@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Vias do Sistema Nervoso</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --bg2: #090d1a;
+    --bg3: #0d1222;
+    --surface: #111827;
+    --border: #1e2d45;
+    --text: #c8d6f0;
+    --text-dim: #5a7099;
+    --text-bright: #e8f0ff;
+
+    --aferente: #00c8a0;
+    --eferente: #e05c5c;
+    --autonomo: #f0a020;
+    --craniano: #a78bfa;
+    --limbico: #f472b6;
+    --molecular: #38bdf8;
+    --clinico: #fb923c;
+    --cerebelo: #86efac;
+    --ganglio: #fbbf24;
+
+    --glow-a: 0 0 18px rgba(0,200,160,0.25);
+    --glow-e: 0 0 18px rgba(224,92,92,0.25);
+    --glow-au: 0 0 18px rgba(240,160,32,0.25);
+    --glow-cr: 0 0 18px rgba(167,139,250,0.25);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* BACKGROUND NEURAL GRID */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,100,200,0.07) 0%, transparent 70%),
+      linear-gradient(rgba(30,45,69,0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30,45,69,0.3) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+    pointer-events: none;
+  }
+
+  /* HEADER */
+  header {
+    position: relative; z-index: 10;
+    text-align: center;
+    padding: 48px 24px 36px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(5,8,16,0.9), transparent);
+  }
+
+  header .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 4px;
+    color: var(--text-dim); text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  header h1 {
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 300;
+    color: var(--text-bright);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--molecular);
+  }
+
+  header p {
+    font-size: 15px; color: var(--text-dim);
+    max-width: 560px; margin: 0 auto;
+  }
+
+  /* LEGEND */
+  .legend {
+    position: relative; z-index: 10;
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 1px;
+    color: var(--text-dim);
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    cursor: default;
+    transition: all 0.2s;
+  }
+
+  .legend-item:hover { color: var(--text-bright); }
+
+  .legend-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* SEARCH */
+  .search-bar {
+    position: relative; z-index: 10;
+    padding: 16px 24px;
+    display: flex; justify-content: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-bar input {
+    width: 100%; max-width: 480px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-bright);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 10px 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-bar input:focus {
+    border-color: var(--molecular);
+    box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
+  }
+
+  .search-bar input::placeholder { color: var(--text-dim); }
+
+  /* CONTROLS */
+  .controls {
+    position: relative; z-index: 10;
+    display: flex; gap: 10px; flex-wrap: wrap;
+    justify-content: center;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ctrl-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 1px;
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .ctrl-btn:hover {
+    background: var(--surface);
+    color: var(--text-bright);
+    border-color: var(--molecular);
+  }
+
+  /* MIND MAP CONTAINER */
+  .map-container {
+    position: relative; z-index: 5;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* SECTION (top-level branches) */
+  .section {
+    margin-bottom: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--bg2);
+    transition: box-shadow 0.3s;
+  }
+
+  .section:hover { box-shadow: 0 4px 40px rgba(0,0,0,0.4); }
+
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 24px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+    position: relative;
+  }
+
+  .section-header:hover { background: rgba(255,255,255,0.03); }
+
+  .section-icon {
+    font-size: 1.4rem; flex-shrink: 0;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+  }
+
+  .section-title {
+    font-size: 1.25rem; font-weight: 600;
+    letter-spacing: -0.2px;
+    flex: 1;
+  }
+
+  .section-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  .section-toggle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px; color: var(--text-dim);
+    transition: transform 0.3s, color 0.2s;
+    flex-shrink: 0;
+  }
+
+  .section.open .section-toggle { transform: rotate(45deg); color: var(--text-bright); }
+
+  .section-body {
+    display: none;
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .section.open .section-body { display: block; }
+
+  /* NODES — 2nd level */
+  .node {
+    margin: 12px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+    background: var(--bg3);
+    transition: border-color 0.2s;
+  }
+
+  .node:hover { border-color: rgba(255,255,255,0.12); }
+
+  .node-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 18px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+
+  .node-header:hover { background: rgba(255,255,255,0.03); }
+
+  .node-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px currentColor;
+  }
+
+  .node-title {
+    font-size: 1.05rem; font-weight: 600;
+    flex: 1;
+  }
+
+  .node-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    padding: 3px 8px; border-radius: 4px;
+    border: 1px solid;
+    opacity: 0.7; flex-shrink: 0;
+  }
+
+  .node-chevron {
+    font-size: 12px; color: var(--text-dim);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+
+  .node.open .node-chevron { transform: rotate(90deg); }
+
+  .node-body {
+    display: none;
+    padding: 4px 18px 16px 38px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .node.open .node-body { display: block; }
+
+  /* LEAVES — 3rd level */
+  .leaf-group {
+    margin: 10px 0;
+  }
+
+  .leaf-group-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    padding-left: 4px;
+    border-left: 2px solid var(--border);
+  }
+
+  .leaf {
+    margin: 5px 0;
+    display: flex; gap: 10px;
+    align-items: flex-start;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid transparent;
+    transition: all 0.18s;
+    cursor: pointer;
+  }
+
+  .leaf:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.08);
+  }
+
+  .leaf-bullet {
+    width: 6px; height: 6px; border-radius: 50%;
+    margin-top: 7px; flex-shrink: 0;
+  }
+
+  .leaf-content { flex: 1; }
+
+  .leaf-title {
+    font-size: 0.95rem; font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 2px;
+  }
+
+  .leaf-desc {
+    font-size: 0.88rem; color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .leaf-desc strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* PILL TAGS on leaves */
+  .pills {
+    display: flex; flex-wrap: wrap; gap: 5px;
+    margin-top: 6px;
+  }
+
+  .pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; padding: 2px 8px;
+    border-radius: 20px; border: 1px solid;
+    opacity: 0.75;
+  }
+
+  /* CLINICAL BOX */
+  .clin-box {
+    margin: 12px 0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border-left: 3px solid var(--clinico);
+    background: rgba(251,146,60,0.06);
+  }
+
+  .clin-box .clin-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    color: var(--clinico);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .clin-box p {
+    font-size: 0.88rem; color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .clin-box p strong { color: var(--text); }
+
+  /* FORMULA BOX */
+  .formula-box {
+    margin: 12px 0;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: rgba(56,189,248,0.06);
+    border: 1px solid rgba(56,189,248,0.2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--molecular);
+    letter-spacing: 0.5px;
+  }
+
+  /* DIVIDER */
+  .map-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 10px 0;
+  }
+
+  /* SEARCH HIGHLIGHT */
+  .highlight { background: rgba(56,189,248,0.2); border-radius: 2px; }
+
+  /* HIDDEN BY SEARCH */
+  .search-hidden { display: none !important; }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 10;
+    text-align: center;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* SCROLL TO TOP */
+  .scroll-top {
+    position: fixed; bottom: 28px; right: 28px; z-index: 100;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    opacity: 0; pointer-events: none;
+  }
+
+  .scroll-top.visible {
+    opacity: 1; pointer-events: all;
+  }
+
+  .scroll-top:hover {
+    background: var(--bg3);
+    color: var(--text-bright);
+    border-color: var(--molecular);
+  }
+
+  /* COUNTER */
+  .stat-bar {
+    position: relative; z-index: 10;
+    display: flex; gap: 24px; flex-wrap: wrap;
+    justify-content: center;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(9,13,26,0.6);
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem; font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    header h1 { font-size: 1.8rem; }
+    .section-header { padding: 14px 16px; }
+    .node-body { padding-left: 24px; }
+    .map-container { padding: 20px 12px 60px; }
+  }
+
+  /* ANIMATION */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section { animation: fadeIn 0.4s ease both; }
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.2s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+  .section:nth-child(6) { animation-delay: 0.3s; }
+  .section:nth-child(7) { animation-delay: 0.35s; }
+  .section:nth-child(8) { animation-delay: 0.4s; }
+  .section:nth-child(9) { animation-delay: 0.45s; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="label">Neurociência Clínica · Medicina Interna & Intensiva</div>
+  <h1>Vias do <em>Sistema Nervoso</em></h1>
+  <p>Mapa mental interativo — do receptor molecular ao córtex. Clique em cada nó para expandir.</p>
+</header>
+
+<div class="stat-bar">
+  <div class="stat"><div class="stat-num">9</div><div class="stat-label">Sistemas</div></div>
+  <div class="stat"><div class="stat-num">47</div><div class="stat-label">Vias & Tratos</div></div>
+  <div class="stat"><div class="stat-num">80+</div><div class="stat-label">Conceitos-chave</div></div>
+  <div class="stat"><div class="stat-num">30+</div><div class="stat-label">Aplicações clínicas</div></div>
+</div>
+
+<div class="legend">
+  <div class="legend-item" style="border-color:var(--aferente);color:var(--aferente)"><span class="legend-dot" style="background:var(--aferente)"></span>Sensitivo / Aferente</div>
+  <div class="legend-item" style="border-color:var(--eferente);color:var(--eferente)"><span class="legend-dot" style="background:var(--eferente)"></span>Motor / Eferente</div>
+  <div class="legend-item" style="border-color:var(--autonomo);color:var(--autonomo)"><span class="legend-dot" style="background:var(--autonomo)"></span>Autônomo</div>
+  <div class="legend-item" style="border-color:var(--craniano);color:var(--craniano)"><span class="legend-dot" style="background:var(--craniano)"></span>Nervos Cranianos</div>
+  <div class="legend-item" style="border-color:var(--limbico);color:var(--limbico)"><span class="legend-dot" style="background:var(--limbico)"></span>Límbico / Superior</div>
+  <div class="legend-item" style="border-color:var(--molecular);color:var(--molecular)"><span class="legend-dot" style="background:var(--molecular)"></span>Molecular</div>
+  <div class="legend-item" style="border-color:var(--clinico);color:var(--clinico)"><span class="legend-dot" style="background:var(--clinico)"></span>Clínico</div>
+  <div class="legend-item" style="border-color:var(--cerebelo);color:var(--cerebelo)"><span class="legend-dot" style="background:var(--cerebelo)"></span>Cerebelo / GB</div>
+</div>
+
+<div class="search-bar">
+  <input type="text" id="search" placeholder="Buscar: ex. lemnisco, dopamina, Wallenberg, NMDA…" oninput="doSearch(this.value)">
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn" onclick="expandAll()">▼ Expandir Tudo</button>
+  <button class="ctrl-btn" onclick="collapseAll()">▲ Recolher Tudo</button>
+  <button class="ctrl-btn" onclick="expandSections()">Expandir Seções</button>
+</div>
+
+<div class="map-container" id="mapContainer">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 0 — NEURÔNIO: UNIDADE FUNCIONAL
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="section" id="sec-neuronio">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:rgba(56,189,248,0.1);color:var(--molecular)">⚛</div>
+      <div>
+        <div class="section-title" style="color:var(--molecular)">0 · Neurônio — Unidade Funcional</div>
+        <div class="section-subtitle">MORFOLOGIA · MIELINA · SINAPSE · POTENCIAL DE AÇÃO</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+
+      <!-- Morfologia -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--molecular);background:var(--molecular)"></div>
+          <div class="node-title" style="color:var(--molecular)">Morfologia Neuronal</div>
+          <div class="node-tag" style="color:var(--molecular);border-color:var(--molecular)">HISTOLOGIA</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf-group">
+            <div class="leaf-group-title">Componentes</div>
+            <div class="leaf">
+              <div class="leaf-bullet" style="background:var(--molecular)"></div>
+              <div class="leaf-content">
+                <div class="leaf-title">Soma (pericário)</div>
+                <div class="leaf-desc">Núcleo eucarionte + nucléolo proeminente + <strong>Corpúsculos de Nissl</strong> (RER = síntese proteica). Cromatolise = dissolução dos corpúsculos após lesão axonal.</div>
+              </div>
+            </div>
+            <div class="leaf">
+              <div class="leaf-bullet" style="background:var(--molecular)"></div>
+              <div class="leaf-content">
+                <div class="leaf-title">Dendritos (δένδρον = árvore)</div>
+                <div class="leaf-desc">Múltiplos prolongamentos receptores. <strong>Espinhas dendríticas</strong> = sítios de sinapses excitatórias. Densidade regulada por LTP (Potenciação de Longa Duração).</div>
+              </div>
+            </div>
+            <div class="leaf">
+              <div class="leaf-bullet" style="background:var(--molecular)"></div>
+              <div class="leaf-content">
+                <div class="leaf-title">Axônio + Cone de Emergência</div>
+                <div class="leaf-desc">Cone = maior densidade de Nav (Nav1.6) → local de iniciação do PA. Termina em <strong>botões terminais</strong> (boutons sinápticos).</div>
+                <div class="pills">
+                  <span class="pill" style="color:var(--molecular);border-color:var(--molecular)">Nav1.1</span>
+                  <span class="pill" style="color:var(--molecular);border-color:var(--molecular)">Nav1.6</span>
+                  <span class="pill" style="color:var(--molecular);border-color:var(--molecular)">Cav2.1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="leaf-group">
+            <div class="leaf-group-title">Bainha de Mielina</div>
+            <div class="leaf">
+              <div class="leaf-bullet" style="background:var(--molecular)"></div>
+              <div class="leaf-content">
+                <div class="leaf-title">Composição</div>
+                <div class="leaf-desc">70% lipídios (galactocerebrosídeo, colesterol, esfingomielina) + 30% proteínas: <strong>MBP</strong> (Myelin Basic Protein), <strong>PLP</strong> (Proteolipid Protein), <strong>MAG</strong>, <strong>MOG</strong> (alvo de anticorpos na EM e NMOSD).</div>
+              </div>
+            </div>
+            <div class="leaf">
+              <div class="leaf-bullet" style="background:var(--molecular)"></div>
+              <div class="leaf-content">
+                <div class="leaf-title">Condução Saltatória — Física</div>
+                <div class="leaf-desc">Mielina = isolante elétrico (↑ resistência, ↓ capacitância). PA "pula" de nodo a nodo. <strong>Velocidade ∝ diâmetro</strong> (fibras mielinizadas).</div>
+                <div class="formula-box">Vc (m/s) ≈ 6 × diâmetro (μm)   [fibras Aα]</div>
+              </div>
+            </div>
+            <div class="leaf">
+              <div class="leaf-bullet" style="background:var(--molecular)"></div>
+              <div class="leaf-content">
+                <div class="leaf-title">Classificação das Fibras</div>
+                <div class="leaf-desc"><strong>Aα</strong> 70–120 m/s (propriocepção/motricidade) · <strong>Aβ</strong> 30–70 m/s (tato/vibração) · <strong>Aδ</strong> 5–30 m/s (dor rápida, temperatura) · <strong>C</strong> 0.5–2 m/s (dor lenta, calor, autonômico).</div>
+              </div>
+            </div>
+            <div class="clin-box">
+              <div class="clin-label">⚕ Clínica</div>
+              <p><strong>Esclerose Múltipla (EM):</strong> desmielinização → lentidão/bloqueio de condução. <strong>Toxina Botulínica:</strong> cliva proteínas SNARE (SNAP-25 para BoNT/A) → bloqueia exocitose de ACh → paralisia flácida. Uso terapêutico: distonia, espasticidade, enxaqueca.</p>
+            </div>
+          </div>
+          <div class="leaf-group">
+            <div class="leaf-group-title">Sinapse Química</div>
+            <div class="leaf">
+              <div class="leaf-bullet" style="background:var(--molecular)"></div>
+              <div class="leaf-content">
+                <div class="leaf-title">Mecanismo Molecular</div>
+                <div class="leaf-desc">PA → ↑ Ca²⁺ (Cav2.1/P/Q-type) → <strong>complexo SNARE</strong> (sintaxina + SNAP-25 + VAMP/sinaptobrevina) + <strong>sinaptotagmina</strong> (sensor Ca²⁺) → fusão vesicular → liberação de NT → receptor pós-sináptico.</div>
+              </div>
+            </div>
+            <div class="leaf">
+              <div class="leaf-bullet" style="background:var(--molecular)"></div>
+              <div class="leaf-content">
+                <div class="leaf-title">PPSE / PPSI</div>
+                <div class="leaf-desc"><strong>PPSE</strong> (EPSP): influxo Na⁺/Ca²⁺ via AMPA/NMDA → despolarização. <strong>PPSI</strong> (IPSP): influxo Cl⁻ via GABA-A ou K⁺ via GABA-B → hiperpolarização. Integração no cone de emergência (limiar ~−55 mV).</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 1 — VIAS SENSITIVAS
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="section" id="sec-sensitivas">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:rgba(0,200,160,0.1);color:var(--aferente)">↑</div>
+      <div>
+        <div class="section-title" style="color:var(--aferente)">1 · Vias Sensitivas — Aferentes Somáticas</div>
+        <div class="section-subtitle">LEMNISCAL · ESPINOTALÂMICA · TRIGEMINOTALÂMICA · ESPINOCEREBELAR</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+
+      <!-- Receptores -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--aferente);background:var(--aferente)"></div>
+          <div class="node-title" style="color:var(--aferente)">Receptores Sensoriais</div>
+          <div class="node-tag" style="color:var(--aferente);border-color:var(--aferente)">ORIGEM</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf-group">
+            <div class="leaf-group-title">Mecanorreceptores Cutâneos</div>
+            <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Corpúsculos de Meissner</div><div class="leaf-desc">Papilas dérmicas (polpa dedos, lábios). Tato fino, textura, braille. <strong>Adaptação rápida.</strong> Fibras Aβ. ~23/mm² no indicador.</div></div></div>
+            <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Corpúsculos de Pacini (Vater-Pacini)</div><div class="leaf-desc">Hipoderme, periósteo. Estrutura lamelar "cebola". Vibração 200–300 Hz, pressão profunda. <strong>Adaptação muito rápida.</strong></div></div></div>
+            <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Discos de Merkel</div><div class="leaf-desc">Estrato espinhoso. Bordas/formas, pressão estática fina. <strong>Adaptação lenta.</strong> Fibras Aβ.</div></div></div>
+            <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Terminações de Ruffini</div><div class="leaf-desc">Derme profunda, cápsulas articulares. Estiramento cutâneo, propriocepção articular. <strong>Adaptação lenta.</strong></div></div></div>
+            <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Terminações Nervosas Livres</div><div class="leaf-desc">Fibras Aδ e C. Sem cápsula. Nociceptores (dor), termorreceptores. Distribuição ubíqua.</div></div></div>
+          </div>
+          <div class="leaf-group">
+            <div class="leaf-group-title">Propriorreceptores</div>
+            <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Fuso Muscular</div><div class="leaf-desc">Fibras intrafusais (bag1, bag2, chain). <strong>Ia</strong> (anuloespiral, velocidade+comprimento) + <strong>II</strong> (comprimento estático). Motoneurônios γ ajustam sensibilidade. Base do reflexo miotático.</div></div></div>
+            <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Órgão Tendinoso de Golgi (OTG)</div><div class="leaf-desc">Junção miotendínea. Fibras Ib. Detecta <strong>tensão</strong> muscular. Reflexo de inibição autogênica. Protege contra ruptura.</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Via Lemniscal -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--aferente);background:var(--aferente)"></div>
+          <div class="node-title" style="color:var(--aferente)">Via Lemniscal Medial (Colunas Posteriores)</div>
+          <div class="node-tag" style="color:var(--aferente);border-color:var(--aferente)">DCML</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Modalidades</div><div class="leaf-desc">Tato discriminativo · Propriocepção consciente · Vibração (palestesia) · Pressão fina · Estereognosia · Grafestesia · Discriminação de 2 pontos.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">1º Neurônio → DRG (pseudo-unipolar)</div><div class="leaf-desc">Fibras Aβ/Aα. Ramo central sobe <strong>ipsilateral</strong> pela coluna posterior: <strong>Fascículo Grácil</strong> (Goll, medial, perna T7↓) + <strong>Fascículo Cuneiforme</strong> (Burdach, lateral, braço C1–T6).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">2º Neurônio → Bulbo → Decussação</div><div class="leaf-desc">Sinapse nos <strong>Núcleos Grácil e Cuneiforme</strong> do bulbo → <strong>Fibras Arqueadas Internas</strong> → cruzam → formam o <strong>Lemnisco Medial</strong> (fita/faixa, λημνίσκος). Sobe ipsi ao objetivo cortical (contra ao corpo).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">3º Neurônio → Tálamo VPL → Córtex S1</div><div class="leaf-desc"><strong>VPL</strong> (Ventral PosteroLateral) para corpo; <strong>VPM</strong> para face. → Cápsula interna (ramo posterior) → Giro pós-central (áreas 3,1,2 de Brodmann) = <strong>S1</strong>. Homúnculo de Penfield.</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Lesão da Coluna Posterior</div>
+            <p><strong>Sinal de Romberg +</strong> (cai com olhos fechados). <strong>Ataxia sensitiva</strong>. Perda de vibração, discriminação, estereognosia. Causas: <strong>Tabes dorsalis</strong> (sífilis terciária), <strong>Def. B12</strong> (degeneração combinada subaguda: col. posterior + lateral), mielopatia cervical.</p>
+          </div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Síndrome Talâmica de Déjerine-Roussy</div>
+            <p>Lesão do VPL (AVE do território tálamo-geniculado) → <strong>dor central</strong> intratável + hemianestesia contralateral. Tratamento: amitriptilina, gabapentina, carbamazepina.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Via Espinotalâmica -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--aferente);background:var(--aferente)"></div>
+          <div class="node-title" style="color:var(--aferente)">Via Espinotalâmica (Sistema Anterolateral)</div>
+          <div class="node-tag" style="color:var(--aferente);border-color:var(--aferente)">DOR/TEMP</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Modalidades</div><div class="leaf-desc">Dor rápida (Aδ, localizada) · Dor lenta (C, difusa, queimação) · Temperatura · Tato grosseiro · Prurido.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Nociceptores Moleculares</div><div class="leaf-desc"><strong>TRPV1</strong>: calor >43°C, capsaicina, H⁺, anandamida · <strong>TRPA1</strong>: frio <17°C, mostarda · <strong>TRPM8</strong>: frio <25°C, mentol. Sensibilização periférica via PGE2, bradicinina, NGF.</div><div class="pills"><span class="pill" style="color:var(--molecular);border-color:var(--molecular)">TRPV1</span><span class="pill" style="color:var(--molecular);border-color:var(--molecular)">TRPA1</span><span class="pill" style="color:var(--molecular);border-color:var(--molecular)">TRPM8</span><span class="pill" style="color:var(--molecular);border-color:var(--molecular)">Nav1.8</span></div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Lâminas de Rexed (sinapse medular)</div><div class="leaf-desc"><strong>Lâmina I</strong> (marginal, NK1, dor/temp Aδ/C) · <strong>Lâmina II</strong> (substância gelatinosa, modulação, opioides) · <strong>Lâmina V</strong> (WDR — Wide Dynamic Range — convergência Aβ+Aδ+C; sensibilização central, windup).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Decussação e Ascensão</div><div class="leaf-desc">Cruza pela <strong>comissura branca anterior</strong> (mesmo nível ou 1–2 segmentos acima). Sobe no funículo anterolateral. Somatotopia: <strong>sacral lateral</strong>, cervical medial.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Subdivisões</div><div class="leaf-desc"><strong>Neospinotalâmico</strong> (Aδ → VPL → S1, dor discriminativa) · <strong>Paleospinotalâmico</strong> (C → intralaminares → amígdala/ACC/ínsula, dor afetiva) · <strong>Espinomesencefálico</strong> (→ PAG, controle descendente) · <strong>Espinoparabraquial</strong> (→ amígdala).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Receptor NMDA e Sensibilização Central</div><div class="leaf-desc">Estímulo repetido de fibras C → bloqueio Mg²⁺ removido → influxo Ca²⁺ → PKC + NOS → NO → potenciação pré-sináptica → <strong>windup</strong> e <strong>LTP nociceptivo</strong>.</div><div class="pills"><span class="pill" style="color:var(--molecular);border-color:var(--molecular)">AMPA</span><span class="pill" style="color:var(--molecular);border-color:var(--molecular)">NMDA</span><span class="pill" style="color:var(--molecular);border-color:var(--molecular)">Substância P / NK1</span></div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Teoria da Comporta (Melzack & Wall, 1965)</div><div class="leaf-desc">Fibras Aβ (tato) → ativam interneurônios inibitórios da lâmina II → <strong>fecham comporta</strong> → reduzem dor. Base da <strong>TENS</strong> (Transcutaneous Electrical Nerve Stimulation).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Controle Descendente da Dor</div><div class="leaf-desc"><strong>PAG</strong> (substância cinzenta periaquedutal, receptores μ/δ, CB1) → <strong>RVM</strong> (núcleo magno da rafe, 5-HT) + <strong>Locus Coeruleus</strong> (noradrenalina, α2) → funículo dorsolateral → lâminas I/II/V → inibição pré e pós-sináptica.</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Brown-Séquard / Siringomielia</div>
+            <p><strong>Brown-Séquard</strong> (hemissecção): perda ipsilateral de propriocepção + perda contralateral de dor/temperatura (2–3 segmentos abaixo). Causa: trauma penetrante, EM, tumor. <strong>Siringomielia</strong>: perda bilateral de dor/temperatura em "capa" (sacral preservado), dissociação sensitiva. Associada a Chiari I.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Via Trigeminotalâmica -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--aferente);background:var(--aferente)"></div>
+          <div class="node-title" style="color:var(--aferente)">Via Trigeminotalâmica (Sensitivo da Face)</div>
+          <div class="node-tag" style="color:var(--aferente);border-color:var(--aferente)">NC V</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Divisões do Trigêmeo</div><div class="leaf-desc"><strong>V1</strong> oftálmica (fronte, córnea, narina) · <strong>V2</strong> maxilar (bochechas, lábio superior) · <strong>V3</strong> mandibular (queixo, lábio inferior, 2/3 anteriores língua).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--aferente)"></div><div class="leaf-content"><div class="leaf-title">Núcleos do Tronco Encefálico</div><div class="leaf-desc"><strong>Mesencefálico</strong>: propriocepção da face (únicos corpos de 1ª ordem DENTRO do SNC) · <strong>Sensitivo principal</strong> (ponte): tato discriminativo → <strong>trato trigeminotalâmico ventral</strong> → VPM → S1 · <strong>Espinal</strong> (ponte→bulbo→C1-3): dor/temperatura → <strong>trato trigeminotalâmico dorsal</strong>.</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Neuralgia do Trigêmeo</div>
+            <p>Dor lancinante em V2/V3, unilateral, desencadeada por zona de gatilho. Causa: compressão vascular (artéria cerebelar superior). <strong>1ª linha: carbamazepina</strong> (bloqueador Nav). Cirurgia: descompressão microvascular de Jannetta, Gamma Knife, termocoagulação percutânea.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Espinocerebelar -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--cerebelo);background:var(--cerebelo)"></div>
+          <div class="node-title" style="color:var(--cerebelo)">Vias Espinocerebelares (Propriocepção Inconsciente)</div>
+          <div class="node-tag" style="color:var(--cerebelo);border-color:var(--cerebelo)">CEREBELO</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--cerebelo)"></div><div class="leaf-content"><div class="leaf-title">Posterior de Flechsig</div><div class="leaf-desc">DRG → Núcleo Torácico de Clarke (C8–L3) → <strong>ipsilateral</strong> (NÃO cruza) → funículo lateral → pedúnculo cerebelar inferior. MMII e tronco. Comprimento e velocidade muscular.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--cerebelo)"></div><div class="leaf-content"><div class="leaf-title">Anterior de Gowers</div><div class="leaf-desc">DRG → comissura → funículo anterolateral contralateral → <strong>recruza no cerebelo</strong> (pedúnculo superior). Informação integrada de interneurônios.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--cerebelo)"></div><div class="leaf-content"><div class="leaf-title">Cuneocerebelar</div><div class="leaf-desc">Equivalente do posterior para <strong>membros superiores</strong>. → Núcleo cuneiforme acessório (bulbo) → pedúnculo cerebelar inferior.</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Ataxia de Friedrich</div>
+            <p>Mutação no gene <strong>FXN</strong> (frataxina mitocondrial, 9q13) → degeneração dos tratos espinocerebelares + colunas posteriores → ataxia progressiva + arreflexia + cardiomiopatia hipertrófica.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 2 — VIAS MOTORAS
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="section" id="sec-motoras">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:rgba(224,92,92,0.1);color:var(--eferente)">↓</div>
+      <div>
+        <div class="section-title" style="color:var(--eferente)">2 · Vias Motoras — Eferentes Somáticas</div>
+        <div class="section-subtitle">PIRAMIDAL · EXTRAPIRAMIDAL · GÂNGLIOS DA BASE · CEREBELO</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+
+      <!-- NMS vs NMI -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--eferente);background:var(--eferente)"></div>
+          <div class="node-title" style="color:var(--eferente)">NMS vs NMI — Diagnóstico Diferencial</div>
+          <div class="node-tag" style="color:var(--clinico);border-color:var(--clinico)">CLÍNICO</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">Lesão NMS (UMN — Upper Motor Neuron)</div><div class="leaf-desc">↑ tônus (espasticidade) · ↑ reflexos (hiper-reflexia) · Babinski + · Atrofia discreta · Sem fasciculações · Padrão piramidal (extensores MMSS fracos, flexores MMII fracos).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">Lesão NMI (LMN — Lower Motor Neuron)</div><div class="leaf-desc">↓ tônus (flacidez) · ↓/ausência de reflexos · Sem Babinski · Atrofia intensa (denervação) · Fasciculações · Distribuição nervosa/radicular.</div></div></div>
+        </div>
+      </div>
+
+      <!-- Via Piramidal -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--eferente);background:var(--eferente)"></div>
+          <div class="node-title" style="color:var(--eferente)">Via Piramidal — Trato Corticospinal (TCS)</div>
+          <div class="node-tag" style="color:var(--eferente);border-color:var(--eferente)">VOLUNTÁRIO</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">Origem Cortical</div><div class="leaf-desc">30% M1 (área 4, <strong>Células de Betz</strong> ~34.000/hemisfério, 70–120 μm) + 30% área pré-motora/AMS (área 6) + 40% córtex parietal (1,2,3,5,7). <strong>Homúnculo Motor de Penfield.</strong></div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">Trajeto Descendente</div><div class="leaf-desc"><strong>Cápsula interna</strong> (joelho: corticobulbar; braço posterior: corticospinal) → <strong>Pedúnculo cerebral</strong> (3/5 centrais) → <strong>Base da ponte</strong> (fragmentado) → <strong>Pirâmides do bulbo</strong> → <strong>Decussação piramidal</strong> (85–90% cruzam).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">TCS Lateral e Anterior</div><div class="leaf-desc"><strong>TCS lateral</strong> (85–90%): funículo lateral, somatotopia cervical medial/sacral lateral → motoneurônios α (lâmina IX) para músculos distais. <strong>TCS anterior</strong> (10–15%): funículo anterior, cruza na medula → músculos axiais.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">Trato Corticobulbar</div><div class="leaf-desc">Controla núcleos motores dos nervos cranianos. <strong>Inervação bilateral</strong> (exceto 1/3 inferior do NC VII e hipoglosso caudal). AVE cortical → paralisia facial central (poupa fronte) vs. periférica (toda hemiface).</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ AVE da ACM / ELA</div>
+            <p><strong>AVE da ACM</strong> (artéria cerebral média): hemiplegia contralateral braquiofacial. Trombólise rt-PA ≤4,5h + trombectomia mecânica ≤24h (DAWN/DEFUSE-3). <strong>ELA</strong> (Esclerose Lateral Amiotrófica): degeneração NMS+NMI. Mutação SOD1/C9orf72. Tratamento: riluzol (↓ glutamato) + edaravone (antioxidante).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Extrapiramidais -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--eferente);background:var(--eferente)"></div>
+          <div class="node-title" style="color:var(--eferente)">Vias Extrapiramidais (Tronco Encefálico)</div>
+          <div class="node-tag" style="color:var(--eferente);border-color:var(--eferente)">POSTURA</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">Vestibuloespinal Lateral (Deiters)</div><div class="leaf-desc">Núcleo vestibular lateral → ipsilateral → funículo anterior → <strong>facilita extensores antigravitacionais</strong>. Postura ereta, reflexos posturais.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">Reticuloespinal Pontino (medial)</div><div class="leaf-desc">Formação reticular pontina → ipsilateral → facilita extensores/inibe flexores. Espasticidade pós-lesão corticospinal em parte por este trato.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">Reticuloespinal Bulbar (lateral)</div><div class="leaf-desc">Formação reticular bulbar → bilateral → inibe extensores/facilita flexores. Contrapeso ao pontino.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">Rubroespinal</div><div class="leaf-desc">Núcleo rubro (mesencéfalo) → cruza (decussação tegmental ventral, Forel) → funículo lateral → flexores do MS. Em humanos: papel menor.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--eferente)"></div><div class="leaf-content"><div class="leaf-title">Tetoespinal + FLM</div><div class="leaf-desc"><strong>Tetoespinal</strong>: colículo superior → cruza (decussação de Meynert) → C4 → orientação da cabeça/olhos. <strong>FLM</strong> (Fascículo Longitudinal Medial): coordenação oculomotora. Lesão → <strong>Oftalmoplegia Internuclear (OIN)</strong> na EM.</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Posturas Patológicas</div>
+            <p><strong>Descerebração</strong> (lesão entre mesencéfalo e ponte): extensão de todos os membros, pronação. <strong>Decorticação</strong> (lesão acima do mesencéfalo): flexão MMSS + extensão MMII. Ambas indicam lesão grave do tronco/hipertensão intracraniana.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gânglios da Base -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--ganglio);background:var(--ganglio)"></div>
+          <div class="node-title" style="color:var(--ganglio)">Gânglios (Núcleos) da Base — Circuitos</div>
+          <div class="node-tag" style="color:var(--ganglio);border-color:var(--ganglio)">GB / BG</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--ganglio)"></div><div class="leaf-content"><div class="leaf-title">Estruturas</div><div class="leaf-desc"><strong>Estriado</strong> (caudado + putâmen) → recebe input cortical. <strong>GPi/GPe</strong> (globo pálido interno/externo). <strong>NST</strong> (núcleo subtalâmico, Luys). <strong>SNc</strong> (dopamina, neuromelanina) + <strong>SNr</strong> (GABA, output).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--ganglio)"></div><div class="leaf-content"><div class="leaf-title">Via Direta (Albin-DeLong)</div><div class="leaf-desc">Córtex → Estriado (D1, facilitado pela DA) → GPi (inibição GABA) → Tálamo VA/VL (desinibição) → Córtex motor (facilitação do movimento).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--ganglio)"></div><div class="leaf-content"><div class="leaf-title">Via Indireta</div><div class="leaf-desc">Córtex → Estriado (D2, inibido pela DA) → GPe (inibição) → NST (desinibição → excita GPi) → Tálamo (hipersupressão) → inibição do córtex motor (suprime movimentos indesejados).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--ganglio)"></div><div class="leaf-content"><div class="leaf-title">Papel da Dopamina</div><div class="leaf-desc">DA (SNc) → D1 (via direta) = facilita movimento + D2 (via indireta) = suprime inibição = facilita movimento. Dopamina = <strong>facilitadora global do movimento</strong>.</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Parkinson / Huntington / Hemibalismo</div>
+            <p><strong>Parkinson</strong>: ↓ DA (SNc) → via indireta predomina → hipocinesia (bradiquinesia, rigidez, tremor de repouso). Tratamento: <strong>Levodopa + carbidopa</strong>, agonistas D2, <strong>DBS</strong> do NST ou GPi. <strong>Huntington</strong>: degeneração neurônios D2-estriatais → hipercinesia (coreia). CAG repeats no gene HTT. <strong>Hemibalismo</strong>: lesão do NST → movimentos violentos contralaterais.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cerebelo -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--cerebelo);background:var(--cerebelo)"></div>
+          <div class="node-title" style="color:var(--cerebelo)">Circuitos Cerebelares</div>
+          <div class="node-tag" style="color:var(--cerebelo);border-color:var(--cerebelo)">COORDENAÇÃO</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--cerebelo)"></div><div class="leaf-content"><div class="leaf-title">Divisões Filogenéticas</div><div class="leaf-desc"><strong>Arquicerebelo</strong> (vestibulocerebelo, flóculo/nódulo): equilíbrio, movimentos oculares. <strong>Paleocerebelo</strong> (espinocerebelo, vermis+paravermis): postura, membros. <strong>Neocerebelo</strong> (pontocerebelo, hemisférios laterais): planejamento e timing de movimentos finos.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--cerebelo)"></div><div class="leaf-content"><div class="leaf-title">Histologia Cortical</div><div class="leaf-desc"><strong>Células de Purkinje</strong> (único output do córtex, GABAérgicas) na camada de Purkinje. <strong>Células granulares</strong> (~80 bilhões!, glutamatérgicas) na camada granular → <strong>fibras paralelas</strong> na camada molecular. <strong>Fibras trepadeiras</strong> (oliva inferior → Purkinje, sinal de erro, LTD).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--cerebelo)"></div><div class="leaf-content"><div class="leaf-title">Núcleos Profundos e Output</div><div class="leaf-desc"><strong>Denteado</strong> (neocerebelo) → pedúnculo superior → cruza → tálamo VA/VL → M1. <strong>Interposto</strong> → núcleo rubro. <strong>Fastigial</strong> → núcleos vestibulares/reticulares. Princípio: ipsilateral ao corpo (cruza 2×).</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Síndrome Cerebelar</div>
+            <p>Ipsilateral à lesão. <strong>DANISH</strong>: Disdiadococinesia · Ataxia · Nistagmo · Intenção (tremor) · Scanning dysarthria · Hypotonia. Romberg negativo. Lesão do <strong>vermis</strong> → ataxia de tronco/marcha. Lesão dos <strong>hemisférios</strong> → dismetria de membros.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 3 — SISTEMA AUTÔNOMO
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="section" id="sec-autonomo">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:rgba(240,160,32,0.1);color:var(--autonomo)">⚙</div>
+      <div>
+        <div class="section-title" style="color:var(--autonomo)">3 · Sistema Nervoso Autônomo (SNA)</div>
+        <div class="section-subtitle">SIMPÁTICO · PARASSIMPÁTICO · ENTÉRICO · VISCERAL AFERENTE</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--autonomo);background:var(--autonomo)"></div>
+          <div class="node-title" style="color:var(--autonomo)">Organização Geral</div>
+          <div class="node-tag" style="color:var(--autonomo);border-color:var(--autonomo)">GERAL</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">2 Neurônios em Série</div><div class="leaf-desc"><strong>Pré-ganglionar</strong> (SNC, fibra B mielinizada) → gânglio → <strong>Pós-ganglionar</strong> (fibra C). NT pré-ganglionar: sempre <strong>ACh + nAChR</strong> (nicotínico) em ambos simpático e parassimpático.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">NT Pós-ganglionares</div><div class="leaf-desc"><strong>Simpático</strong>: NE (norepinefrina) → α e β receptores. Exceções: glândulas sudoríparas écrinas + vasos cutâneos = ACh + muscarínico. <strong>Parassimpático</strong>: ACh → receptores muscarínicos (M1–M5).</div></div></div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--autonomo);background:var(--autonomo)"></div>
+          <div class="node-title" style="color:var(--autonomo)">Via Simpática (Toracolombar T1–L2)</div>
+          <div class="node-tag" style="color:var(--autonomo);border-color:var(--autonomo)">FIGHT/FLIGHT</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Centro Medular: CIL</div><div class="leaf-desc">Coluna IntermedioLateral (lâmina VII, C8–L2). Input de: hipotálamo posterior/lateral (via feixe hipotálamo-espinal) + RVLM (Rostral Ventrolateral Medulla = área C1 do bulbo).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Gânglios Simpáticos</div><div class="leaf-desc"><strong>Cadeia paravertebral</strong> (22 pares): gânglio cervical superior, médio, estrelado (C8-T1). <strong>Pré-vertebrais</strong>: celíaco (estômago/fígado/rins), mesentérico superior (intestino), mesentérico inferior (cólon/bexiga).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Receptores Adrenérgicos</div><div class="leaf-desc"><strong>α1</strong>: vasoconstrição, midríase (fenilefrina). <strong>α2</strong>: pré-sináptico inibitório, hipotensão central (clonidina, dexmedetomidina). <strong>β1</strong>: coração ↑FC/contratilidade (dobutamina). <strong>β2</strong>: broncodilatação, vasodilatação muscular (salbutamol). <strong>β3</strong>: lipólise, relaxamento vesical (mirabegron).</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ UTI — Vasopressores</div>
+            <p><strong>Choque séptico</strong>: 1ª linha <strong>norepinefrina</strong> (α1+β1). 2ª linha: vasopressina (V1R, independente adrenérgico). PCR: <strong>epinefrina</strong> 1 mg IV/3–5min. Disfunção miocárdica: <strong>dobutamina</strong> (β1). <strong>Dexmedetomidina</strong> (α2 central, locus coeruleus): sedação+analgesia sem depressão respiratória na UTI.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--autonomo);background:var(--autonomo)"></div>
+          <div class="node-title" style="color:var(--autonomo)">Via Parassimpática (Craniossacral)</div>
+          <div class="node-tag" style="color:var(--autonomo);border-color:var(--autonomo)">REST/DIGEST</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Componente Cranial</div><div class="leaf-desc"><strong>NC III</strong> (Edinger-Westphal → gânglio ciliar): miose + acomodação. <strong>NC VII</strong> (nuc. salivatório sup. → gânglios pterigopalatino + submandibular): lágrimas, saliva. <strong>NC IX</strong> (nuc. salivatório inf. → gânglio ótico): parótida. <strong>NC X</strong> (nuc. motor dorsal + ambíguo → gânglios viscerais): coração, pulmões, TGI até cólon transverso.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Nervo Vago (X)</div><div class="leaf-desc">80% das fibras são <strong>aferentes viscerais</strong>! Efeitos: ↓ FC (M2, IKACh), broncoconstrição (M3), ↑ motilidade TGI. Núcleo do trato solitário (NTS) = centro de integração visceral no bulbo.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Receptores Muscarínicos</div><div class="leaf-desc"><strong>M1</strong>: SNC/gástrico (pirenzepina). <strong>M2</strong>: coração ↓FC (atropina bloqueia). <strong>M3</strong>: músculo liso brônquico/TGI/bexiga (ipratrópio, tiotrópio na DPOC). <strong>M4/M5</strong>: SNC.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Componente Sacral (S2–S4)</div><div class="leaf-desc">Nervos esplâncnicos pélvicos → gânglios pélvicos → detrusor (contração, M3), reto (defecação), genitais (ereção via NO endotelial).</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Intoxicação por Organofosforados</div>
+            <p>Inibição da acetilcolinesterase → excesso de ACh. <strong>SLUDGE</strong>: Salivação, Lacrimejamento, Urination, Defecação, GI distress, Emese + miose, bradicardia, broncoespasmo. Tratamento: <strong>atropina</strong> (antagonista M) + <strong>pralidoxima</strong> (reativa AChE, dentro de 24–48h, antes do "aging").</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--autonomo);background:var(--autonomo)"></div>
+          <div class="node-title" style="color:var(--autonomo)">Dor Referida — Aferente Visceral</div>
+          <div class="node-tag" style="color:var(--clinico);border-color:var(--clinico)">DIAGNÓSTICO</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Mecanismo — Convergência Viscero-Somática</div><div class="leaf-desc">Fibras C viscerais + fibras somáticas fazem sinapse nos mesmos neurônios WDR (lâmina V). O cérebro "interpreta" a dor visceral como somática → <strong>dor referida</strong>.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Padrões Clínicos</div><div class="leaf-desc"><strong>Coração</strong> (T1-T5): braço esquerdo + mandíbula · <strong>Apêndice</strong> (T10): periumbilical inicial · <strong>Vesícula</strong> (T6-T9): ombro direito (via frênico C3-C5) · <strong>Rim</strong> (T10-L1): flanco e virilha.</div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 4 — NERVOS CRANIANOS E VIAS ESPECIAIS
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="section" id="sec-cranianos">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:rgba(167,139,250,0.1);color:var(--craniano)">◎</div>
+      <div>
+        <div class="section-title" style="color:var(--craniano)">4 · Nervos Cranianos e Vias Especiais</div>
+        <div class="section-subtitle">VISUAL · AUDITIVA · VESTIBULAR · 12 NCs</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--craniano);background:var(--craniano)"></div>
+          <div class="node-title" style="color:var(--craniano)">Os 12 Pares de Nervos Cranianos</div>
+          <div class="node-tag" style="color:var(--craniano);border-color:var(--craniano)">NC I–XII</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC I — Olfatório (SVA)</div><div class="leaf-desc">Olfato. Neurônios bipolares no epitélio olfatório → bulbo olfatório → córtex piriforme (via límbica).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC II — Óptico (SSA)</div><div class="leaf-desc">Visão. Células ganglionares retinianas → quiasma óptico → trato óptico → NGL/colículo/NSQ.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC III — Oculomotor (GSE + GVE)</div><div class="leaf-desc">RS, RI, RM, OI, elevador palpebral. Parassimpático (Edinger-Westphal): miose + acomodação. Lesão → ptose + midríase + olho "para baixo e fora" (sinal de herniação tentorial!).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC IV — Troclear (GSE)</div><div class="leaf-desc">Oblíquo superior → intorsão e depressão ao aduzir. Único NC que cruza e emerge dorsalmente. Lesão → diplopia vertical, cabeça inclinada (Bielschowsky +).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC V — Trigêmeo (GSA + SVE)</div><div class="leaf-desc">V1/V2/V3. Sensitivo da face + mastigação. Gânglio de Gasser. Núcleos: mesencefálico, sensitivo principal, espinal.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC VI — Abducente (GSE)</div><div class="leaf-desc">Reto lateral → abdução do olho. Núcleo na ponte (tegmento pontino). Lesão → esotropia ipsilateral.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC VII — Facial (SVE + GVE + SVA + GSA)</div><div class="leaf-desc">Expressão facial, lacrimejamento, saliva submandibular/sublingual, gustação 2/3 ant língua (corda do tímpano), sensitivo pavilhão auricular. Gânglio geniculado.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC VIII — Vestibulococlear (SSA)</div><div class="leaf-desc">Audição (coclear) + equilíbrio (vestibular). Gânglios espiral e vestibular de Scarpa.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC IX — Glossofaríngeo (múltiplos)</div><div class="leaf-desc">Gustação 1/3 post língua, sensitivo faringe, parótida (parassimpático), estilofaríngeo (SVE), barorreceptor do seio carotídeo.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC X — Vago (múltiplos)</div><div class="leaf-desc">Fonação, deglutição, parassimpático de vísceras torácicas/abdominais. 80% fibras = aferentes viscerais. NTS = centro integração.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC XI — Acessório (GSE)</div><div class="leaf-desc">Esternocleidomastóideo + trapézio. Origem: medula cervical C1-C5 → sobe pelo forame magno. Lesão → ombro caído + dificuldade de virar cabeça ipsilateral.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">NC XII — Hipoglosso (GSE)</div><div class="leaf-desc">Músculos intrínsecos e extrínsecos da língua. Lesão NMI → desvio ipsilateral da língua. Lesão NMS → desvio contralateral.</div></div></div>
+        </div>
+      </div>
+
+      <!-- Via Visual -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--craniano);background:var(--craniano)"></div>
+          <div class="node-title" style="color:var(--craniano)">Via Visual — NC II</div>
+          <div class="node-tag" style="color:var(--craniano);border-color:var(--craniano)">VISÃO</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">Fototransdução Molecular</div><div class="leaf-desc">Fóton → isomerização 11-cis-retinal → transducina (Gtα) → PDE → ↓ cGMP → fechamento canais CNG → hiperpolarização do fotorreceptor → ↓ liberação de glutamato.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">Retina — Células</div><div class="leaf-desc"><strong>Cones</strong> (fóvea, 3 tipos S/M/L, cor/acuidade) + <strong>Bastonetes</strong> (periferia, visão escotópica, rodopsina). <strong>Células M/P ganglionares</strong>: magnocelulares (movimento) e parvocelulares (cor/detalhe). <strong>ipRGCs</strong> (melanopsina, ritmo circadiano).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">Quiasma → Trato → NGL → Radiações → V1</div><div class="leaf-desc">Fibras nasais (campo temporal) <strong>cruzam</strong> no quiasma. Trato óptico = campo visual contralateral. NGL (tálamo, 6 camadas M/P) → <strong>Alça de Meyer</strong> (campo superior, lobo temporal) → <strong>Radiações Ópticas</strong> → <strong>V1</strong> (giro calcarino, área 17).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">Vias Pós-V1</div><div class="leaf-desc"><strong>Via Dorsal</strong> ("onde/como"): V1→MT/V5→córtex parietal posterior (7), movimento, visuo-espacial. <strong>Via Ventral</strong> ("o quê"): V1→V4→IT, reconhecimento de objetos, faces, cores.</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Defeitos de Campo Visual</div>
+            <p>Nervo óptico → amaurose ipsilateral. <strong>Quiasma central</strong> → hemianopsia bitemporal (adenoma hipofisário). Trato óptico → hemianopsia homônima contralateral. <strong>Alça de Meyer</strong> (lóbulo temporal) → quadrantanopsia superior homônima contralateral. V1 occipital → hemianopsia com preservação macular (dupla irrigação ACM+ACP). Cegueira cortical bilateral → reflexo fotomotor preservado (pupilas normais)!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Via Auditiva -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--craniano);background:var(--craniano)"></div>
+          <div class="node-title" style="color:var(--craniano)">Via Auditiva — NC VIII</div>
+          <div class="node-tag" style="color:var(--craniano);border-color:var(--craniano)">AUDIÇÃO</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">Cóclea — Transdução</div><div class="leaf-desc">Onda sonora → ossículos → perilinfa → vibração da membrana basilar (tonotopia: base=agudos, ápice=graves, lei de Bekesy). Deflexão de estereocílios → tip links → canais MET (TMC1/2) → influxo K⁺/Ca²⁺ → despolarização das IHC → glutamato → gânglio espiral.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">Via Ascendente (Bilateral)</div><div class="leaf-desc">NC VIII → <strong>Núcleo Coclear</strong> (bilat.) → Corpo Trapezóide → <strong>Oliva Superior</strong> (reflexo estapediano, localização sonora) → <strong>Lemnisco Lateral</strong> → <strong>Colículo Inferior</strong> → <strong>NGM</strong> (Núcleo Geniculado Medial, tálamo) → <strong>A1</strong> (Giro de Heschl, áreas 41/42) → <strong>Área de Wernicke</strong> (22).</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Exames Audiológicos</div>
+            <p><strong>Audiometria tonal</strong>: gap aéreo-ósseo >10 dB → perda condutiva; sem gap = neurossensorial. <strong>BERA/ABR</strong> (Brainstem Evoked Response Audiometry): ondas I–V, detecta neurinoma do acústico/desmielinização. <strong>EOAs</strong> (Emissões Otoacústicas): produto das OHCs (prestin); ausentes em perda coclear. Base da triagem neonatal.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Via Vestibular -->
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--craniano);background:var(--craniano)"></div>
+          <div class="node-title" style="color:var(--craniano)">Via Vestibular — Equilíbrio</div>
+          <div class="node-tag" style="color:var(--craniano);border-color:var(--craniano)">VESTIBULAR</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">Receptores</div><div class="leaf-desc"><strong>Canais semicirculares</strong> (crista ampular): aceleração angular. <strong>Utrículo</strong> (mácula horizontal): aceleração linear horizontal. <strong>Sáculo</strong> (mácula vertical): gravidade/aceleração vertical. Mecanismo: otólitos/cúpula → deflexão estereocílios.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">Projeções Centrais</div><div class="leaf-desc">Gânglio de Scarpa → <strong>Núcleos Vestibulares</strong> (4 pares: superior, medial, lateral Deiters, inferior) → <strong>Cerebelo</strong> (flóculo/nódulo) + <strong>FLM</strong> (VOR) + <strong>Tratos Vestibuloespinais</strong> (postura) + <strong>Tálamo → Córtex Parieto-Insular Vestibular (PIVC)</strong>.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--craniano)"></div><div class="leaf-content"><div class="leaf-title">Reflexo Vestíbulo-Ocular (VOR)</div><div class="leaf-desc">Rotação da cabeça → movimentos oculares conjugados opostos (ganho ~1) → estabilização da imagem retiniana. Via: Canais → núcleos vestibulares → FLM → NC III/IV/VI.</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ BPPV / HINTS / Síndrome de Wallenberg</div>
+            <p><strong>BPPV</strong>: otocônias no canal posterior → nistagmo geotrópico em Dix-Hallpike. Tratamento: manobra de Epley. <strong>Teste HINTS</strong> (diferencia central de periférico): Head Impulse positivo + Nystagmus unidirecional + sem Test of Skew → periférico (benigno). HIT negativo/nistagmo muda de direção → <strong>AVE do tronco</strong> (urgência!). <strong>Wallenberg</strong> (AVE PICA): anestesia facial ipsilateral + anestesia corporal contralateral + vertigem + disfagia + Horner ipsilateral + ataxia ipsilateral.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 5 — SISTEMA LÍMBICO
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="section" id="sec-limbico">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:rgba(244,114,182,0.1);color:var(--limbico)">♡</div>
+      <div>
+        <div class="section-title" style="color:var(--limbico)">5 · Sistema Límbico e Funções Superiores</div>
+        <div class="section-subtitle">HIPOCAMPO · AMÍGDALA · MEMÓRIA · LINGUAGEM · CIRCUITO DE PAPEZ</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--limbico);background:var(--limbico)"></div>
+          <div class="node-title" style="color:var(--limbico)">Circuito de Papez e Estruturas Límbicas</div>
+          <div class="node-tag" style="color:var(--limbico);border-color:var(--limbico)">PAPEZ/1937</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--limbico)"></div><div class="leaf-content"><div class="leaf-title">Circuito de Papez</div><div class="leaf-desc">Hipocampo → Fórnix → Corpos Mamilares → Trato Mamilotalâmico → Núcleo Anterior do Tálamo → Giro do Cíngulo → Córtex Entorrinal → Hipocampo. Substrato da memória episódica.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--limbico)"></div><div class="leaf-content"><div class="leaf-title">Hipocampo — Memória Declarativa</div><div class="leaf-desc">Arquicórtex 3 camadas: CA1-CA4 + Giro Denteado. <strong>LTP</strong> (Bliss & Lømo, 1973): estimulação → AMPA → remoção Mg²⁺ do NMDA → Ca²⁺ → CaMKII → inserção de receptores AMPA → potenciação sináptica duradoura. Base celular da memória.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--limbico)"></div><div class="leaf-content"><div class="leaf-title">Amígdala — Emoção e Medo</div><div class="leaf-desc"><strong>BLA</strong> (basolateral): aprendizado emocional (LTP amigdalino). <strong>Núcleo central</strong>: output → hipotálamo + PAG (comportamento de medo, ativação autonômica). "Low road" (tálamo→amígdala, rápido) + "high road" (tálamo→córtex→amígdala, elaborado).</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Alzheimer / PTSD</div>
+            <p><strong>Alzheimer</strong>: degeneração cortex entorrinal II/III e CA1 → amnésia anterógrada. Placas β-amiloides (Aβ42, processamento anormal do APP) + emaranhados de tau hiperfosforilada. Anticorpos anti-Aβ (lecanemab, donanemab, FDA 2023-24). <strong>PTSD</strong>: hiperatividade amigdalina + hipofunção do córtex pré-frontal medial. Tratamento: ISRS + terapia de exposição/EMDR.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--limbico);background:var(--limbico)"></div>
+          <div class="node-title" style="color:var(--limbico)">Vias da Linguagem</div>
+          <div class="node-tag" style="color:var(--limbico);border-color:var(--limbico)">AFASIA</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--limbico)"></div><div class="leaf-content"><div class="leaf-title">Área de Broca (44/45)</div><div class="leaf-desc">Giro frontal inferior, hemisfério dominante. <strong>Produção</strong> da linguagem (fluência, articulação, gramática). Lesão → Afasia de Broca: não-fluente, compreensão preservada, agramatismo.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--limbico)"></div><div class="leaf-content"><div class="leaf-title">Área de Wernicke (22)</div><div class="leaf-desc">Giro temporal superior posterior, hemisfério dominante. <strong>Compreensão</strong> da linguagem. Lesão → Afasia de Wernicke: fluente com parafasias/neologismos, compreensão gravemente comprometida.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--limbico)"></div><div class="leaf-content"><div class="leaf-title">Fascículo Arqueado</div><div class="leaf-desc">Conecta Wernicke ↔ Broca (via fascículo longitudinal superior). Lesão → <strong>Afasia de Condução</strong>: fluente, compreensão preservada, <strong>repetição comprometida</strong>.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--limbico)"></div><div class="leaf-content"><div class="leaf-title">Modelo Dual (Hickok & Poeppel)</div><div class="leaf-desc"><strong>Via Dorsal</strong> (temporal→parietal→frontal): interface sensório-motora, articulação, repetição. <strong>Via Ventral</strong> (temporal→frontal inferior): acesso ao significado, compreensão semântica.</div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 6 — HIPOTÁLAMO E CONTROLE AUTONÔMICO CENTRAL
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="section" id="sec-hipotalamo">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:rgba(240,160,32,0.1);color:var(--autonomo)">⬡</div>
+      <div>
+        <div class="section-title" style="color:var(--autonomo)">6 · Hipotálamo — Maestro Autonômico</div>
+        <div class="section-subtitle">NÚCLEOS · EIXO HHA · OREXINA · TERMORREGULAÇÃO</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--autonomo);background:var(--autonomo)"></div>
+          <div class="node-title" style="color:var(--autonomo)">Núcleos Hipotalâmicos e Funções</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Supraquiasmático (NSQ)</div><div class="leaf-desc">Relógio circadiano (~24h). Recebe do trato retino-hipotalâmico (ipRGCs, melanopsina). Regula melatonina (epífise) via simpático cervical.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Supraóptico + Paraventricular</div><div class="leaf-desc">Síntese e transporte de <strong>ADH/vasopressina</strong> (V1/V2) e <strong>ocitocina</strong> → neurohipófise (axônios terminam no lobo posterior). PVN também sintetiza CRH.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Ventromedial (VMH) + Lateral</div><div class="leaf-desc"><strong>VMH</strong>: saciedade (lesão → hiperfagia). <strong>Lateral</strong>: fome/sede + neurônios de <strong>orexina/hipocretina</strong> (vigília, recompensa). Deficiência de orexina → <strong>narcolepsia com cataplexia</strong>.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--autonomo)"></div><div class="leaf-content"><div class="leaf-title">Eixo HHA (HPA axis)</div><div class="leaf-desc">PVN → <strong>CRH</strong> → hipófise anterior → <strong>ACTH</strong> → córtex adrenal → <strong>cortisol</strong>. Feedback negativo. Pico matinal (ritmo circadiano). Teste de supressão com <strong>dexametasona</strong> 1mg → rastreio de Cushing (cortisol suprime <1.8 μg/dL).</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Diabetes Insipidus / Narcolepsia</div>
+            <p><strong>Diabetes insipidus central</strong>: deficiência de ADH (lesão do NSO ou neuro-hipófise) → poliúria hipotônica. Tratamento: desmopressina (DDAVP, análogo V2). <strong>Narcolepsia com cataplexia</strong>: dosagem de orexina-A no LCR <110 pg/mL = critério diagnóstico. Tratamento: modafinil, oxibato de sódio, pitolisant.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 7 — DOR CRÔNICA E NEUROMODULAÇÃO
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="section" id="sec-dor">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:rgba(251,146,60,0.1);color:var(--clinico)">⚡</div>
+      <div>
+        <div class="section-title" style="color:var(--clinico)">7 · Dor Crônica — Farmacologia e Neuromodulação</div>
+        <div class="section-subtitle">SENSIBILIZAÇÃO · OPIOIDES · CETAMINA · SCS · DBS</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--clinico);background:var(--clinico)"></div>
+          <div class="node-title" style="color:var(--clinico)">Cronificação da Dor</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Sequência Fisiopatológica</div><div class="leaf-desc">Lesão → inflamação → sensibilização periférica (↓ limiar TRPV1/Nav1.8) → estimulação repetida de C → NMDA ativado → windup → sensibilização central (LTP nociceptivo) → desinibição (perda interneurônios GABAérgicos/glicinérgicos) → ativação glial (micróglia P2X4R → BDNF → ↓ KCC2 → GABA excitatório).</div></div></div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--clinico);background:var(--clinico)"></div>
+          <div class="node-title" style="color:var(--clinico)">Farmacologia Integrativa da Dor</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Nível Periférico</div><div class="leaf-desc">AINEs (↓ COX→PGE2) · Anestésicos locais (bloqueio Nav) · Capsaicina 8% (dessensibilização TRPV1) · Anti-NGF (tanezumabe, em desenvolvimento).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Nível Espinal</div><div class="leaf-desc"><strong>Opioides intratecais</strong> (morfina, hidromorfona): receptores μ/δ → ↓ Ca²⁺ pré + ↑ K⁺ pós → hiperpolarização. <strong>Cetamina</strong>: bloqueador de canal aberto NMDA → analgesia + previne hiperalgesia. <strong>Gabapentina/Pregabalina</strong>: subunidade α2δ-1 dos Cav → ↓ liberação de glutamato/SP. <strong>Ziconotide</strong>: bloqueador Cav2.2 intratecal.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Nível Supraespinal + Descendente</div><div class="leaf-desc"><strong>Opioides sistêmicos</strong> (μ>κ>δ): fentanil (lipofílico, sem metabólitos tóxicos), remifentanil (esterases plasmáticas, UTI). <strong>ADTs/SNRIs</strong> (amitriptilina, duloxetina): ↑ NE e 5-HT → ↑ controle descendente. <strong>Dexmedetomidina</strong> (α2 central): sedoanalgesia UTI.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Neuromodulação</div><div class="leaf-desc"><strong>TENS</strong>: fecha comporta via Aβ. <strong>SCS</strong> (Spinal Cord Stimulation): eletrodos epidurais coluna posterior, inibe WDR. <strong>DBS</strong> (Deep Brain Stimulation): NST ou GPi para Parkinson; alvo na PAG para dor crônica refratária.</div></div></div>
+          <div class="clin-box">
+            <div class="clin-label">⚕ Receptores Opioides</div>
+            <p><strong>μ (mu)</strong>: analgesia supraespinal e espinal, euforia, <strong>depressão respiratória</strong>, constipação, miose. Morfina, fentanil, metadona, buprenorfina (agonista parcial μ/antagonista κ). <strong>κ (kappa)</strong>: analgesia espinal, sedação, disforia. Nalbufina. <strong>δ (delta)</strong>: analgesia, humor.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 8 — SÍNDROMES NEUROLÓGICAS INTEGRADAS
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="section" id="sec-sindromes">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:rgba(251,146,60,0.1);color:var(--clinico)">⚕</div>
+      <div>
+        <div class="section-title" style="color:var(--clinico)">8 · Síndromes Neurológicas — Correlação Via-a-Via</div>
+        <div class="section-subtitle">WALLENBERG · BROWN-SÉQUARD · SIRINGOMIELIA · AVC · ELA</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--clinico);background:var(--clinico)"></div>
+          <div class="node-title" style="color:var(--clinico)">Síndrome de Wallenberg (Infarto Lateral do Bulbo)</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Estruturas Afetadas (Tegmento Lateral Bulbar)</div><div class="leaf-desc">NC V espinal → anestesia facial ipsilateral. TES (já cruzado) → anestesia corporal contralateral. Núcleos vestibulares → vertigem/nistagmo. Pedúnculo cerebelar inferior → ataxia ipsilateral. Núcleo ambíguo (IX/X) → disfagia/rouquidão. Simpático descendente → Horner ipsilateral (miose+ptose+enoftalmia).</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Padrão Clínico Clássico</div><div class="leaf-desc"><strong>Síndrome sensitiva dissociada cruzada</strong>: face ipsilateral + corpo contralateral. SEM hemiplegia (TCS preservado nas pirâmides anteriores). AVE por oclusão de PICA ou artéria vertebral.</div></div></div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--clinico);background:var(--clinico)"></div>
+          <div class="node-title" style="color:var(--clinico)">Brown-Séquard / Siringomielia / Lesão Medular</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Brown-Séquard (Hemissecção Medular)</div><div class="leaf-desc">Ipsilateral: hemiplegia espástica (TCS) + perda propriocepção/vibração (col. posterior). Contralateral: perda dor/temperatura (TES, 2–3 segmentos abaixo). Causas: trauma penetrante, EM, tumor.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Siringomielia</div><div class="leaf-desc">Cavidade intramedular → fibras espinotalâmicas cruzantes (comissura anterior) afetadas primeiro → perda bilateral de dor/temp em "capa" (ombros/braços) com preservação sacral. Dissociação sensitiva. Via lemniscal inicialmente preservada.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Lesão Medular Alta (Acima C4)</div><div class="leaf-desc">Perda do nervo frênico (C3-C5) → insuficiência respiratória → VM. Hipotensão neurogênica (vasoplegia simpática) → norepinefrina. Bradicardia reflexa. Atenção: succinilcolina CI após 48–72h (hipercalemia por supersensibilização a ACh extrajuncional).</div></div></div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--clinico);background:var(--clinico)"></div>
+          <div class="node-title" style="color:var(--clinico)">ELA / Degeneração dos Motoneurônios</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">ELA (ALS)</div><div class="leaf-desc">Degeneração progressiva NMS + NMI → sinais mistos (espasticidade + atrofia + fasciculações). Mutação SOD1 (20% familiar), C9orf72 (mais comum familiar e esporádico). Diagnóstico: critérios de El Escorial revisados + EMG.</div><div class="pills"><span class="pill" style="color:var(--clinico);border-color:var(--clinico)">Riluzol (Nav + Glu)</span><span class="pill" style="color:var(--clinico);border-color:var(--clinico)">Edaravone (antioxidante)</span></div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--clinico)"></div><div class="leaf-content"><div class="leaf-title">Atrofia Muscular Espinal (AME)</div><div class="leaf-desc">Mutação no gene SMN1 (5q13). Deficiência de SMN (Survival Motor Neuron) → degeneração seletiva dos motoneurônios α. Tipo I (Werdnig-Hoffmann), II, III. Tratamento: <strong>nusinersen</strong> (ASO intratecal), <strong>onasemnogene abeparvovec</strong> (terapia gênica, dose única).</div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SEÇÃO 9 — EXAMES COMPLEMENTARES
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="section" id="sec-exames">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:rgba(56,189,248,0.1);color:var(--molecular)">◈</div>
+      <div>
+        <div class="section-title" style="color:var(--molecular)">9 · Diagnóstico — Exames das Vias Nervosas</div>
+        <div class="section-subtitle">EMG · PE · RM · LCR · AUDIOMETRIA · CAMPIMETRIA</div>
+      </div>
+      <div class="section-toggle">+</div>
+    </div>
+    <div class="section-body">
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--molecular);background:var(--molecular)"></div>
+          <div class="node-title" style="color:var(--molecular)">Eletroneuromiografia (EMG/ENG)</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--molecular)"></div><div class="leaf-content"><div class="leaf-title">EMG de Agulha</div><div class="leaf-desc">Avalia atividade elétrica dos músculos. <strong>Fibrilações e ondas positivas agudas</strong>: denervação ativa (NMI). <strong>Fasciculações</strong>: doença de motoneurônio (ELA, AME). <strong>Padrão neurogênico</strong>: PUMs aumentados, polifásicos, redução no recrutamento.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--molecular)"></div><div class="leaf-content"><div class="leaf-title">Eletroneurografia (ENG)</div><div class="leaf-desc">Velocidade de condução nervosa. <strong>Desmielinização</strong>: ↓ velocidade, ↑ latência distal, bloqueio de condução (Guillain-Barré). <strong>Axonopathy</strong>: ↓ amplitude do CMAP/SNAP, velocidade normal. Diferencia polineuropatia axonal de desmielinizante.</div></div></div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--molecular);background:var(--molecular)"></div>
+          <div class="node-title" style="color:var(--molecular)">Potenciais Evocados (PE)</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--molecular)"></div><div class="leaf-content"><div class="leaf-title">PEV (Potencial Evocado Visual)</div><div class="leaf-desc">Onda P100 (<100 ms normal). <strong>Latência alargada</strong> na desmielinização do nervo óptico (neurite óptica da EM). Detecta lesões subclínicas.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--molecular)"></div><div class="leaf-content"><div class="leaf-title">BERA (ABR)</div><div class="leaf-desc">Ondas I–V. Detecta neurinoma do acústico (schwannoma vestibular), desmielinização da via auditiva, lesões do tronco. I = NC VIII; III = oliva; V = colículo inferior.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--molecular)"></div><div class="leaf-content"><div class="leaf-title">PESS (Potencial Evocado Somatossensitivo)</div><div class="leaf-desc">Avalia via lemniscal medial. Latência e amplitude. Monitorização intraoperatória de coluna vertebral (evitar lesão da coluna posterior). Diagnóstico de mielopatia, EM.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--molecular)"></div><div class="leaf-content"><div class="leaf-title">PME (Potencial Motor Evocado — TMS)</div><div class="leaf-desc">Estimulação magnética transcraniana sobre M1 → resposta muscular. Avalia integridade do trato corticospinal. Latência central = tempo de condução central (normal ≤10ms). Alargado na EM, mielopatia, ELA.</div></div></div>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-header" onclick="toggleNode(this)">
+          <div class="node-dot" style="color:var(--molecular);background:var(--molecular)"></div>
+          <div class="node-title" style="color:var(--molecular)">Neuroimagem e LCR</div>
+          <div class="node-chevron">▶</div>
+        </div>
+        <div class="node-body">
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--molecular)"></div><div class="leaf-content"><div class="leaf-title">RM de Crânio/Medula</div><div class="leaf-desc"><strong>DWI</strong> (Diffusion-Weighted Imaging): AVE isquêmico agudo (restrição à difusão). <strong>FLAIR</strong>: lesões desmielinizantes (EM), edema, gliose. <strong>T1+gadolínio</strong>: ruptura de BHE (placa ativa de EM, tumor, abscesso). <strong>Angio-RM</strong>: estenose de vasos intracranianos.</div></div></div>
+          <div class="leaf"><div class="leaf-bullet" style="background:var(--molecular)"></div><div class="leaf-content"><div class="leaf-title">LCR — Líquido Cerebrospinal</div><div class="leaf-desc">EM: bandas oligoclonais (IgG) + índice de IgG elevado. <strong>GBS</strong> (Guillain-Barré): dissociação albumino-citológica (↑ proteína, células normais). <strong>Alzheimer</strong>: Aβ42↓ + tau total↑ + p-tau↑. Meningite bacteriana: ↓ glicose, ↑ proteína, neutrófilos.</div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /map-container -->
+
+<footer>
+  MAPA MENTAL — VIAS DO SISTEMA NERVOSO &nbsp;·&nbsp; Medicina Interna & Intensiva &nbsp;·&nbsp; Claude · Anthropic 2026
+</footer>
+
+<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Voltar ao topo">↑</button>
+
+<script>
+  // Toggle section (1st level)
+  function toggleSection(header) {
+    const section = header.closest('.section');
+    section.classList.toggle('open');
+  }
+
+  // Toggle node (2nd level)
+  function toggleNode(header) {
+    const node = header.closest('.node');
+    node.classList.toggle('open');
+  }
+
+  // Expand all
+  function expandAll() {
+    document.querySelectorAll('.section').forEach(s => s.classList.add('open'));
+    document.querySelectorAll('.node').forEach(n => n.classList.add('open'));
+  }
+
+  // Collapse all
+  function collapseAll() {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('open'));
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('open'));
+  }
+
+  // Expand only sections
+  function expandSections() {
+    document.querySelectorAll('.section').forEach(s => s.classList.add('open'));
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('open'));
+  }
+
+  // Search
+  function doSearch(query) {
+    const q = query.trim().toLowerCase();
+
+    // Remove all highlights first
+    document.querySelectorAll('.highlight').forEach(el => {
+      const parent = el.parentNode;
+      parent.replaceChild(document.createTextNode(el.textContent), el);
+      parent.normalize();
+    });
+
+    if (!q) {
+      document.querySelectorAll('.section, .node, .leaf, .clin-box, .leaf-group').forEach(el => {
+        el.classList.remove('search-hidden');
+      });
+      return;
+    }
+
+    // Open all for search
+    document.querySelectorAll('.section').forEach(s => s.classList.add('open'));
+    document.querySelectorAll('.node').forEach(n => n.classList.add('open'));
+
+    // Hide non-matching leaves
+    document.querySelectorAll('.leaf').forEach(leaf => {
+      const text = leaf.textContent.toLowerCase();
+      if (text.includes(q)) {
+        leaf.classList.remove('search-hidden');
+        highlightText(leaf, q);
+      } else {
+        leaf.classList.add('search-hidden');
+      }
+    });
+
+    // Hide clin-boxes that don't match
+    document.querySelectorAll('.clin-box').forEach(box => {
+      const text = box.textContent.toLowerCase();
+      if (text.includes(q)) {
+        box.classList.remove('search-hidden');
+        highlightText(box, q);
+      } else {
+        box.classList.add('search-hidden');
+      }
+    });
+
+    // Show/hide nodes based on whether they have visible children
+    document.querySelectorAll('.node').forEach(node => {
+      const visibleLeaves = node.querySelectorAll('.leaf:not(.search-hidden), .clin-box:not(.search-hidden)');
+      const titleMatches = node.querySelector('.node-title').textContent.toLowerCase().includes(q);
+      if (visibleLeaves.length === 0 && !titleMatches) {
+        node.classList.add('search-hidden');
+      } else {
+        node.classList.remove('search-hidden');
+      }
+    });
+
+    // Show/hide sections
+    document.querySelectorAll('.section').forEach(section => {
+      const visibleNodes = section.querySelectorAll('.node:not(.search-hidden)');
+      const titleMatches = section.querySelector('.section-title').textContent.toLowerCase().includes(q);
+      if (visibleNodes.length === 0 && !titleMatches) {
+        section.classList.add('search-hidden');
+      } else {
+        section.classList.remove('search-hidden');
+      }
+    });
+  }
+
+  function highlightText(el, query) {
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(textNode => {
+      const text = textNode.textContent;
+      const lowerText = text.toLowerCase();
+      const idx = lowerText.indexOf(query);
+      if (idx === -1) return;
+
+      const before = document.createTextNode(text.substring(0, idx));
+      const match = document.createElement('mark');
+      match.className = 'highlight';
+      match.textContent = text.substring(idx, idx + query.length);
+      const after = document.createTextNode(text.substring(idx + query.length));
+
+      const parent = textNode.parentNode;
+      parent.insertBefore(before, textNode);
+      parent.insertBefore(match, textNode);
+      parent.insertBefore(after, textNode);
+      parent.removeChild(textNode);
+    });
+  }
+
+  // Scroll top button
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scrollTopBtn');
+    if (window.scrollY > 400) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  });
+
+  // Open first section on load
+  document.querySelector('.section').classList.add('open');
+</script>
+</body>
+</html>

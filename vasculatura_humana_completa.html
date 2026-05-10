@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vasculatura Humana Completa — Atlas Anatômico e Clínico</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crimson: #8B0000;
+    --blood: #C0392B;
+    --arterial: #E74C3C;
+    --venous: #2471A3;
+    --deep-venous: #1A5276;
+    --gold: #B7950B;
+    --gold-light: #F4D03F;
+    --parchment: #FDF6E3;
+    --ink: #1C1008;
+    --ink-light: #3D2B1F;
+    --border: #D4B896;
+    --accent: #6E2C0E;
+    --lymph: #1E8449;
+    --capillary: #A569BD;
+    --bg-dark: #0D0604;
+    --bg-section: #FBF4E8;
+    --note-bg: #FEF9E7;
+    --clinical-bg: #EBF5FB;
+    --warn-bg: #FDEDEC;
+    --etymology-bg: #F4ECF7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.85;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────────────── */
+  header {
+    background: linear-gradient(135deg, #0D0604 0%, #1a0a08 40%, #2d0d0a 100%);
+    color: #FDF6E3;
+    padding: 4rem 2rem 3rem;
+    text-align: center;
+    border-bottom: 4px solid var(--blood);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(192,57,43,0.18) 0%, transparent 70%);
+  }
+  header .subtitle-band {
+    display: inline-block;
+    background: var(--blood);
+    color: #FDF6E3;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 0.3em 1.2em;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #FDF6E3 30%, #F4D03F 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header p.lead {
+    max-width: 780px;
+    margin: 0 auto;
+    font-size: 1.05rem;
+    color: #C9B99A;
+    font-style: italic;
+    line-height: 1.7;
+  }
+  header .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+  }
+  header .stat {
+    text-align: center;
+  }
+  header .stat .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    display: block;
+  }
+  header .stat .lbl {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #A08060;
+  }
+
+  /* ── NAV ─────────────────────────────────────────────────────── */
+  nav.toc {
+    background: #1a0d0a;
+    border-bottom: 2px solid var(--accent);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  nav.toc a {
+    color: #C9B99A;
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    margin-right: 1.5rem;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  nav.toc a:hover { color: var(--gold-light); }
+
+  /* ── MAIN LAYOUT ─────────────────────────────────────────────── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+  }
+
+  /* ── SECTION TITLES ──────────────────────────────────────────── */
+  .part-header {
+    background: linear-gradient(135deg, var(--crimson), var(--blood));
+    color: #FDF6E3;
+    padding: 2.5rem 2rem 2rem;
+    margin: 3rem -1.5rem 2rem;
+    border-left: 6px solid var(--gold);
+    position: relative;
+  }
+  .part-header.venous {
+    background: linear-gradient(135deg, var(--deep-venous), #1A5276);
+    border-left-color: #AED6F1;
+  }
+  .part-header.lymph {
+    background: linear-gradient(135deg, #145A32, #1E8449);
+    border-left-color: #A9DFBF;
+  }
+  .part-header.micro {
+    background: linear-gradient(135deg, #4A235A, #7D3C98);
+    border-left-color: #D7BDE2;
+  }
+  .part-header .part-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 0.4rem;
+  }
+  .part-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 900;
+    line-height: 1.1;
+  }
+  .part-header .part-sub {
+    font-size: 0.95rem;
+    opacity: 0.85;
+    margin-top: 0.4rem;
+    font-style: italic;
+  }
+
+  h3.vessel-group {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--crimson);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0.4rem;
+    margin: 2.5rem 0 1rem;
+  }
+  h3.vessel-group.v { color: var(--deep-venous); }
+  h3.vessel-group.m { color: #7D3C98; }
+  h3.vessel-group.l { color: #145A32; }
+
+  h4.vessel-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--accent);
+    margin: 2rem 0 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  h4.vessel-name.v { color: var(--deep-venous); }
+  h4.vessel-name .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.15em 0.5em;
+    border-radius: 3px;
+    background: var(--arterial);
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+  h4.vessel-name.v .badge { background: var(--deep-venous); }
+
+  /* ── CARDS ───────────────────────────────────────────────────── */
+  .vessel-card {
+    background: var(--bg-section);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--arterial);
+    border-radius: 4px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .vessel-card.v { border-left-color: var(--venous); }
+  .vessel-card.m { border-left-color: #9B59B6; }
+  .vessel-card.l { border-left-color: var(--lymph); }
+
+  .vessel-card .vc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 0.8rem;
+  }
+  @media(max-width:680px){ .vessel-card .vc-grid { grid-template-columns: 1fr; } }
+
+  .vc-field {
+    margin-bottom: 0.6rem;
+  }
+  .vc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--blood);
+    margin-bottom: 0.15rem;
+    display: block;
+  }
+  .vc-label.v { color: var(--deep-venous); }
+  .vc-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink-light);
+  }
+
+  /* ── CALLOUT BOXES ───────────────────────────────────────────── */
+  .box {
+    border-radius: 4px;
+    padding: 1.1rem 1.4rem;
+    margin: 1.2rem 0;
+    font-size: 0.94rem;
+    line-height: 1.7;
+  }
+  .box-clinical { background: var(--clinical-bg); border-left: 4px solid #2471A3; }
+  .box-etym { background: var(--etymology-bg); border-left: 4px solid #9B59B6; }
+  .box-histo { background: #F0FFF0; border-left: 4px solid #27AE60; }
+  .box-physio { background: #FFF8E1; border-left: 4px solid #F39C12; }
+  .box-warn { background: var(--warn-bg); border-left: 4px solid var(--blood); }
+  .box-formula { background: #1a0d0a; color: #F4D03F; border-radius: 4px; padding: 1rem 1.4rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; margin: 1rem 0; }
+  .box h5 {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: inherit;
+  }
+  .box-clinical h5 { color: var(--deep-venous); }
+  .box-etym h5 { color: #7D3C98; }
+  .box-histo h5 { color: #1E8449; }
+  .box-physio h5 { color: #B7770D; }
+  .box-warn h5 { color: var(--crimson); }
+
+  /* ── TABLE ───────────────────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 1.2rem 0;
+  }
+  th {
+    background: var(--crimson);
+    color: #FDF6E3;
+    text-align: left;
+    padding: 0.6rem 0.9rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  table.venous th { background: var(--deep-venous); }
+  td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid #E8D8C0;
+    color: var(--ink-light);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: rgba(0,0,0,0.025); }
+
+  /* ── PROSE ───────────────────────────────────────────────────── */
+  p { margin-bottom: 0.9rem; color: var(--ink-light); }
+  ul, ol { padding-left: 1.4rem; margin-bottom: 0.9rem; color: var(--ink-light); }
+  li { margin-bottom: 0.3rem; }
+  strong { color: var(--ink); }
+  em { color: var(--accent); }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    background: #F0E8D8;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    color: var(--crimson);
+  }
+  a { color: var(--blood); }
+  a:hover { color: var(--arterial); }
+
+  /* ── DIAGRAM (pure CSS SVG-style) ───────────────────────────── */
+  .diagram-wrap {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: #FDF6E3;
+    padding: 1rem;
+  }
+  .diagram-wrap svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
+  /* ── FOOTNOTES / REFS ────────────────────────────────────────── */
+  .refs {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border);
+    font-size: 0.82rem;
+    color: #666;
+    line-height: 1.6;
+  }
+  .refs h4 { font-family: 'Playfair Display', serif; color: var(--ink); margin-bottom: 0.8rem; font-size: 1rem; }
+  .refs ol { padding-left: 1.2rem; }
+  .refs li { margin-bottom: 0.3rem; }
+
+  /* ── RULER ───────────────────────────────────────────────────── */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  /* ── LEGEND CHIP ─────────────────────────────────────────────── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1rem 0;
+  }
+  .legend-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25em 0.8em;
+    border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: white;
+  }
+  .lc-a { background: var(--blood); }
+  .lc-v { background: var(--deep-venous); }
+  .lc-l { background: var(--lymph); }
+  .lc-c { background: var(--capillary); }
+
+  /* ── BACK TO TOP ─────────────────────────────────────────────── */
+  .back-top {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    background: var(--blood);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 46px; height: 46px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    z-index: 200;
+    text-decoration: none;
+  }
+  .back-top:hover { background: var(--crimson); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════════════════ -->
+<header id="top">
+  <div class="subtitle-band">Atlas Vascular Humano Completo</div>
+  <h1>Vasculatura Humana<br>Artérias · Veias · Capilares · Linfáticos</h1>
+  <p class="lead">
+    Do arco aórtico às arteríolas terminais, das grandes veias cavas às vênulas pós-capilares —
+    um compêndio anatômico, histológico, fisiológico e clínico para o estudante de Medicina Interna e Terapia Intensiva.
+  </p>
+  <div class="stats-row">
+    <div class="stat"><span class="num">~100.000 km</span><span class="lbl">extensão total de vasos</span></div>
+    <div class="stat"><span class="num">5–6 L</span><span class="lbl">volume sanguíneo adulto</span></div>
+    <div class="stat"><span class="num">37 trilhões</span><span class="lbl">células irrigadas</span></div>
+    <div class="stat"><span class="num">&gt;600</span><span class="lbl">vasos nomeados</span></div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════
+     NAV
+═══════════════════════════════════════════════════════════════ -->
+<nav class="toc">
+  <a href="#intro">Introdução</a>
+  <a href="#histologia">Histologia Vascular</a>
+  <a href="#fisiologia">Fisiologia</a>
+  <a href="#aorta">Aorta</a>
+  <a href="#coronarias">Coronárias</a>
+  <a href="#cabeca">Cabeça/Pescoço</a>
+  <a href="#torax">Tórax</a>
+  <a href="#abdomen">Abdômen</a>
+  <a href="#pelve">Pelve</a>
+  <a href="#mmss">MMSS</a>
+  <a href="#mmii">MMII</a>
+  <a href="#veias">Sistema Venoso</a>
+  <a href="#portal">Sistema Porta</a>
+  <a href="#micro">Microcirculação</a>
+  <a href="#linfaticos">Linfáticos</a>
+  <a href="#refs">Referências</a>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MAIN
+═══════════════════════════════════════════════════════════════ -->
+<main>
+
+<!-- ─────────────────────────────────────────────────────────────
+     INTRODUÇÃO GERAL
+───────────────────────────────────────────────────────────────── -->
+<section id="intro">
+  <div class="part-header">
+    <div class="part-num">Parte I — Fundamentos</div>
+    <h2>Introdução ao Sistema Cardiovascular Vascular</h2>
+    <div class="part-sub">Embriologia, princípios físicos e classificação dos vasos</div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-chip lc-a">● Artéria</span>
+    <span class="legend-chip lc-v">● Veia</span>
+    <span class="legend-chip lc-l">● Linfático</span>
+    <span class="legend-chip lc-c">● Capilar/Microcirculação</span>
+  </div>
+
+  <div class="box box-etym">
+    <h5>📖 Etimologia — "Vaso"</h5>
+    <p><strong>Artéria</strong> vem do grego <em>artēría</em> (ἀρτηρία), derivado de <em>aēr</em> (ar) + <em>tēréō</em> (guardar). Os gregos antigos achavam que as artérias continham ar, pois estavam vazias nos cadáveres. <strong>Veia</strong> vem do latim <em>vena</em>, provavelmente da raiz proto-indo-europeia <em>*weyh</em> (tecer, fluir). <strong>Capilar</strong> vem do latim <em>capillaris</em>, de <em>capillus</em> (cabelo) — por sua espessura capilar. <strong>Aorta</strong> vem do grego <em>aortē</em> (ἀορτή), de <em>aeirō</em> (levantar, sustentar).</p>
+  </div>
+
+  <p>O sistema circulatório humano é dividido em dois grandes circuitos em série:</p>
+  <ul>
+    <li><strong>Circulação Sistêmica (Grande Circulação):</strong> ventrículo esquerdo → aorta → artérias sistêmicas → capilares → veias → veia cava → átrio direito.</li>
+    <li><strong>Circulação Pulmonar (Pequena Circulação):</strong> ventrículo direito → artéria pulmonar → capilares pulmonares → veias pulmonares → átrio esquerdo.</li>
+  </ul>
+
+  <div class="box box-physio">
+    <h5>⚗️ Princípios Físicos Fundamentais — Lei de Hagen-Poiseuille</h5>
+    <p>O fluxo sanguíneo <strong>Q</strong> (em mL/s) em um vaso segue:</p>
+    <div class="box-formula">Q = (π · ΔP · r⁴) / (8 · η · L)</div>
+    <p>Onde: <strong>ΔP</strong> = diferença de pressão, <strong>r</strong> = raio do vaso, <strong>η</strong> (eta) = viscosidade do sangue (~3–4 mPa·s), <strong>L</strong> = comprimento do vaso.</p>
+    <p><strong>Importância clínica crítica:</strong> O fluxo é proporcional ao raio à <em>quarta potência</em>! Se o raio cair pela metade (ex.: estenose ateromatosa), o fluxo cai 16 vezes. Isso explica por que uma placa ateromatosa que reduza 50% do raio causa queda dramática no fluxo coronariano.</p>
+    <p><strong>Resistência Vascular (RVP / RVS):</strong></p>
+    <div class="box-formula">R = (8 · η · L) / (π · r⁴) = ΔP / Q = MAP − CVP / DC</div>
+    <p>RVS = Resistência Vascular Sistêmica; RVP = Resistência Vascular Pulmonar; MAP = Mean Arterial Pressure (Pressão Arterial Média); CVP = Central Venous Pressure (Pressão Venosa Central); DC = Débito Cardíaco.</p>
+    <p><strong>Exercício clínico:</strong> Paciente em choque séptico, DC = 8 L/min (elevado), MAP = 55 mmHg, CVP = 8 mmHg. Calcule a RVS.<br>
+    RVS = (55 − 8) / 8 = 5,875 mmHg·min/L = 470 din·s/cm⁵ (normal: 800–1200). → RVS baixa = choque distributivo.</p>
+  </div>
+
+  <h3 class="vessel-group">Embriologia Vascular</h3>
+  <p>O sistema vascular origina-se do <strong>mesodermo</strong> lateral e paraxial, a partir da 3ª semana embrionária. As células precursoras são os <strong>angioblastos</strong> — células mesenquimatosas que se diferenciam em células endoteliais. O processo de formação de novos vasos chama-se:</p>
+  <ul>
+    <li><strong>Vasculogênese:</strong> formação de novos vasos <em>de novo</em> a partir de angioblastos (em tecidos embrionários e no adulto sob hipóxia).</li>
+    <li><strong>Angiogênese:</strong> brotamento e crescimento de vasos a partir de vasos pré-existentes — mediada principalmente por <strong>VEGF</strong> (Vascular Endothelial Growth Factor / Fator de Crescimento do Endotélio Vascular).</li>
+  </ul>
+  <p>A aorta dorsal forma-se a partir dos arcos aórticos (1º ao 6º). O 4º arco aórtico esquerdo torna-se o arco da aorta. O 6º arco forma a artéria pulmonar e o <strong>ducto arterioso</strong> (que fecha ao nascimento formando o <em>ligamento arterioso</em>).</p>
+
+  <div class="box box-clinical">
+    <h5>🏥 Aplicação Clínica — Persistência do Ducto Arterioso (PDA)</h5>
+    <p>O ducto arterioso conecta a artéria pulmonar à aorta descendente durante a vida fetal (permite bypass do pulmão não-ventilado). Fecha funcionalmente nas primeiras horas de vida pela elevação da PO₂ e queda das prostaglandinas E₂. A falha no fechamento causa PDA — shunt esquerda→direita, sopro contínuo em "maquinaria", e sobrecarga pulmonar. Tratamento: indometacina (inibidora de COX, reduz PGE₂) ou cirurgia. <a href="https://www.ncbi.nlm.nih.gov/books/NBK430758/" target="_blank">(NIH StatPearls — PDA)</a></p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     HISTOLOGIA VASCULAR
+───────────────────────────────────────────────────────────────── -->
+<section id="histologia">
+  <div class="part-header">
+    <div class="part-num">Parte II — Microestrutura</div>
+    <h2>Histologia Vascular — Túnicas, Células e Matriz</h2>
+    <div class="part-sub">Da adventícia ao endotélio: estrutura molecular e funcional de cada camada</div>
+  </div>
+
+  <p>Todo vaso sanguíneo (exceto capilares) é composto de <strong>três túnicas concêntricas</strong>:</p>
+
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field">
+          <span class="vc-label">Túnica Íntima (Intima)</span>
+          <span class="vc-content">Camada mais interna. Composta por: <strong>endotélio</strong> (monocamada de células endoteliais poligonais planas), <strong>lâmina basal</strong> (colágeno IV, laminina, fibronectina) e <strong>tecido conjuntivo subendotelial</strong> (fibras elásticas, colágeno I/III). Em artérias elásticas existe a <em>membrana elástica interna</em> (MEI) — rica em elastina fenestrada. O endotélio produz: <strong>NO</strong> (óxido nítrico — vasodilatador), <strong>prostaciclina</strong> (PGI₂ — antiagregante), <strong>endotelina-1</strong> (vasoconstritor), <strong>tPA</strong> (ativador tecidual do plasminogênio — fibrinolítico), <strong>FvW</strong> (Fator von Willebrand — adesão plaquetária).</span>
+        </div>
+      </div>
+      <div>
+        <div class="vc-field">
+          <span class="vc-label">Túnica Média (Media)</span>
+          <span class="vc-content">Camada intermediária. Contém <strong>células musculares lisas</strong> (CML) organizadas em espirais (permitem contração e relaxamento — vasomotricidade), fibras elásticas e colágeno. Nas artérias elásticas (aorta, pulmonar) predominam <strong>lamelas elásticas concêntricas</strong> (40–70 na aorta). Nas artérias musculares predomina músculo liso. A espessura da média determina a resistência e complacência do vaso. Separada da adventícia pela <em>membrana elástica externa</em> (MEE).</span>
+        </div>
+      </div>
+      <div>
+        <div class="vc-field">
+          <span class="vc-label">Túnica Adventícia (Adventitia)</span>
+          <span class="vc-content">Camada externa. Tecido conjuntivo frouxo com colágeno I e III, fibras elásticas, fibroblastos, macrófagos. Contém os <strong>vasa vasorum</strong> (vasos que nutrem a parede vascular — especialmente em vasos grandes) e <strong>nervi vasorum</strong> (fibras adrenérgicas simpáticas que controlam o tônus vascular). Em artérias grandes, a adventícia ancora o vaso às estruturas vizinhas.</span>
+        </div>
+      </div>
+      <div>
+        <div class="vc-field">
+          <span class="vc-label">Classificação por Calibre</span>
+          <span class="vc-content">
+            <strong>Artérias elásticas (condutoras):</strong> Ø &gt; 1 cm — aorta, tronco pulmonar, carótidas, subclávia, ilíacas. Função: efeito Windkessel — armazenam energia sistólica e a liberam na diástole (fluxo contínuo).<br>
+            <strong>Artérias musculares (distribuidoras):</strong> Ø 0,1–10 mm — coronárias, femorais, renais, braquiais.<br>
+            <strong>Artérias de resistência (arteríolas):</strong> Ø 10–100 µm — controlam RVP/RVS.<br>
+            <strong>Capilares:</strong> Ø 5–10 µm — troca.<br>
+            <strong>Vênulas pós-capilares:</strong> Ø 10–50 µm.<br>
+            <strong>Veias:</strong> Ø variado, paredes mais finas, válvulas.
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box box-histo">
+    <h5>🔬 Microscopia — Endotélio em Detalhe</h5>
+    <p>O endotélio humano corresponde a ~1 kg de massa total e ~6000 m² de área de superfície. As células endoteliais são unidas por <strong>junções ocludentes</strong> (tight junctions — claudinas, ocludinas) e <strong>junções aderentes</strong> (VE-caderina). O <strong>glicocálice</strong> — camada de proteoglicanos (heparano-sulfato, syndecan) e glicoproteínas na face luminal — protege contra agregação plaquetária, age como sensor de shear stress (tensão de cisalhamento) e modula a permeabilidade capilar. A lesão do glicocálice (sepse, isquemia-reperfusão) é pré-requisito para a disfunção endotelial e o "edema de ressuscitação".</p>
+    <p><a href="https://www.ahajournals.org/doi/10.1161/ATVBAHA.120.314205" target="_blank">Referência: Arterioscler Thromb Vasc Biol. 2020 — Endothelial function review</a></p>
+  </div>
+
+  <div class="box box-physio">
+    <h5>⚗️ Efeito Windkessel (Complacência Aórtica)</h5>
+    <p>Nas artérias elásticas, durante a sístole, a energia cinética do sangue ejetado distende a parede aórtica (armazenamento elástico). Na diástole, a parede retrai, impulsionando o sangue perifericamente → fluxo quase contínuo nos capilares. Com o envelhecimento, a aorta torna-se mais rígida (arteriosclerose) → maior pressão de pulso (PA sistólica − PA diastólica) → maior trabalho cardíaco → HVE (Hipertrofia Ventricular Esquerda). Esse é o mecanismo da <em>hipertensão sistólica isolada do idoso</em>.</p>
+    <div class="box-formula">Complacência (C) = ΔV / ΔP</div>
+    <p>Aorta jovem: C alta → amortece bem a onda de pulso. Aorta envelhecida: C baixa → maior reflexo de onda de pulso → aumenta PA sistólica, reduz PA diastólica.</p>
+  </div>
+
+  <h3 class="vessel-group">Tipos de Capilares</h3>
+  <table>
+    <thead>
+      <tr><th>Tipo</th><th>Estrutura</th><th>Permeabilidade</th><th>Localização</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Contínuos</strong></td><td>Junções ocludentes, lâmina basal contínua</td><td>Baixa (apenas pequenas moléculas)</td><td>Músculo, pulmão, pele, SNC (BBB)</td></tr>
+      <tr><td><strong>Fenestrados</strong></td><td>Poros (fenestrações) de 60–80 nm cobertos por diafragma</td><td>Moderada-alta (proteínas pequenas)</td><td>Glomérulo renal, plexo coroide, intestino, glândulas endócrinas</td></tr>
+      <tr><td><strong>Sinusoides</strong></td><td>Fenestrações largas, lâmina basal descontínua ou ausente</td><td>Muito alta (proteínas, células)</td><td>Fígado (células de Kupffer), baço, medula óssea, glândulas adrenais</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box box-clinical">
+    <h5>🏥 Barreira Hematoencefálica (BHE / BBB — Blood-Brain Barrier)</h5>
+    <p>Os capilares cerebrais são contínuos com junções ocludentes excepcionalmente densas (claudina-5, ocludina), envolvidos pelos <strong>pés astrocíticos</strong> (astrócitos) e pericitos. Isso cria a BHE, que restringe a passagem de fármacos ao SNC. Para atravessar a BHE, uma droga deve ser: lipossolúvel, pequena (&lt;500 Da), não ionizada em pH fisiológico. Estratégias terapêuticas: manitol (abertura osmótica temporária), nanopartículas, pró-drogas. A ruptura da BHE na meningite bacteriana facilita o edema cerebral vasogênico. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8228257/" target="_blank">(Nature Neurosci — BHE review)</a></p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     FISIOLOGIA VASCULAR
+───────────────────────────────────────────────────────────────── -->
+<section id="fisiologia">
+  <div class="part-header">
+    <div class="part-num">Parte III — Fisiologia</div>
+    <h2>Controle do Tônus Vascular e Hemodinâmica</h2>
+    <div class="part-sub">Autorregulação, barorreceptores, RAAS, NO, endotelinas — mecanismos moleculares</div>
+  </div>
+
+  <h3 class="vessel-group">Regulação Neural</h3>
+  <p>As artérias de resistência (arteríolas) são inervadas por fibras <strong>simpáticas adrenérgicas</strong> (neurônios pós-ganglionares) que liberam <strong>noradrenalina</strong> (NE). A NE atua nos receptores <strong>α₁-adrenérgicos</strong> do músculo liso vascular → vasoconstrição (↑ RVS). Os receptores <strong>β₂-adrenérgicos</strong> (predominantes em vasos musculares) → vasodilatação. Vasos coronários e músculo esquelético têm predomínio β₂, por isso a adrenalina circulante pode dilatar esses leitos durante o estresse.</p>
+
+  <h3 class="vessel-group">Regulação Humoral</h3>
+  <table>
+    <thead><tr><th>Substância</th><th>Origem</th><th>Efeito Vascular</th><th>Mecanismo</th><th>Relevância Clínica</th></tr></thead>
+    <tbody>
+      <tr><td>Angiotensina II (AT-II)</td><td>RAAS — pulmão (ECA)</td><td>Vasoconstrição potente</td><td>AT₁R → ↑ IP₃ → ↑ Ca²⁺</td><td>HAS, ICC — alvo dos iECAs e BRA</td></tr>
+      <tr><td>Aldosterona</td><td>Córtex adrenal (zona glomerulosa)</td><td>Retenção Na⁺/H₂O → ↑ volemia</td><td>Receptor mineralocorticoide</td><td>Hiperaldosteronismo primário</td></tr>
+      <tr><td>ADH / Vasopressina</td><td>Hipotálamo → neuro-hipófise</td><td>Vasoconstrição (V₁R), retenção H₂O (V₂R)</td><td>V₁R → ↑ Ca²⁺ CML; V₂R → ↑ AQP2</td><td>Choque — vasopressina exógena</td></tr>
+      <tr><td>Óxido Nítrico (NO)</td><td>Endotélio (eNOS)</td><td>Vasodilatação potente</td><td>↑ GMPc → ↓ Ca²⁺ CML</td><td>Disfunção endotelial, nitratos, sepse</td></tr>
+      <tr><td>Endotelina-1 (ET-1)</td><td>Endotélio</td><td>Vasoconstrição potente e prolongada</td><td>ET_AR → ↑ IP₃ → ↑ Ca²⁺</td><td>HAP — bloqueadores (bosentan)</td></tr>
+      <tr><td>Prostaciclina (PGI₂)</td><td>Endotélio</td><td>Vasodilatação, antiagregante</td><td>↑ AMPc → ↓ Ca²⁺ CML</td><td>HAP — iloprost, epoprostenol</td></tr>
+      <tr><td>Bradicinina</td><td>Calicreína → cinina</td><td>Vasodilatação (via NO e PGI₂)</td><td>B₂R → ↑ eNOS</td><td>Angioedema pelo iECA</td></tr>
+      <tr><td>Histamina</td><td>Mastócitos, basófilos</td><td>Vasodilatação e ↑ permeabilidade</td><td>H₁R endotelial → NO; abertura JO</td><td>Anafilaxia, urticária</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box box-physio">
+    <h5>⚗️ Sistema RAAS (Renina-Angiotensina-Aldosterona) — Cascata Molecular</h5>
+    <p><strong>Renina</strong> (liberada pelas células justaglomerulares renais por ↓PA, ↓Na⁺, ↑simpático) cliva o <strong>angiotensinogênio</strong> hepático em <strong>Angiotensina I</strong> (10 aa). A <strong>ECA</strong> (Enzima Conversora de Angiotensina / ACE — Angiotensin-Converting Enzyme), expressa nos capilares pulmonares, remove 2 aa → <strong>Angiotensina II</strong> (8 aa). A AT-II: (1) vasoconstrição arteriolar sistêmica, (2) estimula aldosterona → retenção Na/H₂O, (3) estimula sede e ADH, (4) hipertrofia vascular e cardíaca. <strong>iECA</strong> (captopril, enalapril) bloqueiam a conversão, reduzem AT-II e acumulam bradicinina (→ tosse seca). <strong>BRA</strong> (losartan, valsartan) bloqueiam o receptor AT₁ sem acumular bradicinina. <a href="https://www.ncbi.nlm.nih.gov/books/NBK470411/" target="_blank">(StatPearls — RAAS)</a></p>
+  </div>
+
+  <h3 class="vessel-group">Autorregulação do Fluxo</h3>
+  <p>Certos leitos vasculares mantêm fluxo constante apesar de variações na pressão de perfusão (mecanismo miogênico + metabólico):</p>
+  <ul>
+    <li><strong>Cérebro:</strong> autorregula entre MAP 60–150 mmHg. Abaixo de 60 → isquemia. Acima de 150 → ruptura da BHE → encefalopatia hipertensiva.</li>
+    <li><strong>Rim:</strong> 80–180 mmHg. Resposta miogênica + feedback tubuloglomerular (mácula densa).</li>
+    <li><strong>Coração:</strong> O2 consumo alto basal (~70% extração de O₂ em repouso). Autorregula por metabólitos vasodilatadores: adenosina, CO₂, H⁺, ↓PO₂, K⁺.</li>
+  </ul>
+
+  <div class="box box-clinical">
+    <h5>🏥 Importância na UTI — Pressão de Perfusão Cerebral (PPC)</h5>
+    <div class="box-formula">PPC = MAP − PIC</div>
+    <p>PPC = Pressão de Perfusão Cerebral; MAP = Mean Arterial Pressure; PIC = Pressão Intracraniana. Meta na TCE grave: PPC ≥ 60 mmHg (guideline BTF 2016). Se MAP = 70 e PIC = 25 → PPC = 45 → isquemia. Conduta: ↑ MAP com vasopressor (noradrenalina) + ↓ PIC (manitol, hipertônica, drenagem). <a href="https://journals.lww.com/jneurotrauma/fulltext/2017/09010/guidelines_for_the_management_of_severe_traumatic.1.aspx" target="_blank">(Brain Trauma Foundation Guidelines)</a></p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SISTEMA ARTERIAL
+═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-num">Parte IV — Sistema Arterial</div>
+  <h2>Todas as Artérias Humanas</h2>
+  <div class="part-sub">Da aorta às arteríolas — trajeto, limites, ramos e relações anatômicas</div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────────────
+     AORTA
+───────────────────────────────────────────────────────────────── -->
+<section id="aorta">
+  <h3 class="vessel-group">AORTA — A Grande Artéria</h3>
+
+  <div class="box box-etym">
+    <h5>📖 Etimologia — "Aorta"</h5>
+    <p>Do grego <em>aortē</em> (ἀορτή), de <em>aeirō</em> (ἀείρω) = levantar, sustentar. Hipócrates usou o termo para designar os "grandes vasos" do coração. Galeno e Aristóteles também descreveram a aorta, mas confundindo suas funções com as veias.</p>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Aorta Ascendente</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem / Início</span><span class="vc-content">Orifício aórtico do ventrículo esquerdo (anel aórtico), ao nível do espaço intercostal III esquerdo / margem inferior do manúbrio esternal.</span></div>
+        <div class="vc-field"><span class="vc-label">Trajeto</span><span class="vc-content">Sobe obliquamente para cima e para frente, percorrendo ~5 cm até a origem do arco aórtico. Localizada no mediastino médio, dentro do pericárdio fibroso.</span></div>
+        <div class="vc-field"><span class="vc-label">Término / Limite</span><span class="vc-content">Plano do ângulo esternal (ângulo de Louis / Louis angle), ao nível do disco intervertebral T4–T5, onde inicia o arco aórtico.</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos Principais</span><span class="vc-content">
+          <strong>Artéria Coronária Direita (ACD)</strong> — seio aórtico direito (seio de Valsalva direito)<br>
+          <strong>Artéria Coronária Esquerda (ACE / LMCA)</strong> — seio aórtico esquerdo (seio de Valsalva esquerdo)
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Relações Anatômicas</span><span class="vc-content">
+          <strong>Anterior:</strong> esterno, timo (ou resquício adiposo), artéria pulmonar direita<br>
+          <strong>Posterior:</strong> artéria pulmonar esquerda, brônquio esquerdo<br>
+          <strong>Direita:</strong> veia cava superior (VCS)<br>
+          <strong>Esquerda:</strong> artéria pulmonar principal
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Dissecção de Aorta Ascendente (Tipo A de Stanford)</h5>
+      <p>A dissecção tipo A (acomete aorta ascendente) é emergência cirúrgica. A camada média se cliva em lâmina interna e externa — a falsa luz pode comprometer as coronárias (IAM) ou inundar o pericárdio (tamponamento cardíaco). Risco de mortalidade: 1–2%/hora sem tratamento. TC com contraste de aorta (angiotomografia) é o exame padrão. <a href="https://www.ncbi.nlm.nih.gov/books/NBK441963/" target="_blank">(StatPearls — Aortic Dissection)</a></p>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Arco Aórtico (Cayado da Aorta)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Ângulo de Louis (T4–T5), continuação da aorta ascendente.</span></div>
+        <div class="vc-field"><span class="vc-label">Trajeto</span><span class="vc-content">Curva para cima, para trás e para a esquerda sobre o brônquio esquerdo e esôfago, terminando no nível de T4 (lateral esquerdo).</span></div>
+        <div class="vc-field"><span class="vc-label">Limite / Término</span><span class="vc-content">Istmo aórtico — ponto de transição para a aorta descendente torácica, ao nível do ligamento arterioso (resquício do ducto arterioso).</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos (da direita para esquerda)</span><span class="vc-content">
+          1. <strong>Tronco Braquiocefálico (TBC)</strong> — também chamado artéria inominada / brachiocephalic trunk<br>
+          2. <strong>Artéria Carótida Comum Esquerda (ACCE)</strong><br>
+          3. <strong>Artéria Subclávia Esquerda (ASE)</strong><br>
+          <em>Variantes:</em> Em ~0,5% há artéria tireoideia ima diretamente do arco. Arco aórtico à direita (situs inversus ou isolado) em ~0,1%.
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Relações</span><span class="vc-content">
+          <strong>Superior:</strong> nervo frênico esquerdo, nervo vago esquerdo, veia braquiocefálica esquerda<br>
+          <strong>Inferior:</strong> bifurcação traqueal (carina), artéria pulmonar esquerda, ligamento arterioso<br>
+          <strong>Nervo laríngeo recorrente esquerdo</strong> — contorna o arco aórtico inferiormente (clinicamente importante: compressão por aneurisma → disfonia)
+        </span></div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Tronco Braquiocefálico (TBC / Artéria Inominada)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Primeiro ramo do arco aórtico (1º ramo à direita). Nível da articulação esternoclavicular direita.</span></div>
+        <div class="vc-field"><span class="vc-label">Trajeto</span><span class="vc-content">Sobe obliquamente para cima e para a direita, retroesternal, percorrendo ~4–5 cm.</span></div>
+        <div class="vc-field"><span class="vc-label">Divisão</span><span class="vc-content">Divide-se atrás da articulação esternoclavicular direita em:<br>
+          • <strong>Artéria Carótida Comum Direita (ACCD)</strong><br>
+          • <strong>Artéria Subclávia Direita (ASD)</strong>
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramo Adicional</span><span class="vc-content"><strong>Artéria Tireoideia Ima</strong> (quando presente, ~10%) — ramo inconstante que irriga o lobo piramidal da tireoide. Importância cirúrgica na tireoidectomia.</span></div>
+        <div class="vc-field"><span class="vc-label">Importância Clínica</span><span class="vc-content">A compressão do TBC por aneurismas aórticos ou massas mediastinais pode causar isquemia cerebral e de membro superior direito simultâneos. A trombose é rara mas catastrófica.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Aorta Descendente Torácica (Aorta Torácica)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Istmo aórtico — nível T4, ao nível do ligamento arterioso.</span></div>
+        <div class="vc-field"><span class="vc-label">Trajeto</span><span class="vc-content">Desce pelo mediastino posterior, inicialmente à esquerda da coluna, progressivamente se centralizando, chegando ao hiato aórtico do diafragma ao nível de T12.</span></div>
+        <div class="vc-field"><span class="vc-label">Relações</span><span class="vc-content">
+          <strong>Anterior:</strong> esôfago (cruza sobre a aorta de esquerda para direita)<br>
+          <strong>Direita:</strong> veia ázigos, ducto torácico<br>
+          <strong>Esquerda:</strong> pleura mediastinal esquerda<br>
+          <strong>Posterior:</strong> coluna vertebral (T5–T12), veias hemi-ázigos
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos Parietais</span><span class="vc-content">
+          • <strong>Artérias Intercostais Posteriores</strong> (9 pares — da 3ª à 11ª; as duas primeiras vêm da intercostal suprema da subclávia)<br>
+          • <strong>Artéria Subcostal</strong> (abaixo do 12º arco costal)<br>
+          • <strong>Artérias Frênicas Superiores</strong> (face superior do diafragma)
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Ramos Viscerais</span><span class="vc-content">
+          • <strong>Artérias Bronquiais</strong> (1–3 de cada lado — nutrem o parênquima pulmonar exceto os alvéolos)<br>
+          • <strong>Artérias Esofágicas</strong> (4–5 pequenos ramos)<br>
+          • <strong>Artérias Mediastinais</strong> (pequenos ramos para linfonodos e pericárdio)
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Artéria de Adamkiewicz (Artéria Radicular Magna)</h5>
+      <p>Também chamada <em>arteria radicularis magna</em> ou artéria de Adamkiewicz, é o principal ramo espinhal anterior — origina-se geralmente de uma artéria intercostal posterior entre T8 e L2 (mais frequentemente T9–T12, lado esquerdo em 75%). Nutre os 2/3 inferiores da medula espinhal. Sua oclusão durante cirurgia de aorta torácica descend/toracoabdominal causa paraplegia. A identificação pré-operatória por angiotomografia é mandatória. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6195183/" target="_blank">(J Spine Surg. 2018)</a></p>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Aorta Abdominal</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Hiato aórtico do diafragma — nível T12 (entre os pilares do diafragma).</span></div>
+        <div class="vc-field"><span class="vc-label">Trajeto</span><span class="vc-content">Desce retroperitonealmente à esquerda da linha média (ligeiramente), acompanhando a face anterior dos corpos vertebrais L1–L4.</span></div>
+        <div class="vc-field"><span class="vc-label">Término</span><span class="vc-content">Bifurcação aórtica ao nível de L4 (plano imediatamente acima do umbigo / 2–3 cm abaixo dele) → artérias ilíacas comuns direita e esquerda.</span></div>
+        <div class="vc-field"><span class="vc-label">Relações</span><span class="vc-content">
+          <strong>Anterior:</strong> pâncreas, veia esplênica, veia renal esquerda, D3 do duodeno, raiz do mesentério, artéria mesentérica superior<br>
+          <strong>Posterior:</strong> corpos vertebrais L1–L4, veia lombar ascendente esquerda<br>
+          <strong>Direita:</strong> veia cava inferior (VCI), cisterna do quilo<br>
+          <strong>Esquerda:</strong> veia renal esquerda, ureter esquerdo
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos Viscerais Pares</span><span class="vc-content">
+          • <strong>Artérias Adrenais (Suprarrenais) Médias</strong> — L1, lateralmente<br>
+          • <strong>Artérias Renais</strong> — L1–L2, perpendiculares à aorta (direita mais longa, cruza VCI)<br>
+          • <strong>Artérias Gonadais</strong> (espermáticas/ováricas) — L2, descem retroperitonealmente
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Ramos Viscerais Ímpares</span><span class="vc-content">
+          • <strong>Tronco Celíaco (TC)</strong> — nível T12/L1 (imediatamente abaixo do hiato)<br>
+          • <strong>Artéria Mesentérica Superior (AMS)</strong> — nível L1<br>
+          • <strong>Artéria Mesentérica Inferior (AMI)</strong> — nível L3
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Ramos Parietais</span><span class="vc-content">
+          • <strong>Artérias Frênicas Inferiores</strong> (par) — imediatamente abaixo do hiato<br>
+          • <strong>Artérias Lombares</strong> (4 pares — L1 a L4) — análogas às intercostais<br>
+          • <strong>Artéria Sacral Mediana</strong> — ramo terminal ímpar, desce sobre L5 e sacro
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-warn" style="margin-top:0.8rem;">
+      <h5>⚠️ Aneurisma de Aorta Abdominal (AAA)</h5>
+      <p>Definido como dilatação ≥ 3 cm (ou &gt;50% do diâmetro normal). Prevalência: ~5–7% em homens &gt;65 anos. Principais fatores de risco: tabagismo, HAS, sexo masculino, história familiar. Risco de ruptura aumenta exponencialmente com o diâmetro: &lt;5 cm → ~0,5%/ano; 5–6 cm → 3–15%/ano; &gt;7 cm → &gt;30%/ano. Ruptura para o retroperitônio pode ser contida temporariamente (tríade: dor lombar, hipotensão, massa pulsátil). Tratamento: EVAR (Endovascular Aortic Repair) ou cirurgia aberta. Rastreamento: ecografia abdominal em homens ≥ 65 anos fumantes (USPSTF grau B). <a href="https://www.ncbi.nlm.nih.gov/books/NBK441909/" target="_blank">(StatPearls — AAA)</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     ARTÉRIAS CORONÁRIAS
+───────────────────────────────────────────────────────────────── -->
+<section id="coronarias">
+  <h3 class="vessel-group">Artérias Coronárias</h3>
+
+  <div class="box box-etym">
+    <h5>📖 Etimologia</h5>
+    <p><em>Coronária</em> vem do latim <em>coronarius</em>, de <em>corona</em> (coroa) — por seu percurso em forma de coroa ao redor do coração nos sulcos atrioventricularese interventricular.</p>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Coronária Esquerda (ACE / LMCA — Left Main Coronary Artery)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Seio aórtico esquerdo (seio de Valsalva esquerdo) da aorta ascendente.</span></div>
+        <div class="vc-field"><span class="vc-label">Tronco Principal (LMCA)</span><span class="vc-content">Percorre 0,5–2 cm entre o tronco pulmonar e a aurícula esquerda, depois bifurca (ou trifurca).</span></div>
+        <div class="vc-field"><span class="vc-label">Divisão</span><span class="vc-content">
+          <strong>1. Artéria Descendente Anterior Esquerda (DAE / LAD — Left Anterior Descending):</strong> desce pelo sulco interventricular anterior até o ápex. Ramos: diagonais (D1, D2...) para a parede anterolateral do VE; septais perfurantes (S1, S2...) para os 2/3 anteriores do SIV.<br>
+          <strong>2. Artéria Circunflexa (CX / LCx — Left Circumflex):</strong> segue pelo sulco atrioventricular esquerdo. Ramos: marginais obtusos (OM1, OM2) para parede lateral do VE; ramo posterolateral esquerdo (se dominância esquerda).
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Território de Irrigação (LAD)</span><span class="vc-content">
+          • Parede anterior do VE<br>
+          • Apex do VE<br>
+          • 2/3 anteriores do septo interventricular (incluindo feixe de His e ramo esquerdo)<br>
+          • Músculos papilares (parcialmente)
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Território de Irrigação (CX)</span><span class="vc-content">
+          • Parede lateral do VE<br>
+          • Parede posterior do VE (em dominância esquerda)<br>
+          • Nó sinoatrial (em 40% — variante)<br>
+          • Átrio esquerdo
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Dominância Coronária</span><span class="vc-content">
+          <strong>Dominância Direita</strong> (~70%): A CD origina a artéria descendente posterior (ADP/PDA) que irriga parede inferior do VE e 1/3 posterior do septo.<br>
+          <strong>Dominância Esquerda</strong> (~10%): A CX origina a ADP.<br>
+          <strong>Dominância Codominante</strong> (~20%): CD e CX contribuem para a ADP.
+        </span></div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Coronária Direita (ACD / RCA — Right Coronary Artery)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Seio aórtico direito (seio de Valsalva direito).</span></div>
+        <div class="vc-field"><span class="vc-label">Trajeto</span><span class="vc-content">Percorre o sulco atrioventricular direito, curva para o sulco interventricular posterior.</span></div>
+        <div class="vc-field"><span class="vc-label">Ramos</span><span class="vc-content">
+          • <strong>Ramo Conal (1º ramo)</strong> — cone arterioso do VD<br>
+          • <strong>Artéria do Nó Sinoatrial (SA)</strong> — origem proximal (~60% dos casos)<br>
+          • <strong>Ramos Atriais</strong><br>
+          • <strong>Marginais Agudos</strong> (1–3 ramos) — parede livre do VD<br>
+          • <strong>Artéria do Nó AV</strong> — na crux cordis (~90% dos casos)<br>
+          • <strong>Artéria Descendente Posterior (PDA)</strong> (em dominância direita) — sulco IV posterior<br>
+          • <strong>Ramos Posterolaterais</strong>
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Território de Irrigação</span><span class="vc-content">
+          • Ventrículo direito (VD — maior parte)<br>
+          • Nó SA (~60%) e Nó AV (~90%)<br>
+          • Parede inferior do VE (em dominância direita)<br>
+          • 1/3 posterior do septo IV (em dominância direita)
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Correlação ECG — Oclusão da ACD</span><span class="vc-content">
+          Oclusão proximal → IAM inferior (D2, D3, aVF) ± parede posterior ± VD (V4R).<br>
+          Oclusão do ramo do NS → bradicardia sinusal, BAV 1º/2º grau Wenckebach.<br>
+          Oclusão do ramo do NAV → BAV 2º grau Mobitz II ou BAV total.
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 SCA (Síndrome Coronariana Aguda) — Fisiopatologia Vascular</h5>
+      <p>A aterosclerose coronariana é a base fisiopatológica. A placa vulnerável (cap fibroso fino, núcleo lipídico grande, inflamação — macrófagos, linfócitos T) sofre rotura → exposição do colágeno subendotelial → adesão plaquetária (via receptor GPIb/FvW e GPVI) → ativação plaquetária (TxA₂, ADP, trombina) → agregação (GPIIb/IIIa − fibrinogênio) → trombo. O trombo pode ser: <em>branco</em> (plaquetário, oclusão parcial → angina instável/NSTEMI) ou <em>vermelho</em> (misto com fibrina, oclusão total → STEMI). Tratamento: dupla antiagregação (AAS + P2Y12i), anticoagulação, reperfusão (ICP primária ou trombólise). <a href="https://www.ncbi.nlm.nih.gov/books/NBK459364/" target="_blank">(StatPearls — ACS)</a></p>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>Artéria</th><th>Território</th><th>ECG Alteração (oclusão)</th><th>Complicação Específica</th></tr></thead>
+    <tbody>
+      <tr><td>LAD proximal (antes D1 e S1)</td><td>Anterior extensa VE + septo + ápex</td><td>STEMI V1–V6, D1, aVL</td><td>Bloqueio de ramo esquerdo, CHF grave, ruptura de septo</td></tr>
+      <tr><td>LAD médio</td><td>Anterior VE, ápex</td><td>STEMI V3–V5</td><td>Disfunção sistólica moderada</td></tr>
+      <tr><td>Diagonal</td><td>Anterolateral VE</td><td>STEMI D1, aVL, V5–V6</td><td>Relativamente preservada função global</td></tr>
+      <tr><td>CX proximal</td><td>Lateral VE</td><td>STEMI V5–V6, D1, aVL ou "silencioso"</td><td>Disfunção lateral, FA (nó SA se dom. esq.)</td></tr>
+      <tr><td>RCA proximal</td><td>VD + inferior VE + NS + NAV</td><td>STEMI D2, D3, aVF; V4R</td><td>IAM de VD, BAV, hipotensão</td></tr>
+      <tr><td>RCA → PDA</td><td>Inferior VE + septo posterior</td><td>STEMI D2, D3, aVF; V7–V9</td><td>Ruptura de m. papilar posterior → IMi aguda</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     CABEÇA E PESCOÇO
+───────────────────────────────────────────────────────────────── -->
+<section id="cabeca">
+  <h3 class="vessel-group">Artérias da Cabeça e do Pescoço</h3>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Carótida Comum (ACC / CCA — Common Carotid Artery)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">
+          <strong>Direita:</strong> Bifurcação do tronco braquiocefálico (TBC) atrás da articulação esternoclavicular direita.<br>
+          <strong>Esquerda:</strong> Diretamente do arco aórtico (2º ramo).
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Trajeto</span><span class="vc-content">Sobe verticalmente no pescoço dentro da bainha carotídea (junto com a veia jugular interna — lateral, e o nervo vago — posterior). Sem ramos no pescoço.</span></div>
+        <div class="vc-field"><span class="vc-label">Bifurcação</span><span class="vc-content">Ao nível de C4–C5 (margem superior da cartilagem tireóidea): bifurca em artéria carótida interna (ACI) e artéria carótida externa (ACE).</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Seio Carotídeo</span><span class="vc-content">Dilatação na bifurcação, com mecanorreceptores (barorreceptores) na adventícia. Inervado pelo nervo glossofaríngeo (NC IX) — ramo seio carotídeo (nervo de Hering). Detecta pressão arterial, transmite ao centro vasomotor bulbar → resposta reflexa (bradicardia, hipotensão). A <em>síncope vasovagal</em> pode ser desencadeada por compressão do seio carotídeo (colarinho apertado).</span></div>
+        <div class="vc-field"><span class="vc-label">Corpo Carotídeo</span><span class="vc-content">Pequeno quimiorreceptor na bifurcação — detecta ↓PO₂, ↑PCO₂, ↓pH. Inervado pelo IX. Tumores do corpo carotídeo: paragangliomas — massa pulsátil no pescoço, sinal de Fontaine (mobilização lateral mas não vertical).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Carótida Interna (ACI / ICA — Internal Carotid Artery)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Segmentos (classificação de Bouthillier)</span><span class="vc-content">
+          <strong>C1 — Cervical:</strong> sobe lateralmente à faringe, sem ramos, entra no canal carotídeo do osso temporal.<br>
+          <strong>C2 — Petroso:</strong> dentro do canal carotídeo, curva anteriormente. Ramos: a. carotidotimpânica, a. do canal pterigóideo.<br>
+          <strong>C3 — Lacerum:</strong> atravessa o forame lácero (coberto por fibrocartilagem — não passa pela abertura!). Sem ramos.<br>
+          <strong>C4 — Cavernoso:</strong> dentro do seio cavernoso. Ramos: a. hipofisária inferior, ramos meníngeos.<br>
+          <strong>C5 — Clinóideo:</strong> perfura a dura-máter. Sem ramos.<br>
+          <strong>C6 — Oftálmica:</strong> dá origem à <strong>artéria oftálmica</strong>.<br>
+          <strong>C7 — Comunicante:</strong> dá origem à <strong>artéria comunicante posterior</strong> e <strong>artéria coroide anterior</strong>, depois bifurca em ACM e ACA.
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos Terminais</span><span class="vc-content">
+          <strong>ACA — Artéria Cerebral Anterior:</strong> sulco inter-hemisférico, irriga córtex frontal e parietal medial, corpo caloso, núcleo caudado, cápsula interna anterior.<br>
+          <strong>ACM — Artéria Cerebral Média:</strong> fissura lateral de Sylvius, irriga a maior parte do córtex lateral: área motora e sensitiva primária dos MMSS e face, área de Broca (F3 esquerdo), área de Wernicke (T1 esquerdo), ínsula, gânglios da base. Suas lenticuloestriadas nutrem a cápsula interna.
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Artéria Oftálmica</span><span class="vc-content">Origem: C6 da ACI, atravessa o canal óptico junto com o nervo óptico (NC II). Ramos principais: <strong>artéria central da retina</strong> (a única irrigação da retina interna — oclusão → amaurose súbita indolor), artéria supraorbitária, artéria etmoidal anterior/posterior, artéria dorsal nasal. Anastomose com ramos da ACE → alternativa em caso de oclusão carotídea.</span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 AVC Isquêmico — Territórios e Síndromes</h5>
+      <p><strong>Oclusão ACM:</strong> hemiplegia contralateral (face + MMSS &gt; MMII), hemianestesia, hemianopsia homônima. Se hemisfério dominante: afasia de Broca (lesão F3 → afasia expressiva), afasia de Wernicke (lesão T1 → afasia receptiva), ou afasia global.</p>
+      <p><strong>Oclusão ACA:</strong> hemiplegia contralateral (MMII &gt; MMSS), incontinência urinária, abulia (lesão do cíngulo).</p>
+      <p><strong>Oclusão ACI:</strong> síndrome combinada ACA + ACM ipsilateral, frequentemente com amaurose transitória (ATM) por hipoperfusão da artéria oftálmica.</p>
+      <p><strong>Janela terapêutica:</strong> Alteplase IV ≤ 4,5h do início dos sintomas (se sem contraindicações). Trombectomia mecânica ≤ 24h em oclusões de grandes vasos (LVO). <a href="https://www.ahajournals.org/doi/10.1161/STR.0000000000000158" target="_blank">(AHA/ASA Stroke Guidelines)</a></p>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Carótida Externa (ACE / ECA — External Carotid Artery)</h4>
+  <div class="vessel-card">
+    <p>Irriga face, couro cabeludo, crânio (meninges), tireoide e faringe. Oito ramos principais (mnemônica: <strong>SALFOPMS</strong> — Superior tiróidea, Ascendente faríngea, Lingual, Facial, Occipital, Pós-auricular, Maxilar, Superficial temporal):</p>
+    <table>
+      <thead><tr><th>Ramo</th><th>Trajeto</th><th>Irrigação</th><th>Nota Clínica</th></tr></thead>
+      <tbody>
+        <tr><td><strong>A. Tireóidea Superior</strong></td><td>1º ramo, desce para polo superior da tireoide</td><td>Tireoide, laringe (a. laríngea superior)</td><td>Lesada na tireoidectomia; a. laríngea superior → lesão do n. laríngeo sup. → perda de agudo vocal</td></tr>
+        <tr><td><strong>A. Faríngea Ascendente</strong></td><td>Sobe medialmente à faringe</td><td>Faringe, meninges (a. meníngea posterior), tuba auditiva</td><td>Raramente acessada cirurgicamente</td></tr>
+        <tr><td><strong>A. Lingual</strong></td><td>Entra no triângulo de Beclard (m. hio-glosso)</td><td>Língua (ramos dorsais e a. profunda da língua), assoalho da boca, glândula sublingual</td><td>Hemorragia após glossectomia; a. de Ranine = a. profunda da língua</td></tr>
+        <tr><td><strong>A. Facial</strong></td><td>Contorna a mandíbula (borda inf. anterior ao masseter), sobe tortuosamente até o ângulo medial do olho (a. angular)</td><td>Lábios (a. labial sup/inf), bochecha, nariz (a. nasal lateral), ângulo medial do olho</td><td>Pulsação palpável na borda inferior da mandíbula (ponto diagnóstico); anastomosa com a. oftálmica</td></tr>
+        <tr><td><strong>A. Occipital</strong></td><td>Corre posterior ao ventre posterior do digástrico, distribui-se no couro cabeludo occipital</td><td>Músculos occipitais, couro cabeludo occipital, meninges (a. meníngea posterior)</td><td>Neuralgia occipital: bloqueio do n. occipital maior perto da a. occipital</td></tr>
+        <tr><td><strong>A. Auricular Posterior</strong></td><td>Sobe posterior à orelha</td><td>Mastoide, pavilhão auricular, couro cabeludo pós-auricular</td><td>Infecções mastoideas → trombose da a. auricular posterior</td></tr>
+        <tr><td><strong>A. Maxilar (Maxilar Interna)</strong></td><td>Entra na fossa infratemporal, depois fossa pterigopalatina. Três segmentos: mandibular, pterigoideo, pterigopalatino</td><td>Ramos: a. meníngea média (fossa média — causa epidural se fratura temporal), a. alveolar inferior (dentes), a. infra-orbitária, a. esfenopalatina (fossa nasal — ramo terminal, causa de epistaxe posterior)</td><td><strong>A. meníngea média:</strong> passa pelo forame espinhoso → espaço epidural → hematoma epidural (fratura do pterion). A. esfenopalatina: embolização para epistaxe recorrente grave</td></tr>
+        <tr><td><strong>A. Temporal Superficial</strong></td><td>Ramo terminal da ACE, sobe anterior ao tragus, bifurca em ramos frontal e parietal</td><td>Couro cabeludo fronto-parietal, parótida, músculo temporal</td><td><strong>Arterite de Células Gigantes (ACG/Temporal):</strong> dor à palpação, nódulo temporal palpável, VSG ↑ &gt; 50 mm/h; biopsia da a. temporal superficial (sensibilidade ~87%); tratar com prednisona ≥ 60 mg/dia para prevenir cegueira <a href="https://www.ncbi.nlm.nih.gov/books/NBK459187/" target="_blank">(StatPearls)</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Vertebral (AV / VA — Vertebral Artery)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">1º ramo da artéria subclávia (de ambos os lados). Origem da subclávia direita: TBC; subclávia esquerda: arco aórtico.</span></div>
+        <div class="vc-field"><span class="vc-label">Segmentos (V1–V4)</span><span class="vc-content">
+          <strong>V1 (pré-foraminal):</strong> da subclávia ao forame transverso de C6.<br>
+          <strong>V2 (foraminal):</strong> sobe pelos forames transversos de C6 a C2. Ramos: espinhais, musculares.<br>
+          <strong>V3 (atlanto-axial):</strong> de C2 ao forame transverso de C1, curva medialmente sobre o arco posterior do atlas.<br>
+          <strong>V4 (intradural):</strong> perfura a dura, ascende ao tronco encefálico, une-se com a contralateral → artéria basilar.
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos do Segmento V4</span><span class="vc-content">
+          • <strong>PICA (Posterior Inferior Cerebellar Artery / A. Cerebelar Póstero-inferior):</strong> maior ramo — circulação lateral do bulbo e hemisfério cerebelar inferior.<br>
+          • <strong>Artéria Espinhal Anterior</strong> — une-se à contralateral → única artéria espinhal anterior.<br>
+          • <strong>Artéria Espinhal Posterior</strong>
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Artéria Basilar (AB)</span><span class="vc-content">Formada pela união das duas AVs ao nível da junção pontobulbar. Ascende pelo sulco basilar da ponte. Ramos: <strong>AICA</strong> (Anterior Inferior Cerebellar Artery), <strong>artérias pontinas</strong>, <strong>SCA</strong> (Superior Cerebellar Artery). Termina bifurcando-se nas <strong>artérias cerebrais posteriores</strong> (ACP/PCA).</span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Síndrome de Wallenberg (Infarto Lateral Bulbar — Oclusão PICA)</h5>
+      <p>Oclusão da PICA ou da artéria vertebral → infarto da porção lateral do bulbo. Manifestações: <em>ipsilateral</em> — paralisia do palato mole e cordas vocais (disfagia, disfonia), síndrome de Horner (ptose, miose, anidrose), ataxia de membro, perda de dor/temperatura na face (núcleo do trigêmeo); <em>contralateral</em> — perda de dor e temperatura no corpo (trato espinotalâmico lateral). O paciente "cai para o lado da lesão". <a href="https://www.ncbi.nlm.nih.gov/books/NBK430824/" target="_blank">(StatPearls — Wallenberg)</a></p>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Polígono de Willis (Círculo Arterial do Cérebro)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Composição</span><span class="vc-content">
+          Anastomose arterial na base do encéfalo, dentro da cisterna subaracnóidea basal. Composto por:<br>
+          • <strong>ACA</strong> bilaterais (ramos da ACI)<br>
+          • <strong>ACoA</strong> — Artéria Comunicante Anterior (une as duas ACAs)<br>
+          • <strong>ACI</strong> bilaterais (segmento C7)<br>
+          • <strong>ACoP</strong> — Artérias Comunicantes Posteriores bilaterais (unem ACI com ACP)<br>
+          • <strong>ACP</strong> bilaterais (ramos terminais da basilar)
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Variantes (importantíssimas)</span><span class="vc-content">
+          Apenas ~20–25% dos indivíduos têm um polígono "completo" e simétrico. Variantes comuns: ACoP hipoplásica/ausente, ACA hipoplásica (A1 hipoplásico), ACP fetal (ACP se origina da ACI e não da basilar — presente em 20–30%).<br>
+          <strong>Aneurismas saculares</strong> ("berry aneurysms") formam-se preferentially nas bifurcações do polígono: ACoA (mais comum, 30–35%), ACoP/ACI, ACM, bifurcação basilar.
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Função</span><span class="vc-content">Redistribuição de fluxo em casos de oclusão (p.ex., oclusão de ACI → fluxo compensatório via ACoA e ACoP). Proteção contra isquemia cerebral.Falha desta compensação quando as comunicantes são hipoplásicas.</span></div>
+      </div>
+    </div>
+    <div class="box box-warn" style="margin-top:0.8rem;">
+      <h5>⚠️ Hemorragia Subaracnóidea Aneurismática (HSA)</h5>
+      <p>Rotura de aneurisma sacular do polígono → "pior cefaleia da vida" (thunderclap headache), rigidez de nuca, fotofobia, perda de consciência. Diagnosticar com TC sem contraste (sangue subaracnóideo — hiperdensidade) ou punção lombar (xantocromia se &gt;12h). Arteriografia cerebral ou AngioTC para localizar o aneurisma. Tratamento: clipping cirúrgico ou coil endovascular. Vasospasmo cerebral (pico D4–D14): nimodipina (Ca²⁺ antagonista) profilático. <a href="https://www.ncbi.nlm.nih.gov/books/NBK441958/" target="_blank">(StatPearls — SAH)</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     TÓRAX
+───────────────────────────────────────────────────────────────── -->
+<section id="torax">
+  <h3 class="vessel-group">Artérias do Tórax (além da Aorta)</h3>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Subclávia</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content"><strong>Direita:</strong> TBC. <strong>Esquerda:</strong> Arco aórtico (3º ramo).</span></div>
+        <div class="vc-field"><span class="vc-label">Segmentos (em relação ao escaleno anterior)</span><span class="vc-content">
+          <strong>1º segmento</strong> (medial ao escaleno): origem → borda medial do escaleno anterior.<br>
+          <strong>2º segmento</strong> (posterior ao escaleno): atrás do músculo escaleno anterior.<br>
+          <strong>3º segmento</strong> (lateral): da borda lateral do escaleno até a 1ª costela, onde se continua como artéria axilar.
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos (4 principais — do 1º segmento)</span><span class="vc-content">
+          1. <strong>A. Vertebral</strong> (V1–V4 → circulação posterior cerebral)<br>
+          2. <strong>Tronco Tireocervical</strong>: a. tireóidea inferior, a. supraescapular, a. cervical ascendente, a. cervical transversa<br>
+          3. <strong>A. Torácica Interna (Mamária Interna)</strong>: desce paralela ao esterno, dá ramos intercostais anteriores, frênica superior; bifurca em a. musculofrênica + a. epigástrica superior<br>
+          4. <strong>Tronco Costocervical</strong> (2º segmento): a. intercostal suprema (→ 1ª e 2ª intercostais posteriores) + a. cervical profunda
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Importância Clínica</span><span class="vc-content">A <strong>a. torácica interna (mamária interna)</strong> é o enxerto de escolha para o CABG (Coronary Artery Bypass Grafting — Revascularização Miocárdica). Anastomosada diretamente na LAD (sem secção da origem) — a. mamária interna esquerda (LIMA). Patência &gt;90% em 10 anos. <a href="https://www.ncbi.nlm.nih.gov/books/NBK537303/" target="_blank">(StatPearls — CABG)</a></span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Síndrome do Roubo da Subclávia (Subclavian Steal Syndrome)</h5>
+      <p>Oclusão ou estenose grave da subclávia proximal (antes da vertebral) → inversão do fluxo na artéria vertebral (fluxo retrógrado — "rouba" da circulação posterior) para suprir o membro superior isquêmico. Clínica: claudicação do MMSS ipsilateral + sintomas de insuficiência vertebrobasilar (vertigem, diplopia, síncope) desencadeados pelo exercício do braço. Diagnóstico: Doppler + angiografia. Diferença de PA entre braços &gt; 15 mmHg. Tratamento: angioplastia + stent. <a href="https://www.ncbi.nlm.nih.gov/books/NBK459240/" target="_blank">(StatPearls)</a></p>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artérias Pulmonares</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Tronco Pulmonar</span><span class="vc-content">Origem: infundíbulo do VD (cone arterial). Comprimento ~5 cm. Bifurca-se abaixo do arco aórtico (nível de T4–T5) em artéria pulmonar direita e esquerda. Contém sangue <em>desoxigenado</em> (única artéria com sangue venoso). Pressão normal: 25/8 mmHg (média ~14 mmHg).</span></div>
+        <div class="vc-field"><span class="vc-label">A. Pulmonar Direita (APD)</span><span class="vc-content">Mais longa (~5 cm), passa atrás da aorta ascendente e VCS, entra no hilo pulmonar direito. Divide-se em ramos lobares: superior (ramo ascendente + ramo descendente superior), médio, inferior. Cada lobar → segmentares (10 no pulmão direito).</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">A. Pulmonar Esquerda (APE)</span><span class="vc-content">Mais curta, conectada ao ligamento arterioso (resquício do ducto). Divide-se em ramos lobares: superior (língula e lóbulo superior) e inferior (8–9 segmentos). Relaciona-se com o brônquio esquerdo e nervo vago esquerdo.</span></div>
+        <div class="vc-field"><span class="vc-label">Regulação do Fluxo Pulmonar</span><span class="vc-content">
+          <strong>Vasoconstrição Hipóxica Pulmonar (HPV):</strong> única área onde hipóxia → vasoconstrição (ao contrário da circulação sistêmica). Mecanismo: hipóxia → inibição canais K⁺ das CML → despolarização → abertura canais Ca²⁺ → vasoconstrição. Função: desviar sangue de áreas não ventiladas (V/Q matching). Exacerbação generalizada em DPOC/altitude → HP.
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Tromboembolismo Pulmonar (TEP / PE — Pulmonary Embolism)</h5>
+      <p>Obstrução da artéria pulmonar (ou seus ramos) por trombo (geralmente de TVP de MMII/pelve). Fisiopatologia: obstrução → ↑ RVP → sobrecarga de VD → falência → choque. Hipóxia por shunt V/Q. <strong>Espaço morto alveolar</strong> (ventilação sem perfusão) → ↑ gradiente A-a. Diagnóstico: angioTC de tórax (padrão-ouro), ecocardiograma (disfunção VD), D-dímero (triagem), troponina e BNP (prognóstico). Critérios de Genebra revisados ou Wells score para probabilidade pré-teste. Tratamento: anticoagulação (HBPM, NOAC); TEP maciço → trombólise sistêmica (tPA 100 mg em 2h) ou embolectomia. <a href="https://www.ncbi.nlm.nih.gov/books/NBK560551/" target="_blank">(StatPearls — PE)</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     ABDÔMEN — TRONCO CELÍACO, AMS, AMI
+───────────────────────────────────────────────────────────────── -->
+<section id="abdomen">
+  <h3 class="vessel-group">Artérias do Abdômen</h3>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Tronco Celíaco (TC / Celiac Trunk)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Face anterior da aorta abdominal, nível T12/L1, imediatamente abaixo do hiato aórtico (entre os pilares do diafragma).</span></div>
+        <div class="vc-field"><span class="vc-label">Comprimento</span><span class="vc-content">~1–2 cm, trifurca-se imediatamente.</span></div>
+        <div class="vc-field"><span class="vc-label">Trifurcação Clássica</span><span class="vc-content">
+          <strong>1. A. Gástrica Esquerda (AGL):</strong> sobe para o cárdia, corre pela curvatura menor do estômago (→ anastomosa com a gástrica direita), dá ramos esofágicos inferiores.<br>
+          <strong>2. A. Hepática Comum (AHC):</strong> para a direita → divide-se em a. hepática própria (→ ramos hepático direito e esquerdo, a. cística) e a. gastroduodenal.<br>
+          <strong>3. A. Esplênica (Lienal):</strong> percurso tortuoso ao longo do bordo superior do pâncreas, entra no hilo esplênico.
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos da A. Hepática</span><span class="vc-content">
+          <strong>A. Hepática Própria:</strong><br>
+          • A. Hepática Direita (AHD) → A. Cística (vesícula biliar)<br>
+          • A. Hepática Esquerda (AHE)<br>
+          • A. Hepática Média (frequente) → lobo caudado<br>
+          <strong>A. Gastroduodenal:</strong> → A. Gastroepiploica Direita (curvatura maior) + A. Pancreaticoduodenal Superior Anterior e Posterior
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Ramos da A. Esplênica</span><span class="vc-content">
+          • A. Pancreáticas: dorsal, magna, da cauda<br>
+          • A. Gástrica Posterior<br>
+          • A. Gastroepiploica Esquerda (curvatura maior do estômago)<br>
+          • Ramos Gástricos Curtos (→ fundo gástrico)
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Ligamento Hepatoduodenal e Triângulo de Calot</h5>
+      <p>A artéria hepática própria, o ducto colédoco e a veia porta formam a tríade portal dentro do ligamento hepatoduodenal. O <strong>Triângulo de Calot</strong> (ou triângulo hepatocístico) — delimitado pela artéria cística, ducto cístico e hepático comum — é o espaço cirúrgico crítico na colecistectomia laparoscópica. A variante mais perigosa: artéria hepática direita anômala originando-se da AMS (em 10–20%) — pode ser lesada se não identificada. A <strong>manobra de Pringle</strong> (compressão do ligamento hepatoduodenal) controla hemorragia hepática temporariamente. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7296316/" target="_blank">(Surg Radiol Anat)</a></p>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Mesentérica Superior (AMS / SMA)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Face anterior da aorta abdominal, nível L1 (1–2 cm abaixo do TC, atrás do colo do pâncreas).</span></div>
+        <div class="vc-field"><span class="vc-label">Trajeto</span><span class="vc-content">Emerge entre o colo do pâncreas e a 3ª porção do duodeno (ângulo entre AMS e aorta = ~45–60°, que pode comprimir a veia renal esquerda → síndrome do quebra-nozes, e o duodeno → síndrome de Wilkie). Entra na raiz do mesentério, irradia ramos para toda a anastomose do intestino delgado e cólon até o ângulo esplênico.</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos</span><span class="vc-content">
+          • <strong>A. Pancreaticoduodenal Inferior</strong> (anterior + posterior) — anastomosa com as pancreaticoduodenais superiores do TC<br>
+          • <strong>A. Jejunais</strong> (4–6 ramos)<br>
+          • <strong>A. Ileais</strong> (9–13 ramos) — arcadas vasculares no mesentério<br>
+          • <strong>A. Ileocólica</strong> → ceco, apêndice (a. apendicular!), íleo terminal<br>
+          • <strong>A. Cólica Direita</strong> → cólon ascendente<br>
+          • <strong>A. Cólica Média</strong> → cólon transverso (ramo mais proximal)
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Território</span><span class="vc-content">Intestino delgado (exceto duodeno superior), cólon ascendente e 2/3 do cólon transverso. Ponto de Griffiths: anastomose entre cólica média e esquerda (ponto de Griffiths, ângulo esplênico do cólon) — zona "watershed" suscetível a isquemia.</span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Isquemia Mesentérica Aguda (IMA)</h5>
+      <p>Emergência vascular abdominal. Causas: embolismo arterial (50% — geralmente cardioembólico, FA), trombose arterial (15–25%), trombose venosa mesentérica, isquemia não-oclusiva (vasospasmo, baixo DC). Tríade clássica: dor abdominal desproporcional ao exame físico, esvaziamento intestinal reflexo, história de FA/aterosclerose. Labs: ↑ lactato, leucocitose, ↑ LDH, ↑ D-dímero. Diagnóstico: angioTC de abdômen (pneumatose intestinal → gangrenoso). Tratamento: repermeabilização (embolectomia cirúrgica ou trombólise intra-arterial) + ressecção intestinal se necrose. Mortalidade: 50–80% sem tratamento precoce. <a href="https://www.ncbi.nlm.nih.gov/books/NBK430738/" target="_blank">(StatPearls — AMI)</a></p>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Mesentérica Inferior (AMI / IMA)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Face anterior da aorta abdominal, nível L3, ~3 cm acima da bifurcação aórtica.</span></div>
+        <div class="vc-field"><span class="vc-label">Ramos</span><span class="vc-content">
+          • <strong>A. Cólica Esquerda</strong> → cólon descendente + 1/3 esquerdo do transverso<br>
+          • <strong>Artérias Sigmóideas</strong> (2–4 ramos) → cólon sigmoide<br>
+          • <strong>A. Retal Superior (Hemorroidal Superior)</strong> — ramo terminal → face posterior e lateral do reto superior
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Arcada de Riolano e Arco Marginal de Drummond</span><span class="vc-content">
+          <strong>Arco Marginal de Drummond:</strong> anastomose arterial ao longo do mesocólon paralela ao cólon, conectando ramos de AMS e AMI. Importantíssimo na cirurgia de aorta abdominal.<br>
+          <strong>Arcada de Riolano (a. meandering):</strong> anastomose mais central entre cólica média (AMS) e cólica esquerda (AMI) — via de compensação em estenose/oclusão. Visível na angiotomografia como "meandering mesenteric artery".
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Ponto de Sudeck</span><span class="vc-content">Ponto frágil de anastomose entre sigmóide e retal superior, sem circulação colateral adequada. Lesão durante cirurgia de reto → isquemia cólica distal. Importante na proctectomia.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artérias Renais</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Faces laterais da aorta abdominal ao nível de L1–L2, abaixo da AMS.</span></div>
+        <div class="vc-field"><span class="vc-label">Diferenças L-D</span><span class="vc-content"><strong>Direita:</strong> mais longa (~8 cm), passa atrás da VCI, veia renal direita, cabeça do pâncreas e D2 do duodeno.<br><strong>Esquerda:</strong> mais curta (~4 cm), passa atrás da veia renal esquerda, pâncreas e veia esplênica.</span></div>
+        <div class="vc-field"><span class="vc-label">Ramos</span><span class="vc-content">
+          • A. Adrenal Inferior (Suprarrenal inferior)<br>
+          • A. Uretérica (pelve renal)<br>
+          • Ramos segmentares: <strong>superior, antero-superior, antero-inferior, inferior, posterior</strong> — cada um irriga um segmento renal sem anastomose → infartos segmentares em embolismo.
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Circulação Intrarrenal</span><span class="vc-content">
+          Renal → <strong>Segmentares</strong> → <strong>Interlobares</strong> (entre pirâmides) → <strong>Arqueadas</strong> (base das pirâmides) → <strong>Interlobulares</strong> (córtex) → <strong>Arteríolas Aferentes</strong> (→ glomérulo) → <strong>Capilares Glomerulares</strong> → <strong>Arteríola Eferente</strong> → <strong>Capilares Peritubulares</strong> (córtex) ou <strong>Vasa Recta</strong> (medula) → vênulas → veias interlobulares...
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Pressão de Filtração Glomerular</span><span class="vc-content">
+          <div class="box-formula" style="font-size:0.8rem;padding:0.5rem;">PFG = Phidrostática(glom) − Ponc(plasma) − Phidrostática(cápsula Bowman)<br>= ~60 − 30 − 18 = ~12 mmHg</div>
+          TFG normal: 90–120 mL/min/1,73m². Controlada pelo equilíbrio de tônus das arteríolas aferente (dilatação → ↑TFG) e eferente (constrição → ↑TFG). Os iECA dilatam a arteríola eferente → ↓TFG → KI em estenose de artéria renal bilateral.
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Estenose de Artéria Renal (EAR) — Hipertensão Renovascular</h5>
+      <p>Causa: aterosclerose (&gt;90%, ostiolar, idosos) ou displasia fibromuscular (FMD — mulheres jovens, aspecto de "colar de pérolas" na angiografia). EAR → ↓ perfusão renal → ↑ renina → ↑ AT-II → HAS. Suspeitar em: HAS refratária, piora da função renal com iECA/BRA, sopro periumbilical, rim menor unilateral. Diagnóstico: Doppler renal (VPS &gt; 200 cm/s, índice de resistência &gt;0,7), angioRM, angioTC. Tratamento: angioplastia + stent (aterosclerose); angioplastia sem stent (FMD). <a href="https://www.ncbi.nlm.nih.gov/books/NBK430718/" target="_blank">(StatPearls)</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     PELVE
+───────────────────────────────────────────────────────────────── -->
+<section id="pelve">
+  <h3 class="vessel-group">Artérias da Pelve</h3>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Ilíaca Comum</h4>
+  <div class="vessel-card">
+    <p>A bifurcação aórtica (L4) origina as artérias ilíacas comuns direita e esquerda. Cada uma percorre ~5 cm e bifurca na articulação sacroilíaca em <strong>ilíaca externa</strong> (→ membro inferior) e <strong>ilíaca interna</strong> (→ pelve).</p>
+    <div class="vc-field"><span class="vc-label">Relações</span><span class="vc-content">Direita: uréter cruza anteriormente. Esquerda: cruzada pela artéria retal superior. Veia ilíaca comum direita cruza abaixo da artéria ilíaca comum esquerda (ponto de compressão na Síndrome de May-Thurner → TVP ilíaca esquerda).</span></div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Ilíaca Interna (Hipogástrica)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Divisão</span><span class="vc-content">Tronco anterior e tronco posterior.</span></div>
+        <div class="vc-field"><span class="vc-label">Tronco Anterior</span><span class="vc-content">
+          • A. Umbilical → a. vesical superior (bexiga) + ligamento umbilical medial (obliterada distalmente)<br>
+          • A. Obturatória → canal obturador → m. adutores da coxa<br>
+          • A. Vesical Inferior → bexiga inferior, próstata/vagina, vesículas seminais<br>
+          • A. Retal Média<br>
+          • A. Uterina (mulheres) — cruza o ureter ("água sob a ponte")<br>
+          • A. Vaginal (mulheres)<br>
+          • A. Pudenda Interna → genitais externos (pénis/vulva), períneo, reto inferior<br>
+          • A. Glútea Inferior
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Tronco Posterior</span><span class="vc-content">
+          • A. Iliolumbar → m. quadrado lombar + ilíaco<br>
+          • A. Sacral Lateral (superior + inferior) → forames sacrais anteriores, medula espinhal<br>
+          • A. Glútea Superior → forame suprapiriforme → glúteo médio/mínimo
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Importância Clínica</span><span class="vc-content">
+          <strong>A. Uterina:</strong> origem de hemorragia puerperal grave → embolização endovascular de emergência. A ligadura bilateral das ilíacas internas reduz hemorragia obstétrica (reduz pressão de pulso em 85%).<br>
+          <strong>A. Pudenda Interna:</strong> ereção peniana e clitoridiana (via NO) — comprometida em lesão pelve ou cirurgia radical de próstata (prostatectomia radical).<br>
+          <strong>A. Obturatória:</strong> variante corona mortis — anastomosa com a. epigástrica inferior → "coroa da morte" → lesão na herniorrafia inguinal laparoscópica.
+        </span></div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Ilíaca Externa</h4>
+  <div class="vessel-card">
+    <p>Maior ramo terminal da ilíaca comum. Percorre a borda medial do psoas maior até o ligamento inguinal, onde se torna artéria femoral. Ramos: <strong>a. epigástrica inferior</strong> (→ anastomosa com epigástrica superior — via de circulação colateral em coarctação da aorta; âncora do ligamento redondo/lig. interfoveolar) e <strong>a. circunflexa ilíaca profunda</strong>.</p>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Coarctação da Aorta — Circulação Colateral</h5>
+      <p>Estenose da aorta descendente (geralmente no istmo, próximo ao ligamento arterioso). Manifesta-se com HAS em MMSS + hipotensão em MMII + pulsos femorais diminuídos/tardios. Circulação colateral: artérias intercostais (da aorta descendente) se anastomosam com as artérias epigástricas (do sistema subclávia) → rosicagem de arcos costais (notching costal — sinal de Roesler no Rx tórax). Diagnóstico: AngioTC. Tratamento: correção cirúrgica ou endovascular. <a href="https://www.ncbi.nlm.nih.gov/books/NBK430726/" target="_blank">(StatPearls — Coarctação)</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     MMSS
+───────────────────────────────────────────────────────────────── -->
+<section id="mmss">
+  <h3 class="vessel-group">Artérias dos Membros Superiores (MMSS)</h3>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Axilar</h4>
+  <div class="vessel-card">
+    <p>Continuação da subclávia lateral à 1ª costela. Divide-se em 3 partes em relação ao músculo peitoral menor:</p>
+    <table>
+      <thead><tr><th>Parte</th><th>Localização</th><th>Ramos</th></tr></thead>
+      <tbody>
+        <tr><td>1ª parte</td><td>Medial à borda medial do peitoral menor</td><td>A. torácica superior (suprema)</td></tr>
+        <tr><td>2ª parte</td><td>Posterior ao peitoral menor</td><td>A. toracoacromial (→ ramos acromial, clavicular, deltóideo, peitoral); A. torácica lateral (→ seio mamário, mm. serrátil)</td></tr>
+        <tr><td>3ª parte</td><td>Lateral ao peitoral menor → até borda inf. do grande redondo</td><td>A. subescapular (→ A. toracodorsal + A. circunflexa escapular); A. circunflexa umeral anterior; A. circunflexa umeral posterior (→ canal quadrilateral com nervo axilar)</td></tr>
+      </tbody>
+    </table>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Lesão do Nervo Axilar</h5>
+      <p>O nervo axilar (C5–C6) percorre o espaço quadrilateral junto com a a. circunflexa umeral posterior. Lesão em luxação anterior do ombro ou fratura da cabeça do úmero → paralisia do deltóide (→ abdução do ombro comprometida) + hipoestesia no "patch" da face lateral do braço. Sinal: perda de contorno do ombro ("ombro em platibanda" = sinal da charrete). <a href="https://www.ncbi.nlm.nih.gov/books/NBK539718/" target="_blank">(StatPearls)</a></p>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Braquial (Umeral)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Trajeto</span><span class="vc-content">Da borda inferior do grande redondo até a fossa cubital (onde se bifurca ao nível do colo do rádio, ~2 cm abaixo da dobra do cotovelo). Medialmente ao biceps, no sulco bicipital medial.</span></div>
+        <div class="vc-field"><span class="vc-label">Ramos</span><span class="vc-content">
+          • <strong>A. Profunda do Braço (Braquial Profunda)</strong>: maior ramo, corre com nervo radial no sulco espiral/canal de torção do úmero → anastomose periarticular do cotovelo<br>
+          • A. Nutrícia do Úmero<br>
+          • A. Colateral Ulnar Superior e Inferior
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Bifurcação</span><span class="vc-content">Na fossa cubital → <strong>A. Radial</strong> (lateral) e <strong>A. Ulnar</strong> (medial).</span></div>
+        <div class="vc-field"><span class="vc-label">Importância Clínica</span><span class="vc-content">
+          <strong>Medição da PA:</strong> o manguito de esfigmomanômetro oclude a braquial; sons de Korotkoff detectados por ausculta da braquial na fossa cubital.<br>
+          <strong>Cateterismo arterial:</strong> punção da braquial (técnica de Seldinger) para hemodinâmica cardíaca (técnica de Judkins).<br>
+          <strong>Fratura supracondilar do úmero em crianças:</strong> lesão da braquial → isquemia do antebraço → síndrome compartimentar → contratura isquêmica de Volkmann (contratura em flexão dos dedos e punho).
+        </span></div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artérias Radial e Ulnar</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">A. Radial</span><span class="vc-content">
+          Ramo lateral da bifurcação braquial. Desce no antebraço lateral (entre bráquiorradial e pronador redondo, depois entre bráquiorradial e flexor radial do carpo). Pulsação palpável no punho (tabaqueira anatômica = "snuff box") — local de verificação do pulso radial. Contorna a face dorsal do rádio → atravessa o 1º espaço interósseo → palma → forma o <strong>arco palmar profundo</strong> (anastomosando com o ramo profundo da ulnar).
+          Ramos: a. radial recorrente (anastomose do cotovelo), artérias palmares metacárpicas, a. princeps pollicis (polegar), a. radialis indicis (indicador).
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">A. Ulnar</span><span class="vc-content">
+          Ramo medial da bifurcação braquial. Maior dos dois ramos. Desce no antebraço medial, cruza sob o retináculo dos flexores (junto com o nervo ulnar — canal de Guyon). Forma o <strong>arco palmar superficial</strong> (anastomosando com o ramo superficial da radial).
+          Ramos: a. ulnar recorrente anterior/posterior, tronco interósseo comum (→ a. interóssea anterior e posterior), a. palmar profunda, artérias digitais palmares comuns (→ artérias digitais palmares próprias).
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Teste de Allen</span><span class="vc-content">
+          Teste clínico para avaliar comunicação entre radial e ulnar pelo arco palmar. Comprima ambas as artérias ao nível do punho → punho fechado (palidez) → solte a ulnar → se mão rosear em &lt;5s: arco adequado. Obrigatório antes de cateterismo arterial radial (hemodinâmica, UTI). Resultado positivo (palma não roseia): não usar radial desse lado.
+        </span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     MMII
+───────────────────────────────────────────────────────────────── -->
+<section id="mmii">
+  <h3 class="vessel-group">Artérias dos Membros Inferiores (MMII)</h3>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Femoral</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem</span><span class="vc-content">Continuação da ilíaca externa, distal ao ligamento inguinal (ponto médio inguinal — midpoint between ASIS e sínfise púbica).</span></div>
+        <div class="vc-field"><span class="vc-label">Trajeto</span><span class="vc-content">
+          <strong>Triângulo Femoral (Scarpa):</strong> limitado pelo lig. inguinal (superior), sartório (lateral), adutor longo (medial). Conteúdo (de lateral para medial): nervo femoral — artéria femoral — veia femoral — canal femoral (linfáticos). Mnemônica: <em>NAVY</em> (Nerve-Artery-Vein-Y-fronts [cueca]).<br>
+          Depois percorre o <strong>Canal de Hunter (Canal Adutor / Subsartorial)</strong> entre o vasto medial e os adutores, terminando no <strong>hiato do adutor</strong> (onde se torna a. poplítea).
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos</span><span class="vc-content">
+          • <strong>A. Femoral Profunda (Profunda Femoris)</strong> — principal ramo (~4 cm abaixo do lig. inguinal): principal irrigação da coxa.<br>
+          → A. Circunflexa Femoral Medial (ACFM): colo e cabeça do fêmur (ramo mais importante!)<br>
+          → A. Circunflexa Femoral Lateral (ACFL): ramos ascendente, transverso, descendente → quadríceps<br>
+          → A. Perfurantes (1ª, 2ª, 3ª): perfuram o adutor maior → compartimento posterior da coxa<br>
+          • A. Epigástrica Superficial<br>
+          • A. Circunflexa Ilíaca Superficial<br>
+          • A. Pudenda Externa
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Doença Arterial Periférica (DAP)</span><span class="vc-content">A oclusão femoral/poplítea causa claudicação intermitente da panturrilha. ABI (Ankle-Brachial Index / Índice Tornozelo-Braquial) = PA sistólica tornozelo ÷ PA sistólica braquial. Normal: 1,0–1,4; DAP leve: 0,7–0,9; DAP moderado: 0,4–0,7; isquemia crítica: &lt;0,4. Tratamento: estatinas + antiagregante ± revascularização (angioplastia ou bypass).</span></div>
+      </div>
+    </div>
+    <div class="box box-warn" style="margin-top:0.8rem;">
+      <h5>⚠️ Isquemia Aguda de Membro (IAM)</h5>
+      <p>Os 6 Ps: Pain (dor), Pallor (palidez), Pulselessness (ausência de pulsos), Paresthesia (parestesia), Paralysis (paralisia — sinal tardio!), Poikilothermia (frio). Causa: embolia (FA — coágulo na bifurcação femoral = "sela de embolo"), trombose in situ em placa aterosclerótica, dissecção. Diagnóstico clínico! Angiotomografia se dúvida ou planejamento cirúrgico. Tratamento: embolectomia com cateter de Fogarty ou bypass urgente. Fasciotomia se síndrome compartimental. <a href="https://www.ncbi.nlm.nih.gov/books/NBK441953/" target="_blank">(StatPearls)</a></p>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Poplítea</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">Origem/Término</span><span class="vc-content">Hiato do adutor → bifurca no bordo inferior do poplíteo em a. tibial anterior e tronco tibiofibular.</span></div>
+        <div class="vc-field"><span class="vc-label">Relações</span><span class="vc-content">Estrutura mais profunda (anterior) na fossa poplítea. Conteúdo da fossa (superficial → profundo): nervos tibial e fibular comum → veia poplítea → artéria poplítea. Palpada na fossa poplítea com o joelho semifletido.</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">Ramos</span><span class="vc-content">
+          • A. Geniculares Superiores Medial e Lateral<br>
+          • A. Genicular Média<br>
+          • A. Geniculares Inferiores Medial e Lateral<br>
+          • A. Sural Medial e Lateral → gastrocnêmio<br>
+          (Rede anastomótica periarticular do joelho)
+        </span></div>
+        <div class="vc-field"><span class="vc-label">Aneurisma Poplíteo</span><span class="vc-content">Aneurisma periférico mais comum (70%). Bilateral em 50%. Associado a AAA (em 40% dos pacientes com aneurisma poplíteo). Complicações: trombose (isquemia aguda), embolização distal, compressão da veia poplítea (TVP) ou do nervo tibial (neuropatia). Diagnóstico: Doppler.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vessel-name"><span class="badge">A</span> Artéria Tibial Anterior, Tibial Posterior e Fibular (Peroneal)</h4>
+  <div class="vessel-card">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label">A. Tibial Anterior</span><span class="vc-content">Perfura a membrana interóssea para o compartimento anterior da perna. Desce entre tibial anterior e extensor longo dos dedos. Cruza o retináculo dos extensores → torna-se <strong>a. dorsal do pé (pediosa)</strong>. Palpável entre os tendões do extensor longo do hálux e extensor longo dos dedos, no dorso do pé (para verificar pulso pediosa).</span></div>
+        <div class="vc-field"><span class="vc-label">A. Tibial Posterior</span><span class="vc-content">Maior divisão do tronco tibiofibular. Desce no compartimento posterior superficial junto com o nervo tibial. Passa atrás do maléolo medial (palpável aqui — pulso tibial posterior). Divide-se no túnel do tarso em <strong>a. plantar medial</strong> e <strong>a. plantar lateral</strong>. A plantar lateral forma o <strong>arco plantar profundo</strong> com a pediosa.</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label">A. Fibular (Peroneal)</span><span class="vc-content">Da bifurcação do tronco tibiofibular. Desce no compartimento posterior profundo, lateral à fíbula. Ramos: a. perfurante, a. maleolar lateral, ramos calcâneos. Frequentemente a maior das três artérias crurais em DAP avançada ("peroneal dominance").</span></div>
+        <div class="vc-field"><span class="vc-label">Arco Plantar e Artérias Digitais</span><span class="vc-content">
+          A. Plantar Lateral → arco plantar profundo → artérias metatársicas plantares → artérias digitais plantares próprias.<br>
+          A. Plantar Medial → ramo superficial (hálux) e profundo (arco).<br>
+          Pé diabético: calcificação mediânica das artérias (Mönckeberg) — ABI falsamente elevado → usar ITD (Índice Tornozelo-Dedo / TBI — Toe-Brachial Index) ou PVR.
+        </span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SISTEMA VENOSO
+═══════════════════════════════════════════════════════════════ -->
+<section id="veias">
+  <div class="part-header venous">
+    <div class="part-num">Parte V — Sistema Venoso</div>
+    <h2>Todas as Veias Humanas</h2>
+    <div class="part-sub">Veia cava superior e inferior, sistema porta, veias profundas e superficiais</div>
+  </div>
+
+  <div class="box box-physio">
+    <h5>⚗️ Fisiologia Venosa — Reservatório de Volume</h5>
+    <p>As veias contêm ~65–70% do volume sanguíneo total (sistema de capacitância). Sua complacência (C = ΔV/ΔP) é ~20× maior que a das artérias. O retorno venoso é dependente de: <strong>(1) gradiente de pressão</strong> (pressão venosa periférica − CVP), <strong>(2) bomba muscular</strong> (contração muscular → compressão venosa + válvulas), <strong>(3) bomba respiratória</strong> (inspiração → ↓pressão intratorácica → aspiração venosa para o tórax), <strong>(4) válvulas venosas</strong> (unidirecionais — ausentes na VCI, veias hepáticas, veias cerebrais). Venoconstrição simpática (↑noradrenalina) → desloca volume do reservatório venoso → ↑retorno venoso → ↑pré-carga → ↑DC (lei de Frank-Starling).</p>
+  </div>
+
+  <h3 class="vessel-group v">Veias da Cabeça e Pescoço</h3>
+
+  <h4 class="vessel-name v"><span class="badge">V</span> Veia Jugular Interna (VJI / IJV)</h4>
+  <div class="vessel-card v">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label v">Origem</span><span class="vc-content">Forame jugular (crânio) — continuação do seio sigmoide. Drena o encéfalo, meninges, olho, orelha interna.</span></div>
+        <div class="vc-field"><span class="vc-label v">Trajeto</span><span class="vc-content">Desce no pescoço dentro da bainha carotídea, lateral à ACC e à carótida interna. Une-se à subclávia → veia braquiocefálica (ângulo venoso de Pirogoff).</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label v">Tributárias</span><span class="vc-content">Seio cavernoso (via seio petroso inferior), veia facial, veia lingual, veias faríngeas, veia tireóidea superior/média.</span></div>
+        <div class="vc-field"><span class="vc-label v">Importância Clínica</span><span class="vc-content"><strong>PVC pelo pulso jugular:</strong> a VJI transmite a pulsação do átrio direito — ondas a (sístole atrial), c, v, x, y. PVC estimada pelo nível da pulsação jugular (nível &gt;4 cm acima do ângulo esternal = &gt;9 cmH₂O = elevação da PVC). Utilíssimo em IC, tamponamento, SHVS. Cateter venoso central (CVC) — punção da VJI: técnica de Seldinger, guia de USG. <a href="https://www.ncbi.nlm.nih.gov/books/NBK459269/" target="_blank">(StatPearls — CVC)</a></span></div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="vessel-name v"><span class="badge">V</span> Seios Venosos Durais</h4>
+  <div class="vessel-card v">
+    <p>Canais venosos dentro das duplicaturas da dura-máter. Sem válvulas. Paredes rígidas (não colapsam).</p>
+    <table class="venous">
+      <thead><tr><th>Seio</th><th>Localização</th><th>Drenagem</th><th>Nota Clínica</th></tr></thead>
+      <tbody>
+        <tr><td>Seio Sagital Superior</td><td>Borda superior da foice do cérebro</td><td>Córtex cerebral convexidade (veias corticais)</td><td>Trombose → déficit motor contralateral MMII, convulsões</td></tr>
+        <tr><td>Seio Sagital Inferior</td><td>Borda inferior da foice</td><td>Face medial hemisférios</td><td>Drena para seio reto</td></tr>
+        <tr><td>Seio Reto</td><td>Junção foice + tenda cerebelo</td><td>Seios sagitais + veia cerebral magna (Galeno)</td><td>Confluência dos seios (prensa de Herófilo)</td></tr>
+        <tr><td>Seio Transverso</td><td>Tenda do cerebelo</td><td>Prensa → seio sigmoide</td><td>Trombose: Hcéfaleia + papiledema + déficit VI</td></tr>
+        <tr><td>Seio Sigmoide</td><td>Sulco sigmoide do osso temporal</td><td>→ VJI pelo forame jugular</td><td>Trombose: otite média complicada (pediatria)</td></tr>
+        <tr><td>Seio Cavernoso</td><td>Lateral à sela turca</td><td>Veias orbitárias, seio esfenoparietal</td><td>Trombose: oftalmoplegia (NC III, IV, VI), Horner (V₁), dor orbitária; fístula carótido-cavernosa (trauma)</td></tr>
+      </tbody>
+    </table>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Trombose Venosa Cerebral (TVC / CVT)</h5>
+      <p>Trombose dos seios ou veias cerebrais. Causas: estados de hipercoagulabilidade (trombofilias, contraceptivos orais), infecções, desidratação, gravidez/puerpério. Sintomas: cefaleia progressiva + papiledema (hipertensão intracraniana), déficits neurológicos focais, convulsões, AVC venoso hemorrágico. Diagnóstico: RM com angiografia venosa por RM (MRV) — "sinal do triângulo vazio" na TC com contraste. Tratamento: anticoagulação plena (heparina) mesmo com hemorragia associada. <a href="https://www.ncbi.nlm.nih.gov/books/NBK430821/" target="_blank">(StatPearls)</a></p>
+    </div>
+  </div>
+
+  <h3 class="vessel-group v">Veia Cava Superior (VCS / SVC)</h3>
+  <div class="vessel-card v">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label v">Formação</span><span class="vc-content">União das veias braquiocefálicas direita e esquerda atrás da articulação esternoclavicular direita (1ª cartilagem costal direita).</span></div>
+        <div class="vc-field"><span class="vc-label v">Tributárias</span><span class="vc-content">VBC direita + VBC esquerda (→ V. Jugular Interna + V. Subclávia de cada lado), veia ázigos (drena para VCS superior), veias pericárdicas, veias mediastinais.</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label v">Trajeto</span><span class="vc-content">Desce ~7 cm no mediastino superior, drena no átrio direito ao nível da 3ª cartilagem costal. Localizada à direita da aorta ascendente, anterior ao brônquio direito.</span></div>
+        <div class="vc-field"><span class="vc-label v">Síndrome da VCS (SVCS)</span><span class="vc-content">Compressão ou obstrução da VCS: edema facial, cervical e de MMSS, circulação colateral torácica visível, dispneia, cefaleia ao se curvar. Causas: neoplasia pulmonar (CPNPC direito, linfoma), trombose por CVC, fibrose mediastinal. Tratamento: radioterapia/quimioterapia, stent endovascular, anticoagulação. <a href="https://www.ncbi.nlm.nih.gov/books/NBK441979/" target="_blank">(StatPearls)</a></span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="vessel-group v">Sistema Ázigos-Hemiázigos</h3>
+  <div class="vessel-card v">
+    <p>Sistema de veias paravertebrais que drena a parede torácica, mediastino posterior e parte do abdômen, funcionando como comunicação colateral entre VCS e VCI.</p>
+    <table class="venous">
+      <thead><tr><th>Veia</th><th>Trajeto</th><th>Tributárias</th><th>Drenagem</th></tr></thead>
+      <tbody>
+        <tr><td><strong>V. Ázigos</strong></td><td>Sobe à direita da coluna vertebral, T4–T12. Arco sobre brônquio direito → VCS</td><td>VIs intercostais posteriores direitas (4–11), V. hemiázigos acessória, V. hemiázigos, veias bronquiais, veias esofágicas</td><td>VCS (ao nível de T4)</td></tr>
+        <tr><td><strong>V. Hemiázigos</strong></td><td>Sobe à esquerda, T8–T12</td><td>VIs intercostais posteriores esquerdas (9–11), veias lombares</td><td>Cruza T8–T9 → ázigos</td></tr>
+        <tr><td><strong>V. Hemiázigos Acessória</strong></td><td>À esquerda, T5–T8</td><td>VIs intercostais posteriores esquerdas (4–8), v. bronquial esquerda</td><td>Cruza → ázigos ou hemiázigos</td></tr>
+        <tr><td><strong>V. Intercostal Suprema Esquerda</strong></td><td>Drena 1ª–3ª intercostais esquerdas</td><td>3 intercostais superiores esquerdas</td><td>V. braquiocefálica esquerda</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="vessel-group v">Veia Cava Inferior (VCI / IVC)</h3>
+  <div class="vessel-card v">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label v">Formação</span><span class="vc-content">União das veias ilíacas comuns ao nível de L5 (ligeiramente à direita da linha média).</span></div>
+        <div class="vc-field"><span class="vc-label v">Trajeto</span><span class="vc-content">Sobe retroperitonealmente à direita da aorta abdominal, sulco da face posterior do fígado (sem tecido hepático), atravessa o hiato da VCI no diafragma (T8), drena no átrio direito.</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label v">Tributárias (ascendendo)</span><span class="vc-content">
+          V. ilíacas comuns → V. lombares (4 pares) → V. renais → V. adrenais direitas (direto na VCI; esquerda drena na renal esq.) → V. gonadais (direita direto na VCI; esquerda na renal esq.) → V. hepáticas (3 principais: direita, média, esquerda) → átrio direito
+        </span></div>
+        <div class="vc-field"><span class="vc-label v">Filtro de VCI</span><span class="vc-content">Dispositivo metálico percutâneo implantado infrarenal para interceptar trombos. Indicações: TEP recorrente apesar de anticoagulação adequada, contraindicação absoluta à anticoagulação em TVP proximal, embolectomia + TVP não tratável. Complicação: trombose do filtro → síndrome pós-trombótica grave. <a href="https://www.ncbi.nlm.nih.gov/books/NBK470534/" target="_blank">(StatPearls)</a></span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="vessel-group v">Veias dos Membros Inferiores</h3>
+
+  <h4 class="vessel-name v"><span class="badge">V</span> Sistema Venoso Profundo dos MMII</h4>
+  <div class="vessel-card v">
+    <table class="venous">
+      <thead><tr><th>Veia</th><th>Acompanha</th><th>Drenagem</th></tr></thead>
+      <tbody>
+        <tr><td>V. Tibiais Anteriores (par)</td><td>A. Tibial Anterior</td><td>→ V. Poplítea</td></tr>
+        <tr><td>V. Tibiais Posteriores (par)</td><td>A. Tibial Posterior</td><td>→ V. Poplítea</td></tr>
+        <tr><td>V. Fibulares/Peroneais (par)</td><td>A. Fibular</td><td>→ V. Poplítea</td></tr>
+        <tr><td>V. Poplítea</td><td>A. Poplítea</td><td>→ V. Femoral (canal de Hunter)</td></tr>
+        <tr><td>V. Femoral (profunda)</td><td>A. Femoral</td><td>→ V. Ilíaca Externa</td></tr>
+        <tr><td>V. Femoral Profunda</td><td>A. Profunda Femoris</td><td>→ V. Femoral</td></tr>
+        <tr><td>V. Ilíaca Externa</td><td>A. Ilíaca Externa</td><td>→ V. Ilíaca Comum</td></tr>
+        <tr><td>V. Ilíaca Interna</td><td>A. Ilíaca Interna</td><td>→ V. Ilíaca Comum</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4 class="vessel-name v"><span class="badge">V</span> Sistema Venoso Superficial dos MMII</h4>
+  <div class="vessel-card v">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label v">V. Safena Magna (Great Saphenous Vein)</span><span class="vc-content">
+          Maior veia do corpo. Origem: rede venosa dorsal do pé (arco venoso dorsal, margem medial). Sobe medialmente à perna (anterior ao maléolo medial), depois medialmente à coxa até a fossa oval (hiato safeno), onde perfura a fáscia cribiforme → drena na v. femoral 3–4 cm abaixo do lig. inguinal.<br>
+          Tributárias: v. safena acessória anterior/posterior, v. epigástrica superficial, v. pudenda externa, v. circunflexa ilíaca superficial, v. safena femoral.<br>
+          Válvulas: 10–20 ao longo do trajeto.
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label v">V. Safena Parva (Small Saphenous Vein)</span><span class="vc-content">
+          Origem: margem lateral do pé / maléolo lateral. Sobe pela face posterior da perna no compartimento superficial. Perfura a fáscia poplítea e drena na v. poplítea (fossa poplítea). Pode drenar na v. femoral ou nas veias profundas da coxa (variável).
+        </span></div>
+        <div class="vc-field"><span class="vc-label v">Veias Perfurantes</span><span class="vc-content">
+          Conectam o sistema superficial ao profundo, perfurando a fáscia muscular. Válvulas dirigem o fluxo: superficial → profundo. Insuficiência das perfurantes → hipertensão venosa superficial → varizes, úlceras venosas. Principais grupos: grupo de Cockett (tornozelo medial), grupo de Boyd (terço superior da perna medial), grupo de Dodd (terço inferior da coxa medial).
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Trombose Venosa Profunda (TVP / DVT) e Varizes</h5>
+      <p><strong>TVP:</strong> Tríade de Virchow: estase venosa, hipercoagulabilidade, lesão endotelial. Localização: 70% nas veias da panturrilha/poplítea/ilíacas. Diagnóstico: Doppler venoso (padrão-ouro ambulatorial), D-dímero (exclusão se probabilidade pré-teste baixa — escore de Wells). Tratamento: HBPM ou NOAC (rivaroxabana, apixabana). Complicação: TEP + síndrome pós-trombótica (dor crônica, edema, lipodermatoesclerose, úlcera maleolar medial). <strong>Varizes:</strong> insuficiência valvular da safena → dilatação, tortuosidade. Tratamento: escleroterapia, laser endovenoso (EVLA), safenectomia (Babcock). <a href="https://www.ncbi.nlm.nih.gov/books/NBK507840/" target="_blank">(StatPearls — DVT)</a></p>
+    </div>
+  </div>
+
+  <h3 class="vessel-group v">Veias dos Membros Superiores</h3>
+  <div class="vessel-card v">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label v">Sistema Profundo</span><span class="vc-content">
+          V. radiais + V. ulnares → V. braquiais (par, acompanham a. braquial) → V. axilar (se une à cefálica) → V. subclávia → V. braquiocefálica → VCS
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label v">Sistema Superficial</span><span class="vc-content">
+          <strong>V. Cefálica:</strong> face dorsal do polegar → antebraço lateral → sulco deltopeitoral → infraclavicular → drena na v. axilar (pelo trígono clavipeitoral).<br>
+          <strong>V. Basílica:</strong> face medial do antebraço → braço medial → perfura fáscia → drena na v. braquial ou axilar.<br>
+          <strong>V. Mediana Cubital:</strong> conecta cefálica e basílica na fossa cubital — acesso IV preferencial para coleta de sangue e punções.
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 PICC (Peripherally Inserted Central Catheter) e Acesso Venoso</h5>
+      <p>PICC = cateter central de inserção periférica, inserido na basílica ou cefálica do braço, com ponta posicionada na junção cavoatrial (veia cava superior + átrio direito). Indicações: antibioticoterapia prolongada, nutrição parenteral, quimioterapia. Complicação mais comum: TVP de MMSS (1–6%), tromboflebite, infecção (CLABSI). Guia ecográfico e RX tórax para confirmar posição obrigatórios. <a href="https://www.ncbi.nlm.nih.gov/books/NBK459338/" target="_blank">(StatPearls — PICC)</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     SISTEMA PORTA
+───────────────────────────────────────────────────────────────── -->
+<section id="portal">
+  <h3 class="vessel-group v">Sistema Porta Hepático</h3>
+
+  <div class="box box-etym">
+    <h5>📖 Etimologia — "Porta"</h5>
+    <p>Do latim <em>porta</em> = porta, entrada. O sistema porta é literalmente a "porta de entrada" do fígado — leva nutrientes e substâncias absorvidas do intestino diretamente ao parênquima hepático para metabolismo de primeira passagem.</p>
+  </div>
+
+  <div class="vessel-card v">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label v">Veia Porta (VP / PV)</span><span class="vc-content">
+          Formada pela união da veia mesentérica superior (VMS) + veia esplênica (VE) atrás do colo do pâncreas (nível L1–L2).<br>
+          <strong>Comprimento:</strong> ~8 cm.<br>
+          <strong>Calibre:</strong> ~13 mm (hipertensão portal se &gt;13 mm).<br>
+          <strong>Pressão normal:</strong> 5–10 mmHg. Hipertensão portal: ≥ 12 mmHg (gradiente portocaval — GPVH/HVPG).
+        </span></div>
+        <div class="vc-field"><span class="vc-label v">Tributárias da Veia Esplênica</span><span class="vc-content">
+          • V. mesentérica inferior (VMI) — geralmente drena na VE<br>
+          • V. gástrica esquerda (coronária gástrica) → varizes esofágicas!<br>
+          • V. gástrica direita<br>
+          • V. gastroepiploica esquerda
+        </span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label v">Circulação Intrahepática</span><span class="vc-content">
+          VP → ramos porta direito e esquerdo → ramos segmentares → vênulas portais → sinusoides hepáticos (junto com sangue das artérias hepáticas) → veia central do lóbulo (terminal hepática) → veias hepáticas (direita, média, esquerda) → VCI → átrio direito.
+        </span></div>
+        <div class="vc-field"><span class="vc-label v">Anastomoses Portossistêmicas (shunts)</span><span class="vc-content">
+          Em hipertensão portal, o sangue busca caminhos alternativos para o sistema venoso sistêmico via anastomoses:<br>
+          1. <strong>Varizes esofágicas</strong>: V. gástrica esq. ↔ V. ázigos (via veias esofágicas) → risco de rotura e hemorragia digestiva alta grave.<br>
+          2. <strong>Varizes retais (hemorroidas)</strong>: V. retal superior (portal) ↔ V. retais média/inferior (sistêmica).<br>
+          3. <strong>Caput medusae</strong>: V. paraumbilicais (ligamento redondo) ↔ Veias da parede abdominal → veias epigástricas.<br>
+          4. <strong>Retroperitoneais</strong>: veias cólicas ↔ v. renais/lombares.<br>
+          5. <strong>Esplenorenais</strong>: v. esplênica ↔ v. renal esquerda (pode formar espontaneamente).
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Hipertensão Portal (HTP) e Hemorragia Varicosa</h5>
+      <p>GPVH (Gradiente de Pressão Venosa Hepática / HVPG — Hepatic Venous Pressure Gradient) ≥ 10 mmHg → varizes. ≥ 12 mmHg → risco de sangramento. Medido por cateterismo da veia hepática com balão (HVPG = PCVE − PLVE). Causas: cirrose (pré-sinusoidal, sinusoidal — mais comum), trombose de veia porta (pré-hepática), síndrome de Budd-Chiari (pós-hepática).</p>
+      <p>Manejo da hemorragia varicosa aguda: expansão volêmica cautelosa, terlipressina (análogo vasopressina → vasoconstrição esplâncnica → ↓fluxo portal), antibiótico (norfloxacino/ceftriaxona — previne PBE pós-sangramento), endoscopia urgente (ligadura elástica de varizes). TIPS (Transjugular Intrahepatic Portosystemic Shunt — Shunt Portossistêmico Intra-hepático Transjugular) se falha. <a href="https://www.ncbi.nlm.nih.gov/books/NBK482141/" target="_blank">(StatPearls — Portal HTN)</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     MICROCIRCULAÇÃO
+───────────────────────────────────────────────────────────────── -->
+<section id="micro">
+  <div class="part-header micro">
+    <div class="part-num">Parte VI — Microcirculação</div>
+    <h2>Microcirculação — Arteríolas, Capilares e Vênulas</h2>
+    <div class="part-sub">Trocas moleculares, regulação local, fisiopatologia do choque</div>
+  </div>
+
+  <div class="vessel-card" style="border-left-color: #9B59B6;">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label" style="color:#7D3C98;">Arteríolas (10–100 µm)</span><span class="vc-content">Principais reguladoras da resistência vascular. Parede: endotélio + 1–2 camadas de CML. O tônus das arteríolas determina a distribuição do fluxo entre leitos. Regulação: neural (simpática → vasoconstrição α₁), humoral (AT-II, NE, ET-1 → constrição; NO, adenosina, bradicinina → dilatação), metabólica local (CO₂, H⁺, K⁺, lactato, hipóxia → dilatação). <em>Meta-arteríola:</em> transição arteríola → capilar; com esfíncteres pré-capilares (anéis de CML sem inervação — respondem apenas a fatores locais).</span></div>
+        <div class="vc-field"><span class="vc-label" style="color:#7D3C98;">Capilares (5–10 µm)</span><span class="vc-content">Apenas endotélio + lâmina basal. Diâmetro ≈ eritrócito (6–8 µm) → os eritrócitos deformam-se para passar (deformabilidade do eritrócito: dependente de ATP; na esferocitose, eritrócitos rígidos → aprisionamento esplênico). <strong>Trocas:</strong> por difusão (O₂, CO₂, lipídeos), filtração (água e eletrólitos — lei de Starling), transcitose (proteínas grandes). Densidade capilar: músculo cardíaco ~3500/mm², músculo esquelético ~800/mm³, tecido adiposo ~300/mm³.</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label" style="color:#7D3C98;">Lei de Starling (Forças de Starling)</span>
+          <div class="box-formula" style="margin-top:0.3rem;font-size:0.8rem;">Jv = Kf [(Pc − Pi) − σ(πc − πi)]</div>
+          <span class="vc-content">
+            Jv = fluxo de fluido (mL/min); Kf = coeficiente de filtração; Pc = pressão hidrostática capilar; Pi = pressão hidrostática intersticial; σ = coeficiente de reflexão osmótica; πc = pressão oncótica plasmática (~25 mmHg); πi = pressão oncótica intersticial (~8 mmHg).<br>
+            <strong>Causas de Edema:</strong><br>
+            • ↑Pc → edema hidrostático (IC, TVP, obstrução linfática)<br>
+            • ↓πc → edema oncótico (hipoalbuminemia: cirrose, síndrome nefrótica, desnutrição)<br>
+            • ↑Permeabilidade capilar → edema inflamatório (sepse, anafilaxia, queimadura)<br>
+            • Obstrução linfática → linfedema
+          </span>
+        </div>
+        <div class="vc-field"><span class="vc-label" style="color:#7D3C98;">Vênulas Pós-capilares (10–50 µm)</span><span class="vc-content">Local preferencial da transmigração leucocitária na inflamação. A sequência de eventos (adesão leucocitária): <strong>Rolling</strong> (selectinas E/P endoteliais + L-selectina leucocitária) → <strong>Ativação</strong> (quimiocinas) → <strong>Adesão firme</strong> (integrinas β₂ leucocitárias + ICAM-1 endotelial) → <strong>Diapedese</strong> (PECAM-1/CD31 na junção intercelular). Bloqueio das integrinas β₂: natalizumab (EM), vedolizumab (DII).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box box-clinical">
+    <h5>🏥 Fisiopatologia do Choque — A Microcirculação como Alvo</h5>
+    <p>No choque de qualquer etiologia, a microcirculação é o palco da lesão orgânica. A hipoperfusão → ↑extração de O₂ → ↓SvO₂ → metabolismo anaeróbico → ↑lactato. O "choque microcirculatório" pode persistir mesmo após normalização dos parâmetros macrocirculatórios (pressão e DC) — disfunção da microcirculação na sepse (heterogeneidade do fluxo, oclusão por leucócitos e fibrina, disfunção endotelial). Avaliação: NIRS (Near-Infrared Spectroscopy — StO₂), Sidestream Dark-Field microscopy (SDF / IDF — visualização da microcirculação sublingual), lactato seriado, gradiente CO₂ venoso-arterial (P(v-a)CO₂ &gt; 6 mmHg → DC inadequado). <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5971441/" target="_blank">(Intensive Care Med — Microcirculation in Shock)</a></p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     LINFÁTICOS
+───────────────────────────────────────────────────────────────── -->
+<section id="linfaticos">
+  <div class="part-header lymph">
+    <div class="part-num">Parte VII — Sistema Linfático</div>
+    <h2>Vasos Linfáticos — Capilares, Coletores e Ductos</h2>
+    <div class="part-sub">Drenagem de proteínas, imunidade e fisiopatologia do linfedema</div>
+  </div>
+
+  <div class="box box-etym">
+    <h5>📖 Etimologia — "Linfa"</h5>
+    <p>Do latim <em>lympha</em> = água limpa, água divina. Os romanos associavam a linfa à água pura. Galeno descreveu vasos semelhantes a veias cheios de fluido claro. Os vasos quilíferos foram descritos por Gaspar Aselli em 1622, e o ducto torácico por Jean Pecquet em 1651.</p>
+  </div>
+
+  <div class="vessel-card" style="border-left-color: #1E8449;">
+    <div class="vc-grid">
+      <div>
+        <div class="vc-field"><span class="vc-label" style="color:#145A32;">Capilares Linfáticos</span><span class="vc-content">Vasos de fundo cego no interstício. Endotélio descontínuo (junctions do tipo "botão"), sem lâmina basal contínua, sem pericitos. Filamentos de ancoragem conectam o endotélio ao colágeno intersticial — o edema intersticial <em>abre</em> o capilar (ao contrário dos capilares sanguíneos que são comprimidos). Drenam proteínas, lipídeos (quilomícrons — capilares da mucosa intestinal chamados <em>quilíferos</em> ou <em>lacteais</em>), células imunes.
+        </span></div>
+        <div class="vc-field"><span class="vc-label" style="color:#145A32;">Vasos Coletores Pré-nodais</span><span class="vc-content">Com válvulas e CML na parede. As unidades funcionais contrácteis (câmaras entre válvulas) são chamadas <em>linfangions</em> — pacemakers miogênicos que geram contrações peristálticas autônomas, bombeando a linfa. A contração é modulada pelo óxido nítrico (↓NO → ↑frequência contratil) e pela pressão de enchimento.</span></div>
+      </div>
+      <div>
+        <div class="vc-field"><span class="vc-label" style="color:#145A32;">Ductos Principais</span><span class="vc-content">
+          <strong>Ducto Torácico (Ductus Thoracicus):</strong> maior vaso linfático. Origina-se da <em>cisterna do quilo</em> (L1–L2), sobe pelo mediastino posterior (entre aorta e ázigos), arco sobre o ápex do pulmão esquerdo → drena no ângulo venoso esquerdo (junção VJI esq. + subclávia esq.). Drena 75% da linfa corporal: MMII, pelve, abdômen, hemitórax esquerdo, MMSS esq., cabeça/pescoço esq.<br>
+          <strong>Ducto Linfático Direito:</strong> curto (~1 cm) ou ausente (→ vasos individuais). Drena: hemitórax direito, MMSS direito, cabeça/pescoço direito → ângulo venoso direito.
+        </span></div>
+        <div class="vc-field"><span class="vc-label" style="color:#145A32;">Grupos Linfonodais Principais</span><span class="vc-content">
+          • <strong>Cervicais</strong> (profundos e superficiais) — drenagem cabeça/pescoço<br>
+          • <strong>Axilares</strong> (5 grupos: peitoral, escapular, central, apical, lateral) — mama, MMSS<br>
+          • <strong>Mediastinais</strong> (paratraqueais, traqueobronquiais, bifurcação)<br>
+          • <strong>Mesentéricos</strong> (~200 linfonodos) — intestino<br>
+          • <strong>Paraaórticos / Retroperitoneais</strong> — gônadas (via vasos gonadais!), rins<br>
+          • <strong>Ilíacos</strong> (externo, interno, comum) — pelve, MMII<br>
+          • <strong>Inguinais</strong> (superficiais e profundos) — MMII, períneo, genitais externos
+        </span></div>
+      </div>
+    </div>
+    <div class="box box-clinical" style="margin-top:0.8rem;">
+      <h5>🏥 Linfedema e Drenagem Linfática Sentinela</h5>
+      <p><strong>Linfedema primário:</strong> aplasia/hipoplasia congênita de vasos linfáticos (ex.: doença de Milroy — mutação VEGFR3). <strong>Linfedema secundário:</strong> obstrução pós-cirúrgica (esvaziamento axilar no CA de mama), pós-radioterapia, parasitário (filariose por <em>Wuchereria bancrofti</em> — elefantíase). Tratamento: fisioterapia descongestiva complexa (drenagem linfática manual + bandagem multicamadas + exercício + cuidados com a pele).</p>
+      <p><strong>Biópsia do Linfonodo Sentinela (BLS):</strong> injeção peritumoral de azul patente + radiocoloide → identifica o 1º linfonodo da drenagem do tumor. Se negativo → evita esvaziamento radical. Padrão-ouro no CA de mama e melanoma. <a href="https://www.ncbi.nlm.nih.gov/books/NBK430813/" target="_blank">(StatPearls — Lymphedema)</a></p>
+    </div>
+  </div>
+
+  <h3 class="vessel-group l">Drenagem Linfática Regional — Aplicações em Oncologia</h3>
+  <table>
+    <thead><tr><th>Órgão/Região</th><th>1ª Estação Linfática</th><th>2ª Estação</th><th>Importância Clínica</th></tr></thead>
+    <tbody>
+      <tr><td>Mama (quadrante lateral)</td><td>Linfonodos axilares (nível I)</td><td>Axilares II, III → supraclaviculares</td><td>Disseminação CA mama; BLS; Krukenberg (ovário)</td></tr>
+      <tr><td>Mama (quadrante medial)</td><td>Linfonodos da cadeia mamária interna</td><td>Mediastinais</td><td>Frequentemente não acessível cirurgicamente</td></tr>
+      <tr><td>Pulmão (lobo superior dir.)</td><td>Parahilares → paratraqueais direitos</td><td>Mediastinais → supraclaviculares</td><td>Estadiamento N2/N3 NSCLC — mediastinoscopia, EBUS</td></tr>
+      <tr><td>Testículo / Ovário</td><td>Paraaórticos (L1–L2) — via vasos gonadais</td><td>Mediastinais</td><td>Metástase paraaórtica sem inguinal em tumor testicular</td></tr>
+      <tr><td>Reto inferior / Ânus</td><td>Inguinais superficiais</td><td>Ilíacos externos</td><td>Metástase inguinal em carcinoma anal</td></tr>
+      <tr><td>Reto superior / Sigmoide</td><td>Pararretais → mesentéricos inf.</td><td>Paraaórticos</td><td>Estadiamento CA retal — RM pélvica</td></tr>
+      <tr><td>Estômago</td><td>Gástricos, gastroepiploicos, celíacos</td><td>Paraaórticos, hepáticos</td><td>Nódulo de Virchow (supraclavicular esq.) = sinal de Troisier</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box box-histo">
+    <h5>🔬 Histologia Linfática — Diferenças dos Vasos Sanguíneos</h5>
+    <p>Os vasos linfáticos maiores (coletores e ductos) têm parede semelhante às veias, mas mais delgada e com <strong>válvulas mais frequentes</strong> (a cada 2–3 mm vs. cada 10–40 cm nas veias). O endotélio linfático expressa marcadores específicos: <strong>LYVE-1</strong> (Lymphatic Vessel Endothelial Hyaluronan Receptor-1), <strong>Prox1</strong> (fator de transcrição — mestre da identidade linfática), <strong>podoplanina</strong> (D2-40 — marcador usado em imunohistoquímica para identificar vasos linfáticos em peças cirúrgicas), <strong>VEGFR-3</strong>. Ausência de CD31 nas junções intercelulares (presente nos capilares sanguíneos).</p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     TABELA RESUMO GERAL
+───────────────────────────────────────────────────────────────── -->
+<section>
+  <div class="part-header" style="background: linear-gradient(135deg, #2C3E50, #34495E); border-left-color: #ECF0F1;">
+    <div class="part-num">Parte VIII — Síntese</div>
+    <h2>Tabela Mestre — Artérias e Veias Sistêmicas</h2>
+    <div class="part-sub">Compêndio tabular de referência rápida para uso clínico</div>
+  </div>
+
+  <h3 class="vessel-group">Artérias — Síntese de Referência Rápida</h3>
+  <table>
+    <thead><tr><th>Artéria</th><th>Origem</th><th>Território</th><th>Relevância Clínica Chave</th></tr></thead>
+    <tbody>
+      <tr><td>Aorta ascendente</td><td>VE — anel aórtico</td><td>Coronárias</td><td>Dissecção tipo A → emergência cirúrgica</td></tr>
+      <tr><td>LAD (Descendente Anterior)</td><td>LMCA</td><td>Parede anterior VE, septo 2/3 ant, apex</td><td>IAM anterior extenso; BRE de novo</td></tr>
+      <tr><td>CX (Circunflexa)</td><td>LMCA</td><td>Lateral VE</td><td>STEMI "silencioso" (V5–V6 ou invisível)</td></tr>
+      <tr><td>RCA (Coronária Direita)</td><td>Seio aórtico direito</td><td>VD, inferior VE, NS, NAV</td><td>STEMI inferior, BAV, IAM de VD</td></tr>
+      <tr><td>Carótida Interna (ACI)</td><td>Bifurcação ACC (C4–C5)</td><td>Cérebro anterior (ACA, ACM), olho</td><td>AVC isquêmico, ATM, estenose carotídea</td></tr>
+      <tr><td>Artéria Cerebral Média (ACM)</td><td>ACI</td><td>Córtex lateral, cápsula interna</td><td>AVC ACM = hemiplegia + afasia (dominante)</td></tr>
+      <tr><td>Artéria Vertebral</td><td>Subclávia</td><td>Bulbo, cerebelo inferior (PICA)</td><td>Síndrome de Wallenberg, vertigem, dissecção</td></tr>
+      <tr><td>Artéria Basilar</td><td>União das AVs</td><td>Ponte, cerebelo, ACP</td><td>Locked-in syndrome (oclusão basilar)</td></tr>
+      <tr><td>ACP (Cerebral Posterior)</td><td>Basilar (ou ACI — fetal)</td><td>Occipital, tálamo, mesencéfalo</td><td>Hemianopsia, síndrome talâmica</td></tr>
+      <tr><td>Subclávia</td><td>TBC (D) / Arco aórtico (E)</td><td>MMSS, vertebral, mamária interna</td><td>Síndrome do roubo, CABG (mamária interna)</td></tr>
+      <tr><td>Temporal Superficial</td><td>ACE (ramo terminal)</td><td>Couro cabeludo fronto-parietal</td><td>Arterite de células gigantes — biópsia</td></tr>
+      <tr><td>Meníngea Média</td><td>A. Maxilar (ACE)</td><td>Dura-máter fossa média</td><td>Hematoma epidural (fratura pterion)</td></tr>
+      <tr><td>A. Torácica Interna (Mamária)</td><td>Subclávia</td><td>Parede anterior tórax, mama</td><td>Enxerto CABG (LIMA→LAD)</td></tr>
+      <tr><td>Tronco Celíaco</td><td>Aorta abdominal T12/L1</td><td>Fígado, estômago, baço, pâncreas</td><td>Angina mesentérica, isquemia</td></tr>
+      <tr><td>AMS (Mesentérica Superior)</td><td>Aorta L1</td><td>ID, cólon direito</td><td>Isquemia mesentérica aguda — emergência!</td></tr>
+      <tr><td>A. Renal</td><td>Aorta L1–L2</td><td>Rim, glândula adrenal inf, ureter</td><td>Estenose → HAS renovascular (FMD, aterosclerose)</td></tr>
+      <tr><td>AMI (Mesentérica Inferior)</td><td>Aorta L3</td><td>Cólon esquerdo, reto superior</td><td>Isquemia do cólon esquerdo pós-aortoplastia</td></tr>
+      <tr><td>Ilíaca Interna</td><td>Ilíaca comum</td><td>Pelve, genitália interna, nádegas</td><td>Hemorragia obstétrica; embolização</td></tr>
+      <tr><td>Femoral</td><td>Ilíaca externa (sob lig. inguinal)</td><td>Coxa, perna (via poplítea)</td><td>DAP, IAM membro, trombose, ABI</td></tr>
+      <tr><td>Profunda Femoris</td><td>Femoral (~4 cm abaixo lig. ing.)</td><td>Coxa (compartimentos)</td><td>Circunflexa medial → necrose cabeça fêmur</td></tr>
+      <tr><td>Poplítea</td><td>Hiato do adutor</td><td>Joelho, perna (via tibiais)</td><td>Aneurisma poplíteo — associado a AAA</td></tr>
+      <tr><td>Tibial Anterior → Pediosa</td><td>Poplítea (compartimento ant.)</td><td>Dorso do pé</td><td>Pulso pediosa; DAP distal</td></tr>
+      <tr><td>Tibial Posterior</td><td>Tronco tibiofibular</td><td>Plantar, calcâneo</td><td>Pulso tibial posterior; síndrome do túnel do tarso</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="vessel-group v">Veias — Síntese de Referência Rápida</h3>
+  <table class="venous">
+    <thead><tr><th>Veia</th><th>Drenagem</th><th>Destino Final</th><th>Relevância Clínica</th></tr></thead>
+    <tbody>
+      <tr><td>VCS (Veia Cava Superior)</td><td>MMSS, cabeça/pescoço, tórax sup.</td><td>Átrio direito</td><td>Síndrome da VCS (neoplasia, CVC)</td></tr>
+      <tr><td>VCI (Veia Cava Inferior)</td><td>MMII, pelve, abdômen, fígado</td><td>Átrio direito</td><td>Filtro de VCI; Budd-Chiari</td></tr>
+      <tr><td>Veia Porta</td><td>Intestino, baço, estômago</td><td>Fígado → veias hepáticas → VCI</td><td>HTP, varizes esofágicas, TIPS</td></tr>
+      <tr><td>Veia Jugular Interna</td><td>Cérebro (seio sigmoide)</td><td>V. braquiocefálica → VCS</td><td>CVC, pulso venoso jugular (PVC)</td></tr>
+      <tr><td>Seio Sagital Superior</td><td>Córtex cerebral</td><td>Confluência → sigmoide → VJI</td><td>TVC — cefaleia + déficit neurológico</td></tr>
+      <tr><td>Seio Cavernoso</td><td>Veias orbitárias, ACI (via seio)</td><td>Petrosos → VJI</td><td>Trombose (oftalmoplegia), fístula CC</td></tr>
+      <tr><td>V. Ázigos</td><td>Parede torácica direita, esôfago</td><td>VCS (T4)</td><td>Colateral em obstrução de VCS/VCI</td></tr>
+      <tr><td>V. Safena Magna</td><td>Pé/perna medial/coxa medial</td><td>V. femoral (fossa oval)</td><td>Varizes, TVP, enxerto para CABG</td></tr>
+      <tr><td>V. Safena Parva</td><td>Face posterior da perna</td><td>V. poplítea</td><td>Varizes face posterior da perna</td></tr>
+      <tr><td>V. Femoral</td><td>Poplítea + safena magna</td><td>V. ilíaca externa</td><td>TVP proximal, cateterismo femoral</td></tr>
+      <tr><td>V. Cefálica</td><td>Face lateral MMSS</td><td>V. axilar (trígono clavipeitoral)</td><td>PICC, acesso IV, "disappearing vein"</td></tr>
+      <tr><td>V. Basílica</td><td>Face medial MMSS</td><td>V. braquial/axilar</td><td>PICC, acesso IV central</td></tr>
+      <tr><td>V. Mediana Cubital</td><td>Cefálica ↔ basílica (fossa cubital)</td><td>—</td><td>Coleta de sangue, acesso IV</td></tr>
+      <tr><td>V. Mesentérica Superior</td><td>Intestino delgado, cólon direito</td><td>V. Porta</td><td>Trombose VMS — isquemia intestinal</td></tr>
+      <tr><td>V. Esplênica</td><td>Baço, estômago, pâncreas</td><td>V. Porta</td><td>HTP esplenomegalia; esplenoesplenorreno</td></tr>
+      <tr><td>V. Renal Esquerda</td><td>Rim esquerdo, adrenal esq, gônada esq</td><td>VCI</td><td>Síndrome do quebra-nozes (compressão AMS-Ao)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     EXERCÍCIOS CLÍNICOS
+───────────────────────────────────────────────────────────────── -->
+<section>
+  <div class="part-header" style="background: linear-gradient(135deg, #1A5276, #2874A6); border-left-color: #AED6F1;">
+    <div class="part-num">Parte IX — Consolidação</div>
+    <h2>Exercícios de Consolidação Clínica</h2>
+    <div class="part-sub">Casos práticos integrando anatomia, fisiologia e prática médica</div>
+  </div>
+
+  <div class="box box-physio">
+    <h5>📝 Exercício 1 — Hemodinâmica</h5>
+    <p>Paciente em choque hemorrágico (hemorragia digestiva alta): PAM = 50 mmHg, DC = 2,5 L/min, CVP = 2 mmHg. Calcule a RVS e interprete.</p>
+    <div class="box-formula">RVS = (PAM − CVP) / DC = (50 − 2) / 2,5 = 19,2 mmHg·min/L</div>
+    <p>Em unidades din·s/cm⁵: × 80 = 1536 din·s·cm⁻⁵. Normal: 800–1200. RVS <strong>alta</strong> → resposta vasoconstritora compensatória (simpático ↑, AT-II ↑, vasopressina ↑). Tipo de choque: hipovolêmico. Conduta: reposição volêmica + transfusão (se Hb &lt; 7–8) + controle do foco hemorrágico.</p>
+  </div>
+
+  <div class="box box-physio">
+    <h5>📝 Exercício 2 — Lei de Hagen-Poiseuille</h5>
+    <p>Uma artéria coronária tem raio de 1,5 mm (Q normal = 100 mL/min). Uma placa aterosclerótica reduz o raio para 1 mm. Qual o novo fluxo (mantendo ΔP constante)?</p>
+    <div class="box-formula">Q ∝ r⁴ → Q₂/Q₁ = (r₂/r₁)⁴ = (1/1,5)⁴ = (0,667)⁴ = 0,198</div>
+    <p>Q₂ = 0,198 × 100 = <strong>~20 mL/min</strong> — redução de 80% do fluxo com apenas 33% de redução do raio! Isso explica por que estenoses &gt; 70% do diâmetro (= redução de 50% do raio) causam isquemia miocárdica em esforço.</p>
+  </div>
+
+  <div class="box box-physio">
+    <h5>📝 Exercício 3 — Starling Capilar</h5>
+    <p>Paciente cirrótico com albumina de 1,8 g/dL (normal 3,5–5 g/dL). A pressão oncótica plasmática é proporcional à albumina (~0,8 mmHg por g/dL a menos). Calcule a variação na filtração líquida capilar.</p>
+    <div class="box-formula">Δπc = (3,5 − 1,8) × 0,8 ≈ 1,4 mmHg</div>
+    <p>Na fórmula de Starling: Jv = Kf[(Pc − Pi) − σ(πc − πi)]. Com πc caindo de 25 → ~23,6 mmHg, o gradiente oncótico cai → força de reabsorção capilar cai → ↑filtração → acúmulo no interstício → ASCITE + edema periférico. Tratamento: albumina IV, diuréticos (espironolactona + furosemida), restrição de sódio.</p>
+  </div>
+
+  <div class="box box-physio">
+    <h5>📝 Exercício 4 — ABI (Índice Tornozelo-Braquial)</h5>
+    <p>PA sistólica do braço: 140 mmHg. PA sistólica do tornozelo direito (por Doppler): 70 mmHg. Calcule o ABI e classifique.</p>
+    <div class="box-formula">ABI = PA tornozelo / PA braquial = 70 / 140 = 0,5</div>
+    <p>Classificação: ABI 0,4–0,7 → DAP moderada. Sintomas esperados: claudicação intermitente (dor ao caminhar, alivia com repouso). Conduta: controle de fatores de risco (tabagismo, DM, HAS, dislipidemia), antiagregante (AAS + clopidogrel no DAP sintomático), estatina, cilostazol (fosfodiesterase 3 — ↑AMPc → vasodilatação + antiagregação); avaliação para revascularização se isquemia crítica (ABI &lt; 0,4, dor em repouso, úlcera isquêmica, gangrena).</p>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────
+     REFERÊNCIAS
+───────────────────────────────────────────────────────────────── -->
+<section id="refs">
+  <div class="refs">
+    <h4>Referências Bibliográficas Selecionadas</h4>
+    <ol>
+      <li>Moore KL, Dalley AF, Agur AMR. <em>Anatomia Orientada para a Clínica</em>. 8ª ed. Guanabara Koogan, 2019. <a href="https://www.lww.com/Product/9781496347213" target="_blank">Link</a></li>
+      <li>Drake RL, Vogl AW, Mitchell AWM. <em>Gray's Anatomy for Students</em>. 4th ed. Elsevier, 2019. <a href="https://www.elsevier.com/books/grays-anatomy-for-students/drake/978-0-323-39304-1" target="_blank">Link</a></li>
+      <li>Hall JE. <em>Guyton e Hall — Tratado de Fisiologia Médica</em>. 14ª ed. Elsevier, 2021. <a href="https://www.elsevier.com/books/guyton-and-hall-textbook-of-medical-physiology/hall/978-0-323-59712-8" target="_blank">Link</a></li>
+      <li>Kumar V, Abbas AK, Aster JC. <em>Robbins & Cotran — Patologia: Bases Patológicas das Doenças</em>. 10ª ed. Elsevier, 2021. <a href="https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9" target="_blank">Link</a></li>
+      <li>Brunicardi FC et al. <em>Schwartz's Principles of Surgery</em>. 11th ed. McGraw-Hill, 2019.</li>
+      <li>Zipes DP et al. <em>Braunwald's Heart Disease</em>. 11th ed. Elsevier, 2018. <a href="https://www.elsevier.com/books/braunwalds-heart-disease-a-textbook-of-cardiovascular-medicine/libby/978-0-323-46285-3" target="_blank">Link</a></li>
+      <li>StatPearls [Internet]. Treasure Island (FL): StatPearls Publishing; 2024. <a href="https://www.ncbi.nlm.nih.gov/books/NBK430808/" target="_blank">NCBI Bookshelf</a></li>
+      <li>Tintinalli JE et al. <em>Tintinalli's Emergency Medicine</em>. 9th ed. McGraw-Hill, 2020.</li>
+      <li>Fauci AS et al. <em>Harrison's Principles of Internal Medicine</em>. 21st ed. McGraw-Hill, 2022. <a href="https://www.mhmedical.com/book.aspx?bookID=3095" target="_blank">Link</a></li>
+      <li>Standring S. <em>Gray's Anatomy</em>. 42nd ed. Elsevier, 2020. <a href="https://www.elsevier.com/books/grays-anatomy/standring/978-0-7020-7705-0" target="_blank">Link</a></li>
+      <li>Singer M, Deutschman CS, Seymour CW, et al. The Third International Consensus Definitions for Sepsis and Septic Shock (Sepsis-3). JAMA. 2016;315(8):801-810. <a href="https://jamanetwork.com/journals/jama/fullarticle/2492881" target="_blank">Link</a></li>
+      <li>Powers WJ, et al. Guidelines for the Early Management of Patients with Acute Ischemic Stroke. Stroke. 2019. <a href="https://www.ahajournals.org/doi/10.1161/STR.0000000000000158" target="_blank">Link</a></li>
+      <li>Hirsch AT et al. ACC/AHA 2005 Guidelines for the Management of Patients With Peripheral Arterial Disease. JACC. 2006. <a href="https://www.jacc.org/doi/10.1016/j.jacc.2006.02.024" target="_blank">Link</a></li>
+      <tr><td>de Oliveira Manoel AL, Goffi A, Zampieri FG, et al. The critical care management of spontaneous intracranial hemorrhage. Crit Care. 2016. <a href="https://ccforum.biomedcentral.com/articles/10.1186/s13054-016-1172-6" target="_blank">Link</a></td></tr>
+      <li>Spahn DR et al. Management of bleeding and coagulopathy following major trauma. Crit Care. 2019. <a href="https://ccforum.biomedcentral.com/articles/10.1186/s13054-019-2347-3" target="_blank">Link</a></li>
+    </ol>
+  </div>
+</section>
+
+</main>
+
+<!-- BACK TO TOP -->
+<a href="#top" class="back-top" title="Voltar ao topo">↑</a>
+
+<script>
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
