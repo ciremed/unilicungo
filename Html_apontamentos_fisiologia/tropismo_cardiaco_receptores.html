@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tropismos Cardíacos & Receptores — Mapa Mental Completo</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --surface: #0d1117;
+    --surface2: #131820;
+    --border: #1e2a3a;
+    --accent1: #00d4ff;   /* cronotropismo */
+    --accent2: #ff6b35;   /* inotropismo */
+    --accent3: #7fff6e;   /* dromotropismo */
+    --accent4: #c084fc;   /* lusitrópico */
+    --accent5: #fbbf24;   /* batmotropismo */
+    --accent6: #f472b6;   /* tonotropismo */
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --danger: #ef4444;
+    --warn: #f59e0b;
+    --ok: #22c55e;
+    --alpha: #60a5fa;
+    --beta1: #f97316;
+    --beta2: #a3e635;
+    --muscarinic: #e879f9;
+    --adeno: #38bdf8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ══════════════ NAV ══════════════ */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(7,9,15,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 1rem 1.1rem;
+    white-space: nowrap;
+    transition: color 0.2s, border-bottom 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+  nav a:hover { color: var(--text); border-bottom-color: var(--accent1); }
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent1);
+    padding: 1rem 1.5rem 1rem 0;
+    border-right: 1px solid var(--border);
+    margin-right: 1rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ══════════════ HERO ══════════════ */
+  .hero {
+    padding: 5rem 3rem 4rem;
+    max-width: 1400px; margin: 0 auto;
+    position: relative;
+  }
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent1);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: 'Crimson Pro', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: #fff;
+    max-width: 900px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent1); }
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    max-width: 700px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(6,1fr);
+    gap: 0.5rem;
+    margin-top: 3rem;
+  }
+  .hero-chip {
+    padding: 0.6rem 0.4rem;
+    border-radius: 6px;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: 1px solid;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .hero-chip:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+
+  /* ══════════════ LAYOUT ══════════════ */
+  .page { max-width: 1400px; margin: 0 auto; padding: 0 2rem 6rem; }
+
+  section { margin-bottom: 5rem; }
+  .section-header {
+    display: flex; align-items: baseline; gap: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Crimson Pro', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: #fff;
+  }
+  .section-accent {
+    width: 40px; height: 3px;
+    border-radius: 2px;
+    margin-left: auto; flex-shrink: 0;
+  }
+
+  /* ══════════════ TROPISM CARDS ══════════════ */
+  .tropism-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 1.5rem;
+  }
+  .t-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .t-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+  .t-card-head {
+    padding: 1.5rem;
+    display: flex; align-items: flex-start; gap: 1.2rem;
+  }
+  .t-icon {
+    width: 52px; height: 52px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .t-card-title { font-size: 1.4rem; font-weight: 600; color: #fff; }
+  .t-card-greek { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.2rem; letter-spacing: 0.1em; }
+  .t-card-body { padding: 0 1.5rem 1.5rem; }
+  .t-def {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 1.2rem;
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .mech-block {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .mech-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.7rem;
+    color: var(--text-muted);
+  }
+  .mech-chain {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  .mech-step {
+    background: rgba(255,255,255,0.04);
+    border-radius: 4px;
+    padding: 0.15rem 0.5rem;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .arr { color: var(--text-muted); font-size: 0.8rem; }
+
+  .pill {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.78rem;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    margin: 0.15rem;
+  }
+  .pill-up { background: rgba(34,197,94,0.15); color: var(--ok); border: 1px solid rgba(34,197,94,0.3); }
+  .pill-down { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+  .pill-neutral { background: rgba(148,163,184,0.1); color: var(--text-dim); border: 1px solid var(--border); }
+  .pill-drug { background: rgba(0,212,255,0.1); color: var(--accent1); border: 1px solid rgba(0,212,255,0.25); }
+  .pill-receptor { background: rgba(192,132,252,0.12); color: var(--accent4); border: 1px solid rgba(192,132,252,0.3); }
+
+  /* ══════════════ ION CHANNELS ══════════════ */
+  .channel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+    gap: 1.2rem;
+  }
+  .ch-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.3rem;
+  }
+  .ch-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+  .ch-phase {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+    font-family: 'Space Mono', monospace;
+  }
+  .ch-desc { font-size: 0.95rem; line-height: 1.65; color: var(--text-dim); }
+  .ch-reason {
+    margin-top: 0.8rem;
+    padding: 0.7rem;
+    background: var(--surface2);
+    border-radius: 6px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text);
+    border-left: 3px solid;
+  }
+
+  /* ══════════════ RECEPTOR FULL CARDS ══════════════ */
+  .receptor-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  .rec-head {
+    padding: 1.8rem 2rem;
+    display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-start;
+    border-bottom: 1px solid var(--border);
+  }
+  .rec-badge {
+    width: 64px; height: 64px;
+    border-radius: 12px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .rec-badge-symbol { font-size: 1.6rem; line-height: 1; }
+  .rec-info { flex: 1; min-width: 200px; }
+  .rec-name { font-size: 1.8rem; font-weight: 600; color: #fff; }
+  .rec-class { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.12em; margin-top: 0.3rem; }
+  .rec-tags { margin-top: 0.6rem; }
+
+  .rec-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0;
+  }
+  .rec-col {
+    padding: 1.5rem 2rem;
+    border-right: 1px solid var(--border);
+  }
+  .rec-col:last-child { border-right: none; }
+  .rec-col-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  ul.clean { list-style: none; }
+  ul.clean li {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text-dim);
+    padding: 0.25rem 0;
+    padding-left: 1rem;
+    position: relative;
+  }
+  ul.clean li::before {
+    content: '›';
+    position: absolute; left: 0;
+    color: var(--text-muted);
+  }
+  ul.clean li strong { color: var(--text); font-weight: 600; }
+
+  .pathway-box {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .pathway-step { display: flex; gap: 0.5rem; align-items: flex-start; margin-bottom: 0.4rem; }
+  .ps-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    padding: 0.1rem 0.35rem;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    color: var(--text-muted);
+  }
+  .ps-text { color: var(--text-dim); font-size: 0.92rem; }
+  .ps-text strong { color: #fff; }
+  .ps-text em { color: var(--accent1); font-style: italic; }
+
+  /* ══════════════ DRUG TABLE ══════════════ */
+  .drug-table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--border);
+  }
+  th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0.9rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+  }
+  td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  td strong { color: var(--text); }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ══════════════ AP DIAGRAM ══════════════ */
+  .ap-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .ap-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+  .phase-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    align-items: start;
+  }
+  .phase-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    text-align: center;
+    background: var(--surface2);
+    color: #fff;
+    white-space: nowrap;
+  }
+  .phase-desc { font-size: 0.95rem; color: var(--text-dim); line-height: 1.65; }
+  .phase-desc strong { color: #fff; }
+  .phase-desc code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    background: rgba(255,255,255,0.07);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    color: var(--accent1);
+  }
+
+  /* ══════════════ COMPARISON ══════════════ */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  .cmp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.3rem;
+  }
+  .cmp-head {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cmp-row {
+    display: flex; justify-content: space-between;
+    font-size: 0.88rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    gap: 1rem;
+  }
+  .cmp-row:last-child { border-bottom: none; }
+  .cmp-key { color: var(--text-muted); flex-shrink: 0; font-size: 0.82rem; }
+  .cmp-val { color: var(--text); text-align: right; font-size: 0.88rem; }
+
+  /* ══════════════ CALLOUT ══════════════ */
+  .callout {
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin: 1.5rem 0;
+    display: flex; gap: 1rem; align-items: flex-start;
+    font-size: 0.95rem; line-height: 1.7;
+  }
+  .callout-pearl { background: rgba(0,212,255,0.07); border-left: 3px solid var(--accent1); }
+  .callout-warn  { background: rgba(245,158,11,0.07); border-left: 3px solid var(--warn); }
+  .callout-danger{ background: rgba(239,68,68,0.07);  border-left: 3px solid var(--danger); }
+  .callout-ok    { background: rgba(34,197,94,0.07);  border-left: 3px solid var(--ok); }
+  .callout-icon  { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .callout-body  { color: var(--text-dim); }
+  .callout-body strong { color: var(--text); }
+
+  /* ══════════════ PEARLS / RECALL ══════════════ */
+  .pearl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+  }
+  .pearl-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+  }
+  .pearl-q {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent1);
+    margin-bottom: 0.6rem;
+  }
+  .pearl-a { font-size: 0.95rem; color: var(--text-dim); line-height: 1.65; }
+  .pearl-a strong { color: #fff; }
+
+  /* ══════════════ SCROLL ANIMATIONS ══════════════ */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ══════════════ BACK TO TOP ══════════════ */
+  #btt {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color 0.2s;
+    z-index: 200;
+    text-decoration: none;
+  }
+  #btt:hover { color: var(--accent1); }
+
+  /* ══════════════ MISC ══════════════ */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  .formula {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    background: var(--surface2);
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    color: var(--accent1);
+    margin: 0.8rem 0;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .tag-chip {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    margin: 0.1rem;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">♥ CARDIO MAP</div>
+  <a href="#tropismos">Tropismos</a>
+  <a href="#pa-ventricular">PA Ventricular</a>
+  <a href="#pa-nodal">PA Nodal</a>
+  <a href="#canais">Canais Iônicos</a>
+  <a href="#beta1">β₁</a>
+  <a href="#beta2">β₂</a>
+  <a href="#alfa1">α₁</a>
+  <a href="#muscarinico">M₂</a>
+  <a href="#adenosina">Adenosina</a>
+  <a href="#outros">Outros Rec.</a>
+  <a href="#farmacos">Fármacos</a>
+  <a href="#pearls">Pérolas</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">// Medicina Interna & Intensiva — Módulo de Farmacologia Cardiovascular</div>
+  <h1>Tropismos Cardíacos<br>& <em>Receptores</em></h1>
+  <p class="hero-sub">Do potencial de ação ao efeito clínico — fisiologia, fisiopatologia, farmacologia e mecanismos moleculares integrados num único mapa de referência.</p>
+  <div class="hero-grid">
+    <div class="hero-chip" style="color:var(--accent1);border-color:var(--accent1);background:rgba(0,212,255,0.08)">CRONO<br>TROPISMO</div>
+    <div class="hero-chip" style="color:var(--accent2);border-color:var(--accent2);background:rgba(255,107,53,0.08)">INO<br>TROPISMO</div>
+    <div class="hero-chip" style="color:var(--accent3);border-color:var(--accent3);background:rgba(127,255,110,0.08)">DROMO<br>TROPISMO</div>
+    <div class="hero-chip" style="color:var(--accent4);border-color:var(--accent4);background:rgba(192,132,252,0.08)">LUSITRO<br>PISMO</div>
+    <div class="hero-chip" style="color:var(--accent5);border-color:var(--accent5);background:rgba(251,191,36,0.08)">BATMO<br>TROPISMO</div>
+    <div class="hero-chip" style="color:var(--accent6);border-color:var(--accent6);background:rgba(244,114,182,0.08)">TONO<br>TROPISMO</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<div class="page">
+
+<!-- ════════ SECÇÃO 1: TROPISMOS ════════ -->
+<section id="tropismos" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">01 —</span>
+    <h2 class="section-title">Os Seis Tropismos Cardíacos</h2>
+    <div class="section-accent" style="background:var(--accent1)"></div>
+  </div>
+
+  <div class="callout callout-pearl">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <strong>Etimologia:</strong> do grego <em>tropos</em> = "volta, direção, modificação". Os tropismos cardíacos descrevem as propriedades funcionais modificáveis do coração — frequência, força, condução, relaxamento, excitabilidade e tensão de repouso.
+    </div>
+  </div>
+
+  <div class="tropism-grid">
+
+    <!-- CRONOTROPISMO -->
+    <div class="t-card fade-in">
+      <div class="t-card-head">
+        <div class="t-icon" style="background:rgba(0,212,255,0.12);color:var(--accent1)">⏱</div>
+        <div>
+          <div class="t-card-title" style="color:var(--accent1)">Cronotropismo</div>
+          <div class="t-card-greek">CHRONOS = TEMPO · FC (bpm)</div>
+        </div>
+      </div>
+      <div class="t-card-body">
+        <div class="t-def">Capacidade de modificar a <strong>frequência cardíaca</strong> através da alteração da taxa de despolarização espontânea das células marca-passo.</div>
+
+        <div class="mech-block">
+          <div class="mech-label">Mecanismo Celular — Positivo (↑FC)</div>
+          <div class="mech-chain">
+            <span class="mech-step">β₁ estimulado</span><span class="arr">→</span>
+            <span class="mech-step">↑ AMPc</span><span class="arr">→</span>
+            <span class="mech-step">PKA activa</span><span class="arr">→</span>
+            <span class="mech-step">↑ corrente If (HCN)</span><span class="arr">→</span>
+            <span class="mech-step">fase 4 mais rápida</span><span class="arr">→</span>
+            <span class="mech-step">limiar mais cedo</span><span class="arr">→</span>
+            <span class="mech-step">↑FC</span>
+          </div>
+        </div>
+
+        <div class="mech-block">
+          <div class="mech-label">Porquê físico-químico</div>
+          <div class="mech-chain" style="flex-direction:column;gap:0.4rem">
+            <span style="color:var(--text-dim);font-size:0.9rem">A corrente <strong style="color:#fff">If ("funny current")</strong> é uma corrente catiónica mista (Na⁺/K⁺) que se activa por hiperpolarização. Quando AMPc se liga à subunidade HCN, desloca o limiar de activação para potenciais menos negativos → a célula despolariza mais cedo. É uma modificação alostérica do canal por ligando intracelular.</span>
+          </div>
+        </div>
+
+        <div>
+          <div class="mech-label">Modulação Farmacológica</div>
+          <span class="pill pill-up">↑ Adrenalina (β₁)</span>
+          <span class="pill pill-up">↑ Noradrenalina (β₁)</span>
+          <span class="pill pill-up">↑ Atropina (bloqueia M₂)</span>
+          <span class="pill pill-down">↓ Propranolol (β-bloqueante)</span>
+          <span class="pill pill-down">↓ Ivabradina (bloqueia If)</span>
+          <span class="pill pill-down">↓ Acetilcolina (M₂→↑IKAch)</span>
+          <span class="pill pill-down">↓ Verapamil (Ca²⁺ bloqueante)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- INOTROPISMO -->
+    <div class="t-card fade-in">
+      <div class="t-card-head">
+        <div class="t-icon" style="background:rgba(255,107,53,0.12);color:var(--accent2)">💪</div>
+        <div>
+          <div class="t-card-title" style="color:var(--accent2)">Inotropismo</div>
+          <div class="t-card-greek">IS = FIBRA MUSCULAR · FORÇA DE CONTRACÇÃO</div>
+        </div>
+      </div>
+      <div class="t-card-body">
+        <div class="t-def">Capacidade de modificar a <strong>força de contracção miocárdica</strong> (variação do inótropo = variação da contratilidade independente de pré e pós-carga).</div>
+
+        <div class="mech-block">
+          <div class="mech-label">Mecanismo Celular — Inótropo Positivo</div>
+          <div class="pathway-box">
+            <div class="pathway-step"><span class="ps-num">1</span><span class="ps-text"><strong>β₁ → ↑ AMPc → PKA</strong></span></div>
+            <div class="pathway-step"><span class="ps-num">2</span><span class="ps-text">PKA fosforila <strong>Fosfolamban (PLB)</strong> → desinibe SERCA2a → ↑ recaptação de Ca²⁺ para o RS</span></div>
+            <div class="pathway-step"><span class="ps-num">3</span><span class="ps-text">PKA fosforila <strong>canal L de Ca²⁺ (DHPR/Cav1.2)</strong> → ↑ Ca²⁺ influx durante fase 2</span></div>
+            <div class="pathway-step"><span class="ps-num">4</span><span class="ps-text">↑ Ca²⁺ citosólico → <strong>CICR</strong> (Ca²⁺-Induced Ca²⁺ Release) via RyR2 → solta Ca²⁺ do RS</span></div>
+            <div class="pathway-step"><span class="ps-num">5</span><span class="ps-text">Ca²⁺ liga-se a <strong>Troponina C</strong> → remoção do bloqueio da Troponina I → actina+miosina formam pontes cruzadas → contracção</span></div>
+          </div>
+        </div>
+
+        <div class="mech-block">
+          <div class="mech-label">Porquê físico-químico — CICR</div>
+          <div class="mech-chain" style="flex-direction:column;gap:0.3rem">
+            <span style="color:var(--text-dim);font-size:0.9rem">O receptor de rianodina (RyR2) é um canal catiónico activado pelo próprio Ca²⁺ (cooperatividade positiva). Um influx pequeno via Cav1.2 cria microdomínios de alto [Ca²⁺] nas "junctions" — espaço diádico de ≈15nm. A concentração local ultrapassa o limiar de RyR2, provocando libertação maciça do RS. É um sistema de ganho ("spark" de Ca²⁺).</span>
+          </div>
+        </div>
+
+        <div>
+          <span class="pill pill-up">↑ Dobutamina (β₁)</span>
+          <span class="pill pill-up">↑ Digoxina (inibe Na/K-ATPase → ↑ Na⁺ intracel → ↑ Ca²⁺ via NCX reverso)</span>
+          <span class="pill pill-up">↑ Milrinona (inibe PDE3 → ↑AMPc)</span>
+          <span class="pill pill-up">↑ Levosimendan (sensibilizador de TnC)</span>
+          <span class="pill pill-down">↓ β-bloqueantes</span>
+          <span class="pill pill-down">↓ Verapamil/Diltiazem</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DROMOTROPISMO -->
+    <div class="t-card fade-in">
+      <div class="t-card-head">
+        <div class="t-icon" style="background:rgba(127,255,110,0.12);color:var(--accent3)">⚡</div>
+        <div>
+          <div class="t-card-title" style="color:var(--accent3)">Dromotropismo</div>
+          <div class="t-card-greek">DROMOS = CURSO/CORRIDA · VELOCIDADE DE CONDUÇÃO</div>
+        </div>
+      </div>
+      <div class="t-card-body">
+        <div class="t-def">Capacidade de modificar a <strong>velocidade de condução do impulso eléctrico</strong>, principalmente no nó AV — medido pelo intervalo PR no ECG.</div>
+
+        <div class="mech-block">
+          <div class="mech-label">Mecanismo — Dromotropismo Negativo (via M₂)</div>
+          <div class="pathway-box">
+            <div class="pathway-step"><span class="ps-num">1</span><span class="ps-text">ACh liga M₂ (acoplado a <strong>Gi</strong>) → inibe adenilato ciclase → ↓ AMPc</span></div>
+            <div class="pathway-step"><span class="ps-num">2</span><span class="ps-text">Subunidade Gβγ activa directamente <strong>IKAch (GIRK1/GIRK4)</strong> → ↑ efluxo de K⁺</span></div>
+            <div class="pathway-step"><span class="ps-num">3</span><span class="ps-text">Hiperpolarização das células nodais → limiar mais difícil de atingir → condução mais lenta</span></div>
+            <div class="pathway-step"><span class="ps-num">4</span><span class="ps-text">No nó AV: ↓ corrente de Ca²⁺ (Cav3.1/T-type) → ↑ período refractário → ↓ velocidade</span></div>
+          </div>
+        </div>
+
+        <div>
+          <span class="pill pill-up">↑ Adrenalina, Atropina</span>
+          <span class="pill pill-down">↓ Verapamil, Diltiazem</span>
+          <span class="pill pill-down">↓ Adenosina (via A₁ → GIRK)</span>
+          <span class="pill pill-down">↓ Digoxina (acção vagotónica indirecta)</span>
+          <span class="pill pill-down">↓ β-bloqueantes</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LUSITROPISMO -->
+    <div class="t-card fade-in">
+      <div class="t-card-head">
+        <div class="t-icon" style="background:rgba(192,132,252,0.12);color:var(--accent4)">🫀</div>
+        <div>
+          <div class="t-card-title" style="color:var(--accent4)">Lusitropismo</div>
+          <div class="t-card-greek">LYSIS = DISSOLUÇÃO · VELOCIDADE DE RELAXAMENTO</div>
+        </div>
+      </div>
+      <div class="t-card-body">
+        <div class="t-def">Capacidade de modificar a <strong>velocidade e grau de relaxamento diastólico</strong> do miocárdio — avaliada pela taxa de queda de pressão (–dP/dt) e Doppler tecidual (e').</div>
+
+        <div class="mech-block">
+          <div class="mech-label">Mecanismo Molecular</div>
+          <div class="pathway-box">
+            <div class="pathway-step"><span class="ps-num">1</span><span class="ps-text"><strong>β₁ → PKA → fosforila Fosfolamban (PLB)</strong> na Ser16 e Thr17 (via CaMKII)</span></div>
+            <div class="pathway-step"><span class="ps-num">2</span><span class="ps-text">PLB fosforilado perde inibição sobre <strong>SERCA2a</strong> → bomba recapta Ca²⁺ para RS mais rapidamente</span></div>
+            <div class="pathway-step"><span class="ps-num">3</span><span class="ps-text">Queda rápida do Ca²⁺ citosólico → dissociação Ca²⁺-TnC → relaxamento das pontes cruzadas</span></div>
+            <div class="pathway-step"><span class="ps-num">4</span><span class="ps-text">PKA também fosforila <strong>Titina</strong> e proteínas sarcoméricas → ↓ rigidez passiva → melhor compliance</span></div>
+          </div>
+        </div>
+
+        <div class="callout callout-warn" style="margin-top:0.8rem">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body"><strong>Relevância Clínica:</strong> IC-FEP (disfunção diastólica) = lusitropismo negativo crónico. Levosimendan tem efeito lusitrópico positivo (melhora compliance sem ↑ Ca²⁺).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BATMOTROPISMO -->
+    <div class="t-card fade-in">
+      <div class="t-card-head">
+        <div class="t-icon" style="background:rgba(251,191,36,0.12);color:var(--accent5)">🔋</div>
+        <div>
+          <div class="t-card-title" style="color:var(--accent5)">Batmotropismo</div>
+          <div class="t-card-greek">BATHMOS = LIMIAR/DEGRAU · EXCITABILIDADE</div>
+        </div>
+      </div>
+      <div class="t-card-body">
+        <div class="t-def">Capacidade de modificar a <strong>excitabilidade celular</strong>, ou seja, a facilidade com que a célula é despolarizada por um estímulo externo (↓ limiar = mais excitável).</div>
+
+        <div class="mech-block">
+          <div class="mech-label">Mecanismo — Batmotropismo Positivo (pró-arrítmico)</div>
+          <div class="pathway-box">
+            <div class="pathway-step"><span class="ps-num">1</span><span class="ps-text">↑ AMPc (simpaticomiméticos) → PKA fosforila INa (Nav1.5) → activação mais rápida</span></div>
+            <div class="pathway-step"><span class="ps-num">2</span><span class="ps-text">↑ Ca²⁺ citosólico → despolarizações tardias (<strong>EADs/DADs</strong>) em contexto de sobrecarga de Ca²⁺</span></div>
+            <div class="pathway-step"><span class="ps-num">3</span><span class="ps-text">Hipocalemia → hiperpolarização do limiar de Nav1.5 → ↑ excitabilidade (paradoxo)</span></div>
+          </div>
+        </div>
+
+        <div class="callout callout-danger" style="margin-top:0.8rem">
+          <span class="callout-icon">🚨</span>
+          <div class="callout-body"><strong>Perigo Clínico:</strong> Batmotropismo + positivo = base das arritmias por re-entrada e automatismo ectópico. Digoxina em toxicidade = batmotropismo perigosamente positivo.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TONOTROPISMO -->
+    <div class="t-card fade-in">
+      <div class="t-card-head">
+        <div class="t-icon" style="background:rgba(244,114,182,0.12);color:var(--accent6)">📏</div>
+        <div>
+          <div class="t-card-title" style="color:var(--accent6)">Tonotropismo</div>
+          <div class="t-card-greek">TONOS = TENSÃO · TONUS DIASTÓLICO</div>
+        </div>
+      </div>
+      <div class="t-card-body">
+        <div class="t-def">Capacidade de modificar o <strong>grau de tensão miocárdica em repouso (diastole)</strong> — relaciona-se com a rigidez diastólica e compliance ventricular.</div>
+
+        <div class="mech-block">
+          <div class="mech-label">Mecanismo Molecular</div>
+          <div class="mech-chain" style="flex-direction:column">
+            <span style="color:var(--text-dim);font-size:0.9rem">A <strong style="color:#fff">Titina</strong> (maior proteína sarcomérica, ~3,000 kDa) actua como mola molecular. A isoforma rígida (N2B) vs flexível (N2BA) determina a compliance em repouso. Fosforilação por PKA, PKG e PKC modifica a sua rigidez. Hipertrofia → mudança para isoforma N2B → ↑ tonotropismo (rigidez) → disfunção diastólica.</span>
+          </div>
+        </div>
+
+        <div>
+          <span class="pill pill-up">↑ (rigidez) Hipertrofia, Fibrose</span>
+          <span class="pill pill-down">↓ (relaxamento) β₁ (PKA→Titina)</span>
+          <span class="pill pill-down">↓ NO/GMPc → PKG → Titina</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tropism-grid -->
+</section>
+
+<!-- ════════ SECÇÃO 2: POTENCIAL DE ACÇÃO ════════ -->
+<section id="pa-ventricular" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">02 —</span>
+    <h2 class="section-title">Potencial de Acção Ventricular</h2>
+    <div class="section-accent" style="background:var(--accent2)"></div>
+  </div>
+
+  <div class="ap-container">
+    <div class="ap-title">// FASES DO POTENCIAL DE ACÇÃO — CARDIOMIÓCITO VENTRICULAR</div>
+
+    <div class="phase-row">
+      <div class="phase-num" style="border-left:3px solid #ef4444">FASE 0<br><small style="font-size:0.55rem;color:var(--text-muted)">0 ms</small></div>
+      <div class="phase-desc">
+        <strong>Despolarização rápida</strong> — abertura de canais <code>Nav1.5</code> dependentes de voltagem. Limiar: ≈ −65 mV. O canal Nav1.5 tem 2 portões: activação (m) e inactivação (h). Acima do limiar, o portão m abre num ciclo ultrarápido (~0,1 ms) e Na⁺ entra por gradiente electroquímico (−90 mV intracel, [Na⁺] externo 140 mEq/L vs 10 intracel). O potencial sobe para +20 mV (overshoot). Bloqueado por: lidocaína, amiodarona (classe I), hipocaliemia (paradoxalmente aumenta excitabilidade mas ↓ condução).
+      </div>
+    </div>
+
+    <div class="phase-row">
+      <div class="phase-num" style="border-left:3px solid #f97316">FASE 1<br><small style="font-size:0.55rem;color:var(--text-muted)">~1 ms</small></div>
+      <div class="phase-desc">
+        <strong>Repolarização inicial rápida</strong> — inactivação de Nav1.5 + abertura transitória de <code>Kv4.2/4.3 (Ito)</code>. Efluxo de K⁺ cria "entalhe" no traçado. Mais proeminente em epicárdio que endocárdio → heterogeneidade transmural que cria a onda T do ECG. Síndrome de Brugada: mutação em Nav1.5 ou ganho-de-função em Ito.
+      </div>
+    </div>
+
+    <div class="phase-row">
+      <div class="phase-num" style="border-left:3px solid #eab308">FASE 2<br><small style="font-size:0.55rem;color:var(--text-muted)">100–250 ms</small></div>
+      <div class="phase-desc">
+        <strong>Plateau</strong> — equilíbrio entre influxo de Ca²⁺ via <code>Cav1.2 (canal L)</code> e efluxo de K⁺ via IKr e IKs. Este equilíbrio de correntes mantém o potencial próximo de 0 mV durante ~200 ms — tempo necessário para que [Ca²⁺] citosólico chegue à troponina C e a contracção ocorra. <em>Verapamil/diltiazem</em> bloqueiam Cav1.2 → abreviam plateau → efeito inotrópico e cronotrópico negativo. A duração da fase 2 corresponde ao intervalo QT no ECG.
+      </div>
+    </div>
+
+    <div class="phase-row">
+      <div class="phase-num" style="border-left:3px solid #22c55e">FASE 3<br><small style="font-size:0.55rem;color:var(--text-muted)">150–300 ms</small></div>
+      <div class="phase-desc">
+        <strong>Repolarização final rápida</strong> — dominância de <code>IKr (hERG/KCNH2)</code> e <code>IKs (KCNQ1+KCNE1)</code>. Efluxo maciço de K⁺ → retorno a −90 mV. <em>IKr é bloqueada por >150 fármacos</em> (quinolinas, anti-histamínicos, antiemépticos, antipsicóticos) → prolongamento QT → Torsades de Pointes. Na síndrome do QT longo (LQTS): perda-de-função de IKr/IKs ou ganho-de-função de INa late.
+      </div>
+    </div>
+
+    <div class="phase-row">
+      <div class="phase-num" style="border-left:3px solid #3b82f6">FASE 4<br><small style="font-size:0.55rem;color:var(--text-muted)">diastole</small></div>
+      <div class="phase-desc">
+        <strong>Potencial de repouso</strong> — mantido por <code>IK1 (Kir2.1)</code>, canal de K⁺ rectificador de entrada. Acopla o potencial de repouso (~−90 mV) ao potencial de Nernst de K⁺ (EK ≈ −94 mV). A Na⁺/K⁺-ATPase (3Na⁺ fora, 2K⁺ dentro) mantém os gradientes iónicos. Digoxina inibe esta bomba → ↑ [Na⁺] intracel → ↓ gradiente para NCX → NCX inverte → ↑ Ca²⁺ intracel → inotropismo positivo.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SECÇÃO 3: PA NODAL ════════ -->
+<section id="pa-nodal" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">03 —</span>
+    <h2 class="section-title">Potencial de Acção Nodal (SA/AV)</h2>
+    <div class="section-accent" style="background:var(--accent3)"></div>
+  </div>
+
+  <div class="callout callout-pearl">
+    <span class="callout-icon">🔑</span>
+    <div class="callout-body"><strong>Diferença fundamental:</strong> células nodais NÃO têm fase 0 dependente de Nav1.5. A despolarização rápida é mediada por <strong>Cav1.3 e Cav3.1 (canais T)</strong>. Por isso, verapamil afecta profundamente os nós SA e AV mas pouco o ventrículo.</div>
+  </div>
+
+  <div class="ap-container">
+    <div class="ap-title">// FASES DO POTENCIAL DE ACÇÃO NODAL</div>
+
+    <div class="phase-row">
+      <div class="phase-num" style="border-left:3px solid #60a5fa">FASE 4<br><small style="font-size:0.55rem;color:var(--text-muted)">automatismo</small></div>
+      <div class="phase-desc">
+        <strong>Despolarização diastólica espontânea (pacemaker)</strong>. Correntes envolvidas (pela importância):
+        <br>• <code>If (HCN4)</code> — catiônica mista Na⁺/K⁺, activa-se em hiperpolarização, conduz a despolarização lenta (controled by AMPc). É o alvo da ivabradina.
+        <br>• <code>ICaT (Cav3.1)</code> — canal de Ca²⁺ tipo T, activa-se a voltagens mais negativas (~−55 mV), contribui para a última parte da fase 4.
+        <br>• <code>↓ IK (Kv)</code> — redução progressiva da repolarização K⁺ ao longo da fase 4.
+        <br>• <code>NCX</code> — modo forward (3Na⁺ entra, 1Ca²⁺ sai) → corrente despolarizante líquida.
+        <br>• <strong>Relógio de Ca²⁺:</strong> libertação diastólica espontânea de Ca²⁺ do RS → activa NCX → componente despolarizante adicional.
+      </div>
+    </div>
+
+    <div class="phase-row">
+      <div class="phase-num" style="border-left:3px solid #c084fc">FASE 0<br><small style="font-size:0.55rem;color:var(--text-muted)">despol. lenta</small></div>
+      <div class="phase-desc">
+        <strong>Despolarização lenta</strong> via <code>ICaL (Cav1.3)</code> e <code>ICaT (Cav3.1)</code>. Velocidade de subida ≈ 1–10 V/s (vs 200–400 V/s no ventrículo). Daí a condução lenta no nó AV (~0.05 m/s vs 2–4 m/s em Purkinje). Bloqueio por verapamil, diltiazem, adenosina.
+      </div>
+    </div>
+
+    <div class="phase-row">
+      <div class="phase-num" style="border-left:3px solid #f472b6">FASE 3<br><small style="font-size:0.55rem;color:var(--text-muted)">repol.</small></div>
+      <div class="phase-desc">
+        <strong>Repolarização</strong> via <code>IKr</code>, <code>IKs</code> e <code>IKAch</code> (activada por M₂/A₁). ACh → ↑ IKAch → hiperpolarização → fase 4 mais longa → menor FC/menor condução AV.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <span class="callout-icon">📌</span>
+    <div class="callout-body"><strong>Hierarquia de Automatismo:</strong> Nó SA (60–100 bpm) > Nó AV (40–60 bpm) > Feixe de His (30–40 bpm) > Purkinje (20–40 bpm). Em bloqueio SA, o próximo "escapa" — mas com frequência menor → síncope se houver pausa longa.</div>
+  </div>
+</section>
+
+<!-- ════════ SECÇÃO 4: CANAIS ════════ -->
+<section id="canais" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">04 —</span>
+    <h2 class="section-title">Canais Iônicos Cardíacos — Referência Completa</h2>
+    <div class="section-accent" style="background:var(--accent5)"></div>
+  </div>
+
+  <div class="channel-grid">
+
+    <div class="ch-card fade-in">
+      <div class="ch-name">Nav1.5 — Canal de Sódio Rápido</div>
+      <div class="ch-phase" style="color:#ef4444">FASE 0 VENTRICULAR · GENE: SCN5A</div>
+      <div class="ch-desc">Proteína transmembrana com 4 domínios homólogos (I–IV), cada um com 6 segmentos (S1–S6). O S4 é o sensor de voltagem (argininas/lisinas positivas). Portão de activação: m³ (três subunidades m). Portão de inactivação: portão h "bola e cadeia" (loop intracelular I–II).</div>
+      <div class="ch-reason" style="border-color:#ef4444">
+        <strong>Física por trás:</strong> A abertura do canal é regida pelo campo eléctrico transmembrana. Em repouso (−90 mV), o S4 é "puxado" para dentro. Na despolarização acima de −65 mV, o campo inverte e "expulsa" S4 para fora → mudança conformacional → poro abre. A taxa de activação segue a cinética de Hodgkin-Huxley: m³h.
+      </div>
+    </div>
+
+    <div class="ch-card fade-in">
+      <div class="ch-name">Cav1.2 (DHPR) — Canal de Ca²⁺ Tipo L</div>
+      <div class="ch-phase" style="color:#eab308">FASE 2 VENTRICULAR · GENE: CACNA1C</div>
+      <div class="ch-desc">Canal de cálcio dependente de voltagem de alta activação (~−40 mV). Subunidade α₁ forma o poro. Selectividade para Ca²⁺ devida a resíduos de glutamato no poro (EEEE locus) que "filtram" por raio iónico hidratado.</div>
+      <div class="ch-reason" style="border-color:#eab308">
+        <strong>Química por trás:</strong> Selectividade por Ca²⁺ apesar de [Na⁺] ser 70× maior: os 4 glutamatos carregados negativamente criam um sítio de ligação de alta afinidade para Ca²⁺ (kDa ≈ μM) que bloqueia o Na⁺. Verapamil e diltiazem bloqueiam o canal no estado aberto/inactivado (uso-dependência).
+      </div>
+    </div>
+
+    <div class="ch-card fade-in">
+      <div class="ch-name">HCN4 — Canal Funny (If)</div>
+      <div class="ch-phase" style="color:var(--accent1)">FASE 4 NODAL · GENE: HCN4</div>
+      <div class="ch-desc">Canal catiónico (Na⁺/K⁺) activado por hiperpolarização, pertencente à família HCN (Hyperpolarization-activated Cyclic Nucleotide-gated). Modulado directamente por AMPc que se liga ao CNBD (C-terminal cyclic nucleotide binding domain).</div>
+      <div class="ch-reason" style="border-color:var(--accent1)">
+        <strong>Alosteria molecular:</strong> AMPc liga-se ao CNBD e causa uma mudança conformacional que desloca a curva de activação ~+6 a +10 mV → o canal abre a voltagens menos negativas → fase 4 mais rápida → ↑FC. Ivabradina entra pelo poro aberto e bloqueia por dentro (state-dependent, uso-dependente).
+      </div>
+    </div>
+
+    <div class="ch-card fade-in">
+      <div class="ch-name">hERG/IKr — Canal de K⁺ Rectificador Rápido</div>
+      <div class="ch-phase" style="color:#22c55e">FASE 3 · GENE: KCNH2 (HERG)</div>
+      <div class="ch-desc">Rectificador retardado de K⁺ com cinética incomum: inactivação rápida (ms) mas re-abertura lenta na repolarização → "pico" de corrente durante fase 3. Extremamente susceptível a bloqueio farmacológico.</div>
+      <div class="ch-reason" style="border-color:#22c55e">
+        <strong>Por que tantos fármacos o bloqueiam?</strong> O poro do hERG tem 2 aromáticos (Tyr652, Phe656) voltados para o interior que formam um sítio de ligação hidrofóbico grande. Moléculas lipofílicas com anel aromático e N básico (>150 fármacos!) encaixam aqui → LQTS iatrogénico → risco de TdP.
+      </div>
+    </div>
+
+    <div class="ch-card fade-in">
+      <div class="ch-name">GIRK (IKAch) — Canal K⁺ acoplado a G-proteína</div>
+      <div class="ch-phase" style="color:var(--muscarinic)">NODAL · GENES: KCNJ3/KCNJ5 (GIRK1/GIRK4)</div>
+      <div class="ch-desc">Canal de K⁺ rectificador de entrada activado directamente por Gβγ (subunidade da Gi/Go). Presente predominantemente em células atriais e nodais — não nos ventrículos. Mediador principal da bradicardia vagal.</div>
+      <div class="ch-reason" style="border-color:var(--muscarinic)">
+        <strong>Mecanismo directo sem segundo mensageiro:</strong> Gβγ liga-se directamente à face intracelular do GIRK. Não precisa de difusão de AMPc → resposta em milissegundos. Adenosina (A₁) e ACh (M₂) usam o mesmo canal via Gi. Atropina bloqueia M₂ → desinibe GIRK → ↑FC.
+      </div>
+    </div>
+
+    <div class="ch-card fade-in">
+      <div class="ch-name">KATP — Canal de K⁺ sensível a ATP</div>
+      <div class="ch-phase" style="color:var(--accent5)">ISQUEMIA · GENE: KCNJ11+ABCC9</div>
+      <div class="ch-desc">Canal fechado em condições normais pelo ATP intracelular. Na isquemia, ↓ ATP → abertura → hiperpolarização/repolarização → protecção celular ("pré-condicionamento isquémico").</div>
+      <div class="ch-reason" style="border-color:var(--accent5)">
+        <strong>Sensor metabólico:</strong> A subunidade reguladora SUR2A tem um sítio de ligação a ATP/ADP. Razão ATP/ADP normal mantém o canal fechado. Na isquemia, ↓ ATP e ↑ ADP → inversão da razão → canal abre → efluxo K⁺ → encurtamento do PA → ↓ consumo de Ca²⁺ → protecção. Sulfonilureias (glibenclamida) bloqueiam SUR → fecham KATP → base da acção hipoglicemiante E risco cardíaco.
+      </div>
+    </div>
+
+    <div class="ch-card fade-in">
+      <div class="ch-name">NCX — Permutador Na⁺/Ca²⁺ (SLC8A1)</div>
+      <div class="ch-phase" style="color:var(--accent2)">UBÍQUO · TODOS OS CARDIOMIÓCITOS</div>
+      <div class="ch-desc">Transportador electrogénico que troca 3 Na⁺ por 1 Ca²⁺. Reversível — direcção depende do gradiente de Na⁺ e potencial de membrana.</div>
+      <div class="ch-reason" style="border-color:var(--accent2)">
+        <strong>Termodinâmica:</strong> ΔG = 3·F·ΔVNa − 2·F·ΔVCa − F·Em. Em condições normais: modo forward (Ca²⁺ sai). Com digoxina → ↑[Na⁺]i → o gradiente de Na⁺ diminui → NCX reverte → Ca²⁺ entra → inotropismo positivo. Também explica EADs/DADs na sobrecarga de Ca²⁺.
+      </div>
+    </div>
+
+    <div class="ch-card fade-in">
+      <div class="ch-name">RyR2 — Receptor de Rianodina tipo 2</div>
+      <div class="ch-phase" style="color:var(--accent4)">RS → CITOSOL · GENE: RYR2</div>
+      <div class="ch-desc">Canal de Ca²⁺ do retículo sarcoplasmático. Activado por [Ca²⁺] citosólico (CICR) e por AMPc/PKA (fosforilação na Ser2808/Ser2814).</div>
+      <div class="ch-reason" style="border-color:var(--accent4)">
+        <strong>CICR — ganho quântico:</strong> Um "spark" de Ca²⁺ (~5-10 RyR2) liberta ~10,000 iões Ca²⁺. Todo o transiente de Ca²⁺ resulta de centenas de sparks sincronizados. Na IC, RyR2 "leaky" (hiperfosforilado por PKA/CaMKII) → sparks diastólicos → DADs → TVNS → morte súbita. Flecainida e ranolazina reduzem este leak.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════ SECÇÃO 5: RECEPTOR β₁ ════════ -->
+<section id="beta1" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">05 —</span>
+    <h2 class="section-title">Receptor β₁-Adrenérgico</h2>
+    <div class="section-accent" style="background:var(--beta1)"></div>
+  </div>
+
+  <div class="receptor-card fade-in">
+    <div class="rec-head">
+      <div class="rec-badge" style="background:rgba(249,115,22,0.12);color:var(--beta1)">
+        <span class="rec-badge-symbol">β₁</span>
+        <span style="font-size:0.55rem">GPCR</span>
+      </div>
+      <div class="rec-info">
+        <div class="rec-name">Receptor β₁-Adrenérgico</div>
+        <div class="rec-class">GPCR — ACOPLADO A Gs — 7 DOMÍNIOS TRANSMEMBRANA — GENE: ADRB1</div>
+        <div class="rec-tags">
+          <span class="pill pill-up">+Crono</span>
+          <span class="pill pill-up">+Ino</span>
+          <span class="pill pill-up">+Dromo</span>
+          <span class="pill pill-up">+Lusitro</span>
+          <span class="pill pill-up">+Batmo</span>
+          <span class="tag-chip" style="background:rgba(249,115,22,0.15);color:var(--beta1)">Dominante no coração (70–80%)</span>
+        </div>
+      </div>
+    </div>
+    <div class="rec-body">
+      <div class="rec-col">
+        <div class="rec-col-title">Localização & Distribuição</div>
+        <ul class="clean">
+          <li><strong>Nó SA:</strong> ↑ automatismo (fase 4 rápida)</li>
+          <li><strong>Nó AV:</strong> ↑ condução (↑ dromotrop.)</li>
+          <li><strong>Miocárdio ventricular:</strong> contratilidade</li>
+          <li><strong>Sistema de condução (His-Purkinje)</strong></li>
+          <li><strong>Rim (células JG):</strong> ↑ renina</li>
+          <li>Predomínio: 70–80% dos β cardíacos</li>
+        </ul>
+      </div>
+      <div class="rec-col">
+        <div class="rec-col-title">Cascata de Sinalização Detalhada</div>
+        <div class="pathway-box">
+          <div class="pathway-step"><span class="ps-num">1</span><span class="ps-text"><strong>Ligando</strong> (NA, Adr) liga ao sítio ortostérico → mudança conformacional R→R*</span></div>
+          <div class="pathway-step"><span class="ps-num">2</span><span class="ps-text"><strong>Gs activa:</strong> troca GDP → GTP na subunidade Gαs → dissocia Gβγ</span></div>
+          <div class="pathway-step"><span class="ps-num">3</span><span class="ps-text"><strong>Gαs activa Adenilato Ciclase (AC III/V/VI)</strong> → ↑ AMPc (10–100× basal em 10s)</span></div>
+          <div class="pathway-step"><span class="ps-num">4</span><span class="ps-text"><strong>AMPc activa PKA</strong> (dissocia subunidades reguladoras R da catalítica C)</span></div>
+          <div class="pathway-step"><span class="ps-num">5</span><span class="ps-text">PKA fosforila: <em>Cav1.2, PLB, RyR2, TnI, Titina, HCN4</em> → todos os tropismos positivos</span></div>
+          <div class="pathway-step"><span class="ps-num">6</span><span class="ps-text"><strong>Desensibilização:</strong> GRK2 fosforila receptor → β-arrestina → endocitose → downregulation crónica (IC: ↓ 50% β₁)</span></div>
+        </div>
+      </div>
+      <div class="rec-col">
+        <div class="rec-col-title">Agonistas & Antagonistas</div>
+        <div class="drug-table-wrap">
+          <table style="font-size:0.82rem">
+            <thead><tr><th>Fármaco</th><th>Tipo</th><th>Selectividade</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Adrenalina</strong></td><td>Agonista</td><td>β₁=β₂=α</td></tr>
+              <tr><td><strong>Noradrenalina</strong></td><td>Agonista</td><td>β₁>α≫β₂</td></tr>
+              <tr><td><strong>Dobutamina</strong></td><td>Agonista</td><td>β₁≫β₂</td></tr>
+              <tr><td><strong>Isoproterenol</strong></td><td>Agonista</td><td>β₁=β₂</td></tr>
+              <tr><td><strong>Metoprolol</strong></td><td>Antagonista</td><td>β₁ (cardioselectivo)</td></tr>
+              <tr><td><strong>Bisoprolol</strong></td><td>Antagonista</td><td>β₁ (altamente select.)</td></tr>
+              <tr><td><strong>Atenolol</strong></td><td>Antagonista</td><td>β₁ (hidrofílico)</td></tr>
+              <tr><td><strong>Propranolol</strong></td><td>Antagonista</td><td>β₁=β₂ (não select.)</td></tr>
+              <tr><td><strong>Carvedilol</strong></td><td>Antag.+α₁</td><td>β₁=β₂+α₁</td></tr>
+              <tr><td><strong>Nebivolol</strong></td><td>Antag.+NO</td><td>β₁ + ↑ NO</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-danger">
+    <span class="callout-icon">🚨</span>
+    <div class="callout-body"><strong>Paradoxo da IC:</strong> Na IC crónica, activação crónica de β₁ → GRK2 upregulada → downregulation de β₁ → coração "desensibilizado". β-bloqueantes revertem este processo → melhoria a longo prazo (MERIT-HF, CIBIS-II). NUNCA iniciar β-bloqueante em IC descompensada aguda!</div>
+  </div>
+</section>
+
+<!-- ════════ SECÇÃO 6: β₂ ════════ -->
+<section id="beta2" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">06 —</span>
+    <h2 class="section-title">Receptor β₂-Adrenérgico</h2>
+    <div class="section-accent" style="background:var(--beta2)"></div>
+  </div>
+
+  <div class="receptor-card fade-in">
+    <div class="rec-head">
+      <div class="rec-badge" style="background:rgba(163,230,53,0.1);color:var(--beta2)">
+        <span class="rec-badge-symbol">β₂</span>
+        <span style="font-size:0.55rem">GPCR</span>
+      </div>
+      <div class="rec-info">
+        <div class="rec-name">Receptor β₂-Adrenérgico</div>
+        <div class="rec-class">GPCR — Gs (predominante) / Gi (após dessensibilização) — GENE: ADRB2</div>
+        <div class="rec-tags">
+          <span class="pill pill-up">+Crono (fraco)</span>
+          <span class="pill pill-up">+Ino (fraco)</span>
+          <span class="tag-chip" style="background:rgba(163,230,53,0.12);color:var(--beta2)">20–30% dos β cardíacos</span>
+          <span class="tag-chip" style="background:rgba(163,230,53,0.12);color:var(--beta2)">Upregulado na IC</span>
+        </div>
+      </div>
+    </div>
+    <div class="rec-body">
+      <div class="rec-col">
+        <div class="rec-col-title">Localização Cardíaca</div>
+        <ul class="clean">
+          <li><strong>Átrios e ventrículos</strong> (20–30% total)</li>
+          <li>Vasos coronários: vasodilatação</li>
+          <li>Na IC: proporção β₂ ↑ (β₁ desce mais)</li>
+          <li>Pulmão: broncodilatação (não cardíaco)</li>
+          <li>Vasos periféricos: ↓ RVP</li>
+        </ul>
+      </div>
+      <div class="rec-col">
+        <div class="rec-col-title">Diferença vs β₁ — Compartimentalização</div>
+        <ul class="clean">
+          <li><strong>β₁:</strong> sinaliza por todo o citosol via AMPc difuso → efeitos generalizados</li>
+          <li><strong>β₂:</strong> confina sinalização em <strong>cavéolas</strong> e nanodomínios de membrana (via caveolina-3)</li>
+          <li>β₂ pode acoplar Gi após fosforilação por PKA → biased signalling → efeitos cardioprotectores vs deletérios conforme contexto</li>
+          <li>Salbutamol IV em choque: ↑ FC via β₂ + β₁</li>
+        </ul>
+      </div>
+      <div class="rec-col">
+        <div class="rec-col-title">Agonistas β₂ relevantes</div>
+        <ul class="clean">
+          <li><strong>Salbutamol:</strong> curta duração, ↑FC/↑K⁺shift</li>
+          <li><strong>Terbutalina:</strong> tocolítico, ↑FC maternal</li>
+          <li><strong>Formoterol/Salmeterol:</strong> LABA — risco CV mínimo a doses inalatórias</li>
+          <li><strong>Isoproterenol:</strong> β₁=β₂, inótropo/cronótropo</li>
+        </ul>
+        <div class="callout callout-warn" style="margin-top:1rem;padding:0.7rem">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body" style="font-size:0.85rem"><strong>Taquicardia por salbutamol:</strong> β₂ activação sistémica → ↑FC, ↓K⁺ (shift intracelular), prolongamento QT — perigoso em exacerbação asmática grave.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SECÇÃO 7: α₁ ════════ -->
+<section id="alfa1" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">07 —</span>
+    <h2 class="section-title">Receptor α₁-Adrenérgico</h2>
+    <div class="section-accent" style="background:var(--alpha)"></div>
+  </div>
+
+  <div class="receptor-card fade-in">
+    <div class="rec-head">
+      <div class="rec-badge" style="background:rgba(96,165,250,0.1);color:var(--alpha)">
+        <span class="rec-badge-symbol">α₁</span>
+        <span style="font-size:0.55rem">GPCR-Gq</span>
+      </div>
+      <div class="rec-info">
+        <div class="rec-name">Receptor α₁-Adrenérgico Cardíaco</div>
+        <div class="rec-class">GPCR — ACOPLADO A Gq — Via PLC/IP3/DAG — GENES: ADRA1A, ADRA1B</div>
+        <div class="rec-tags">
+          <span class="pill pill-up">+Ino (moderado)</span>
+          <span class="tag-chip" style="background:rgba(96,165,250,0.12);color:var(--alpha)">Hipertrofia Patológica</span>
+          <span class="tag-chip" style="background:rgba(96,165,250,0.12);color:var(--alpha)">Vasoconstrição Periférica</span>
+        </div>
+      </div>
+    </div>
+    <div class="rec-body">
+      <div class="rec-col">
+        <div class="rec-col-title">Localização & Papel</div>
+        <ul class="clean">
+          <li><strong>Cardiomiócitos:</strong> α₁A e α₁B expressos (~10–15% dos α/β totais)</li>
+          <li><strong>Vasos periféricos:</strong> α₁ dominante → vasoconstrição</li>
+          <li>Papel cardíaco: inotropismo moderado, hipertrofia, anti-apoptose</li>
+        </ul>
+      </div>
+      <div class="rec-col">
+        <div class="rec-col-title">Cascata Gq → PLC → IP3/DAG</div>
+        <div class="pathway-box">
+          <div class="pathway-step"><span class="ps-num">1</span><span class="ps-text">Gαq activa <strong>Fosfolipase C β (PLCβ)</strong></span></div>
+          <div class="pathway-step"><span class="ps-num">2</span><span class="ps-text">PLCβ cliva PIP2 → <strong>IP3 + DAG</strong></span></div>
+          <div class="pathway-step"><span class="ps-num">3</span><span class="ps-text"><strong>IP3</strong> liga ao receptor IP3R do RS → liberta Ca²⁺ → inotropismo</span></div>
+          <div class="pathway-step"><span class="ps-num">4</span><span class="ps-text"><strong>DAG + Ca²⁺</strong> activam <strong>PKC</strong> → fosforila TnI (isoforma α) diferente da PKA → possível inotropismo</span></div>
+          <div class="pathway-step"><span class="ps-num">5</span><span class="ps-text">PKC + ERK → activação de MAPK → <strong>hipertrofia cardíaca patológica</strong></span></div>
+        </div>
+      </div>
+      <div class="rec-col">
+        <div class="rec-col-title">Relevância Clínica & Fármacos</div>
+        <ul class="clean">
+          <li><strong>Fenilefrina:</strong> α₁ puro → vasoconstrição → ↑ RVP → ↑ PA → bradicardia reflexa (barorreceptor)</li>
+          <li><strong>Noradrenalina:</strong> α₁ + β₁ → ↑ PA + ↑ inotropismo</li>
+          <li><strong>Prazosina/Doxazosina:</strong> bloqueio α₁ → ↓ RVP → anti-hipertensivo</li>
+          <li><strong>Carvedilol:</strong> β₁+β₂+α₁ bloqueio → vasodilata + reduce pré/pós-carga</li>
+        </ul>
+        <div class="callout callout-pearl" style="margin-top:1rem;padding:0.7rem">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body" style="font-size:0.85rem">α₁ cardíaco tem papel <strong>protector</strong> (anti-apoptótico, antiaterosclerótico) ao contrário do α₁ vascular (vasoconstrição prejudicial). Esta distinção é clinicamente importante para compreender o benefício do carvedilol vs. outros β-bloqueantes.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SECÇÃO 8: M₂ ════════ -->
+<section id="muscarinico" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">08 —</span>
+    <h2 class="section-title">Receptor Muscarínico M₂</h2>
+    <div class="section-accent" style="background:var(--muscarinic)"></div>
+  </div>
+
+  <div class="receptor-card fade-in">
+    <div class="rec-head">
+      <div class="rec-badge" style="background:rgba(232,121,249,0.1);color:var(--muscarinic)">
+        <span class="rec-badge-symbol">M₂</span>
+        <span style="font-size:0.55rem">GPCR-Gi</span>
+      </div>
+      <div class="rec-info">
+        <div class="rec-name">Receptor Muscarínico M₂</div>
+        <div class="rec-class">GPCR — ACOPLADO A Gi/Go — GENE: CHRM2 — LIGANDO: ACETILCOLINA</div>
+        <div class="rec-tags">
+          <span class="pill pill-down">−Crono</span>
+          <span class="pill pill-down">−Dromo</span>
+          <span class="pill pill-down">−Ino (fraco, atrial)</span>
+          <span class="tag-chip" style="background:rgba(232,121,249,0.12);color:var(--muscarinic)">Sistema Parassimpático</span>
+        </div>
+      </div>
+    </div>
+    <div class="rec-body">
+      <div class="rec-col">
+        <div class="rec-col-title">Localização</div>
+        <ul class="clean">
+          <li><strong>Nó SA:</strong> densidade muito alta (predominante)</li>
+          <li><strong>Nó AV:</strong> dromotropismo negativo</li>
+          <li><strong>Átrios:</strong> inotropismo negativo moderado</li>
+          <li><strong>Ventrículos:</strong> escassa inervação vagal → efeito mínimo directo</li>
+          <li>Inervação via nervo vago (X par craniano)</li>
+        </ul>
+      </div>
+      <div class="rec-col">
+        <div class="rec-col-title">Dupla Via de Sinalização Gi/Gβγ</div>
+        <div class="pathway-box">
+          <div class="pathway-step"><span class="ps-num">A</span><span class="ps-text"><strong>Via Gαi:</strong> inibe AC → ↓ AMPc → ↓ PKA → antagoniza β₁ → ↓ If, ↓ ICaL → −Crono/−Dromo</span></div>
+          <div class="pathway-step"><span class="ps-num">B</span><span class="ps-text"><strong>Via Gβγ directa:</strong> activa IKAch (GIRK1/4) → ↑ efluxo K⁺ → hiperpolarização → fase 4 mais lenta e mais negativa → −Crono</span></div>
+          <div class="pathway-step"><span class="ps-num">C</span><span class="ps-text"><strong>No nó AV:</strong> hiperpolarização + ↓ ICaL → ↑ período refractário → bloqueio AV → −Dromo (PR longo / BAVIII)</span></div>
+        </div>
+        <div class="callout callout-pearl" style="margin-top:0.8rem;padding:0.7rem">
+          <span class="callout-icon">⚡</span>
+          <div class="callout-body" style="font-size:0.85rem"><strong>Velocidade diferente:</strong> Via Gβγ→GIRK é muito mais rápida (~100ms) que via Gαi→AMPc (segundos). Por isso, a bradicardia vagal ocorre quase instantaneamente.</div>
+        </div>
+      </div>
+      <div class="rec-col">
+        <div class="rec-col-title">Modulação Farmacológica</div>
+        <ul class="clean">
+          <li><strong>Atropina:</strong> antagonista competitivo M₂ → bloqueia efeito vagal → ↑FC, ↑condução AV. Dose: 0,5mg IV (BAV agudo, bradicardia sintomática)</li>
+          <li><strong>Neostigmina/Fisostigmina:</strong> inibidores de AChE → ↑ ACh sináptica → ↑ M₂ → bradicardia (risco!)</li>
+          <li><strong>Digoxina:</strong> parte do seu efeito dromotropismo negativo é vagotónico (↑ ACh endógena)</li>
+          <li><strong>Pilocarpina, metacolina:</strong> agonistas M directo → bradicardia</li>
+          <li><strong>Organofosforados:</strong> inibem AChE → crise colinérgica → BAV, bradiarritmias</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SECÇÃO 9: ADENOSINA ════════ -->
+<section id="adenosina" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">09 —</span>
+    <h2 class="section-title">Receptor de Adenosina A₁</h2>
+    <div class="section-accent" style="background:var(--adeno)"></div>
+  </div>
+
+  <div class="receptor-card fade-in">
+    <div class="rec-head">
+      <div class="rec-badge" style="background:rgba(56,189,248,0.1);color:var(--adeno)">
+        <span class="rec-badge-symbol">A₁</span>
+        <span style="font-size:0.55rem">GPCR-Gi</span>
+      </div>
+      <div class="rec-info">
+        <div class="rec-name">Receptor de Adenosina A₁</div>
+        <div class="rec-class">GPCR — ACOPLADO A Gi/Go — GENE: ADORA1 — ENDÓGENO + EXÓGENO TERAPÊUTICO</div>
+        <div class="rec-tags">
+          <span class="pill pill-down">−Crono (profundo)</span>
+          <span class="pill pill-down">−Dromo (BAV transitório)</span>
+          <span class="tag-chip" style="background:rgba(56,189,248,0.12);color:var(--adeno)">Cardioversão TSV</span>
+          <span class="tag-chip" style="background:rgba(56,189,248,0.12);color:var(--adeno)">Pré-condicionamento</span>
+        </div>
+      </div>
+    </div>
+    <div class="rec-body">
+      <div class="rec-col">
+        <div class="rec-col-title">Fisiologia Endógena</div>
+        <ul class="clean">
+          <li>Adenosina = produto de degradação de ATP (AMP → adenosina via CD73/ecto-5'-nucleotidase)</li>
+          <li>Libertada em isquemia, hipóxia, exercício intenso</li>
+          <li>Meia-vida plasmática: <strong>~10 segundos</strong> (captada por transportadores de nucleosídeos)</li>
+          <li>Actua como "sinal de crise energética" → vasodilatação coronária + bradicardia</li>
+        </ul>
+      </div>
+      <div class="rec-col">
+        <div class="rec-col-title">Mecanismo — Idêntico a M₂ mas via A₁</div>
+        <div class="pathway-box">
+          <div class="pathway-step"><span class="ps-num">1</span><span class="ps-text">Adenosina liga A₁ → Gi/Go → <strong>Gβγ activa GIRK</strong> → ↑ IKAch → hiperpolarização nodal</span></div>
+          <div class="pathway-step"><span class="ps-num">2</span><span class="ps-text">Gαi → <strong>↓ AMPc</strong> → ↓ PKA → ↓ ICaL nodal → ↓ automatismo SA + ↑ refractário AV</span></div>
+          <div class="pathway-step"><span class="ps-num">3</span><span class="ps-text">No <strong>AV:</strong> BAVIII transitório por 5–15 segundos → interrompe re-entrada que usa o nó AV</span></div>
+          <div class="pathway-step"><span class="ps-num">4</span><span class="ps-text"><strong>Coronárias (A₂A):</strong> Gs → ↑ AMPc → vasodilatação → base do teste de stress farmacológico (adenosina/regadenosona)</span></div>
+        </div>
+      </div>
+      <div class="rec-col">
+        <div class="rec-col-title">Uso Clínico & Cuidados</div>
+        <ul class="clean">
+          <li><strong>Indicação:</strong> TSV com nó AV dependente (TRNAV, TRAV)</li>
+          <li><strong>Dose:</strong> 6 mg IV rápido → 12 mg se falhar → acesso central preferível</li>
+          <li><strong>NÃO converte:</strong> FA, flutter, TV (não usam o nó AV)</li>
+          <li><strong>Serve para diagnóstico</strong> de flutter (desmascarar ondas F)</li>
+          <li><strong>Antagonistas endógenos:</strong> Cafeína, teofilina → inibem A₁/A₂ → necessário dose maior</li>
+          <li><strong>Potenciado por:</strong> Dipiridamol (inibe recaptação de adenosina)</li>
+          <li><strong>Cuidado:</strong> BAV severo pré-existente, síndrome de WPW (pode acelerar condução acessória)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SECÇÃO 10: OUTROS RECEPTORES ════════ -->
+<section id="outros" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">10 —</span>
+    <h2 class="section-title">Outros Receptores Cardíacos</h2>
+    <div class="section-accent" style="background:var(--accent4)"></div>
+  </div>
+
+  <div class="compare-grid">
+
+    <div class="cmp-card fade-in">
+      <div class="cmp-head" style="color:var(--accent4)">RECEPTORES DOPAMINÉRGICOS (D₁/D₂)</div>
+      <div class="cmp-row"><span class="cmp-key">Gene</span><span class="cmp-val">DRD1 / DRD2</span></div>
+      <div class="cmp-row"><span class="cmp-key">Acoplamento</span><span class="cmp-val">D₁→Gs / D₂→Gi</span></div>
+      <div class="cmp-row"><span class="cmp-key">Localização</span><span class="cmp-val">Vasos renais/esplâncnicos D₁; Pré-sináptico D₂</span></div>
+      <div class="cmp-row"><span class="cmp-key">Fármaco</span><span class="cmp-val">Dopamina (dose-dependente)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Doses</span><span class="cmp-val">1–3 μg/kg/min: D₁ renal<br>3–10: β₁ (inótropo)<br>>10: α₁ (vaso)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Efeito cardíaco</span><span class="cmp-val">Dose intermédia: +inótropo/+crono via β₁</span></div>
+    </div>
+
+    <div class="cmp-card fade-in">
+      <div class="cmp-head" style="color:var(--accent5)">RECEPTORES ANGIOTENSINA AT₁</div>
+      <div class="cmp-row"><span class="cmp-key">Gene</span><span class="cmp-val">AGTR1</span></div>
+      <div class="cmp-row"><span class="cmp-key">Acoplamento</span><span class="cmp-val">Gq + β-arrestina</span></div>
+      <div class="cmp-row"><span class="cmp-key">Localização</span><span class="cmp-val">Cardiomiócitos, fibroblastos, vasos</span></div>
+      <div class="cmp-row"><span class="cmp-key">Efeito cardíaco</span><span class="cmp-val">Hipertrofia, fibrose, +batmo, ↑aldosterona</span></div>
+      <div class="cmp-row"><span class="cmp-key">Bloqueio</span><span class="cmp-val">IECA (captopril, enalapril)<br>BRA (losartan, valsartan)<br>ARNI (sacubitril+valsartan)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Evidência IC</span><span class="cmp-val">IECA/BRA: ↓ mortalidade classe I<br>ARNI superior ao IECA (PARADIGM-HF)</span></div>
+    </div>
+
+    <div class="cmp-card fade-in">
+      <div class="cmp-head" style="color:var(--ok)">RECEPTORES PEPTÍDEO NATRIURÉTICO (NPR-A)</div>
+      <div class="cmp-row"><span class="cmp-key">Ligandos</span><span class="cmp-val">ANP, BNP</span></div>
+      <div class="cmp-row"><span class="cmp-key">Tipo</span><span class="cmp-val">Guanilato ciclase transmembrana</span></div>
+      <div class="cmp-row"><span class="cmp-key">Via</span><span class="cmp-val">↑ GMPc → PKG → vasodilatação + natriurese</span></div>
+      <div class="cmp-row"><span class="cmp-key">Efeito cardíaco</span><span class="cmp-val">↓ pré-carga, ↓ pós-carga, lusitrópico via PKG→Titina</span></div>
+      <div class="cmp-row"><span class="cmp-key">Fármaco</span><span class="cmp-val">Nesiritida (BNP recombinante)<br>Sacubitril (inibe neprilisina → ↑BNP)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Antagonizado por</span><span class="cmp-val">PDE5 (sildenafil potencia GMPc)<br>Endotelina-1 (opõe-se)</span></div>
+    </div>
+
+    <div class="cmp-card fade-in">
+      <div class="cmp-head" style="color:var(--danger)">RECEPTORES ENDOTELINA (ET-A / ET-B)</div>
+      <div class="cmp-row"><span class="cmp-key">Ligando</span><span class="cmp-val">Endotelina-1 (ET-1)</span></div>
+      <div class="cmp-row"><span class="cmp-key">ET-A</span><span class="cmp-val">Gq → vasoconstrição, hipertrofia cardíaca</span></div>
+      <div class="cmp-row"><span class="cmp-key">ET-B</span><span class="cmp-val">No endotélio: ↑ NO, ↑ prostaciclina → vasodilatação</span></div>
+      <div class="cmp-row"><span class="cmp-key">Fármacos</span><span class="cmp-val">Bosentan (ET-A/B dual)<br>Ambrisentan (ET-A select.) — HTP</span></div>
+      <div class="cmp-row"><span class="cmp-key">Relevância IC</span><span class="cmp-val">ET-1 elevado na IC → vasoconstrição + hipertrofia → mau prognóstico</span></div>
+    </div>
+
+    <div class="cmp-card fade-in">
+      <div class="cmp-head" style="color:#67e8f9">RECEPTORES GLUCOCORTICÓIDE (GR)</div>
+      <div class="cmp-row"><span class="cmp-key">Tipo</span><span class="cmp-val">Nuclear (NR3C1)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Ligando</span><span class="cmp-val">Cortisol, Dexametasona</span></div>
+      <div class="cmp-row"><span class="cmp-key">Efeito cardíaco</span><span class="cmp-val">↑ sensibilidade a catecolaminas, +inótropo/crono em doses altas</span></div>
+      <div class="cmp-row"><span class="cmp-key">Aldosterona</span><span class="cmp-val">Via MR → ↑ fibrose miocárdica; bloqueio por espironolactona/eplerenona → ↓ mortalidade IC</span></div>
+    </div>
+
+    <div class="cmp-card fade-in">
+      <div class="cmp-head" style="color:#fda4af">RECEPTORES HISTAMINA (H₁/H₂)</div>
+      <div class="cmp-row"><span class="cmp-key">H₁</span><span class="cmp-val">Gq → vasodilatação periférica, hipotensão anafiláctica</span></div>
+      <div class="cmp-row"><span class="cmp-key">H₂</span><span class="cmp-val">Gs → ↑ AMPc → +inótropo/+crono (análogo a β₁)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Relevância</span><span class="cmp-val">Anafilaxia: H₁+H₂ → colapso CV → adrenalina reverte ambos</span></div>
+      <div class="cmp-row"><span class="cmp-key">H₂ bloqueante</span><span class="cmp-val">Ranitidina → bloqueio H₂ cardíaco → ↓FC leve (raramente clinicamente significativo)</span></div>
+    </div>
+
+    <div class="cmp-card fade-in">
+      <div class="cmp-head" style="color:#86efac">RECEPTORES TIRÓIDE (TR-α₁)</div>
+      <div class="cmp-row"><span class="cmp-key">Tipo</span><span class="cmp-val">Nuclear (THRA1)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Ligando</span><span class="cmp-val">T₃ (triiodotironina)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Transcrição</span><span class="cmp-val">↑ β₁, HCN4, SERCA2a, MHC-α<br>↓ MHC-β, Fosfolamban</span></div>
+      <div class="cmp-row"><span class="cmp-key">Efeito clínico</span><span class="cmp-val">Hipertiróideo: ↑↑FC, FA, IC de alto débito<br>Hipotiróideo: bradicardia, IC de baixo débito</span></div>
+      <div class="cmp-row"><span class="cmp-key">Amiodarona</span><span class="cmp-val">Inibe conversão T4→T3 + bloqueia TR → hipotiróidismo/hipertiróidismo</span></div>
+    </div>
+
+    <div class="cmp-card fade-in">
+      <div class="cmp-head" style="color:#c4b5fd">RECEPTORES OPIÓIDE (μ, κ)</div>
+      <div class="cmp-row"><span class="cmp-key">Acoplamento</span><span class="cmp-val">Gi → ↓ AMPc, activa GIRK</span></div>
+      <div class="cmp-row"><span class="cmp-key">Efeito cardíaco</span><span class="cmp-val">Bradicardia (similar M₂), vasodilatação venosa</span></div>
+      <div class="cmp-row"><span class="cmp-key">Morfina</span><span class="cmp-val">Bradicardia, hipotensão, ↓ pré-carga → útil em EAP; RETIRADO de guidelines STEMI (↓ absorção antiagregantes)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Pré-condicionamento</span><span class="cmp-val">Ligação κ → KATP → protecção isquémica</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════ SECÇÃO 11: TABELA DE FÁRMACOS ════════ -->
+<section id="farmacos" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">11 —</span>
+    <h2 class="section-title">Farmacologia Cardiovascular — Tabela Mestre</h2>
+    <div class="section-accent" style="background:var(--accent2)"></div>
+  </div>
+
+  <div class="drug-table-wrap fade-in">
+    <table>
+      <thead>
+        <tr>
+          <th>Fármaco</th>
+          <th>Classe</th>
+          <th>Receptor/Alvo</th>
+          <th>Crono</th>
+          <th>Ino</th>
+          <th>Dromo</th>
+          <th>Mecanismo Chave</th>
+          <th>Indicações</th>
+          <th>EA Importantes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Adrenalina</strong></td>
+          <td>Catecolamina</td>
+          <td>β₁=β₂=α₁</td>
+          <td><span class="pill pill-up">↑↑</span></td>
+          <td><span class="pill pill-up">↑↑</span></td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td>↑ AMPc (β₁) + vasoconstricção (α₁)</td>
+          <td>Paragem cardíaca, anafilaxia, BAVIII</td>
+          <td>HTA, arritmias, isquemia</td>
+        </tr>
+        <tr>
+          <td><strong>Noradrenalina</strong></td>
+          <td>Catecolamina</td>
+          <td>β₁>α₁≫β₂</td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td>β₁+α₁ → ↑ PA + ↑ RVP → bradicardia reflexa</td>
+          <td>Choque distributivo (séptico)</td>
+          <td>Isquemia digital, HTA</td>
+        </tr>
+        <tr>
+          <td><strong>Dobutamina</strong></td>
+          <td>Catecolamina sintética</td>
+          <td>β₁≫β₂, fraco α₁</td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td><span class="pill pill-up">↑↑</span></td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td>↑ AMPc → ↑ Ca²⁺ → ↑ contratilidade</td>
+          <td>IC aguda descompensada, choque cardiogénico</td>
+          <td>Taquicardia, FA, arritmias ventriculares</td>
+        </tr>
+        <tr>
+          <td><strong>Dopamina</strong></td>
+          <td>Catecolamina</td>
+          <td>D₁/D₂, β₁, α₁ (dose-dep.)</td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td>Ver doses: D→β→α conforme dose</td>
+          <td>Choque, bradicardia refractária</td>
+          <td>Taquicardia, necrose tecidular extravasamento</td>
+        </tr>
+        <tr>
+          <td><strong>Milrinona</strong></td>
+          <td>Inibidor PDE3</td>
+          <td>PDE3 (não receptor)</td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td><span class="pill pill-up">↑↑</span></td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td>↓ Degradação AMPc → ↑ PKA (independente de β)</td>
+          <td>IC aguda, pós-operatório cardíaco</td>
+          <td>Hipotensão, arritmias (pró-arrítmico!)</td>
+        </tr>
+        <tr>
+          <td><strong>Levosimendan</strong></td>
+          <td>Sensibilizador Ca²⁺</td>
+          <td>TnC + KATP</td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td><span class="pill pill-up">↑↑</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td>Liga TnC-Ca²⁺ → ↑ interacção actina-miosina SEM ↑[Ca²⁺]; KATP → vasodilatação</td>
+          <td>IC aguda descompensada grave</td>
+          <td>Hipotensão, ↑FC, cefaleia</td>
+        </tr>
+        <tr>
+          <td><strong>Digoxina</strong></td>
+          <td>Glicosídeo cardíaco</td>
+          <td>Na/K-ATPase + M₂</td>
+          <td><span class="pill pill-down">↓</span></td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td><span class="pill pill-down">↓</span></td>
+          <td>Inibe Na/K-ATPase → ↑[Na⁺]i → NCX reverso → ↑Ca²⁺; vagotónico (M₂)</td>
+          <td>FA com resposta ventricular rápida, IC-FEr</td>
+          <td>Toxicidade: hipercaliemia, BAV, TV bidireccional, visão amarela</td>
+        </tr>
+        <tr>
+          <td><strong>Ivabradina</strong></td>
+          <td>Bloqueante If</td>
+          <td>HCN4 (If)</td>
+          <td><span class="pill pill-down">↓↓</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td>Bloqueia canal HCN4 no nó SA pelo interior → ↓ fase 4 → pura bradicardia SEM efeito inotrópico</td>
+          <td>IC-FEr (FE<35%, RS, FC>70), angina</td>
+          <td>Bradicardia, fosfenos (visão luminosa), FA</td>
+        </tr>
+        <tr>
+          <td><strong>Atropina</strong></td>
+          <td>Anticolinérgico</td>
+          <td>M₁, M₂, M₃</td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td><span class="pill pill-up">↑ (leve)</span></td>
+          <td><span class="pill pill-up">↑</span></td>
+          <td>Bloqueia M₂ nodal → desinibe GIRK → ↑FC; ↓ período refractário AV</td>
+          <td>Bradicardia sintomática, BAV agudo, intoxicação organofosforada</td>
+          <td>Taquicardia, retenção urinária, glaucoma, delirium (idosos)</td>
+        </tr>
+        <tr>
+          <td><strong>Adenosina</strong></td>
+          <td>Nucleosídeo</td>
+          <td>A₁, A₂A</td>
+          <td><span class="pill pill-down">↓↓↓</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-down">↓↓↓ (transient.)</span></td>
+          <td>A₁→Gi/GIRK → BAV transitório (5–15s); A₂A→Gs → vasodilatação coronária</td>
+          <td>Cardioversão TSV (TRNAV/TRAV), diagnóstico flutter, stress test</td>
+          <td>Flush, dispneia, broncoespasmo (CI no asma), dor torácica, BAV transitório (intencional)</td>
+        </tr>
+        <tr>
+          <td><strong>Verapamil</strong></td>
+          <td>BCC não-DHP</td>
+          <td>Cav1.2 (L-type)</td>
+          <td><span class="pill pill-down">↓↓</span></td>
+          <td><span class="pill pill-down">↓↓</span></td>
+          <td><span class="pill pill-down">↓↓</span></td>
+          <td>Bloqueia Cav1.2 no estado aberto/inactivado → ↓ Ca²⁺ nodal e ventricular; uso-dependente</td>
+          <td>FA/Flutter controlo de frequência, TSV, angina vasoespástica</td>
+          <td>Hipotensão, BAV, constipação; CI em IC-FEr grave, WPW</td>
+        </tr>
+        <tr>
+          <td><strong>Metoprolol</strong></td>
+          <td>β-bloqueante</td>
+          <td>β₁ (selectivo)</td>
+          <td><span class="pill pill-down">↓↓</span></td>
+          <td><span class="pill pill-down">↓</span></td>
+          <td><span class="pill pill-down">↓</span></td>
+          <td>Bloqueio competitivo β₁ → ↓ AMPc → ↓ PKA → −Crono/−Ino/−Dromo; remodeling inverso IC</td>
+          <td>IC-FEr, HTA, FA, pós-IAM, angina</td>
+          <td>Bradicardia, broncoespasmo (β₂ residual), mascarar hipoglicemia</td>
+        </tr>
+        <tr>
+          <td><strong>Amiodarona</strong></td>
+          <td>Classe III (+ I,II,IV)</td>
+          <td>IKr, IKs, Nav1.5, β-bloqueia, ICaL</td>
+          <td><span class="pill pill-down">↓</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-down">↓</span></td>
+          <td>Bloqueia IKr/IKs (↑QT), Nav1.5 (↑PR, alarga QRS), β-bloqueia, bloqueia Cav1.2. T1/2 = 40–55 dias</td>
+          <td>FA, flutter, TV/FV resistentes, profilaxia TSV</td>
+          <td>Tiróide (hipo/hiper), pulmão (toxicidade), fotossensibilidade, corneal deposits, hepatotox</td>
+        </tr>
+        <tr>
+          <td><strong>Lidocaína</strong></td>
+          <td>Classe Ib</td>
+          <td>Nav1.5 (inactivado)</td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-down">↓ (ventrículo)</span></td>
+          <td>Liga Nav1.5 preferencialmente no estado inactivado e em tecido isquémico (pH ↓) → suprime arritmias ventriculares</td>
+          <td>TV/FV isquémica refractária, arritmias pós-IAM</td>
+          <td>Neurotoxicidade (convulsões, confusão), CI no BAV</td>
+        </tr>
+        <tr>
+          <td><strong>Propranolol</strong></td>
+          <td>β-bloqueante não-select.</td>
+          <td>β₁=β₂</td>
+          <td><span class="pill pill-down">↓↓</span></td>
+          <td><span class="pill pill-down">↓↓</span></td>
+          <td><span class="pill pill-down">↓↓</span></td>
+          <td>Bloqueia β₁ + β₂ → ↑ resistência aérea (CI asmático), ↓ renina, anti-arrítmico classe II</td>
+          <td>HTA, angina, TSV, tirotoxicose, tremor essencial, profilaxia enxaqueca</td>
+          <td>Broncoespasmo, masca hipoglicemia, frigidez periférica, IC aguda</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════ SECÇÃO 12: PÉROLAS & RECALL ════════ -->
+<section id="pearls" class="fade-in">
+  <div class="section-header">
+    <span class="section-num">12 —</span>
+    <h2 class="section-title">Pérolas Clínicas & Active Recall</h2>
+    <div class="section-accent" style="background:var(--accent3)"></div>
+  </div>
+
+  <div class="callout callout-ok">
+    <span class="callout-icon">🏆</span>
+    <div class="callout-body"><strong>Mnemónico dos Tropismos — "C.I.D.L.B.T":</strong> <strong>C</strong>ronotropismo · <strong>I</strong>notropismo · <strong>D</strong>romotropismo · <strong>L</strong>usitropismo · <strong>B</strong>atmotropismo · <strong>T</strong>onotropismo → "Cada Idiota Deve Lembrar Bem Tudo"</div>
+  </div>
+
+  <div class="pearl-grid">
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Por que a adenosina tem t½ de 10 segundos?</div>
+      <div class="pearl-a">Adenosina é captada por transportadores equilibrativos de nucleosídeos (ENT1/2) na superfície eritrocitária e endotelial, e metabolizada por adenosina desaminase → inosina. Por isso, deve ser administrada em bolus IV rápido com soro flush — qualquer atraso inactiva o fármaco antes de chegar ao coração.</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Por que a digoxina causa visão amarela (xantopsia)?</div>
+      <div class="pearl-a">A digoxina inibe Na/K-ATPase nos fotorreceptores da retina, alterando o processamento de sinal. Os cones que processam comprimentos de onda amarelos/verdes são afectados de forma diferencial. Clássico sinal de toxicidade digitálica junto ao BAV e TV bidirecional.</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Por que o verapamil é proibido no WPW com FA?</div>
+      <div class="pearl-a">No WPW, o nó AV actua como "protetor". Verapamil bloqueia o nó AV → impulsos da FA são forçados pela via acessória (sem período refractário dependente de Ca²⁺) → condução 1:1 → FV. Usar procainamida ou CVE. O mesmo raciocínio aplica-se à digoxina e adenosina em WPW com FA.</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Por que a milrinona é "inodilator" e não apenas inótropo?</div>
+      <div class="pearl-a">Inibe PDE3 tanto no miocárdio (↑ AMPc → +inótropo) quanto no músculo liso vascular (↑ AMPc → vasodilatação). Resultado: ↑ contratilidade + ↓ pós-carga + ↓ pré-carga → "inodilator". Útil na IC aguda quando há resistência periférica elevada. Desvantagem: hipotensão e pró-arritmia.</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Por que o levosimendan não aumenta o consumo de O₂ como a dobutamina?</div>
+      <div class="pearl-a">Dobutamina ↑ Ca²⁺ intracelular → ↑ trabalho cardíaco → ↑ consumo O₂. Levosimendan sensibiliza a troponina C ao Ca²⁺ existente, sem aumentar [Ca²⁺]i → mesma força com menos "consumo energético" por mole de Ca²⁺. Além disso, KATP no miocárdio pode ter efeito cardioprotector.</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Qual o mecanismo pelo qual a cafeína aumenta a FC?</div>
+      <div class="pearl-a">Cafeína é um antagonista não-selectivo dos receptores de adenosina (A₁ e A₂A). Bloqueia A₁ nodal → desinibe o efeito bradicardizante endógeno da adenosina → ↑FC e ↑condução AV. Também inibe PDE → ↑ AMPc → efeitos simpatomiméticos indirectos.</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Por que a hipocaliemia favorece arritmias com digoxina?</div>
+      <div class="pearl-a">K⁺ compete com digoxina no sítio extracelular da Na/K-ATPase. Hipocaliemia → menos competição → digoxina liga-se mais eficazmente → toxicidade agravada mesmo com nível sérico "normal". Na toxicidade: reposição K⁺ + anticorpos anti-digoxina (Fab).</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Por que a atropina pode piorar um BAV de Mobitz II/BAVIII?</div>
+      <div class="pearl-a">Em BAV de alto grau infra-hissiano (Mobitz II, BAVIII), o marcapasso de escape é ventricular/purkinje. Atropina acelera o nó SA mas o impulso ainda não passa para o ventrículo. Pior: a ↑FC nodal pode aumentar a razão de bloqueio (ex: 2:1 → 3:1). Preferir adrenalina ou marcapasso transcutâneo.</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Qual a diferença fisiopatológica entre inotropismo positivo da dobutamina vs digoxina?</div>
+      <div class="pearl-a"><strong>Dobutamina:</strong> β₁ → ↑ AMPc → PKA → ↑ Cav1.2 (↑ entrada Ca²⁺) + fosforila RyR2 (↑ CICR) + PLB (↑ SERCA) → mais Ca²⁺ e ciclo mais rápido. Consome O₂. <strong>Digoxina:</strong> inibe Na/K-ATPase → ↑ [Na⁺]i → NCX modo reverso → ↑ [Ca²⁺]i. Não usa via AMPc/PKA. Não acelera frequência. Útil na IC crónica com FA.</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Board Question: Paciente com BAV de 1º grau e IC-FEr. Qual β-bloqueante preferir?</div>
+      <div class="pearl-a">Carvedilol, bisoprolol ou metoprolol succinato são os β-bloqueantes com evidência de mortalidade na IC-FEr (COPERNICUS, CIBIS-II, MERIT-HF). O BAV de 1º grau isolado NÃO contraindica. Contraindica: BAV de 2º/3º grau SEM marcapasso, asma brônquica activa (considerar bisoprolol/metoprolol), FC<60.</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ O que é "biased agonism" no contexto dos β-bloqueantes?</div>
+      <div class="pearl-a">Alguns β-bloqueantes (carvedilol) são agonistas parciais da β-arrestina (sem activar Gs). β-arrestina pode activar vias cardioprotectoras (ERK, Akt) independentemente do AMPc. Isto pode explicar parte do benefício do carvedilol além do simples bloqueio adrenérgico — "bloqueante com ganho funcional".</div>
+    </div>
+
+    <div class="pearl-card fade-in">
+      <div class="pearl-q">❓ Por que a ivabradina é contra-indicada na FA?</div>
+      <div class="pearl-a">O canal HCN4 (alvo da ivabradina) só está presente e relevante no nó SA. Na FA, o nó SA não comanda o ritmo — são múltiplos focos atriais. Ivabradina não reduz a resposta ventricular na FA (quem controla é o nó AV → usar β-bloqueante/diltiazem). Além disso, risco de bradicardia paradoxal.</div>
+    </div>
+
+  </div>
+
+  <hr class="divider" style="margin-top:3rem">
+
+  <!-- Tabela Resumo Final -->
+  <h3 style="font-family:'Crimson Pro',serif;font-size:1.6rem;font-weight:300;color:#fff;margin:2rem 0 1.5rem">Tabela-Resumo: Receptor × Tropismos × Via</h3>
+
+  <div class="drug-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Receptor</th>
+          <th>Localização Principal</th>
+          <th>Acoplamento</th>
+          <th>2º Mensageiro</th>
+          <th>Crono</th>
+          <th>Ino</th>
+          <th>Dromo</th>
+          <th>Lusitro</th>
+          <th>Batmo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--beta1)">β₁</strong></td>
+          <td>SA, AV, Ventrículo</td>
+          <td>Gs</td>
+          <td>↑↑ AMPc → PKA</td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-up">++</span></td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-up">+</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--beta2)">β₂</strong></td>
+          <td>Átrios, Vascular</td>
+          <td>Gs(→Gi)</td>
+          <td>↑ AMPc (compartimentado)</td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--alpha)">α₁</strong></td>
+          <td>Ventrículo (minor), Vasos</td>
+          <td>Gq</td>
+          <td>↑ IP3/DAG → PKC</td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--muscarinic)">M₂</strong></td>
+          <td>SA, AV, Átrios</td>
+          <td>Gi + Gβγ</td>
+          <td>↓ AMPc + ↑ IKAch</td>
+          <td><span class="pill pill-down">−</span></td>
+          <td><span class="pill pill-down">−</span></td>
+          <td><span class="pill pill-down">−−</span></td>
+          <td><span class="pill pill-down">−</span></td>
+          <td><span class="pill pill-down">−</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--adeno)">A₁</strong></td>
+          <td>SA, AV</td>
+          <td>Gi</td>
+          <td>↓ AMPc + ↑ IKAch</td>
+          <td><span class="pill pill-down">−−</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-down">−−</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--accent5)">AT₁</strong></td>
+          <td>Cardiomiócitos, Fibroblastos</td>
+          <td>Gq</td>
+          <td>IP3/DAG → PKC + MAPK</td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-up">+</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:#67e8f9">TR-α₁</strong></td>
+          <td>Cardiomiócitos (nuclear)</td>
+          <td>Nuclear</td>
+          <td>Transcrição: β₁↑, SERCA↑, HCN4↑</td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--ok)">NPR-A</strong></td>
+          <td>Cardiomiócitos, Vasos</td>
+          <td>GC-A</td>
+          <td>↑ GMPc → PKG</td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+          <td><span class="pill pill-up">+</span></td>
+          <td><span class="pill pill-neutral">=</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Fórmula de Frank-Starling -->
+  <h3 style="font-family:'Crimson Pro',serif;font-size:1.6rem;font-weight:300;color:#fff;margin:3rem 0 1rem">Integração com a Lei de Frank-Starling</h3>
+  <div class="callout callout-pearl">
+    <span class="callout-icon">📐</span>
+    <div class="callout-body">
+      <strong>Frank-Starling:</strong> Força de contracção ∝ comprimento inicial da sarcómero (pré-carga). <br>
+      <strong>Inotropismo modifica a CURVA</strong> — desloca a relação débito/pré-carga para cima (inótropo +) ou para baixo (inótropo −), independentemente da pré-carga. <br>
+      <div class="formula">Débito Cardíaco = Volume Sistólico × FC = (Pré-carga × Contratilidade) / Pós-carga × FC</div>
+      Cada receptor e cada fármaco age sobre um ou mais destes determinantes. O domínio real da farmacologia cardiovascular está em saber <em>qual variável</em> cada agente modifica e em <em>que contexto clínico</em> isso é benéfico ou perigoso.
+    </div>
+  </div>
+
+</section>
+
+</div><!-- /page -->
+
+<a href="#" id="btt">↑ TOPO</a>
+
+<script>
+  // Fade-in on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Smooth nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#'+current ? 'var(--accent1)' : '';
+      a.style.borderBottomColor = a.getAttribute('href') === '#'+current ? 'var(--accent1)' : 'transparent';
+    });
+  });
+</script>
+</body>
+</html>
