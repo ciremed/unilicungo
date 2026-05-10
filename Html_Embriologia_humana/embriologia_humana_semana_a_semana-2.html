@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Embriologia Humana — Da Fecundação ao Nascimento</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d14;
+    --bg2: #0f1420;
+    --bg3: #141926;
+    --surface: #1a2035;
+    --surface2: #1f273d;
+    --border: #2a3555;
+    --accent: #c9a84c;
+    --accent2: #e8c97a;
+    --accent3: #f0d99a;
+    --red: #e05c5c;
+    --green: #5ce0a0;
+    --blue: #5c9ee0;
+    --purple: #a07cda;
+    --teal: #5cd0e0;
+    --text: #dce4f0;
+    --text2: #a8b8d0;
+    --text3: #6a7d99;
+    --gold: #c9a84c;
+    --radius: 10px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  .hero {
+    background: linear-gradient(135deg, #080b12 0%, #0d1525 40%, #0a1020 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text2);
+    max-width: 700px;
+    margin: 0 auto 40px;
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  /* ─── NAVIGATION ─── */
+  .toc-container {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .toc-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .toc-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .toc-link {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .toc-link:hover {
+    background: rgba(201,168,76,0.15);
+    border-color: var(--accent);
+    color: var(--accent2);
+  }
+
+  /* ─── MAIN LAYOUT ─── */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  /* ─── TRIMESTER DIVIDER ─── */
+  .trimester-header {
+    margin: 60px 0 40px;
+    padding: 28px 36px;
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--accent);
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .trimester-header::before {
+    content: attr(data-num);
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.07);
+    line-height: 1;
+    user-select: none;
+  }
+
+  .trimester-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .trimester-header p {
+    color: var(--text2);
+    font-size: 0.95rem;
+    font-style: italic;
+  }
+
+  /* ─── WEEK CARD ─── */
+  .week-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 40px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: border-color 0.3s;
+  }
+
+  .week-card:hover { border-color: rgba(201,168,76,0.4); }
+
+  .week-header {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+    padding: 22px 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .week-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    min-width: 60px;
+  }
+
+  .week-title-block { flex: 1; }
+
+  .week-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .week-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  .week-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .badge-embryo { color: var(--purple); border-color: var(--purple); background: rgba(160,124,218,0.1); }
+  .badge-fetal  { color: var(--teal);   border-color: var(--teal);   background: rgba(92,208,224,0.1); }
+  .badge-late   { color: var(--green);  border-color: var(--green);  background: rgba(92,224,160,0.1); }
+
+  .week-body {
+    padding: 30px 36px;
+  }
+
+  /* ─── SECTION WITHIN WEEK ─── */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--accent2);
+    margin: 28px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .section-title:first-child { margin-top: 0; }
+
+  p { margin-bottom: 14px; color: var(--text); }
+
+  /* ─── HIGHLIGHT BOXES ─── */
+  .box {
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 18px 0;
+    border-left: 4px solid;
+    font-size: 0.95rem;
+  }
+
+  .box-gold   { background: rgba(201,168,76,0.08);  border-color: var(--accent);  }
+  .box-red    { background: rgba(224,92,92,0.08);   border-color: var(--red);     }
+  .box-blue   { background: rgba(92,158,224,0.08);  border-color: var(--blue);    }
+  .box-green  { background: rgba(92,224,160,0.08);  border-color: var(--green);   }
+  .box-purple { background: rgba(160,124,218,0.08); border-color: var(--purple);  }
+  .box-teal   { background: rgba(92,208,224,0.08);  border-color: var(--teal);    }
+
+  .box-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.8;
+  }
+
+  .box-gold   .box-title { color: var(--accent2); }
+  .box-red    .box-title { color: var(--red); }
+  .box-blue   .box-title { color: var(--blue); }
+  .box-green  .box-title { color: var(--green); }
+  .box-purple .box-title { color: var(--purple); }
+  .box-teal   .box-title { color: var(--teal); }
+
+  /* ─── LISTS ─── */
+  ul, ol {
+    padding-left: 22px;
+    margin: 10px 0 16px;
+  }
+
+  li {
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  li::marker { color: var(--accent); }
+
+  /* ─── TERM / ETYMOLOGY ─── */
+  .etym {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--accent3);
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 2px 0;
+  }
+
+  abbr-block {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 0.9rem;
+  }
+
+  abbr-block dt { color: var(--accent2); font-weight: 600; }
+  abbr-block dd { color: var(--text2); margin-left: 14px; margin-bottom: 6px; }
+
+  /* ─── CLINICAL PEARLS ─── */
+  .clinical {
+    background: linear-gradient(135deg, rgba(92,158,224,0.06) 0%, rgba(92,208,224,0.06) 100%);
+    border: 1px solid rgba(92,158,224,0.25);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    position: relative;
+  }
+
+  .clinical::before {
+    content: '🩺 PÉROLA CLÍNICA';
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--blue);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  /* ─── FORMULA ─── */
+  .formula-block {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 24px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--accent3);
+    overflow-x: auto;
+  }
+
+  /* ─── SOURCE LINK ─── */
+  a.src {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    border-bottom: 1px dashed rgba(201,168,76,0.4);
+    transition: color 0.2s;
+  }
+
+  a.src:hover { color: var(--accent3); border-bottom-style: solid; }
+
+  /* ─── SIZE RULER ─── */
+  .size-ruler {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin: 14px 0;
+  }
+
+  .size-emoji { font-size: 2rem; }
+
+  .size-data { flex: 1; }
+  .size-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; }
+  .size-value { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--accent); }
+
+  /* ─── TABLE ─── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.9rem;
+  }
+
+  th {
+    background: var(--surface);
+    color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ─── HIGHLIGHT TERM ─── */
+  .ht { color: var(--accent2); font-weight: 600; }
+  .hb { color: var(--blue); }
+  .hg { color: var(--green); }
+  .hr { color: var(--red); }
+  .hp { color: var(--purple); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+
+  footer strong { color: var(--accent); font-style: normal; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .main { padding: 30px 18px; }
+    .hero { padding: 50px 20px 40px; }
+    .toc-container { padding: 20px 18px; position: static; }
+    .week-body { padding: 20px 18px; }
+    .week-header { padding: 18px 18px; }
+    .hero-stats { gap: 24px; }
+  }
+
+  /* ─── SCROLL INDICATOR ─── */
+  .scroll-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(201,168,76,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    z-index: 999;
+  }
+  .scroll-top:hover { transform: scale(1.1); }
+
+  /* ─── PRINT ─── */
+  @media print {
+    .toc-container { position: static; }
+    .scroll-top { display: none; }
+    body { background: #fff; color: #000; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ HERO ════════════════════ -->
+<header class="hero">
+  <div class="hero-badge">Medicina Interna · Neonatologia · Obstetrícia · Intensivismo</div>
+  <h1>Embriologia Humana<br><span>Da Fecundação ao Nascimento</span></h1>
+  <p class="hero-sub">Guia semana a semana — Molecular, Histológico, Anatômico e Fisiológico — com fundamentos para a prática clínica</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">38</span><span class="stat-label">Semanas</span></div>
+    <div class="stat"><span class="stat-num">3</span><span class="stat-label">Trimestres</span></div>
+    <div class="stat"><span class="stat-num">37×10¹²</span><span class="stat-label">Células ao nascer</span></div>
+    <div class="stat"><span class="stat-num">~270</span><span class="stat-label">Dias gestacionais</span></div>
+  </div>
+</header>
+
+<!-- ════════════════════ TOC ════════════════════ -->
+<nav class="toc-container">
+  <div class="toc-title">Navegação Rápida por Semana</div>
+  <div class="toc-grid">
+    <a class="toc-link" href="#s1">S1</a><a class="toc-link" href="#s2">S2</a><a class="toc-link" href="#s3">S3</a><a class="toc-link" href="#s4">S4</a>
+    <a class="toc-link" href="#s5">S5</a><a class="toc-link" href="#s6">S6</a><a class="toc-link" href="#s7">S7</a><a class="toc-link" href="#s8">S8</a>
+    <a class="toc-link" href="#s9">S9</a><a class="toc-link" href="#s10">S10</a><a class="toc-link" href="#s11">S11</a><a class="toc-link" href="#s12">S12</a>
+    <a class="toc-link" href="#s13">S13</a><a class="toc-link" href="#s14">S14</a><a class="toc-link" href="#s15">S15</a><a class="toc-link" href="#s16">S16</a>
+    <a class="toc-link" href="#s17">S17</a><a class="toc-link" href="#s18">S18</a><a class="toc-link" href="#s19">S19</a><a class="toc-link" href="#s20">S20</a>
+    <a class="toc-link" href="#s21">S21</a><a class="toc-link" href="#s22">S22</a><a class="toc-link" href="#s23">S23</a><a class="toc-link" href="#s24">S24</a>
+    <a class="toc-link" href="#s25">S25</a><a class="toc-link" href="#s26">S26</a><a class="toc-link" href="#s27">S27</a><a class="toc-link" href="#s28">S28</a>
+    <a class="toc-link" href="#s29">S29</a><a class="toc-link" href="#s30">S30</a><a class="toc-link" href="#s31">S31</a><a class="toc-link" href="#s32">S32</a>
+    <a class="toc-link" href="#s33">S33</a><a class="toc-link" href="#s34">S34</a><a class="toc-link" href="#s35">S35</a><a class="toc-link" href="#s36">S36</a>
+    <a class="toc-link" href="#s37">S37</a><a class="toc-link" href="#s38">S38</a>
+  </div>
+</nav>
+
+<!-- ════════════════════ MAIN CONTENT ════════════════════ -->
+<main class="main">
+
+<!-- ──────────── INTRODUÇÃO ──────────── -->
+<div class="box box-gold">
+  <div class="box-title">Nota sobre terminologia e datação</div>
+  <p>Em embriologia, as semanas são contadas a partir da <strong>fecundação</strong> (semanas pós-concepção = <span class="etym">PCW — Post-Conceptional Weeks</span>). Na clínica obstétrica, a convenção é contar a partir do <strong>primeiro dia da última menstruação (DUM)</strong>, o que acrescenta aproximadamente 2 semanas. Portanto: <strong>Semana embriológica 1 ≈ Semana gestacional/obstétrica 3.</strong> Este guia segue a contagem embriológica clássica de Moore, Sadler e Langman, mas indica a equivalência obstétrica quando necessário.</p>
+  <p>Referências principais: Moore KL et al. <em>Clinically Oriented Anatomy</em> (8ª ed.); Sadler TW. <em>Langman's Medical Embryology</em> (14ª ed.); Schoenwolf GC. <em>Larsen's Human Embryology</em> (5ª ed.); Gilbert SF. <em>Developmental Biology</em> (12ª ed.).</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!--          PRIMEIRO TRIMESTRE                 -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="trimester-header" data-num="I">
+  <h2>Primeiro Trimestre — Semanas 1 a 12</h2>
+  <p>Período embrionário, organogênese e estabelecimento dos planos corporais fundamentais</p>
+</div>
+
+<!-- ───────────────── SEMANA 1 ───────────────── -->
+<div class="week-card" id="s1">
+  <div class="week-header">
+    <div class="week-num">01</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção</div>
+      <div class="week-title">Fecundação, Clivagem e Mórula</div>
+    </div>
+    <span class="week-badge badge-embryo">Período Embrionário</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🔬</div>
+      <div class="size-data">
+        <div class="size-label">Tamanho / Estrutura</div>
+        <div class="size-value">~0,1 mm (zigoto) → ~0,2 mm (mórula)</div>
+      </div>
+    </div>
+
+    <div class="section-title">1.1 — A Fecundação (Fertilização)</div>
+
+    <p><strong>Etimologia:</strong> <span class="etym">Fecundação — do latim fecundare = tornar fértil</span>. Fertilização vem do latim <em>fertilis</em> = produtivo, fértil.</p>
+
+    <p>A fecundação ocorre, classicamente, na <strong>ampola da tuba uterina</strong> (trompa de Falópio), o segmento mais largo e próximal da tuba. Isso representa cerca de 70–80% dos casos documentados. A tuba uterina não é apenas um conduto passivo: suas células epiteliais ciliadas produzem correntes de fluido, e as células não-ciliadas (chamadas de células "em estaca" ou secretoras) produzem nutrientes fundamentais para o gameta e o embrião inicial (<a class="src" href="https://www.ncbi.nlm.nih.gov/books/NBK539701/" target="_blank">StatPearls — Fertilization, 2023</a>).</p>
+
+    <div class="box box-purple">
+      <div class="box-title">Contexto Molecular — Capacitação Espermática</div>
+      <p>Antes de fecundar o ovócito, o espermatozoide precisa passar pela <strong>capacitação</strong> (<em>capacitation</em>, do latim <em>capax</em> = capaz). Esse processo ocorre no trato genital feminino e dura 4–6 horas. Durante a capacitação:</p>
+      <ul>
+        <li>Há remoção do <strong>colesterol da membrana plasmática</strong> do espermatozoide, tornando-a mais fluida e permeável a Ca²⁺.</li>
+        <li>Ativação da adenilil ciclase → aumento do <strong>cAMP</strong> (<em>cyclic adenosine monophosphate</em> = monofosfato de adenosina cíclico) intracelular.</li>
+        <li>Hiperpolarização seguida de despolarização da membrana → mudança no padrão de batimento flagelar (de simétrico para assimétrico, chamado <strong>hiperativação</strong>).</li>
+        <li>Exposição de receptores de superfície (como a <strong>ZAN — zonadhesin</strong> e a <strong>ADAM3</strong>) que reconhecerão as glicoproteínas da zona pelúcida.</li>
+      </ul>
+      <p>Fonte: <a class="src" href="https://pubmed.ncbi.nlm.nih.gov/26194067/" target="_blank">Publicover et al., Hum Reprod Update, 2015</a></p>
+    </div>
+
+    <p>O ovócito liberado na ovulação encontra-se bloqueado na <strong>metáfase II da meiose</strong> — ele ainda <em>não é</em> tecnicamente um óvulo maduro! Só se tornará um óvulo maduro (com expulsão do 2º corpúsculo polar) após a entrada do espermatozoide. Esse detalhe tem importância conceitual enorme.</p>
+
+    <p><strong>Etapas moleculares da fecundação:</strong></p>
+    <ol>
+      <li><strong>Ligação à zona pelúcida (ZP):</strong> O espermatozoide reconhece e se liga à glicoproteína <span class="ht">ZP3</span> (zona pellucida glycoprotein 3) da zona pelúcida que envolve o ovócito. Esse reconhecimento é altamente espécie-específico. A ZP3 atua como receptor primário de ligação.</li>
+      <li><strong>Reação acrossômica:</strong> A ligação à ZP3 desencadeia a exocitose do <strong>acrossomo</strong> — uma vesícula especializada na cabeça do espermatozoide, derivada do complexo de Golgi, que contém enzimas hidrolíticas: <strong>acrosina</strong> (serino-protease), hialuronidase, neuraminidase, fosfatase ácida, entre outras. Essas enzimas digerem localmente a zona pelúcida, permitindo a penetração.</li>
+      <li><strong>Ligação à ZP2</strong> após a reação acrossômica — a ZP2 funciona como receptor secundário.</li>
+      <li><strong>Fusão das membranas</strong> plasmáticas do espermatozoide e do ovócito, mediada pela proteína <span class="ht">IZUMO1</span> (no espermatozoide) e seu receptor <span class="ht">JUNO</span> (no ovócito). <em>Izumo</em> vem de um santuário xintoísta japonês associado ao casamento — uma nomeação poética!</li>
+      <li><strong>Reação cortical (bloqueio à poliespermia):</strong> A entrada do espermatozoide provoca liberação de Ca²⁺ intracelular no ovócito (por IP₃ = inositol trifosfato), que dispara a exocitose dos <strong>grânulos corticais</strong> para o espaço perivitelino. Esses grânulos contêm enzimas que modificam a ZP, endurecendo-a (reação da zona) e impedindo a entrada de mais espermatozoides — fenômeno chamado <strong>bloqueio lento à poliespermia</strong>. O bloqueio rápido se dá pela despolarização elétrica da membrana do ovócito.</li>
+      <li><strong>Conclusão da meiose II:</strong> O Ca²⁺ liberado ativa o <strong>fator promotor de maturação (MPF)</strong>, que é destruído, liberando o bloqueio meiótico. O ovócito completa a meiose II, expelindo o 2º corpúsculo polar. Os pronúcleos masculino e feminino se formam, cada um com 23 cromossomos haploides (n=23).</li>
+      <li><strong>Singamia:</strong> Os dois pronúcleos se aproximam, suas membranas se dissolvem e os cromossomos se alinham para a primeira divisão mitótica → formação do <span class="ht">zigoto</span> (2n=46). <em>Zigoto: do grego zygōtos = unido, combinado.</em></li>
+    </ol>
+
+    <div class="clinical">
+      <strong>Gravidez ectópica (EP — Ectopic Pregnancy):</strong> Quando o zigoto se implanta fora do endométrio uterino. Em 95–98% dos casos, ocorre na tuba uterina (gravidez tubária). Pode causar ruptura tubária com hemorragia grave e choque hipovolêmico — emergência cirúrgica. Fatores de risco: DIP (doença inflamatória pélvica), endometriose, cirurgias pélvicas prévias, uso de DIU. O diagnóstico precoce se faz com β-hCG sérico + ultrassonografia transvaginal. Ausência de saco gestacional intrauterino com β-hCG > 1.500–2.000 mUI/mL é altamente suspeito. (<a class="src" href="https://www.acog.org/clinical/clinical-guidance/practice-bulletin/articles/2018/03/tubal-ectopic-pregnancy" target="_blank">ACOG Practice Bulletin, 2018</a>)
+    </div>
+
+    <div class="section-title">1.2 — Clivagem (Segmentação)</div>
+
+    <p><strong>Etimologia:</strong> <span class="etym">Clivagem — do inglês cleavage, do proto-germânico *kleuban = fender, dividir</span>. Em embriologia, refere-se às divisões mitóticas rápidas do zigoto sem crescimento celular entre as divisões.</p>
+
+    <p>Após a singamia, o zigoto inicia uma série de divisões mitóticas chamadas <strong>clivagem</strong>. Características fundamentais da clivagem embrionária que a diferenciam da mitose somática comum:</p>
+
+    <ul>
+      <li>As células-filhas (<span class="ht">blastômeros</span>) tornam-se progressivamente <strong>menores</strong> a cada divisão — não há crescimento citoplasmático entre as divisões, apenas divisão do citoplasma.</li>
+      <li>A razão núcleo/citoplasma aumenta progressivamente até atingir a proporção característica das células somáticas (~1:1).</li>
+      <li>O material genético do zigoto está <strong>transcripcionalmente silente</strong> até a ativação do genoma embrionário (EGA — <em>Embryonic Genome Activation</em>), que ocorre no estágio de 4–8 células em humanos (~dia 3). Antes disso, o embrião é guiado pelo <strong>RNA materno</strong> depositado no citoplasma do ovócito.</li>
+      <li>As divisões não são sincronizadas — os blastômeros dividem-se de forma assíncrona, o que é por que o embrião passa por estágios de 3, 5, 6, 7 células antes de atingir o estágio de 8 células.</li>
+    </ul>
+
+    <p>Cronologia aproximada da clivagem humana:</p>
+
+    <table>
+      <tr><th>Tempo pós-fecundação</th><th>Estágio</th><th>Evento chave</th></tr>
+      <tr><td>30 horas</td><td>2 células</td><td>Primeira clivagem completa</td></tr>
+      <tr><td>40–50 horas</td><td>4 células</td><td>Segunda clivagem</td></tr>
+      <tr><td>72 horas (~dia 3)</td><td>8–12 células</td><td>EGA; início da compactação</td></tr>
+      <tr><td>96 horas (~dia 4)</td><td>16–32 células</td><td>Mórula compacta</td></tr>
+    </table>
+
+    <div class="section-title">1.3 — Compactação e Mórula</div>
+
+    <p><strong>Etimologia:</strong> <span class="etym">Mórula — do latim morum = amora, pelo aspecto da estrutura com múltiplos blastômeros esféricos compactados</span>.</p>
+
+    <p>No estágio de 8 células (dias 3–4), ocorre a <strong>compactação</strong> — os blastômeros aderem firmemente uns aos outros pela ação de <strong>E-caderina</strong> (também chamada uvomorulina), uma glicoproteína de adesão cálcio-dependente. As células externos tornam-se achatadas e polares (polo apical voltado para o exterior), formando junções ocludentes (<em>tight junctions</em> = zônulas de oclusão) entre si.</p>
+
+    <p>Esse fenômeno de compactação é crítico porque estabelece a primeira diferenciação celular do embrião:</p>
+    <ul>
+      <li><strong>Células externas</strong> (trofoblasto precursor) → futuro <span class="ht">trofoblasto</span> e placenta</li>
+      <li><strong>Células internas</strong> (massa celular interna, ICM — <em>Inner Cell Mass</em>) → futuro <span class="ht">embrioblasto</span> — o embrião propriamente dito</li>
+    </ul>
+
+    <p>Essa primeira decisão de destino celular é regulada por fatores de transcrição como <strong>CDX2</strong> (nas células externas → trofoblasto) e <strong>OCT4/SOX2/NANOG</strong> (nas células internas → ICM pluripotente). OCT4 e NANOG são os grandes "guardiões" da pluripotência — sua expressão mantém as células em estado de capacidade de se diferenciar em qualquer tecido embrionário (<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/16518400/" target="_blank">Chambers & Smith, Oncogene, 2004</a>).</p>
+
+    <div class="box box-blue">
+      <div class="box-title">Células-Tronco Embrionárias (ESC — Embryonic Stem Cells)</div>
+      <p>As células da ICM no estágio de blastocisto inicial são a fonte das <strong>células-tronco embrionárias humanas (hESCs)</strong>. Elas são <strong>pluripotentes</strong> — capazes de originar qualquer tecido do corpo, mas não os tecidos extraembrionários (trofoblasto, placenta). As células do zigoto e até o estágio de 4 células são consideradas <strong>totipotentes</strong> — capazes de gerar um organismo completo, incluindo tecidos extraembrionários. Essa distinção tem implicações éticas, legais e terapêuticas enormes em medicina regenerativa. (<a class="src" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1351218/" target="_blank">Thomson et al., Science, 1998</a>)</p>
+    </div>
+
+    <div class="section-title">1.4 — Transporte pela Tuba</div>
+
+    <p>Durante toda essa primeira semana, o embrião em clivagem está sendo transportado pela tuba uterina em direção ao útero. Esse transporte ativo é mediado por:</p>
+    <ul>
+      <li>Batimento dos <strong>cílios</strong> das células epiteliais tubárias (em direção ao útero)</li>
+      <li>Contrações peristálticas da musculatura tubária (estimuladas por progesterona e prostaglandinas)</li>
+      <li>Fluxo de fluido tubário</li>
+    </ul>
+    <p>O embrião chega à cavidade uterina por volta do <strong>dia 4–5</strong>. A zona pelúcida permanece intacta durante todo o transporte, impedindo a implantação precoce na tuba — sua ruptura (chamada <strong>eclosão</strong> ou <em>hatching</em>) é necessária para a implantação.</p>
+
+    <div class="clinical">
+      <strong>Síndrome de Hiperestimulação Ovariana (OHSS — Ovarian Hyperstimulation Syndrome):</strong> Em fertilização in vitro (FIV / IVF — <em>In Vitro Fertilization</em>), a estimulação ovariana excessiva pode causar OHSS — acúmulo de fluido no abdome e tórax, oligúria, hemoconcentração, risco de trombose. O monitoramento ultrassonográfico e dosagens de estradiol sérico são essenciais. A transferência de embrião congelado (<em>frozen embryo transfer</em>) pode ser preferível em ciclos de alto risco de OHSS. (<a class="src" href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2019/02/ovarian-hyperstimulation-syndrome" target="_blank">ACOG, 2019</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 2 ───────────────── -->
+<div class="week-card" id="s2">
+  <div class="week-header">
+    <div class="week-num">02</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção</div>
+      <div class="week-title">Blastocisto, Implantação e Disco Bilaminar</div>
+    </div>
+    <span class="week-badge badge-embryo">Período Embrionário</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🫧</div>
+      <div class="size-data">
+        <div class="size-label">Tamanho</div>
+        <div class="size-value">~0,2–0,3 mm (blastocisto)</div>
+      </div>
+    </div>
+
+    <div class="section-title">2.1 — Formação do Blastocisto</div>
+    <p><strong>Etimologia:</strong> <span class="etym">Blastocisto — do grego blastos = broto/germe + kystis = bexiga, bolsa</span>. O blastocisto é literalmente uma "bolsa germinativa".</p>
+
+    <p>Por volta do <strong>dia 4–5</strong>, quando o embrião tem 32–64 células, ocorre a <strong>blastulação</strong>: as junções ocludentes entre as células externas (futuro trofoblasto) tornam-se tão impermeáveis que a bomba Na⁺/K⁺-ATPase presente nessas células começa a bombear Na⁺ para o interior do embrião. Agua segue por osmose, acumulando-se numa cavidade central chamada <span class="ht">blastocele</span> (<em>blastocoel</em>). Forma-se assim o blastocisto, com:</p>
+    <ul>
+      <li><strong>Trofoblasto</strong> — monocamada de células externas achatadas (futuras células placentárias)</li>
+      <li><strong>Embrioblasto (ICM)</strong> — aglomerado de células pluripotentes em um polo (polo embrionário)</li>
+      <li><strong>Blastocele</strong> — cavidade central preenchida por fluido</li>
+    </ul>
+
+    <p>Por volta do <strong>dia 5–6</strong>, enzimas líticas (pepsina-like) digerem a zona pelúcida, ocorrendo a <strong>eclosão (hatching)</strong> — o blastocisto emerge livre, pronto para implantação.</p>
+
+    <div class="section-title">2.2 — Implantação</div>
+
+    <p><strong>Etimologia:</strong> <span class="etym">Implantação — do latim implantare = plantar dentro, fixar</span>. Também chamada de nidação (do latim nidus = ninho).</p>
+
+    <p>A implantação ocorre entre os <strong>dias 6–10</strong> pós-fecundação (semanas 3–4 gestacionais). O sítio mais comum é a parede posterior do corpo uterino, perto do fundo. O processo é fascinantemente complexo e pode ser dividido em fases:</p>
+
+    <ol>
+      <li><strong>Aposição:</strong> Aproximação frouxa e reversível do blastocisto ao epitélio endometrial, com o polo embrionário voltado para o endométrio. O endométrio está na fase secretora (após ovulação), sob influência de progesterona.</li>
+      <li><strong>Adesão:</strong> Contato firme mediado por moléculas de adesão — <strong>integrinas</strong> (αvβ3) no trofoblasto ligam-se à <strong>osteopontina</strong> e <strong>fibronectina</strong> no endométrio. Selecinas e trofininas também participam. O endométrio expressa <strong>pinópodes</strong> (projeções digitiformes) durante a "janela de implantação" (dias 20–24 do ciclo = dias 6–10 pós-ovulação) — estruturas que aumentam a receptividade (<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/12001780/" target="_blank">Dey et al., Endocrinology, 2004</a>).</li>
+      <li><strong>Invasão:</strong> As células do trofoblasto proliferam e diferenciam-se em dois componentes:
+        <ul>
+          <li><span class="ht">Citotrofoblasto (CT)</span> — células mononucleadas, proliferativas, que formam a camada interna</li>
+          <li><span class="ht">Sinciciotrofoblasto (SCT)</span> — massa multinucleada (síncicio) formada pela fusão de citotrofoblastos, altamente invasiva, que penetra o estroma endometrial e depois as artérias espiraladas maternas. O sinciciotrofoblasto produz enzimas proteolíticas (metaloproteinases de matriz — <strong>MMPs</strong>) que digerem a matriz extracelular do endométrio.</li>
+        </ul>
+      </li>
+    </ol>
+
+    <div class="box box-gold">
+      <div class="box-title">hCG — Gonadotrofina Coriônica Humana</div>
+      <p>Desde o início da implantação, o <strong>sinciciotrofoblasto</strong> começa a secretar <strong>hCG</strong> (<em>human Chorionic Gonadotropin</em> = gonadotrofina coriônica humana). O hCG tem estrutura semelhante ao LH (<em>Luteinizing Hormone</em> = hormônio luteinizante) e liga-se ao mesmo receptor (receptor de LH/hCG nas células da granulosa/luteínicas). Isso "resgata" o corpo lúteo, impedindo sua regressão e mantendo a produção de progesterona — essencial para manter a gravidez até que a placenta assuma essa função (~10–12 semanas). É o hCG que os testes de gravidez (urinários e séricos) detectam. Ele começa a ser detectável por volta do <strong>dia 8–10</strong> pós-fecundação. Seus níveis dobram aproximadamente a cada 48–72h nas primeiras semanas, o que é usado clinicamente para monitorar a viabilidade da gravidez inicial. (<a class="src" href="https://www.ncbi.nlm.nih.gov/books/NBK532950/" target="_blank">StatPearls — hCG, 2023</a>)</p>
+    </div>
+
+    <div class="section-title">2.3 — Disco Embrionário Bilaminar</div>
+
+    <p>Enquanto a invasão do trofoblasto ocorre, o <strong>embrioblasto</strong> reorganiza-se em um <strong>disco bilaminar</strong>, consistindo em duas camadas:</p>
+
+    <ul>
+      <li><span class="ht">Epiblasto (EP)</span> — camada superior (voltada para a futura cavidade amniótica), composta de células colunares pseudoestratificadas. Dará origem às 3 camadas germinativas (ectoderme, mesoderme, endoderme) durante a gastrulação. Do epiblasto também se origina o <strong>âmnio</strong>.</li>
+      <li><span class="ht">Hipoblasto (Endoderme Primitiva)</span> — camada inferior (voltada para a blastocele), composta de células cúbicas menores. Dará origem ao <strong>saco vitelino primário</strong> e estruturas extraembrionárias (não contribui para os tecidos do embrião propriamente dito — com exceção das células germinativas primordiais, que migram pelo saco vitelino).</li>
+    </ul>
+
+    <p>O hipoblasto prolifera e migra para revestir o interior da blastocele → forma a <strong>membrana de Heuser</strong> (ou membrana exocelômica) → delimita o <strong>saco vitelino primitivo</strong> (ou cavidade exocelômica).</p>
+
+    <p>O epiblasto, enquanto isso, desenvolve uma cavidade em seu interior por um processo de cavitação (morte celular programada/apoptose das células centrais) → forma a <strong>cavidade amniótica</strong>, revestida por <strong>amnioblastos</strong> derivados do epiblasto.</p>
+
+    <p>Do citotrofoblasto prolifera uma rede de células mesenquimatosas que preenchem o espaço entre o trofoblasto e as membranas internas → formação do <span class="ht">mesoderme extraembrionário</span>, que depois se cavita formando o <strong>celoma extraembrionário</strong> (ou cavidade coriônica).</p>
+
+    <div class="clinical">
+      <strong>Doença Trofoblástica Gestacional (DTG / GTD — Gestational Trophoblastic Disease):</strong> Grupo de doenças originadas de trofoblasto anormal, incluindo mola hidatiforme (parcial e completa), mola invasiva, coriocarcinoma e tumor trofoblástico do sítio placentário. A mola completa (46,XX — origem paterna exclusiva, sem contribuição materna) resulta de fecundação de ovócito sem núcleo. Apresenta hCG muito elevado, útero maior que esperado, ausência de feto, imagem em "flocos de neve" na ultrassonografia. Risco de malignização (coriocarcinoma) torna o seguimento com hCG seriado obrigatório. (<a class="src" href="https://www.esgo.org/media/sites/2/2020/08/GTD-guidelines-2020.pdf" target="_blank">ESGO Guidelines GTD, 2020</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 3 ───────────────── -->
+<div class="week-card" id="s3">
+  <div class="week-header">
+    <div class="week-num">03</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção</div>
+      <div class="week-title">Gastrulação, Disco Trilaminar e Notocorda</div>
+    </div>
+    <span class="week-badge badge-embryo">Período Embrionário</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🥚</div>
+      <div class="size-data">
+        <div class="size-label">Comprimento crânio-caudal</div>
+        <div class="size-value">~1,5–2,5 mm</div>
+      </div>
+    </div>
+
+    <div class="section-title">3.1 — Gastrulação — "O Evento mais Importante da sua Vida"</div>
+
+    <p><strong>Etimologia:</strong> <span class="etym">Gastrulação — do grego gaster = estômago, ventre + -ula (diminutivo) + -ação = processo de formar a "gastrula" (estrutura com cavidade digestiva primitiva)</span>. Lewis Wolpert, biólogo do desenvolvimento, afamosamente disse: <em>"É o evento mais importante da sua vida — não o seu nascimento, casamento ou morte, mas a gastrulação"</em>.</p>
+
+    <p>A gastrulação transforma o disco bilaminar em um disco <strong>trilaminar</strong>, estabelecendo as três camadas germinativas primárias que darão origem a todos os tecidos e órgãos do corpo. Ocorre fundamentalmente entre os dias 14 e 21.</p>
+
+    <p>O processo começa com a formação da <span class="ht">linha primitiva (primitive streak)</span> — um espessamento do epiblasto na linha mediana, na extremidade caudal do disco embrionário. A linha primitiva define os eixos do embrião:</p>
+    <ul>
+      <li><strong>Crânio-caudal</strong> (cefalocaudal): cefálico = extremidade oposta à linha primitiva; caudal = extremidade onde a linha primitiva está</li>
+      <li><strong>Dorsoventral</strong>: epiblasto = dorsal; hipoblasto = ventral</li>
+      <li><strong>Lateralidade (direita-esquerda)</strong>: estabelecida por sinais moleculares assimétricos nessa semana</li>
+    </ul>
+
+    <p>Na extremidade cefálica da linha primitiva forma-se o <span class="ht">nó primitivo (nó de Hensen)</span> — um engrossamento com uma depressão central chamada <strong>fosseta primitiva</strong>. O nó primitivo é o equivalente do "organizador de Spemann" (descoberto em anfíbios) em mamíferos — é o grande centro organizador do embrião.</p>
+
+    <div class="box box-purple">
+      <div class="box-title">Mecanismo Molecular da Gastrulação</div>
+      <p>Células do epiblasto migram para a linha primitiva, sofrem <strong>transição epitélio-mesênquima (TEM)</strong> — perdem suas junções adesivas (downregulation de E-caderina), adquirem capacidade migratória (upregulation de N-caderina, vimentina) — e infiltram-se entre o epiblasto e o hipoblasto. Esse processo é regulado por:</p>
+      <ul>
+        <li><strong>FGF8</strong> (<em>Fibroblast Growth Factor 8</em> = Fator de Crescimento de Fibroblasto 8) — expresso na linha primitiva, induz a TEM e a migração.</li>
+        <li><strong>BMP4</strong> (<em>Bone Morphogenetic Protein 4</em> = Proteína Morfogenética Óssea 4) — gradiente lateral que especifica a formação de mesoderme lateral.</li>
+        <li><strong>WNT3/WNT3a</strong> — via Wnt/β-catenina, essencial para a formação da linha primitiva.</li>
+        <li><strong>Nodal</strong> (membro da família TGF-β) — expresso assimetricamente à esquerda, fundamental para estabelecer a assimetria esquerda-direita.</li>
+      </ul>
+      <p>(<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/11902834/" target="_blank">Tam & Loebel, Nat Rev Genet, 2007</a>)</p>
+    </div>
+
+    <p>As células que migram através da linha primitiva:</p>
+    <ul>
+      <li>Primeiro deslocam as células do hipoblasto → formam a <span class="ht">endoderme definitiva</span> (interna)</li>
+      <li>Em seguida preenchem o espaço entre epiblasto e endoderme → formam a <span class="ht">mesoderme intraembrionária</span> (camada média)</li>
+      <li>O epiblasto remanescente (que não migrou) → torna-se a <span class="ht">ectoderme</span> (externa)</li>
+    </ul>
+
+    <p>Assim temos as três camadas germinativas:</p>
+    <table>
+      <tr><th>Camada</th><th>Posição</th><th>Derivados Principais</th></tr>
+      <tr><td><strong>Ectoderme</strong></td><td>Mais externa</td><td>Sistema nervoso, pele, órgãos dos sentidos, adenohipófise, esmalte dentário</td></tr>
+      <tr><td><strong>Mesoderme</strong></td><td>Média</td><td>Músculo, coração, rins, gônadas, osso, cartilagem, sangue, vasos, derme</td></tr>
+      <tr><td><strong>Endoderme</strong></td><td>Mais interna</td><td>Epitélio do TGI, TGU, vias respiratórias, fígado, pâncreas, tireoide, timo, paratireoides</td></tr>
+    </table>
+
+    <div class="section-title">3.2 — A Notocorda</div>
+
+    <p><strong>Etimologia:</strong> <span class="etym">Notocorda — do grego noton = dorso + chordē = corda. "Corda dorsal"</span>. Em inglês: <em>notochord</em>. É a estrutura que deu nome ao filo Chordata ao qual pertencemos.</p>
+
+    <p>Células do nó primitivo migram cefalicamente e formam um tubo axial — a <span class="ht">notocorda</span> — que se estende do nó primitivo até a placa pré-cordal (futura região da boca). A notocorda é fundamental por:</p>
+    <ul>
+      <li>Definir o <strong>eixo cefalocaudal</strong> do embrião</li>
+      <li>Induzir a <strong>neurulação</strong> — formação do tubo neural (via produção de <strong>Sonic Hedgehog — SHH</strong> e outros sinais indutores)</li>
+      <li>Organizar a somitogênese (formação dos somitos)</li>
+      <li>Na vida adulta, persiste como o <strong>núcleo pulposo</strong> dos discos intervertebrais</li>
+    </ul>
+
+    <div class="box box-red">
+      <div class="box-title">Restos da Notocorda — Implicação Clínica: Cordoma</div>
+      <p>O <strong>cordoma</strong> (<em>chordoma</em>) é um tumor maligno raro derivado de restos da notocorda, tipicamente localizado no <strong>clívus</strong> (base do crânio) ou na região sacrococcígea. É lento, mas localmente agressivo, com alta taxa de recidiva local. Histologicamente, apresenta células "fisalíferas" (<em>physaliphorous cells</em>) com vacúolos citoplasmáticos cheios de muco. Marcador: <strong>brachyury</strong> (T-box transcription factor) — positivo em > 98% dos cordomas, útil para diagnóstico diferencial. (<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/26219015/" target="_blank">Stacchiotti & Sommer, Lancet Oncol, 2015</a>)</p>
+    </div>
+
+    <div class="section-title">3.3 — Assimetria Esquerda-Direita</div>
+    <p>A determinação de qual lado é esquerdo e qual é direito começa nesta semana. Os cílios nodais (presentes no nó primitivo) batem em rotação no sentido anti-horário, gerando um fluxo de fluido para o lado <strong>esquerdo</strong> do embrião. Esse fluxo concentra proteínas de sinalização (<strong>Nodal, Lefty-2, PITX2</strong>) no lado esquerdo, enquanto <strong>Lefty-1</strong> e <strong>SNAI1</strong> formam uma barreira na linha mediana impedindo o Nodal de se difundir para o lado direito.</p>
+    <p>Isso induz, no lado esquerdo: rotação do coração para a esquerda, alça do intestino no sentido horário, fígado à direita, baço à esquerda — o padrão normal (<strong>situs solitus</strong>).</p>
+
+    <div class="clinical">
+      <strong>Situs Inversus e Síndrome de Kartagener (Síndrome de Cílios Imóveis — PCD, Primary Ciliary Dyskinesia):</strong> Quando os cílios nodais são disfuncionais (ex: mutação em genes de dineína como DNAI1, DNAI2, DNAAF1), o fluxo nodal é ausente ou aleatório → posição dos órgãos fica ao acaso (situs ambiguus) ou invertida (situs inversus totalis — espelho de tudo). PCD manifesta-se clinicamente com bronquiectasias (por disfunção ciliar no epitélio respiratório), infertilidade masculina (imotilidade espermática) e sinusite crônica. Em 50% dos casos de PCD há situs inversus — isso caracteriza a Síndrome de Kartagener. (<a class="src" href="https://www.nejm.org/doi/full/10.1056/NEJMra1201124" target="_blank">Knowles et al., NEJM, 2016</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 4 ───────────────── -->
+<div class="week-card" id="s4">
+  <div class="week-header">
+    <div class="week-num">04</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção</div>
+      <div class="week-title">Neurulação, Somitos, Tubo Cardíaco e Dobramento</div>
+    </div>
+    <span class="week-badge badge-embryo">Período Embrionário</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🫘</div>
+      <div class="size-data">
+        <div class="size-label">Comprimento crânio-caudal</div>
+        <div class="size-value">~4–5 mm</div>
+      </div>
+    </div>
+
+    <div class="section-title">4.1 — Neurulação</div>
+    <p><strong>Etimologia:</strong> <span class="etym">Neurulação — do grego neuron = nervo + -ação = processo de formação do tubo neural</span>.</p>
+    <p>A notocorda (e o mesoderme paraxial adjacente) produzem sinais indutores — principalmente <strong>SHH (Sonic Hedgehog)</strong>, <strong>Noggin</strong> e <strong>Chordin</strong> — que inibem a sinalização BMP na ectoderme dorsal sobrejacente. Essa inibição do BMP "libera" a ectoderme dorsal para se diferenciar em <strong>placa neural</strong> (ao invés de continuar como ectoderme de superfície, o que seria o destino padrão na presença de BMP).</p>
+    <p>A <strong>placa neural</strong> espessa-se e, por movimentos morfogenéticos coordenados (convergência-extensão, contração apical mediada por actomiosina), <strong>dobra-se</strong> formando um sulco e depois um <strong>tubo neural</strong> fechado. Esse processo:</p>
+    <ul>
+      <li>Começa na região cervical (~somito 4) e progride tanto cefalicamente quanto caudalmente (fechamento em zíper bidirecional)</li>
+      <li>O polo cefálico fecha em torno do <strong>dia 24–25</strong> (neuroporo anterior)</li>
+      <li>O polo caudal fecha em torno do <strong>dia 26–28</strong> (neuroporo posterior)</li>
+    </ul>
+
+    <div class="box box-red">
+      <div class="box-title">Defeitos do Tubo Neural (DTN / NTD — Neural Tube Defects)</div>
+      <p>Falha no fechamento do tubo neural resulta em DTN — entre os defeitos congênitos mais comuns (1–2/1000 nascimentos):</p>
+      <ul>
+        <li><strong>Anencefalia:</strong> Falha no fechamento do neuroporo anterior → ausência dos hemisférios cerebrais e calvária → incompatível com a vida.</li>
+        <li><strong>Espinha bífida:</strong> Falha no fechamento do neuroporo posterior → espinha bífida oculta (leve, apenas arco vertebral faltando), meningocele (meninges herniadas), mielomeningocele (medula + meninges herniadas → paraplegia, bexiga neurogênica).</li>
+        <li><strong>Encefalocele:</strong> Herniação do encéfalo através de defeito no crânio.</li>
+      </ul>
+      <p>O <strong>ácido fólico (vitamina B9)</strong> é fundamental para a metilação do DNA e síntese de nucleotídeos durante o fechamento do tubo neural. Suplementação periconcepcional de <strong>400–800 μg/dia</strong> reduz a incidência de DTN em ~70%. Diagnóstico pré-natal: <strong>AFP (alfa-fetoproteína)</strong> elevada no líquido amniótico e no soro materno; ultrassonografia. (<a class="src" href="https://www.who.int/publications/i/item/9789240002593" target="_blank">WHO — Folic Acid Supplementation, 2022</a>)</p>
+    </div>
+
+    <div class="section-title">4.2 — Crista Neural</div>
+    <p>Na junção entre o tubo neural em fechamento e a ectoderme de superfície, uma população de células com características extraordinárias — a <span class="ht">crista neural</span> (<em>neural crest</em>) — se separa por transição epitélio-mesênquima e migra extensamente pelo embrião. São chamadas de "quarta camada germinativa" pela sua importância. Seus derivados incluem:</p>
+    <ul>
+      <li>Neurônios e glia do SNP (Sistema Nervoso Periférico)</li>
+      <li>Gânglios autônomos e sensitivos</li>
+      <li>Células de Schwann</li>
+      <li>Células cromafins da medula suprarrenal</li>
+      <li>Melanócitos (em toda a pele)</li>
+      <li>Células C da tireoide (produtoras de calcitonina)</li>
+      <li>Mesênquima cefálico (ossos e cartilagens da face, meninges anteriores)</li>
+      <li>Septo aortopulmonar e parte do coração</li>
+      <li>Células mioepiteliais de glândulas salivares e lacrimais</li>
+    </ul>
+
+    <div class="section-title">4.3 — Somitos e Segmentação</div>
+    <p><strong>Etimologia:</strong> <span class="etym">Somito — do grego soma = corpo + -ito (diminutivo). "Pequeno corpo" ou segmento corporal</span>.</p>
+    <p>O mesoderme paraxial (flanqueando a notocorda) condensa-se em pares de blocos chamados <span class="ht">somitos</span>, formados de forma rostrocaudal em ritmo regular (~1 par a cada 6 horas, nos humanos). Esse relógio segmentador é regulado por oscilações nos níveis de Notch, Wnt e FGF em gradiente caudal-rostral.</p>
+    <p>Na semana 4, formam-se em torno de <strong>4–12 pares de somitos</strong>. Ao final do desenvolvimento haverá ~42–44 pares. O número de somitos é usado para datar precisamente embrições dessa fase. Cada somito diferencia-se em:</p>
+    <ul>
+      <li><span class="ht">Esclerótomo</span> → vértebras e costelas (mesoderme ventral do somito)</li>
+      <li><span class="ht">Dermótomo</span> → derme da pele (mesoderme dorsal do somito)</li>
+      <li><span class="ht">Miótomo</span> → músculos esqueléticos do tronco e membros</li>
+    </ul>
+
+    <div class="section-title">4.4 — Sistema Cardiovascular — Tubos Cardíacos</div>
+    <p>O coração começa a se desenvolver no mesoderme esplâncnico da região cefálica do disco embrionário (placa cardíaca pré-cordal). Células progenitoras cardíacas formam dois tubos endocárdicos que se fundem (durante o dobramento do embrião) em um único <span class="ht">tubo cardíaco primitivo</span> por volta do <strong>dia 21–22</strong>. O coração começa a bater por volta do <strong>dia 22–23</strong> — esse é o primeiro órgão funcional do embrião!</p>
+    <p>O tubo cardíaco primitivo tem, da cauda para a cabeça: seio venoso → átrio primitivo → ventrículo primitivo → bulbo do coração → tronco arterioso.</p>
+
+    <div class="section-title">4.5 — Dobramento do Embrião</div>
+    <p>A semana 4 é marcada pelo <strong>dobramento do embrião</strong> — de disco plano para cilindro tridimensional. Ocorrem dois tipos de dobramento simultâneos:</p>
+    <ul>
+      <li><strong>Dobramento cefalocaudal</strong> — a extremidade cefálica e a caudal "curvam-se" ventralmente, englobando partes do saco vitelino → forma o intestino anterior (foregut) e posterior (hindgut)</li>
+      <li><strong>Dobramento lateral</strong> — as bordas laterais do disco embrionário dobram-se ventralmente, incorporando o saco vitelino → forma o intestino médio (midgut) e fecha o corpo em tubo → forma a parede ventral do corpo e o pedículo do corpo</li>
+    </ul>
+
+    <div class="clinical">
+      <strong>Teratologia — "Janela de Teratogenicidade":</strong> As semanas 3–8 representam o período de maior vulnerabilidade do embrião a agentes teratogênicos (<em>teratógenos</em> — do grego teras = monstro + genos = origem), porque é quando ocorre a organogênese. Álcool (Síndrome Fetal Alcoólica), talidomida (focomelia), ácido valproico (DTN), rubéola congênita, toxoplasmose, CMV, isotretinoína (retinoides) — todos têm seus efeitos mais graves neste período. Antes da semana 3 ("tudo ou nada" — o embrião ou morre ou se recupera completamente). Após a semana 8, os tecidos já formados são menos suscetíveis a malformações estruturais, mas ainda vulneráveis a distúrbios funcionais. (<a class="src" href="https://www.ncbi.nlm.nih.gov/books/NBK538239/" target="_blank">StatPearls — Teratology, 2023</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 5 ───────────────── -->
+<div class="week-card" id="s5">
+  <div class="week-header">
+    <div class="week-num">05</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção</div>
+      <div class="week-title">Organogênese Inicial — Coração, SNC e Vesículas Encefálicas</div>
+    </div>
+    <span class="week-badge badge-embryo">Período Embrionário</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🫀</div>
+      <div class="size-data">
+        <div class="size-label">Comprimento crânio-caudal</div>
+        <div class="size-value">~8–10 mm · FC ≈ 80–100 bpm</div>
+      </div>
+    </div>
+
+    <div class="section-title">5.1 — Vesículas Encefálicas Primárias</div>
+    <p>A extremidade cefálica do tubo neural expande-se formando três <strong>vesículas encefálicas primárias</strong>:</p>
+    <table>
+      <tr><th>Vesícula</th><th>Significado (grego)</th><th>Derivados</th></tr>
+      <tr><td><strong>Prosencéfalo</strong></td><td>protos = anterior + enkephalos = encéfalo</td><td>Telencéfalo (córtex, hipocampo, amígdala, gânglios da base) + Diencéfalo (tálamo, hipotálamo, retina)</td></tr>
+      <tr><td><strong>Mesencéfalo</strong></td><td>meso = médio + enkephalos</td><td>Tecto (colículos), tegmento, pedúnculos cerebrais</td></tr>
+      <tr><td><strong>Rombencéfalo</strong></td><td>rhombos = losango + enkephalos</td><td>Metencéfalo (cerebelo, ponte) + Mielencéfalo (bulbo)</td></tr>
+    </table>
+
+    <div class="section-title">5.2 — Desenvolvimento Cardíaco na Semana 5</div>
+    <p>O tubo cardíaco dobra-se sobre si mesmo formando o <span class="ht">loop cardíaco (dobradura cardíaca)</span> — essencial para posicionar as câmaras nos locais corretos. O loop dobra-se para o lado direito (<strong>D-loop</strong>) em condições normais (regulado por sinais de assimetria esquerda-direita). Falha nesse processo → <strong>dextrocardia</strong> ou <strong>levocardia</strong> com situs inversus.</p>
+    <p>O coração já possui quatro regiões e um septo atrioventricular primitivo começa a se formar. A frequência cardíaca eleva-se para ~80 bpm e é detectável por ultrassonografia transvaginal nessa semana.</p>
+
+    <div class="section-title">5.3 — Desenvolvimento dos Membros</div>
+    <p>Aparecem os <span class="ht">brotos dos membros superiores</span> (como protuberâncias laterais do corpo, ao nível de C5–T1) por volta do dia 26–27, seguidos pelos brotos dos membros inferiores (dias 28–30, ao nível de L2–S2). O broto do membro é coberto por uma ectoderme apical especializada — a <strong>crista ectodermal apical (AER — Apical Ectodermal Ridge)</strong> — que produz FGF4, FGF8, FGF10 para manter a proliferação mesenquimal subjacente (zona de progresso).</p>
+
+    <div class="section-title">5.4 — Arcos Faríngeos (Branquiais)</div>
+    <p><strong>Etimologia:</strong> <span class="etym">Faríngeo — do grego pharynx = garganta. Branquial — do grego branchia = brânquias</span>. Chamados de branquiais pela semelhança com as brânquias dos peixes, embora em humanos não sejam brânquias funcionais.</p>
+    <p>Formam-se 5 pares de arcos faríngeos numerados 1, 2, 3, 4 e 6 (o 5 regride). Cada arco consiste em um núcleo de mesoderme e crista neural, coberto externamente por ectoderme e internamente por endoderme, e contém: um nervo craniano específico, uma artéria aórtica (arco aórtico), cartilagem e musculatura. A separação entre os arcos é feita por fendas ectodérmicas externamente e bolsas faríngeas endodérmicas internamente.</p>
+
+    <table>
+      <tr><th>Arco</th><th>Nervo</th><th>Cartilagem/Osso</th><th>Músculo</th></tr>
+      <tr><td>1º (Mandibular)</td><td>V (Trigêmeo)</td><td>Martelo, Bigorna, Mandíbula, Maxila, Zigomático</td><td>Mastigação, Tensor do tímpano, milo-hióideo, digástrico anterior</td></tr>
+      <tr><td>2º (Hióideo)</td><td>VII (Facial)</td><td>Estribo, Apófise estilóide, corno menor e corpo do hioide</td><td>Expressão facial, Estapédio, Estilo-hióideo, digástrico posterior</td></tr>
+      <tr><td>3º</td><td>IX (Glossofaríngeo)</td><td>Corno maior do hioide</td><td>Estilofaríngeo</td></tr>
+      <tr><td>4º</td><td>X (Vago — ramo laríngeo superior)</td><td>Cartilagens laríngeas (aritenóide, tireóide)</td><td>Constritores faríngeos, Cricotireóideo</td></tr>
+      <tr><td>6º</td><td>X (Vago — ramo laríngeo recorrente)</td><td>Cartilagens laríngeas inferiores</td><td>Intrínsecos da laringe</td></tr>
+    </table>
+
+    <div class="clinical">
+      <strong>Síndrome de DiGeorge (22q11.2 deletion syndrome):</strong> Deleção no cromossomo 22q11.2 afeta o desenvolvimento das bolsas faríngeas 3 e 4 e a migração de células da crista neural → hipoplasia/aplasia do timo (imunodeficiência de células T), hipoplasia das paratireoides (hipocalcemia neonatal), malformações cardíacas conotruncais (truncus arteriosus, tetralogia de Fallot, interrupção do arco aórtico). É a deleção cromossômica mais comum após a trissomia 21 — incidência de ~1/4.000 nascimentos. Triagem: FISH ou aCGH (comparative genomic hybridization). (<a class="src" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3115947/" target="_blank">McDonald-McGinn et al., Nat Rev Dis Primers, 2015</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 6 ───────────────── -->
+<div class="week-card" id="s6">
+  <div class="week-header">
+    <div class="week-num">06</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção</div>
+      <div class="week-title">Fácies, Retina, Cristas Urogenitais e Membros</div>
+    </div>
+    <span class="week-badge badge-embryo">Período Embrionário</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🐤</div>
+      <div class="size-data">
+        <div class="size-label">Comprimento crânio-caudal</div>
+        <div class="size-value">~13–17 mm · FC ≈ 100–130 bpm</div>
+      </div>
+    </div>
+
+    <div class="section-title">6.1 — Desenvolvimento da Face</div>
+    <p>A face humana forma-se pela fusão de 5 processos faciais (derivados de crista neural):</p>
+    <ul>
+      <li><strong>Processo frontonasal (1)</strong> — forma a fronte, nariz, filtro do lábio</li>
+      <li><strong>Processos maxilares (2, um de cada lado)</strong> — bochechas, lábio superior lateral, palato secundário</li>
+      <li><strong>Processos mandibulares (2, um de cada lado)</strong> — queixo, lábio inferior</li>
+    </ul>
+    <p>Placódios nasais se aprofundam formando as fossas nasais. O septo nasal começa a se formar. Os olhos, inicialmente nas laterais da cabeça, começam a migrar para a posição frontal (que permite visão binocular e percepção de profundidade).</p>
+
+    <div class="box box-red">
+      <div class="box-title">Fissura Labiopalatal (Lábio/Palato Fendido)</div>
+      <p>É a malformação craniofacial mais comum (~1/700 nascimentos). Resulta de falha na fusão dos processos faciais. <strong>Lábio fendido (fissura labial)</strong> — falha na fusão do processo maxilar com o frontonasal. <strong>Palato fendido</strong> — falha na fusão das prateleiras palatinas (processos maxilares). Podem ocorrer isoladas ou juntas. Etiologia multifatorial (genética + ambiental: tabagismo, álcool, deficiência de ácido fólico, anticonvulsivantes). Genes envolvidos: IRF6, GRHL3, MSX1. (<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/22703952/" target="_blank">Dixon et al., Nat Rev Genet, 2011</a>)</p>
+    </div>
+
+    <div class="section-title">6.2 — Olho e Retina</div>
+    <p>A retina é <strong>tecido do SNC</strong> — derivada do diencéfalo! A vesícula óptica (protusão do diencéfalo) induz o ectoderme sobrejacente a espessar-se → <strong>placódio do cristalino</strong> → este invagina → <strong>vesícula do cristalino</strong>. A vesícula óptica invagina-se → <strong>cálice óptico</strong> (camada interna = retina neural; camada externa = epitélio pigmentado da retina). O nervo óptico é formado pelos axônios das células ganglionares da retina, que é por isso considerado um trato do SNC (não um nervo periférico), tendo bainha de mielina de oligodendrócitos (não células de Schwann).</p>
+
+    <div class="section-title">6.3 — Desenvolvimento Urogenital — Pronefros, Mesonefros</div>
+    <p>Os rins desenvolvem-se em três gerações sucessivas:</p>
+    <ol>
+      <li><strong>Pronefros</strong> (semanas 4–5) — vestigial em humanos, regride completamente. Equivalente ao rim dos peixes primitivos.</li>
+      <li><strong>Mesonefros</strong> (semanas 4–8) — rim funcional transitório; seus ductos (ductos mesonéfricos = ductos de Wolff) persistem e são cruciais para o desenvolvimento do sistema genital masculino.</li>
+      <li><strong>Metanefros</strong> (semana 5 em diante) — rim definitivo, formado pela interação entre o <strong>broto ureteral</strong> (divertículo do ducto de Wolff) e o <strong>blastema metanéfrico</strong> (mesoderme intermediário). Essa indução recíproca é um modelo clássico de interação epitélio-mesênquima.</li>
+    </ol>
+
+    <div class="clinical">
+      <strong>Agenesia Renal Bilateral (Síndrome de Potter):</strong> Falha no desenvolvimento do metanefros — ausência bilateral dos rins → ausência de produção de urina fetal → oligodrâmnio severo → compressão fetal → Sequência de Potter (hipoplasia pulmonar, face característica, posição anormal dos membros, talipes equinovarus). Incompatível com a vida pós-natal por hipoplasia pulmonar. Detecção: ultrassonografia pré-natal mostrando oligodrâmnio + ausência de bexiga cheia. Incidência: ~1/3.000 nascimentos. (<a class="src" href="https://www.ncbi.nlm.nih.gov/books/NBK560482/" target="_blank">StatPearls — Potter Sequence, 2023</a>)
+    </div>
+
+    <div class="section-title">6.4 — Membros na Semana 6</div>
+    <p>Os brotos dos membros crescem rapidamente. As placas das mãos se formam e começam a aparecer os <strong>raios digitais</strong> (condensações mesenquimatosas que serão os dedos). Entre os raios digitais, células morrem por <strong>apoptose</strong> mediada por BMP para esculpir os espaços interdigitais. Nessa semana, a cartilagem começa a se condrificar nos membros.</p>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 7 ───────────────── -->
+<div class="week-card" id="s7">
+  <div class="week-header">
+    <div class="week-num">07</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção</div>
+      <div class="week-title">Hérnia Fisiológica, Palato, Orelha e Gônadas</div>
+    </div>
+    <span class="week-badge badge-embryo">Período Embrionário</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🫁</div>
+      <div class="size-data">
+        <div class="size-label">Comprimento crânio-caudal</div>
+        <div class="size-value">~17–22 mm · FC ≈ 130–160 bpm</div>
+      </div>
+    </div>
+
+    <div class="section-title">7.1 — Hérnia Umbilical Fisiológica</div>
+    <p>O intestino médio cresce mais rápido que a cavidade abdominal pode comportar. Nessa semana, as alças intestinais herniam para dentro do <strong>celoma extraembrionário</strong> (espaço dentro do cordão umbilical). Esse processo é chamado <strong>hérnia umbilical fisiológica</strong> e é absolutamente normal (distinguir de onfalocele patológica!). As alças rotacionam 90° no sentido anti-horário (vistas de frente) durante a herniação. O retorno à cavidade abdominal ocorre nas semanas 10–11, com mais 180° de rotação anti-horária (total de 270°), posicionando o jejuno-íleo à esquerda e o colo à direita.</p>
+
+    <div class="box box-red">
+      <div class="box-title">Malrotação Intestinal e Vólvulo do Intestino Médio</div>
+      <p>Falha na rotação normal das alças intestinais durante o retorno à cavidade abdominal. O duodeno não ocupa a posição retroperitoneal e o ceco não desce para a FID. A mesentério fica sobre um pedículo estreito → predispõe ao <strong>vólvulo do intestino médio</strong> — emergência cirúrgica neonatal com torção das alças sobre a AMS (artéria mesentérica superior), causando isquemia intestinal. Apresentação: vômitos biliosos em neonato. Diagnóstico: contraste TGI superior (posição anormal do ligamento de Treitz). Tratamento: cirurgia imediata (procedimento de Ladd). (<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/27568488/" target="_blank">Birnbaum & Motyl, Pediatr Emerg Care, 2016</a>)</p>
+    </div>
+
+    <div class="section-title">7.2 — Formação do Palato</div>
+    <p>O <strong>palato primário</strong> (triângulo anterior ao forame incisivo) forma-se pela fusão dos processos palatinos mediais do processo frontonasal (~semana 6). O <strong>palato secundário</strong> (palato duro e mole posteriores) forma-se pelas prateleiras palatinas (projeções horizontais dos processos maxilares), que precisam elevar-se de uma posição vertical (flanqueando a língua) para horizontal e fundir-se na linha mediana. Isso ocorre entre as semanas 7–10. A fusão das prateleiras palatinas é mediada por apoptose do epitélio de fusão — falha nessa apoptose causa palato fendido.</p>
+
+    <div class="section-title">7.3 — Determinação Sexual das Gônadas</div>
+    <p>As gônadas surgem como cristas genitais indiferenciadas na parede posterior do celoma. Até a semana 7, as gônadas são <strong>indiferentes/bipotenciais</strong> — idênticas nos dois sexos geneticamente. A determinação testicular começa nessa semana, mediada pelo gene <span class="ht">SRY</span> (<em>Sex-determining Region of the Y chromosome</em> = região determinante do sexo no cromossomo Y), localizado no braço curto do Y. SRY ativa SOX9, que por sua vez ativa AMH (Hormônio Anti-Mülleriano), levando à diferenciação testicular. Na ausência de SRY, as gônadas diferenciam-se em ovários (programa "padrão", regulado por FOXL2, WNT4, RSPO1).</p>
+
+    <div class="section-title">7.4 — Orelha Interna, Média e Externa</div>
+    <p>A orelha tem três origens distintas:</p>
+    <ul>
+      <li><strong>Orelha interna</strong> (labirinto membranoso + coclear) — do placódio ótico (ectoderme)</li>
+      <li><strong>Orelha média</strong> (ossículos: martelo, bigorna, estribo; trompa de Eustáquio) — do 1º e 2º arcos faríngeos + 1ª bolsa faríngea</li>
+      <li><strong>Orelha externa</strong> (pavilhão auricular, conduto auditivo externo) — das 6 aurículas (protuberâncias dos arcos 1 e 2) + 1ª fenda faríngea</li>
+    </ul>
+
+    <div class="clinical">
+      <strong>Surdez Congênita:</strong> É o defeito sensorial mais comum ao nascimento (~1–3/1.000). 60–70% têm base genética. Mutações no gene <strong>GJB2</strong> (conexina 26) são a causa genética mais frequente de surdez neurossensorial congênita. O <strong>teste do PEATE (Potencial Evocado Auditivo do Tronco Encefálico)</strong> — chamado em inglês de ABR (Auditory Brainstem Response) ou BERA — é o padrão-ouro para triagem auditiva neonatal. A triagem neonatal auditiva universal é preconizada antes da alta hospitalar. (<a class="src" href="https://www.who.int/publications/i/item/9789241514484" target="_blank">WHO — Hearing Loss, 2021</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 8 ───────────────── -->
+<div class="week-card" id="s8">
+  <div class="week-header">
+    <div class="week-num">08</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção</div>
+      <div class="week-title">Fim do Período Embrionário — Todos os Órgãos Presentes</div>
+    </div>
+    <span class="week-badge badge-embryo">Período Embrionário — Último</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🍓</div>
+      <div class="size-data">
+        <div class="size-label">Comprimento crânio-caudal (CR)</div>
+        <div class="size-value">~28–30 mm · Peso ≈ 1–3 g</div>
+      </div>
+    </div>
+
+    <p>A semana 8 marca o <strong>fim do período embrionário</strong> — uma fronteira conceitual crucial. Todos os sistemas orgânicos estão estabelecidos, embora primitivos. A partir da semana 9 tem início o <strong>período fetal</strong>, marcado principalmente pelo crescimento, maturação e refinamento dos órgãos já formados (não criação de novos órgãos).</p>
+
+    <p>Características da semana 8:</p>
+    <ul>
+      <li><strong>Cabeça</strong> — representa quase metade do comprimento total do embrião. Há flexão cervical proeminente. Olhos bem formados (com pálpebras fundidas). Narinas visíveis. Pavilhões auriculares identificáveis.</li>
+      <li><strong>Membros</strong> — dedos das mãos separados; espaços interdigitais dos pés em formação. Cotovelos distinguíveis. Joelhos visíveis.</li>
+      <li><strong>Movimento</strong> — primeiros movimentos espontâneos (reflexos primitivos a estímulos tácteis) detectáveis por ultrassonografia de alta resolução.</li>
+      <li><strong>Sistema nervoso</strong> — todos os segmentos do encéfalo distinguíveis; cerebelo começa a se formar; proliferação neuronal exuberante no neocórtex.</li>
+      <li><strong>Sistema cardiovascular</strong> — coração de 4 câmaras quase completo; circulação placentária estabelecida; FC ~150–170 bpm.</li>
+      <li><strong>Trato GI</strong> — intestinos retornando à cavidade abdominal; estômago, intestinos delgado e grosso formados; fígado volumoso (hematopoese).</li>
+      <li><strong>Gônadas</strong> — diferenciação visível em testículos ou ovários.</li>
+    </ul>
+
+    <div class="box box-gold">
+      <div class="box-title">Transição Embrião → Feto</div>
+      <p>A mudança de nomenclatura reflete uma mudança biológica real. O embrião (do grego embryon = crescer dentro) está em fase de organogênese ativa, com máxima vulnerabilidade teratogênica. O feto (do latim fetus = prole, cria) está em fase de crescimento e maturação. Todas as principais malformações estruturais têm sua origem no período embrionário (semanas 3–8), o que reforça a importância do <strong>cuidado pré-concepcional</strong> e das primeiras semanas de gravidez (muitas vezes antes de a mulher saber que está grávida).</p>
+    </div>
+
+    <div class="clinical">
+      <strong>Rastreio Cromossômico do 1º Trimestre — Translucência Nucal (TN):</strong> Entre 11–13⁺⁶ semanas gestacionais (equivalente a semanas embriológicas 9–11), mede-se o acúmulo de fluido na nuca fetal (TN — Translucência Nucal) por ultrassonografia. TN aumentada (> 3mm ou > p99 para a IG) associa-se a trissomias (21, 18, 13), Turner, cardiopatias congênitas. Combinada com hCG livre e PAPP-A (<em>Pregnancy-Associated Plasma Protein A</em>), o rastreio do 1T detecta ~90% das T21 com 5% de falso-positivo. O NIPT (<em>Non-Invasive Prenatal Testing</em>) por DNA fetal livre no plasma materno tem sensibilidade > 99% para T21. (<a class="src" href="https://fetalmedicine.org/research/assess/trisomies" target="_blank">Fetal Medicine Foundation, 2023</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!--     SEMANAS 9–12 (ainda 1º trimestre)       -->
+<!-- ═══════════════════════════════════════════ -->
+
+<!-- ───────────────── SEMANA 9 ───────────────── -->
+<div class="week-card" id="s9">
+  <div class="week-header">
+    <div class="week-num">09</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção · Semana Gestacional 11</div>
+      <div class="week-title">Início do Período Fetal — Crescimento e Hematopoese Hepática</div>
+    </div>
+    <span class="week-badge badge-fetal">Período Fetal</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🫐</div>
+      <div class="size-data">
+        <div class="size-label">CR (crânio-caudal)</div>
+        <div class="size-value">~40–45 mm · Peso ≈ 8–10 g</div>
+      </div>
+    </div>
+
+    <p>O feto cresce rapidamente — essa é a característica dominante do período fetal. A proporção cabeça:corpo começa lentamente a diminuir (embora a cabeça ainda seja desproporcionalmente grande). A ossificação do esqueleto intensifica-se.</p>
+
+    <p><strong>Hematopoese fetal:</strong> O fígado fetal é o principal órgão hematopoético durante as semanas 6–22 (hematopoese hepática). O <strong>saco vitelino</strong> foi o primeiro sítio hematopoético (semanas 3–6, produzindo hemácias primitivas nucleadas). No 2º trimestre, o <strong>baço</strong> contribui brevemente. No 3º trimestre e após o nascimento, a <strong>medula óssea</strong> assume definitivamente. Isso explica por que neonatos prematuros têm eritropoese extramedular (esplenomegalia) em condições de anemia.</p>
+
+    <p>O <strong>pâncreas</strong> (formado pela fusão dos brotos dorsal e ventral do pâncreas) começa a produzir insulina e glucagon. As células β ilhotas estão funcionantes nessa semana — o que é relevante clinicamente: fetos de mães diabéticas expostos a hiperglicemia crônica desenvolvem hiperplasia de ilhotas → hiperinsulinismo fetal → macrossomia e hipoglicemia neonatal.</p>
+
+    <div class="section-title">9.1 — Diferenciação Sexual Externa</div>
+    <p>A genitália externa ainda é indiferenciada ao final da semana 8. Na semana 9, sob influência de <strong>DHT (Di-Hidrotestosterona)</strong> (convertida da testosterona pela 5α-redutase nos tecidos periféricos), em fetos XY:</p>
+    <ul>
+      <li>Tubérculo genital → glande do pênis</li>
+      <li>Pregas urogenitais → corpo do pênis (uretral)</li>
+      <li>Elevações labioescrotais → escroto</li>
+    </ul>
+    <p>Em fetos XX (sem DHT suficiente):</p>
+    <ul>
+      <li>Tubérculo genital → clitóris</li>
+      <li>Pregas urogenitais → lábios menores</li>
+      <li>Elevações labioescrotais → lábios maiores</li>
+    </ul>
+
+    <div class="clinical">
+      <strong>Hiperplasia Adrenal Congênita (HAC / CAH — Congenital Adrenal Hyperplasia):</strong> Deficiência enzimática (mais comum: 21-hidroxilase, gene CYP21A2) → acúmulo de precursores androgênicos → virilização de fetos XX (genitália ambígua). É a causa mais comum de genitália ambígua em RN. A forma perdedora de sal causa hipotensão, hiponatremia e hipercalemia com risco de vida nos primeiros dias. Triagem neonatal: 17-OHP (17-OH-progesterona) sérica elevada. Tratamento: corticoide (hidrocortisona) + mineralocorticoide (fludrocortisona) na forma clássica. (<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/29872607/" target="_blank">Speiser et al., J Clin Endocrinol Metab, 2018</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 10 ───────────────── -->
+<div class="week-card" id="s10">
+  <div class="week-header">
+    <div class="week-num">10</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção · SG 12</div>
+      <div class="week-title">Retorno Intestinal, Deglutição, Rins Funcionando</div>
+    </div>
+    <span class="week-badge badge-fetal">Período Fetal</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🍋</div>
+      <div class="size-data">
+        <div class="size-label">CR</div>
+        <div class="size-value">~55–65 mm · Peso ≈ 14–20 g</div>
+      </div>
+    </div>
+
+    <p>As alças intestinais retornam à cavidade abdominal completando a rotação de 270° anti-horária. O <strong>intestino delgado</strong> ocupa a posição central do abdome, e o <strong>colo</strong> enquadra-o perifericamente — padrão do adulto. O <strong>ceco</strong> desce para a fossa ilíaca direita.</p>
+
+    <p>O feto começa a <strong>deglutir</strong> líquido amniótico — fundamental para o desenvolvimento do TGI e dos pulmões (o líquido engolido e depois regurgitado para o líquido amniótico contribui para a manutenção do volume do LA). A produção de <strong>líquido amniótico</strong> nessa fase começa a ser progressivamente dominada pela <strong>urina fetal</strong> (os rins começam a produzir urina a partir de ~10–11 semanas).</p>
+
+    <p><strong>Unhas</strong> começam a se formar nos dedos das mãos. <strong>Folículos pilosos</strong> se iniciam na pele. O <strong>palato</strong> fecha-se completamente nessa semana.</p>
+
+    <div class="box box-blue">
+      <div class="box-title">Líquido Amniótico — Composição e Função</div>
+      <p>O LA (líquido amniótico / AF — Amniotic Fluid) tem composição dinâmica que muda ao longo da gestação. No 1º trimestre, é principalmente um ultrafiltrado do plasma materno. No 2º trimestre em diante, a <strong>urina fetal</strong> domina (hipotônica, com ureia e creatinina). O LA amortece o feto, permite movimentação (desenvolvimento musculoesquelético), tem propriedades antibacterianas (lisozima, IgA), e é essencial para o desenvolvimento pulmonar (o feto "respira" LA). Volume normal a termo: ~500–1500 mL. Oligodrâmnio (< 500 mL): associado a agenesia renal, pós-datismo, rotura de membranas. Polidrâmnio (> 2000 mL): associado a atresia esofágica, anencefalia, diabetes gestacional. (<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/26968778/" target="_blank">Underwood et al., Semin Perinatol, 2005</a>)</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 11 ───────────────── -->
+<div class="week-card" id="s11">
+  <div class="week-header">
+    <div class="week-num">11</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção · SG 13</div>
+      <div class="week-title">Osso, Eritropoese e Movimentos Ativos</div>
+    </div>
+    <span class="week-badge badge-fetal">Período Fetal</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🫚</div>
+      <div class="size-data">
+        <div class="size-label">CR</div>
+        <div class="size-value">~70–80 mm · Peso ≈ 25–35 g</div>
+      </div>
+    </div>
+
+    <p>A <strong>ossificação</strong> progride rapidamente — ossos longos, costelas e vértebras mostram centros de ossificação primários visíveis radiologicamente/ultrassonograficamente. A calvária ainda é predominantemente cartilagem.</p>
+
+    <p>O feto realiza <strong>movimentos ativos de membros</strong> detectáveis por ultrassonografia (a mãe geralmente não sente ainda — isso ocorre entre 16–20 semanas para mulheres nulíparas, 14–16 para multíparas). Reflexos primitivos como o de sucção começam a ser observados.</p>
+
+    <p>O <strong>timo</strong> está bem desenvolvido e começa a processar precursores de linfócitos T (timócitos). Linfócitos B são produzidos no fígado fetal. O sistema imune está se construindo, mas ainda não é funcional de forma autônoma — a proteção imunológica passiva vem de <strong>IgG materna</strong> transferida pela placenta (via receptor FcRn nos sinciciotrofoblastos) principalmente no 3º trimestre.</p>
+
+    <div class="clinical">
+      <strong>Biópsia de Vilo Corial (CVS — Chorionic Villus Sampling):</strong> Realizada entre 10–13 semanas gestacionais. Obtém tecido do trofoblasto (geneticamente idêntico ao feto) para cariotipagem e diagnóstico molecular. Pode ser feita por via transcervical ou transabdominal. Vantagem sobre amniocentese: diagnóstico mais precoce, permitindo decisão mais cedo. Risco de perda fetal: ~0,5–1% (similar à amniocentese). Complicação específica: se feita antes de 10 semanas → risco de hipoplasia de membros (rara, mas documentada). (<a class="src" href="https://www.acog.org/clinical/clinical-guidance/practice-bulletin/articles/2020/05/invasive-prenatal-testing-for-aneuploidy" target="_blank">ACOG Practice Bulletin 162, 2020</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 12 ───────────────── -->
+<div class="week-card" id="s12">
+  <div class="week-header">
+    <div class="week-num">12</div>
+    <div class="week-title-block">
+      <div class="week-label">Semana Pós-Concepção · SG 14</div>
+      <div class="week-title">Fim do 1º Trimestre — Rosto Humano, Genitália Distinguível</div>
+    </div>
+    <span class="week-badge badge-fetal">Período Fetal</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🍑</div>
+      <div class="size-data">
+        <div class="size-label">CR</div>
+        <div class="size-value">~85–90 mm · Peso ≈ 45–60 g</div>
+      </div>
+    </div>
+
+    <p>O rosto fetal é claramente humano na ultrassonografia. Olhos completamente formados (ainda fundidos). Orelhas em posição lateral mais cefálica (ainda não na posição final). Pálpebras fechadas.</p>
+
+    <p>A genitália externa é distinguível por ultrassonografia: o ângulo do tubérculo genital em relação à coluna vertebral ajuda a determinar o sexo (método de Nub). Testículos ainda na cavidade abdominal/canal inguinal — descerão para o escroto somente no 3º trimestre.</p>
+
+    <p>O risco de abortamento espontâneo cai drasticamente após a semana 12 (de ~15–20% no 1T para ~1–2% no 2T) — daí a convenção social de anunciar a gravidez após as 12 semanas.</p>
+
+    <div class="box box-green">
+      <div class="box-title">Placenta ao Final do 1º Trimestre</div>
+      <p>A placenta está completamente formada com suas vilosidades coriônicas maduras. A circulação uteroplacentária é estabelecida (~semana 10–12) quando o citotrofoblasto invade e remodela as artérias espiraladas maternas, transformando-as de vasos musculares resistentes em conduítes de baixa resistência e alta capacidade. Essa remodelagem é essencial para o aporte adequado de sangue ao espaço interviloso. Falha nesse processo é central na fisiopatologia da <strong>pré-eclâmpsia</strong>. (<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/19079234/" target="_blank">Redman & Sargent, Science, 2009</a>)</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!--          SEGUNDO TRIMESTRE                  -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="trimester-header" data-num="II">
+  <h2>Segundo Trimestre — Semanas 13 a 26</h2>
+  <p>Crescimento intenso, maturação neurológica, movimentos fetais e mielinização inicial</p>
+</div>
+
+<!-- ───────────────── SEMANA 13 ───────────────── -->
+<div class="week-card" id="s13">
+  <div class="week-header">
+    <div class="week-num">13</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 15</div>
+      <div class="week-title">Crescimento Acelerado, Lanugo e Vernix</div>
+    </div>
+    <span class="week-badge badge-fetal">2º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🍈</div>
+      <div class="size-data">
+        <div class="size-label">CR / Peso</div>
+        <div class="size-value">~100 mm · Peso ≈ 65–80 g</div>
+      </div>
+    </div>
+
+    <p>O 2º trimestre é marcado por crescimento rápido e maior proporção crânio-corporal mais equilibrada. A pele fetal é fina, translúcida e avermelhada (vasos visíveis através dela). Surge o <span class="ht">lanugo</span> — <em>do latim lana = lã</em> — pelos finos e macios que cobrem o corpo fetal, com função de proteção da pele e ancoragem do vernix caseoso.</p>
+
+    <p>O <span class="ht">vernix caseoso</span> — <em>do latim vernix = verniz + caseosus = queijoso</em> — começa a se depositar na pele fetal a partir das semanas 17–20. É uma mistura de sebo (sebáceo), células escamadas da pele e lanugo que protege a pele do feto da maceração pelo líquido amniótico. Ao nascer, o RN a termo tem pouco vernix; o prematuro tem abundante vernix.</p>
+
+    <p>O <strong>tecido adiposo marrom (BAT — Brown Adipose Tissue)</strong> começa a se depositar (principalmente na região escapular, pescoço e ao redor de órgãos). Sua função pós-natal é a <strong>termogênese sem tremor</strong> — vital para o neonato, que não tem capacidade eficiente de termorregulação. O BAT é rico em mitocôndrias e expressa <strong>UCP1 (Uncoupling Protein 1 = proteína desacopladora 1)</strong>, que dissipa o gradiente de prótons da cadeia respiratória como calor.</p>
+
+    <div class="clinical">
+      <strong>Amniocentese:</strong> Realizada tipicamente entre 15–20 semanas gestacionais. Punção percutânea guiada por ultrassom da cavidade amniótica para aspiração de ~15–30 mL de líquido amniótico. As células amnióticas (amniócitos — derivados da pele e mucosas fetais) são cultivadas e submetidas a cariotipagem, FISH, microarray, ou sequenciamento exômico. Risco de perda fetal: ~0,1–0,3% nas mãos experientes. Indicações: rastreio do 1T alterado, NIPT positivo, malformações na ultrassonografia, idade materna avançada (> 35 anos), história familiar. (<a class="src" href="https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/amniocentesis-and-chorionic-villus-sampling-green-top-guideline-no-8/" target="_blank">RCOG GTG No. 8, 2021</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 14 ───────────────── -->
+<div class="week-card" id="s14">
+  <div class="week-header">
+    <div class="week-num">14</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 16</div>
+      <div class="week-title">Movimentos Fetais Consistentes, Gânglios da Base</div>
+    </div>
+    <span class="week-badge badge-fetal">2º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🥑</div>
+      <div class="size-data">
+        <div class="size-label">CR / Peso</div>
+        <div class="size-value">~115 mm · Peso ≈ 100–120 g</div>
+      </div>
+    </div>
+
+    <p>Os movimentos fetais tornam-se mais coordenados e consistentes — há movimentos de membros, virar de cabeça, movimentos respiratórios fetais (MRF — entrada e saída de líquido amniótico pelos pulmões, essencial para o desenvolvimento pulmonar). Os MRF são detectados por perfil biofísico fetal — sua ausência a termo indica sofrimento fetal.</p>
+
+    <p>O <strong>córtex cerebral</strong> começa uma fase de <strong>proliferação neuronal intensa</strong>. Neurônios corticais são gerados na zona ventricular e migram radialmente para o exterior, guiados pelas fibras radiais da glia de Bergmann. O córtex humano começa liso (lisencéfalo) e adquire circunvoluções progressivamente a partir do 3º trimestre.</p>
+
+    <p>Desenvolvimento do <strong>trato gastrointestinal</strong>: vilosidades intestinais bem formadas; enzimas digestivas (lactase, sacarase) começam a ser expressas no intestino delgado; o mecônio começa a se acumular no colo (produto da deglutição de líquido amniótico, secreções gastrointestinais, sebo e células descamadas — de coloração verde-escura pelo pigmento biliar).</p>
+
+    <div class="clinical">
+      <strong>Ultrassonografia Morfológica do 2º Trimestre (Morfológica entre 18–22 SG):</strong> É o exame de imagem mais importante da gestação. Avalia: biometria fetal (DBP — diâmetro biparietal, CA — circunferência abdominal, CF — comprimento do fêmur), morfologia craniana, face, coluna, coração (4 câmaras, vias de saída), diafragma, parede abdominal, TGI, rins, bexiga, membros, placenta, LA, artéria umbilical. Detecta ~60–80% das malformações fetais maiores. (<a class="src" href="https://www.isuog.org/clinical-resources/isuog-guidelines/practice-guidelines-performance-fetal-anatomy-scan.html" target="_blank">ISUOG Guidelines, 2022</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 15 ───────────────── -->
+<div class="week-card" id="s15">
+  <div class="week-header">
+    <div class="week-num">15</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 17</div>
+      <div class="week-title">Ossificação Calvarial, Gordura Subcutânea Inicial</div>
+    </div>
+    <span class="week-badge badge-fetal">2º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🍊</div>
+      <div class="size-data">
+        <div class="size-label">CR / Peso</div>
+        <div class="size-value">~128 mm · Peso ≈ 140–160 g</div>
+      </div>
+    </div>
+
+    <p>Os <strong>centros de ossificação</strong> se multiplicam em todo o esqueleto. A calvária (parte membranosa do crânio) ossifica-se a partir de centros intramembranosos nos ossos frontal, parietal, temporal e occipital, separados por suturas e fontanelas. As <strong>fontanelas</strong> (anterior/bregmática e posterior/lambdóide) são áreas de tecido conjuntivo fibroso — permitem o amoldamento da cabeça durante o parto e o crescimento cerebral pós-natal. A fontanela anterior fecha-se normalmente entre 12–18 meses de vida; a posterior em 2–3 meses.</p>
+
+    <p>A <strong>placenta</strong> pesa aproximadamente o mesmo que o feto nessa fase — relação que se inverte progressivamente até o termo.</p>
+
+    <div class="section-title">Desenvolvimento Pulmonar — Fase Pseudoglandular</div>
+    <p>Os pulmões fetais passam por fases bem definidas de desenvolvimento:</p>
+    <table>
+      <tr><th>Fase</th><th>Período</th><th>Eventos</th></tr>
+      <tr><td>Embrionária</td><td>Semanas 4–7</td><td>Broto pulmonar (divertículo do intestino anterior) → brônquios principais → lobares → segmentares</td></tr>
+      <tr><td>Pseudoglandular</td><td>Semanas 8–16</td><td>Ramificação até bronquíolos terminais (~16 ordens); aspecto de glândula em corte histológico; sem trocas gasosas possíveis</td></tr>
+      <tr><td>Canalicular</td><td>Semanas 17–26</td><td>Bronquíolos respiratórios; acinos primitivos; capilares aproximam-se do epitélio; pneumócitos tipo I e II diferenciando</td></tr>
+      <tr><td>Sacular</td><td>Semanas 27–36</td><td>Sacos terminais; surfactante produzido; viabilidade possível com suporte</td></tr>
+      <tr><td>Alveolar</td><td>Semana 36 – 8 anos</td><td>Alvéolos verdadeiros; área de troca gasosa aumenta ~23x pós-natal</td></tr>
+    </table>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 16 ───────────────── -->
+<div class="week-card" id="s16">
+  <div class="week-header">
+    <div class="week-num">16</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 18</div>
+      <div class="week-title">Quadruple Screen, Primeiros Movimentos Sentidos</div>
+    </div>
+    <span class="week-badge badge-fetal">2º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🥭</div>
+      <div class="size-data">
+        <div class="size-label">CR / Peso</div>
+        <div class="size-value">~142 mm · Peso ≈ 190–220 g</div>
+      </div>
+    </div>
+
+    <p>Entre as semanas 16–20 (SG 18–22), a maioria das mães primíparas começa a sentir os movimentos fetais — chamados de <span class="ht">percepção de movimentos fetais (PMF)</span> ou popularmente "quickening" (do inglês antigo quick = vivo). Multíparas percebem mais cedo (14–16 semanas).</p>
+
+    <p>Entre 15–20 semanas, pode ser realizado o <strong>rastreio sérico do 2T (Quadruple Screen)</strong> — dosagem de 4 marcadores maternos: <strong>AFP (alfa-fetoproteína), hCG, estriol não-conjugado (uE3) e inibina A</strong> — para rastreio de T21, T18, DTN e síndrome de Smith-Lemli-Opitz. Padrão na T21: AFP↓, hCG↑, uE3↓, inibina A↑.</p>
+
+    <p>O <strong>sistema auditivo</strong> está funcionante — o feto responde a sons externos com mudanças de FC. Ele pode ouvir a voz materna (condução ossea), música e sons ambientes. Isso tem implicações para o desenvolvimento da linguagem pós-natal.</p>
+
+    <div class="clinical">
+      <strong>Cerclagem Cervical (Sutura de McDonald / Shirodkar):</strong> Em mulheres com insuficiência ístmico-cervical (incompetência do colo uterino), o colo dilata silenciosamente sem contrações → abortamento tardio ou parto prematuro. A cerclagem é um procedimento cirúrgico que sutura o colo uterino para mantê-lo fechado, realizado tipicamente entre 14–16 semanas. Indicações: história de perda fetal prévia por IIC, colo curto (< 25 mm) na USS entre 16–24 semanas + história de parto prematuro. (<a class="src" href="https://www.acog.org/clinical/clinical-guidance/practice-bulletin/articles/2014/05/cerclage-for-the-management-of-cervical-insufficiency" target="_blank">ACOG Practice Bulletin 142, 2014</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 17 ───────────────── -->
+<div class="week-card" id="s17">
+  <div class="week-header">
+    <div class="week-num">17</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 19</div>
+      <div class="week-title">Reflexo de Moro Primitivo, Mielo e Conexões Neurais</div>
+    </div>
+    <span class="week-badge badge-fetal">2º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🍍</div>
+      <div class="size-data">
+        <div class="size-label">CR / Peso</div>
+        <div class="size-value">~155 mm · Peso ≈ 260–300 g</div>
+      </div>
+    </div>
+
+    <p>A <strong>mielinização</strong> — processo de envoltura dos axônios por mielina (produzida por oligodendrócitos no SNC e células de Schwann no SNP) — começa nessa fase nas vias sensoriais periféricas e medulares. A mielinização do córtex cerebral é um processo lento que se estende até a segunda e terceira décadas de vida. A velocidade de condução nervosa aumenta 50–100× com a mielinização.</p>
+
+    <p>O reflexo de <strong>Moro</strong> (susto) é detectável nessa fase por ultrassonografia — resposta de abdução e adução dos membros superiores em resposta a estímulo súbito. Reflexos neonatais como sucção, preensão palmar e plantar, e reflexo de Galant também estão sendo mielinizados. A ausência de reflexo de Moro ao nascer indica comprometimento neurológico grave.</p>
+
+    <p>O <strong>cerebelo</strong> está em fase de crescimento intenso — folhamento das fissuras cerebelares, proliferação dos neurônios de Purkinje e das células granulares. Lesões no período perinatal que afetem o cerebelo (ex: hemorragia cerebelar em prematuros extremos) causam ataxia, hipotonia e déficits de coordenação.</p>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 18 ───────────────── -->
+<div class="week-card" id="s18">
+  <div class="week-header">
+    <div class="week-num">18</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 20</div>
+      <div class="week-title">Morfológica — Feto na Metade da Gestação</div>
+    </div>
+    <span class="week-badge badge-fetal">2º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🫑</div>
+      <div class="size-data">
+        <div class="size-label">CR / Peso (marco)</div>
+        <div class="size-value">~170 mm · Peso ≈ 320–360 g · Meio da gestação</div>
+      </div>
+    </div>
+
+    <p>A semana 20 gestacional (= semana 18 embriológica) é o <strong>marco da metade da gestação</strong> (de 40 semanas gestacionais). O fundo uterino atinge a altura do umbigo — referência clínica importante na medida da altura uterina.</p>
+
+    <p>Esta é a semana da <strong>ultrassonografia morfológica</strong> (ideal entre SG 18–22). O coração fetal pode ser avaliado em cortes de 4 câmaras, via de saída do VE e VD — detectando a maioria das cardiopatias congênitas estruturais maiores.</p>
+
+    <p>O <strong>córtex suprarrenal fetal</strong> é enorme em relação ao tamanho total da glândula — a zona fetal do córtex suprarrenal (que involui após o nascimento) produz DHEA-S (sulfato de deidroepiandrosterona), precursor dos estrogênios placentários. Isso explica por que a suprarrenal fetal é proporcionalmente muito maior que a do adulto (involuirá drasticamente nas primeiras semanas de vida).</p>
+
+    <div class="clinical">
+      <strong>Cardiopatias Congênitas — Prevalência e Diagnóstico:</strong> São as malformações congênitas mais comuns (6–8/1.000 nascidos vivos). As mais frequentes: CIV (comunicação interventricular), CIA (comunicação interatrial), PCA (persistência do canal arterial), CoAo (coarctação da aorta), TF (tetralogia de Fallot), TGA (transposição das grandes artérias). O ecocardiograma fetal é o método diagnóstico pré-natal de escolha. A saturimetria pós-natal (CCHD screening — Critical Congenital Heart Disease) com SpO₂ pré e pós-ductal deve ser realizada em todos os neonatos antes da alta. (<a class="src" href="https://www.ahajournals.org/doi/10.1161/CIR.0000000000000443" target="_blank">AHA Statement CCHD Screening, 2016</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 19–20 ───────────────── -->
+<div class="week-card" id="s19">
+  <div class="week-header">
+    <div class="week-num">19–20</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 21–22</div>
+      <div class="week-title">Surfactante Pulmonar, Proliferação Neuronal Pico</div>
+    </div>
+    <span class="week-badge badge-fetal">2º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🌽</div>
+      <div class="size-data">
+        <div class="size-label">CR / Peso</div>
+        <div class="size-value">~185–200 mm · Peso ≈ 400–500 g</div>
+      </div>
+    </div>
+
+    <p>Os <span class="ht">pneumócitos tipo II</span> — células cuboides que revestem os alvéolos — começam a diferenciar-se e a sintetizar <strong>surfactante pulmonar</strong>. O surfactante é uma mistura de fosfolipídios (principalmente fosfatidilcolina — lecitina — 70–80%) e proteínas (SP-A, SP-B, SP-C, SP-D). Sua função: <strong>reduzir a tensão superficial nos alvéolos</strong>, impedindo o colapso alveolar na expiração.</p>
+
+    <div class="box box-blue">
+      <div class="box-title">Física do Surfactante — Lei de Laplace</div>
+      <p>A pressão necessária para manter um alvéolo aberto é descrita pela <strong>Lei de Laplace</strong>:</p>
+      <div class="formula-block">P = 2T / r</div>
+      <p>Onde: P = pressão de distensão (Pa), T = tensão superficial (N/m), r = raio do alvéolo (m).</p>
+      <p>Sem surfactante, T ≈ 72 mN/m (como a água). Com surfactante, T cai para ~1–5 mN/m. Alvéolos menores (r menor) precisariam de P muito maior para não colabar — o surfactante resolve isso ao aumentar a concentração nos alvéolos menores (reduzindo ainda mais T). Ausência de surfactante → colapso alveolar difuso → SDR (Síndrome de Dificuldade Respiratória / RDS — Respiratory Distress Syndrome) do neonato prematuro.</p>
+      <p><strong>Exercício clínico:</strong> Se r = 50 μm e T sem surfactante = 70 mN/m: P = 2×0,07 / 0,00005 = 2.800 Pa ≈ 28 cmH₂O. Com surfactante (T = 5 mN/m): P = 2×0,005 / 0,00005 = 200 Pa ≈ 2 cmH₂O. A diferença é brutal!</p>
+    </div>
+
+    <p>A taxa de síntese de surfactante acelera dramaticamente após a <strong>semana 34</strong> (importante para definir a maturidade pulmonar). Glicocorticoides (betametasona, dexametasona) administrados à mãe em risco de parto prematuro (< 34 semanas) aceleram a maturação pulmonar fetal — um dos tratamentos mais impactantes em neonatologia.</p>
+
+    <p>O <strong>córtex cerebral</strong> atinge o pico de proliferação neuronal entre 15–25 semanas (zona ventricular e zona subventricular). Após isso, os neurônios migram e não são mais gerados. A neurogênese pós-natal em humanos é limitada ao hipocampo (giro denteado) e ao bulbo olfatório.</p>
+
+    <div class="clinical">
+      <strong>Limite de Viabilidade Fetal:</strong> Atualmente estabelecido em ~22–23 semanas gestacionais (= ~20–21 semanas embriológicas) em centros de excelência. Antes de 22 SG: pulmões na fase pseudoglandular/início canalicular — ausência de sacos alveolares e surfactante — incompatível com vida extrauterina. Entre 22–24 SG: zona cinzenta — decisões complexas, individualizadas, em conjunto com família. Após 24 SG: viabilidade relativamente bem estabelecida com suporte intensivo. (<a class="src" href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2016/04/medically-indicated-late-preterm-and-early-term-deliveries" target="_blank">ACOG, Periviability, 2022</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 21–22 ───────────────── -->
+<div class="week-card" id="s21">
+  <div class="week-header">
+    <div class="week-num">21–22</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 23–24</div>
+      <div class="week-title">Limiar de Viabilidade — Fase Canalicular Pulmonar</div>
+    </div>
+    <span class="week-badge badge-fetal">2º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🥥</div>
+      <div class="size-data">
+        <div class="size-label">Peso</div>
+        <div class="size-value">~500–600 g</div>
+      </div>
+    </div>
+
+    <p>Os pulmões estão na fase <strong>canalicular</strong>: os bronquíolos respiratórios se desenvolvem, os ácinos pulmonares primitivos formam-se, e os capilares começam a se aproximar do epitélio — criando a pré-condição para trocas gasosas. A relação lecitina/esfingomielina (L/E ou L/S — <em>lecithin-to-sphingomyelin ratio</em>) no líquido amniótico é usada para avaliar maturidade pulmonar fetal: L/S > 2,0 indica pulmão maduro (geralmente ≥ 35 semanas).</p>
+
+    <p>O <strong>ritmo circadiano fetal</strong> começa a se organizar — o feto apresenta ciclos de sono-vigília detectáveis por monitorização de movimentos. Há influência do ritmo circadiano materno (cortisol, melatonina, temperatura) sobre o feto.</p>
+
+    <p>A <strong>medula óssea</strong> começa progressivamente a assumir a hematopoese do fígado fetal — transição que se completa antes do nascimento. O baço ainda é hematopoético nesse período.</p>
+
+    <div class="clinical">
+      <strong>Corticoterapia Antenatal (ACS — Antenatal Corticosteroids):</strong> Betametasona 12 mg IM a cada 24h (2 doses) ou dexametasona 6 mg IM a cada 12h (4 doses) — indicada em mulheres com risco de parto prematuro entre 24–34 semanas. Reduz em ~50% a incidência de SDR, hemorragia intraventricular (HIV) e enterocolite necrosante (ECN) nos prematuros. Mecanismo: ativa receptor de glicocorticoide (GR) nos pneumócitos tipo II → upregulation de SP-B, SP-C e enzimas de síntese de fosfatidilcolina → maturação surfactante. (<a class="src" href="https://www.who.gov/recommendations/preterm-birth/antenatal-corticosteroids" target="_blank">WHO Recommendation ACS, 2022</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 23–24 ───────────────── -->
+<div class="week-card" id="s23">
+  <div class="week-header">
+    <div class="week-num">23–24</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 25–26</div>
+      <div class="week-title">Pele, Resposta à Dor e Maturação Cortical</div>
+    </div>
+    <span class="week-badge badge-fetal">2º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🌶️</div>
+      <div class="size-data">
+        <div class="size-label">Peso</div>
+        <div class="size-value">~650–820 g</div>
+      </div>
+    </div>
+
+    <p>A pele fetal passa a ter estrato córneo (queratinização) — barreira contra perda de água. Em prematuros extremos (< 28 semanas), a pele ainda é gelatinosa e translúcida — barreira epidérmica imatura → enorme perda insensível de água → hipernatremia e hipovolemia nos primeiros dias de vida. Os prematuros extremos são cobertos com plástico de polietileno imediatamente ao nascer para reduzir essa perda.</p>
+
+    <p>As <strong>fibras nociceptivas (C e Aδ)</strong> e as vias tálamo-corticais estão se desenvolvendo. A resposta fetal a estímulos dolorosos (retirada de membro, aumento de FC) é possível a partir de ~22–24 semanas — o que gerou debate ético sobre anestesia/analgesia fetal em procedimentos invasivos. O substrato cortical para processamento consciente da dor provavelmente não é completo antes de ~28–30 semanas.</p>
+
+    <div class="section-title">Olhos — Abertura das Pálpebras</div>
+    <p>As pálpebras, que estavam fusionadas desde ~10 semanas, começam a se separar por volta de 24–26 semanas. O reflexo de piscar ao estímulo luminoso torna-se presente. A retina é sensível à luz, mas a acuidade visual é mínima — o sistema visual requer estimulação pós-natal para amadurecer completamente (período crítico de desenvolvimento visual: primeiros 6–8 anos).</p>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 25–26 ───────────────── -->
+<div class="week-card" id="s25">
+  <div class="week-header">
+    <div class="week-num">25–26</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 27–28</div>
+      <div class="week-title">Fim do 2º Trimestre — Olhos Abertos, SNC em Maturação</div>
+    </div>
+    <span class="week-badge badge-fetal">2º Trimestre — Final</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🍆</div>
+      <div class="size-data">
+        <div class="size-label">Peso</div>
+        <div class="size-value">~900–1.000 g</div>
+      </div>
+    </div>
+
+    <p>Ao final do 2T, o feto pesa aproximadamente 1 kg. Os pulmões ainda estão na transição canalicular-sacular — SDR grave se nascesse agora. Com suporte intensivo em UTI neonatal de nível III (UTIN), a sobrevida a 28 semanas é de ~80–90% em centros especializados, com risco significativo de morbidades neurológicas.</p>
+
+    <p>Circunvoluções cerebrais (<strong>giros</strong>) começam a ser visíveis na ultrassonografia — o córtex deixa de ser liso. A giração (gyrification) é determinada geneticamente, mas também por forças mecânicas de crescimento diferencial entre córtex e substância branca. Ausência de giros ao nascimento = <strong>lissencefalia</strong> (do grego lissos = liso + enkephalos) — grave doença neurológica.</p>
+
+    <p>O <strong>sistema imunológico fetal</strong> produz linfócitos T e B funcionais. O feto está exposto a antígenos do LA (deglutição) e começa a desenvolver tolerância imunológica. A transferência ativa de IgG materna pela placenta está acelerando — fundamental para a imunidade neonatal passiva nas primeiras semanas de vida.</p>
+
+    <div class="clinical">
+      <strong>Hemorragia Intraventricular (HIV) em Prematuros:</strong> A HIV (IVH — Intraventricular Hemorrhage) é a complicação neurológica mais comum em prematuros < 32 semanas. Origina-se na zona germinativa subependimária (matriz germinativa), rica em vasos frágeis, que involui após 34 semanas. Graus: I (apenas na matriz), II (no ventrículo sem dilatação), III (com hidrocefalia), IV (extensão ao parênquima). HIV grau III-IV → leucomalácia periventricular, hidrocefalia pós-hemorrágica, paralisia cerebral. Prevenção: ACS, sulfato de magnésio (neuroproteção), evitar hipotensão e variações bruscas de pressão arterial. (<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/24814559/" target="_blank">Papile et al., NeoReviews, 2014</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!--          TERCEIRO TRIMESTRE                 -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="trimester-header" data-num="III">
+  <h2>Terceiro Trimestre — Semanas 27 a 38</h2>
+  <p>Maturação pulmonar, crescimento ponderal intenso, descida fetal e preparação para o nascimento</p>
+</div>
+
+<!-- ───────────────── SEMANA 27–28 ───────────────── -->
+<div class="week-card" id="s27">
+  <div class="week-header">
+    <div class="week-num">27–28</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 29–30</div>
+      <div class="week-title">3º Trimestre — Fase Sacular Pulmonar, Eritropoese Medular</div>
+    </div>
+    <span class="week-badge badge-late">3º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🥦</div>
+      <div class="size-data">
+        <div class="size-label">Peso</div>
+        <div class="size-value">~1.100–1.400 g</div>
+      </div>
+    </div>
+
+    <p>Os pulmões entram na <strong>fase sacular</strong>: sacos terminais (sáculos) expandem-se, a parede dos sáculos torna-se extremamente fina, e a barreira ar-sangue reduz-se a ~0,5–2 μm (adequada para trocas gasosas). A produção de surfactante é agora significativa.</p>
+
+    <p>A <strong>medula óssea vermelha</strong> assume definitivamente a hematopoese. Eritrócitos fetais têm principalmente <strong>hemoglobina fetal (HbF — Hemoglobin Fetal: α₂γ₂)</strong>, com maior afinidade pelo O₂ que a HbA adulta (α₂β₂) — permite ao feto capturar O₂ da hemoglobina materna na placenta onde a pO₂ é de ~40 mmHg (vs. ~100 mmHg nos pulmões do adulto). A HbF começa a ser substituída por HbA a partir do 3T, e essa troca está completa em ~6 meses de vida pós-natal.</p>
+
+    <div class="box box-blue">
+      <div class="box-title">Curva de Dissociação do O₂ — HbF vs HbA</div>
+      <p>HbF tem P50 ≈ 19 mmHg vs HbA P50 ≈ 27 mmHg (P50 = pressão de O₂ na qual a hemoglobina está 50% saturada). Isso significa que a curva da HbF está deslocada para a esquerda — maior afinidade pelo O₂. Na placenta: a HbF capta O₂ da HbA materna (que "cede" O₂ mais prontamente porque também há 2,3-DPG materno → efeito Bohr favorece libertação de O₂). No feto: a HbF libera O₂ nos tecidos onde a pCO₂ é elevada (Efeito Bohr local). Clinicamente: pacientes com doenças falciformes têm crise após o 6º mês de vida, quando HbF diminui e HbS predomina.</p>
+    </div>
+
+    <p>O <strong>sistema nervoso autônomo</strong> amadurece — o controle vagal da FC fetal torna-se mais eficiente, resultando em maior <strong>variabilidade da FC fetal</strong> (FCF). A variabilidade da FCF em CTG (cardiotocografia) é um indicador de bem-estar fetal: variabilidade normal (10–25 bpm) indica integridade do SNA. Variabilidade diminuída ou ausente pode indicar acidose ou depressão neurológica.</p>
+
+    <div class="clinical">
+      <strong>CTG (Cardiotocografia) — Avaliação do Bem-Estar Fetal:</strong> Monitorização simultânea da FCF e das contrações uterinas. Interpretação pelo sistema FIGO 2015: FCF basal normal 110–160 bpm; variabilidade normal 5–25 bpm; acelerações = sinal de bem-estar; desacelerações tardias (tipo II) = hipóxia; desacelerações variáveis prolongadas = compressão do cordão. O perfil biofísico (PBF) adiciona ultrassonografia (movimentos respiratórios, movimentos corporais, tônus, LA). (<a class="src" href="https://obgyn.onlinelibrary.wiley.com/doi/10.1002/ijgo.12195" target="_blank">FIGO Intrapartum CTG Guidelines, 2015</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 29–30 ───────────────── -->
+<div class="week-card" id="s29">
+  <div class="week-header">
+    <div class="week-num">29–30</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 31–32</div>
+      <div class="week-title">Crescimento Ponderal — Tecido Adiposo e Imunidade Passiva</div>
+    </div>
+    <span class="week-badge badge-late">3º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🥬</div>
+      <div class="size-data">
+        <div class="size-label">Peso</div>
+        <div class="size-value">~1.500–1.800 g</div>
+      </div>
+    </div>
+
+    <p>O ganho ponderal fetal acelera nesse período — o feto ganha cerca de <strong>200–250 g por semana</strong>. O acúmulo de <strong>gordura branca subcutânea</strong> é intenso — responsável pela aparência "arredondada" do RN a termo. Prematuros nascem magros e enrugados pois não completaram esse acúmulo.</p>
+
+    <p>A transferência placentária de <strong>IgG materna</strong> (imunidade passiva) está no pico — o feto acumula anticorpos maternos que protegerão o RN nas primeiras semanas/meses de vida. Isso reforça a importância da vacinação materna no 3T (influenza, pertussis/coqueluche — Tdpa) para proteção do neonato antes que ele possa ser vacinado (esquema vacinal começa com 2 meses).</p>
+
+    <p>O <strong>reflexo de sucção</strong> está completo e coordenado com a deglutição — habilidade que o RN prematuro < 32–34 semanas ainda não possui (daí a necessidade de sonda nasogástrica para alimentação de prematuros).</p>
+
+    <div class="section-title">Descenso Testicular</div>
+    <p>Os testículos, que se desenvolveram na região lombar posterior, migram para o escroto ao longo do canal inguinal a partir de ~28 semanas, guiados pelo <strong>gubernáculo</strong> e regulados por IGF-1, AMH, INSL3 (insulin-like factor 3) e andrógenos. O processo completa-se em ~35–36 semanas na maioria dos RN masculinos. Criptorquidia (testículo não-descido) ocorre em ~3–5% dos RN a termo masculinos — resolve espontaneamente em ~70% até 6 meses de vida; orquidopexia indicada até 18 meses se não houver resolução espontânea.</p>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 31–32 ───────────────── -->
+<div class="week-card" id="s31">
+  <div class="week-header">
+    <div class="week-num">31–32</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 33–34</div>
+      <div class="week-title">Maturação Pulmonar Crítica — Surfactante em Alta</div>
+    </div>
+    <span class="week-badge badge-late">3º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🥕</div>
+      <div class="size-data">
+        <div class="size-label">Peso</div>
+        <div class="size-value">~1.900–2.100 g</div>
+      </div>
+    </div>
+
+    <p>A partir de 32 semanas, a produção de surfactante aumenta exponencialmente. A razão <strong>lecitina/esfingomielina (L/E ou L/S)</strong> no LA > 2,0 após 34 semanas geralmente indica maturidade pulmonar. O <strong>fosfatidilglicerol (PG)</strong> no LA (positivo após 35 semanas) é outro marcador de maturidade pulmonar ainda mais específico.</p>
+
+    <p>A <strong>Síndrome de Dificuldade Respiratória (SDR) neonatal / RDS — Respiratory Distress Syndrome</strong> em prematuros é causada por deficiência de surfactante. Clinicamente: taquipneia, gemido expiratório, tiragem, cianose, nas primeiras horas de vida. Rx: infiltrado reticulogranular difuso bilateral ("vidro moído") com broncograma aéreo. Tratamento: surfactante exógeno (beractant, poractant alfa) por via intratraqueal + suporte ventilatório (CPAP nasal ou VM). (<a class="src" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7055415/" target="_blank">Sweet et al., Neonatology — European Consensus Guidelines, 2023</a>)</p>
+
+    <p>O <strong>sono REM (Rapid Eye Movement)</strong> fetal é a fase predominante — os RN passam ~50% do tempo em sono REM (vs. ~20% dos adultos). O sono REM fetal parece essencial para a plasticidade sináptica e consolidação de memória implícita. Movimentos oculares rápidos são observados na ultrassonografia.</p>
+
+    <div class="section-title">Maturação Hepática</div>
+    <p>O fígado começa a sintetizar <strong>proteínas de coagulação</strong> de forma mais eficiente, mas permanece com deficiência relativa de vitamina K-dependentes (fatores II, VII, IX, X). Isso explica por que todos os RN recebem vitamina K ao nascer (1 mg IM) para prevenir a <strong>Doença Hemorrágica do Recém-Nascido (DHRN / VKDB — Vitamin K Deficiency Bleeding)</strong>.</p>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 33–34 ───────────────── -->
+<div class="week-card" id="s33">
+  <div class="week-header">
+    <div class="week-num">33–34</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 35–36</div>
+      <div class="week-title">Pré-termo Tardio — Maturação Quase Completa</div>
+    </div>
+    <span class="week-badge badge-late">3º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🍌</div>
+      <div class="size-data">
+        <div class="size-label">Peso</div>
+        <div class="size-value">~2.100–2.400 g</div>
+      </div>
+    </div>
+
+    <p>Neonatos nascidos nessa faixa são chamados de <strong>pré-termo tardios (PTT)</strong> — 34⁰/⁷ a 36⁶/⁷ semanas gestacionais. Representam ~70–75% de todos os prematuros e são frequentemente subestimados em risco. Apresentam morbidades como: dificuldades de amamentação (sucção-deglutição-respiração ainda imaturas), hipoglicemia, hiperbilirrubinemia, hipotermia, SDR leve e risco aumentado de readmissão hospitalar. (<a class="src" href="https://www.acog.org/clinical/clinical-guidance/obstetric-care-consensus/articles/2016/10/medically-indicated-late-preterm-and-early-term-deliveries" target="_blank">ACOG, Late Preterm, 2016</a>)</p>
+
+    <p>O <strong>encéfalo</strong> pesa apenas ~65% do seu peso a termo nessa fase. Os últimos giros corticais (terciários) ainda estão se formando. O risco de lesão cerebral por agressões hipóxico-isquêmicas ou inflamatórias ainda é alto.</p>
+
+    <p>O feto assume preferencialmente a posição <strong>cefálica</strong> (cabeça para baixo) — favorecida pelo maior peso da cabeça e pela forma do útero. Apresentações não-cefálicas (pélvica, córmica) em torno de 35–36 semanas podem ser corrigidas por versão cefálica externa (VCE) guiada por ultrassonografia, realizada por volta de 36–37 semanas.</p>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 35–36 ───────────────── -->
+<div class="week-card" id="s35">
+  <div class="week-header">
+    <div class="week-num">35–36</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 37–38</div>
+      <div class="week-title">Início do Termo — Mielin Final, Descida Fetal</div>
+    </div>
+    <span class="week-badge badge-late">3º Trimestre</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🍈</div>
+      <div class="size-data">
+        <div class="size-label">Peso</div>
+        <div class="size-value">~2.500–2.800 g</div>
+      </div>
+    </div>
+
+    <p>A partir de 37 semanas gestacionais (SG 37⁰/⁷), o feto é considerado a <strong>termo</strong>. A janela de "termo pleno" é 39⁰/⁷–40⁶/⁷ semanas — associada aos melhores desfechos neonatais. Nascimentos eletivos antes de 39 semanas sem indicação médica aumentam o risco de morbidade neonatal.</p>
+
+    <p>A <strong>mielinização</strong> progride intensamente no tronco cerebral, cerebelo e gânglios da base — essencial para os reflexos neonatais de sobrevida (sucção, deglutição, controle respiratório). Embora a mielinização do córtex seja um processo que dura décadas, as vias essenciais para a vida estão operacionais ao nascer.</p>
+
+    <p>O feto começa a <strong>descer para a pelve materna</strong> (encaixe / <em>engagement</em>) — a cabeça fetal penetra no estreito superior da pelve. Isso alivia a pressão no diafragma materno (a mãe "respira melhor") mas aumenta a pressão na bexiga (micção mais frequente). Clinicamente, o médico/obstetra avalia a altura da apresentação pelo toque vaginal usando o sistema de <strong>De Lee</strong> (planos de De Lee — de -5 a +5) ou planos de Hodge.</p>
+
+    <div class="box box-gold">
+      <div class="box-title">Índice de Bishop — Pré-condições do Colo para Indução</div>
+      <p>O <strong>Índice de Bishop</strong> avalia a favorabilidade do colo uterino para o parto, somando pontuações de: dilatação (0–3 pontos), apagamento (0–3), consistência (0–2), posição (0–2) e altura da apresentação (0–3). Score ≥ 8 = colo favorável, indução com alta taxa de sucesso. Score < 6 = colo desfavorável, necessita amadurecimento (misoprostol, dinoprostona, balão de Foley). (<a class="src" href="https://pubmed.ncbi.nlm.nih.gov/13988099/" target="_blank">Bishop, Obstet Gynecol, 1964</a>)</p>
+    </div>
+
+    <div class="section-title">Preparação Bioquímica para o Parto</div>
+    <p>Nas semanas que antecedem o parto, ocorrem alterações hormonais preparatórias:</p>
+    <ul>
+      <li><strong>Queda de progesterona relativa</strong> (ou dessensibilização dos receptores de progesterona) → remoção da inibição uterina</li>
+      <li><strong>Aumento de estrogênios</strong> → upregulation de receptores de ocitocina no miométrio</li>
+      <li><strong>Produção fetal de CRH</strong> (corticotrofina de origem placentária) → estimula cortisol fetal → maturação pulmonar e iniciação do parto</li>
+      <li><strong>Prostaglandinas</strong> (PGE₂, PGF₂α) produzidas pelas membranas amnióticas → amadurecimento do colo (efeito colagenolítico) e contrações uterinas</li>
+      <li><strong>Relaxina</strong> → amolecimento dos ligamentos pélvicos e do colo</li>
+    </ul>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 37 ───────────────── -->
+<div class="week-card" id="s37">
+  <div class="week-header">
+    <div class="week-num">37</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 39</div>
+      <div class="week-title">Termo Pleno — Feto Completamente Maduro</div>
+    </div>
+    <span class="week-badge badge-late">Termo Pleno</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">🎃</div>
+      <div class="size-data">
+        <div class="size-label">Comprimento / Peso</div>
+        <div class="size-value">~48–51 cm · Peso ≈ 3.000–3.500 g · FC ≈ 120–160 bpm</div>
+      </div>
+    </div>
+
+    <p>O feto a termo pleno (semana embriológica 37 = SG 39) apresenta todas as características de maturidade:</p>
+
+    <ul>
+      <li><strong>Pulmões</strong>: Surfactante abundante; fase alveolar iniciada; capaz de ventilação autônoma ao nascer.</li>
+      <li><strong>Sistema nervoso</strong>: Reflexos neonatais integrados (Moro, sucção, preensão, marcha automática, Babinski). Tônus flexor adequado. Choro forte.</li>
+      <li><strong>Termorregulação</strong>: BAT (gordura marrom) bem distribuído. Ainda relativamente ineficiente comparado ao adulto, mas funcional.</li>
+      <li><strong>Sistema imune</strong>: IgG materna transferida. Início de produção de IgM própria (resposta a antígenos intrauterinos).</li>
+      <li><strong>Rim</strong>: Nefrogênese completa — o neonato tem o número definitivo de néfrons (~1 milhão por rim). Não há formação de novos néfrons após o nascimento.</li>
+      <li><strong>Fígado</strong>: Capaz de conjugar bilirrubina (embora imaturidade relativa cause icterícia fisiológica neonatal nas primeiras semanas).</li>
+      <li><strong>Pele</strong>: Queratinizada, pouco lanugo, vernix reduzido. Rugas nas plantas (>1/3 da superfície plantar).</li>
+      <li><strong>Genitália</strong>: Bem desenvolvida — meninos: testículos no escroto, pigmentação escrotal; meninas: lábios maiores cobrindo os menores.</li>
+    </ul>
+
+    <div class="section-title">Cordão Umbilical a Termo</div>
+    <p>O cordão umbilical a termo mede em média 50–60 cm de comprimento e ~2 cm de diâmetro. Contém 2 artérias umbilicais (sangue desoxigenado feto→placenta) e 1 veia umbilical (sangue oxigenado placenta→feto), mergulhadas na geléia de Wharton (<em>Wharton's jelly</em> — mucopolissacarídeos ricos em ácido hialurônico, que protegem os vasos de compressão). A presença de apenas 1 artéria umbilical (artéria umbilical única — AUU) ocorre em ~1% das gestações e está associada a aumento do risco de malformações renais, cardíacas e cromossomopatias — indica investigação adicional.</p>
+
+    <div class="clinical">
+      <strong>Doença Hemolítica do Feto e Recém-Nascido (DHFRN / HDFN — Hemolytic Disease of the Fetus and Newborn):</strong> Incompatibilidade Rh (ou ABO): anticorpos maternos anti-D (IgG) atravessam a placenta e destroem as hemácias fetais D-positivas → hemólise → anemia fetal grave → hidropisia fetal (edema generalizado por insuficiência cardíaca de alto débito e hipoalbuminemia). Prevenção: imunoglobulina anti-D (300 μg IM) em mães Rh-negativas às 28 semanas e após parto/procedimentos invasivos de feto Rh-positivo. Diagnóstico: anticorpos irregulares na gestante; Doppler da ACM fetal (velocidade sistólica pico > 1,5 MoM indica anemia). Tratamento: transfusão intravascular fetal. (<a class="src" href="https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/management-of-women-with-red-cell-antibodies-during-pregnancy-green-top-guideline-no-65/" target="_blank">RCOG GTG 65, 2021</a>)
+    </div>
+
+  </div>
+</div>
+
+<!-- ───────────────── SEMANA 38 ───────────────── -->
+<div class="week-card" id="s38">
+  <div class="week-header">
+    <div class="week-num">38</div>
+    <div class="week-title-block">
+      <div class="week-label">SG 40 — Nascimento</div>
+      <div class="week-title">O Parto e a Transição Feto-Neonatal</div>
+    </div>
+    <span class="week-badge badge-late">Nascimento</span>
+  </div>
+  <div class="week-body">
+
+    <div class="size-ruler">
+      <div class="size-emoji">👶</div>
+      <div class="size-data">
+        <div class="size-label">Comprimento / Peso ao Nascer</div>
+        <div class="size-value">~50 cm · Peso ≈ 3.000–4.000 g · FC ≈ 120–160 bpm</div>
+      </div>
+    </div>
+
+    <div class="section-title">38.1 — O Trabalho de Parto</div>
+    <p>O trabalho de parto (<em>labor</em>) é desencadeado por um complexo de sinais que incluem maturação fetal (cortisol fetal aumentado) e decidual, com alteração do equilíbrio progesterona/estrogênio, aumento de prostaglandinas e ocitocina. O parto é classicamente dividido em:</p>
+    <ul>
+      <li><strong>1º período:</strong> Do início das contrações regulares até a dilatação cervical completa (10 cm). Subfases: latente (0–5 cm, lenta) e ativa (6–10 cm, mais rápida, > 1 cm/h nas nulíparas). Monitorização: CTG, progressão da dilatação (partograma OMS).</li>
+      <li><strong>2º período:</strong> Da dilatação completa ao nascimento do bebê. Inclui os esforços expulsivos. Normalmente < 2–3h em nulíparas, < 1–2h em multíparas. Monitorização contínua da FCF.</li>
+      <li><strong>3º período:</strong> Do nascimento até a expulsão da placenta (dequitação). Normalmente ocorre 5–30 minutos após o parto. Uso profilático de ocitocina (10 UI IM ou 5 UI IV) reduz hemorragia pós-parto.</li>
+    </ul>
+
+    <div class="section-title">38.2 — A Transição Feto-Neonatal — Evento Fisiológico Extraordinário</div>
+    <p>Nos primeiros segundos a minutos após o nascimento, ocorre uma das transições fisiológicas mais dramáticas da biologia humana:</p>
+
+    <div class="box box-gold">
+      <div class="box-title">Circulação Fetal → Circulação Neonatal</div>
+      <p>Na circulação fetal, os pulmões são não funcionais (high resistance, vasoconstrição pulmonar por hipóxia relativa) e recebem apenas ~10% do débito cardíaco. O sangue circula pelos 3 shunts:</p>
+      <ul>
+        <li><strong>Ducto venoso (DV)</strong>: sangue rico em O₂ da veia umbilical → contorna o fígado → cava inferior → coração direito</li>
+        <li><strong>Forame oval (FO)</strong>: sangue do AD → AE (bypassa o pulmão)</li>
+        <li><strong>Ducto arterioso (DA)</strong>: VD → aorta (bypassa o pulmão)</li>
+      </ul>
+      <p>Com o nascimento e o início da respiração:</p>
+      <ol>
+        <li>Os pulmões se expandem com ar → PO₂ alveolar aumenta → vasodilatação das arteríolas pulmonares (mediada por O₂ e NO — óxido nítrico) → queda da resistência vascular pulmonar (RVP) → aumento do fluxo pulmonar.</li>
+        <li>A clampeagem do cordão umbilical → remove circulação placentária de baixa resistência → aumento da resistência vascular sistêmica (RVS).</li>
+        <li>Aumento do retorno venoso pulmonar ao AE → pressão no AE > AD → o septo interatrial (válvula do forame oval) fecha-se funcionalmente → FO fechado.</li>
+        <li>A PO₂ elevada → contração do músculo liso do DA → fechamento funcional em horas (< 24h em RN a termo); fechamento anatômico em 2–3 semanas (por fibrose).</li>
+        <li>O DV fecha-se com a clampeagem do cordão → torna-se o ligamento venoso.</li>
+      </ol>
+    </div>
+
+    <div class="section-title">38.3 — Icterícia Neonatal Fisiológica</div>
+    <p>Nos primeiros dias de vida, a maioria dos RN desenvolve icterícia (hiperbilirrubinemia indireta = não-conjugada). Causas fisiológicas:</p>
+    <ul>
+      <li>Alta taxa de hemólise de hemácias fetais (HbF sendo substituída) → aumento de produção de bilirrubina</li>
+      <li>Imaturidade hepática relativa da UGT1A1 (uridina-difosfato-glucuronosiltransferase 1A1) → conjugação insuficiente de bilirrubina</li>
+      <li>Circulação êntero-hepática aumentada (β-glucuronidase intestinal deconjuga bilirrubina)</li>
+    </ul>
+    <p>Pico em 3–5 dias, resolução em ~2 semanas. Bilirrubina indireta muito elevada → risco de <strong>kernicterus</strong> (bilirrubina atravessa BHE por imaturidade → deposita nos núcleos da base e cerebelo → dano neurológico irreversível). Tratamento: fototerapia (luz azul ~450 nm → isomeriza bilirrubina para forma hidrossolúvel → excretável sem conjugação); exsanguíneotransfusão em casos graves.</p>
+
+    <div class="section-title">38.4 — Índice de Apgar</div>
+    <p>O <strong>Índice de Apgar</strong> — criado pela anestesista Virginia Apgar em 1953 — é avaliado ao 1º e 5º minuto de vida (e aos 10 min se < 7):</p>
+
+    <table>
+      <tr><th>Sinal</th><th>0</th><th>1</th><th>2</th></tr>
+      <tr><td><strong>A</strong>ppearance (Cor)</td><td>Cianótico/Pálido</td><td>Corpo rosado, extremidades cianóticas</td><td>Totalmente rosado</td></tr>
+      <tr><td><strong>P</strong>ulse (FC)</td><td>Ausente</td><td>< 100 bpm</td><td>≥ 100 bpm</td></tr>
+      <tr><td><strong>G</strong>rimace (Reflexo)</td><td>Sem resposta</td><td>Careta</td><td>Choro/tosse/espirro</td></tr>
+      <tr><td><strong>A</strong>ctivity (Tônus)</td><td>Flácido</td><td>Flexão leve</td><td>Movimento ativo</td></tr>
+      <tr><td><strong>R</strong>espiration (Respiração)</td><td>Ausente</td><td>Irregular/fraco</td><td>Forte, choro</td></tr>
+    </table>
+
+    <p>Interpretação: 7–10 = normal; 4–6 = depressão leve-moderada (reanimação básica); 0–3 = depressão grave (reanimação avançada). O Apgar ao 5 minutos é melhor preditor de desfecho neurológico que o do 1 minuto.</p>
+
+    <div class="clinical">
+      <strong>Reanimação Neonatal (ILCOR / SBP Guidelines):</strong> A maioria dos RN (~90%) não precisa de reanimação além dos cuidados de rotina. Os outros 10% necessitam de alguma intervenção. O algoritmo segue sequência: secagem e estimulação → posicionamento + abertura de vias aéreas → ventilação com pressão positiva (VPP) com máscara se apneia/FC < 100 bpm → oxigênio suplementar → compressão torácica se FC < 60 bpm após 30 s de VPP → adrenalina IV/IO se FC < 60 persiste. A concentração inicial de O₂ recomendada é 21% (ar ambiente) para RN a termo, ajustando pela SpO₂. (<a class="src" href="https://www.sbp.com.br/publicacoes/recomendacoes/reanimacao-neonatal/" target="_blank">SBP — Reanimação Neonatal 2022</a>; <a class="src" href="https://www.ilcor.org/consensus-on-science-and-treatment-recommendations/costr-neonatal/" target="_blank">ILCOR CoSTR Neonatal, 2021</a>)
+    </div>
+
+    <div class="section-title">38.5 — Triagem Neonatal (Teste do Pezinho)</div>
+    <p>Realizado idealmente entre 48–72h de vida (coleta de sangue do calcanhar em papel filtro). No Brasil, o Programa Nacional de Triagem Neonatal (PNTN) rastreia:</p>
+    <ul>
+      <li><strong>Fenilcetonúria (PKU)</strong> — deficiência de PAH (fenilalanina hidroxilase) → acúmulo de Phe → dano cerebral. Tratamento: dieta restrita em Phe desde o nascimento.</li>
+      <li><strong>Hipotireoidismo congênito</strong> — TSH elevado. Tratamento: levotiroxina desde os primeiros dias previne retardo mental.</li>
+      <li><strong>HAC</strong> (17-OHP) — já mencionada.</li>
+      <li><strong>Anemia falciforme e hemoglobinopatias</strong> — eletroforese de Hb.</li>
+      <li><strong>Deficiência de biotinidase</strong>.</li>
+      <li><strong>Galactosemia</strong>.</li>
+      <li>(Conforme estado: fibrose cística, toxoplasmose congênita, e mais 50+ doenças no programa ampliado).</li>
+    </ul>
+    <p>(<a class="src" href="https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/t/triagem-neonatal" target="_blank">MS Brasil — Triagem Neonatal</a>)</p>
+
+    <div class="section-title">38.6 — Outros Rastreios Neonatais Mandatórios</div>
+    <ul>
+      <li><strong>Teste do Olhinho (reflexo vermelho)</strong> — rastreio de catarata congênita, retinoblastoma, glaucoma. Realizado com oftalmoscópio antes da alta.</li>
+      <li><strong>Teste da Orelhinha</strong> — PEATE/BERA ou EOAE (emissões otoacústicas) — triagem auditiva universal.</li>
+      <li><strong>Teste do Coraçãozinho</strong> — oximetria pré e pós-ductal (pulso na MDta e no pé) — rastreio de cardiopatia congênita crítica. SpO₂ pré-ductal ≥ 95% e diferença < 3%.</li>
+      <li><strong>Teste da Linguinha</strong> — rastreio de anquiloglossia (freio lingual curto) que interfere na amamentação.</li>
+      <li><strong>Vacinas ao nascer</strong>: BCG (tuberculose) + Hepatite B (1ª dose).</li>
+    </ul>
+
+    <div class="box box-green">
+      <div class="box-title">Síntese Final — Do Zigoto ao Neonato</div>
+      <p>Em 38 semanas (266 dias), uma única célula de 0,1 mm se transformou em um ser humano com ~3,3 kg, ~50 cm, ~37 trilhões de células, 78 órgãos, 206 ossos, ~86 bilhões de neurônios, e uma sequência de DNA de 3,2 bilhões de pares de bases perfeitamente copiada em cada núcleo celular — com apenas ~40–80 mutações de novo por geração. Isso representa o programa de desenvolvimento mais sofisticado que conhecemos no universo. O entendimento profundo desse processo é a base para compreender qualquer patologia do desenvolvimento, da reprodução, da neonatologia e de toda a medicina.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════ REFERÊNCIAS ═══════════════════════ -->
+<div class="box box-gold" style="margin-top:60px;">
+  <div class="box-title">Referências Bibliográficas Principais</div>
+  <ul>
+    <li>Moore KL, Persaud TVN, Torchia MG. <em>The Developing Human: Clinically Oriented Embryology</em>. 11ª ed. Elsevier, 2019. <a class="src" href="https://www.elsevier.com/books/the-developing-human/moore/978-0-323-61154-3" target="_blank">→ Elsevier</a></li>
+    <li>Sadler TW. <em>Langman's Medical Embryology</em>. 14ª ed. Wolters Kluwer, 2018. <a class="src" href="https://shop.lww.com/Langman-s-Medical-Embryology/p/9781496383907" target="_blank">→ LWW</a></li>
+    <li>Schoenwolf GC et al. <em>Larsen's Human Embryology</em>. 5ª ed. Churchill Livingstone, 2014.</li>
+    <li>Gilbert SF. <em>Developmental Biology</em>. 12ª ed. Sinauer/Oxford, 2019. <a class="src" href="https://www.ncbi.nlm.nih.gov/books/NBK10064/" target="_blank">→ NCBI</a></li>
+    <li>Cunningham FG et al. <em>Williams Obstetrics</em>. 25ª ed. McGraw-Hill, 2022.</li>
+    <li>Fanaroff & Martin. <em>Neonatal-Perinatal Medicine</em>. 11ª ed. Elsevier, 2019.</li>
+    <li>PubMed Central: <a class="src" href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank">https://pubmed.ncbi.nlm.nih.gov/</a></li>
+    <li>StatPearls (NCBI/NBK): <a class="src" href="https://www.ncbi.nlm.nih.gov/books/NBK430685/" target="_blank">Embryology</a></li>
+    <li>Fetal Medicine Foundation: <a class="src" href="https://fetalmedicine.org/" target="_blank">https://fetalmedicine.org/</a></li>
+    <li>WHO Reproductive Health: <a class="src" href="https://www.who.int/health-topics/reproductive-health" target="_blank">https://www.who.int/</a></li>
+  </ul>
+</div>
+
+</main>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer>
+  <p>Elaborado para estudantes de medicina e profissionais de saúde. Conteúdo baseado em evidências científicas atualizadas.<br>
+  <strong>Fontes primárias devem sempre ser consultadas para decisões clínicas.</strong><br>
+  Moore · Sadler · Schoenwolf · Gilbert · Williams · Fanaroff · ACOG · RCOG · FIGO · SBP · WHO · PubMed</p>
+</footer>
+
+<!-- Scroll to top button -->
+<button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+</body>
+</html>
