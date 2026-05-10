@@ -1,0 +1,3019 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Epidemiologia: Métodos e Tipos de Estudos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --paper: #f5f0e8;
+    --cream: #ede6d6;
+    --accent: #8b1a1a;
+    --accent2: #1a4a6b;
+    --gold: #b8860b;
+    --green: #1a4a2e;
+    --muted: #5c4a32;
+    --border: #c8b89a;
+    --highlight: #fff3cd;
+    --code-bg: #1e1e1e;
+    --code-text: #d4d4d4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.85;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 30px,
+      rgba(184,134,11,0.04) 30px,
+      rgba(184,134,11,0.04) 31px
+    );
+  }
+
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .site-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .site-header h1 span { color: var(--gold); }
+
+  .site-header .subtitle {
+    font-size: 1rem;
+    color: rgba(245,240,232,0.65);
+    font-style: italic;
+    margin-top: 0.75rem;
+  }
+
+  .header-meta {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .header-meta span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(245,240,232,0.5);
+    letter-spacing: 0.1em;
+  }
+
+  /* NAVIGATION */
+  .toc-nav {
+    background: var(--accent2);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+
+  .toc-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 2rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .toc-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .toc-bar h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin: 0;
+  }
+
+  .toc-active-label {
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.82rem;
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .toc-toggle-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.8);
+    border-radius: 4px;
+    padding: 0.25rem 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .toc-toggle-btn:hover { background: rgba(255,255,255,0.22); }
+
+  .toc-toggle-btn .arrow {
+    display: inline-block;
+    transition: transform 0.25s;
+  }
+
+  .toc-nav.open .toc-toggle-btn .arrow { transform: rotate(180deg); }
+
+  .toc-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 2rem;
+  }
+
+  .toc-nav.open .toc-dropdown {
+    max-height: 300px;
+    padding: 0.75rem 2rem 1rem;
+  }
+
+  .toc-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    list-style: none;
+  }
+
+  .toc-links a {
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-family: 'Source Serif 4', serif;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+
+  .toc-links a:hover, .toc-links a.active { color: var(--gold); }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 4rem 0 3rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  section:last-child { border-bottom: none; }
+
+  /* SECTION HEADERS */
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin: 2.5rem 0 1rem;
+    padding-left: 0.75rem;
+    border-left: 3px solid var(--accent2);
+  }
+
+  h4 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--green);
+    margin: 2rem 0 0.75rem;
+  }
+
+  h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  .section-intro {
+    font-size: 1.05rem;
+    color: var(--muted);
+    font-style: italic;
+    border-left: 3px solid var(--gold);
+    padding-left: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  p { margin-bottom: 1.2rem; }
+
+  /* ETYMOLOGY BOX */
+  .etymology {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+  }
+
+  .etymology::before {
+    content: '📜 ETIMOLOGIA';
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  /* INFO BOXES */
+  .box {
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.75rem 0;
+    border-left: 4px solid;
+  }
+
+  .box-concept { background: #e8f4f8; border-color: var(--accent2); }
+  .box-clinical { background: #f0f7ee; border-color: var(--green); }
+  .box-warning { background: #fff3cd; border-color: var(--gold); }
+  .box-danger { background: #fde8e8; border-color: var(--accent); }
+  .box-formula { background: var(--code-bg); border-color: var(--gold); color: var(--code-text); }
+
+  .box-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-weight: 600;
+  }
+
+  .box-concept .box-label { color: var(--accent2); }
+  .box-clinical .box-label { color: var(--green); }
+  .box-warning .box-label { color: #856404; }
+  .box-danger .box-label { color: var(--accent); }
+  .box-formula .box-label { color: var(--gold); }
+
+  /* FORMULA */
+  .formula {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--code-bg);
+    color: #9cdcfe;
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+    overflow-x: auto;
+    border-left: 3px solid var(--gold);
+  }
+
+  .formula .comment { color: #6a9955; }
+  .formula .highlight { color: #ce9178; }
+  .formula .number { color: #b5cea8; }
+
+  /* EXERCISE */
+  .exercise {
+    background: linear-gradient(135deg, #1a1208 0%, #2d1f0a 100%);
+    color: var(--paper);
+    border-radius: 6px;
+    padding: 1.75rem 2rem;
+    margin: 2rem 0;
+  }
+
+  .exercise-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .exercise h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #fff;
+    margin: 0 0 0.75rem;
+  }
+
+  .exercise p { color: rgba(245,240,232,0.85); margin-bottom: 0.6rem; font-size: 0.95rem; }
+
+  .exercise .solution {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(184,134,11,0.3);
+  }
+
+  .exercise .solution-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; margin: 2rem 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  th {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+
+  td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td { background: var(--cream); }
+  tr:hover td { background: #e8e0d0; }
+
+  /* COMPARISON GRID */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin: 2rem 0;
+  }
+
+  .compare-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .compare-card-header {
+    padding: 0.75rem 1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .compare-card-header.quant { background: var(--accent2); }
+  .compare-card-header.qual { background: var(--accent); }
+  .compare-card-header.misto { background: var(--green); }
+
+  .compare-card-body { padding: 1rem; font-size: 0.88rem; }
+  .compare-card-body ul { padding-left: 1.25rem; }
+  .compare-card-body li { margin-bottom: 0.4rem; }
+
+  /* PYRAMID */
+  .pyramid {
+    margin: 2rem auto;
+    max-width: 600px;
+  }
+
+  .pyramid-level {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+
+  .pyramid-bar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 3px;
+    flex: 1;
+    text-align: center;
+    padding: 0 0.5rem;
+  }
+
+  .pyramid-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    width: 120px;
+    text-align: right;
+    padding-right: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .pyramid-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    width: 30px;
+    text-align: center;
+    padding-left: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin: 2rem 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.65rem;
+    top: 0.5rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent2);
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 2px var(--accent2);
+  }
+
+  .timeline-year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  /* ACRONYM */
+  abbr {
+    text-decoration: underline dotted;
+    cursor: help;
+    color: var(--accent2);
+    font-weight: 600;
+  }
+
+  /* CITATION */
+  cite {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  .ref {
+    font-size: 0.82rem;
+    color: var(--muted);
+    padding-left: 1rem;
+    border-left: 2px solid var(--border);
+    margin: 0.4rem 0;
+  }
+
+  .ref a { color: var(--accent2); word-break: break-all; }
+
+  /* HIGHLIGHT */
+  mark {
+    background: var(--highlight);
+    padding: 0.1em 0.3em;
+    border-radius: 2px;
+    color: var(--ink);
+  }
+
+  strong { color: var(--ink); }
+  em { color: var(--accent); font-style: italic; }
+
+  /* TAGS */
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2em 0.6em;
+    border-radius: 2px;
+    margin: 0.15rem;
+  }
+
+  .tag-blue { background: #dbeafe; color: var(--accent2); }
+  .tag-red { background: #fde8e8; color: var(--accent); }
+  .tag-green { background: #dcfce7; color: var(--green); }
+  .tag-gold { background: #fef3c7; color: #92400e; }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2.5rem 0;
+    color: var(--border);
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .divider span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* SCROLL TO TOP */
+  .scroll-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--ink);
+    color: var(--gold);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    text-decoration: none;
+    transition: transform 0.2s;
+    z-index: 200;
+  }
+  .scroll-top:hover { transform: translateY(-3px); }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    color: rgba(245,240,232,0.5);
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.82rem;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* PRINT */
+  @media print {
+    .toc-nav, .scroll-top { display: none; }
+    section { page-break-inside: avoid; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .container { padding: 0 1rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .toc-links { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <span class="header-tag">Medicina Interna & Epidemiologia Clínica</span>
+  <h1>Métodos de Estudos em<br><span>Epidemiologia</span></h1>
+  <p class="subtitle">Quantitativo · Qualitativo · Misto · Tipos de Delineamento · Aplicações Clínicas</p>
+  <div class="header-meta">
+    <span>⚕ Medicina Baseada em Evidências</span>
+    <span>📊 Bioestatística</span>
+    <span>🔬 Epidemiologia Analítica</span>
+    <span>🏥 Aplicações Clínicas</span>
+  </div>
+</header>
+
+<!-- NAVIGATION -->
+<nav class="toc-nav" id="tocNav">
+  <div class="toc-bar" id="tocBar">
+    <div class="toc-bar-left">
+      <h3>Índice</h3>
+      <span class="toc-active-label" id="tocActiveLabel">Fundamentos</span>
+    </div>
+    <button class="toc-toggle-btn" id="tocToggleBtn">
+      Expandir <span class="arrow">▼</span>
+    </button>
+  </div>
+  <div class="toc-dropdown" id="tocDropdown">
+    <ul class="toc-links">
+      <li><a href="#s1">1. Fundamentos</a></li>
+      <li><a href="#s2">2. Método Quantitativo</a></li>
+      <li><a href="#s3">3. Método Qualitativo</a></li>
+      <li><a href="#s4">4. Método Misto</a></li>
+      <li><a href="#s5">5. Estudos Descritivos</a></li>
+      <li><a href="#s6">6. Estudos Analíticos</a></li>
+      <li><a href="#s7">7. Estudos Experimentais</a></li>
+      <li><a href="#s8">8. Revisões & Meta-análise</a></li>
+      <li><a href="#s9">9. Pirâmide de Evidências</a></li>
+      <li><a href="#s10">10. Vieses & Erros</a></li>
+      <li><a href="#s11">11. Medidas Epidemiológicas</a></li>
+      <li><a href="#s12">12. Aplicações Clínicas</a></li>
+      <li><a href="#s13">13. Exercícios</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 1: FUNDAMENTOS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s1">
+  <span class="section-number">// 01 — Fundamentos</span>
+  <h2>O Que é Epidemiologia?</h2>
+  <p class="section-intro">Antes de mergulhar nos métodos, precisamos entender o que a epidemiologia estuda, seu vocabulário fundamental e por que ela é a espinha dorsal da medicina baseada em evidências.</p>
+
+  <div class="etymology">
+    Do grego <em>epi</em> (ἐπί = "sobre", "entre") + <em>demos</em> (δῆμος = "povo", "população") + <em>logos</em> (λόγος = "estudo", "discurso"). Literalmente: <strong>"o estudo do que acontece sobre/entre o povo"</strong>. O termo foi popularizado por John Snow (1813–1858), considerado o pai da epidemiologia moderna, durante a investigação do cólera em Londres em 1854.
+  </div>
+
+  <p>A <strong>epidemiologia</strong> é a ciência que estuda a <mark>distribuição, frequência, determinantes e controle</mark> dos eventos de saúde e doença em populações humanas. Ela responde a três perguntas fundamentais:</p>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header quant">QUEM está adoecendo?</div>
+      <div class="compare-card-body">
+        <p>Características do hospedeiro: idade, sexo, etnia, estado imunológico, genética, comorbidades, comportamentos.</p>
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header qual">ONDE está acontecendo?</div>
+      <div class="compare-card-body">
+        <p>Distribuição geográfica, urbano vs rural, altitude, clima, acesso a serviços de saúde, condições de saneamento.</p>
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header misto">QUANDO está acontecendo?</div>
+      <div class="compare-card-body">
+        <p>Tendências temporais, sazonalidade, surtos, epidemias, pandemias, ciclos endêmicos.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>O Triângulo Epidemiológico</h3>
+
+  <p>Toda doença transmissível (e muitas não transmissíveis) pode ser analisada por meio do <strong>triângulo epidemiológico</strong> — modelo clássico de John Gordon (1950) que relaciona três vértices:</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Vértice</th>
+          <th>Definição</th>
+          <th>Exemplos Concretos</th>
+          <th>Intervenção Possível</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Agente</strong></td>
+          <td>Fator cuja presença, ausência ou excesso é necessário para a doença</td>
+          <td>Mycobacterium tuberculosis, vírus SARS-CoV-2, tabagismo, excesso de sódio</td>
+          <td>Antibióticos, vacinas, regulação de substâncias</td>
+        </tr>
+        <tr>
+          <td><strong>Hospedeiro</strong></td>
+          <td>Ser humano susceptível que aloja o agente</td>
+          <td>Imunossuprimidos, idosos, gestantes, desnutridos</td>
+          <td>Vacinação, quimioprofilaxia, nutrição</td>
+        </tr>
+        <tr>
+          <td><strong>Ambiente</strong></td>
+          <td>Conjunto de condições externas que favorecem ou não a interação</td>
+          <td>Saneamento, temperatura, densidade populacional, pobreza</td>
+          <td>Saneamento básico, políticas públicas, habitação</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Aplicação Clínica</span>
+    <p>Em UTI (Unidade de Terapia Intensiva), o raciocínio epidemiológico é aplicado para entender <abbr title="Healthcare-Associated Infections – Infecções Relacionadas à Assistência à Saúde">IRAS (Infecções Relacionadas à Assistência à Saúde)</abbr>. O agente pode ser uma bactéria multirresistente (ex: <em>Klebsiella pneumoniae</em> produtora de carbapenemase — <abbr title="Klebsiella pneumoniae carbapenemase">KPC</abbr>), o hospedeiro é um paciente intubado com cateter venoso central, e o ambiente é o leito de UTI com pressão seletiva de antibióticos. A intervenção exige as 3 frentes: isolamento (agente), bundles de prevenção (hospedeiro) e esterilização/limpeza (ambiente).</p>
+  </div>
+
+  <h3>Conceitos Epidemiológicos Básicos — Glossário Essencial</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Termo (PT/EN)</th>
+          <th>Definição Precisa</th>
+          <th>Exemplo Numérico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Endemia</strong> / <em>Endemic</em></td>
+          <td>Presença constante de doença em uma região, com frequência esperada e estável</td>
+          <td>Malária no Norte do Brasil (Amazônia)</td>
+        </tr>
+        <tr>
+          <td><strong>Epidemia</strong> / <em>Epidemic</em></td>
+          <td>Ocorrência de casos acima do esperado para uma área/período</td>
+          <td>Dengue no verão brasileiro ultrapassando limiar epidêmico</td>
+        </tr>
+        <tr>
+          <td><strong>Pandemia</strong> / <em>Pandemic</em></td>
+          <td>Epidemia que se espalha por múltiplos continentes/países simultaneamente</td>
+          <td>COVID-19 (2020–), Influenza H1N1 (2009)</td>
+        </tr>
+        <tr>
+          <td><strong>Surto</strong> / <em>Outbreak</em></td>
+          <td>Aumento localizado de casos, frequentemente em área restrita</td>
+          <td>Surto de salmonela em refeitório hospitalar</td>
+        </tr>
+        <tr>
+          <td><strong>Incidência</strong> / <em>Incidence</em></td>
+          <td>Casos NOVOS em um período; mede risco</td>
+          <td>50 novos casos de DM2/1.000 pessoas-ano</td>
+        </tr>
+        <tr>
+          <td><strong>Prevalência</strong> / <em>Prevalence</em></td>
+          <td>Casos EXISTENTES (novos + antigos) em um momento; mede carga</td>
+          <td>10% da população com HAS na consulta de hoje</td>
+        </tr>
+        <tr>
+          <td><strong>Mortalidade</strong> / <em>Mortality rate</em></td>
+          <td>Frequência de óbitos na população geral</td>
+          <td>Taxa de mortalidade por AVC: 50/100.000 hab/ano</td>
+        </tr>
+        <tr>
+          <td><strong>Letalidade</strong> / <em>Case-Fatality Rate — CFR</em></td>
+          <td>Proporção de óbitos entre os DOENTES</td>
+          <td>CFR Ébola: ~50–70%; CFR COVID-19: ~1–3%</td>
+        </tr>
+        <tr>
+          <td><strong>Fator de risco</strong> / <em>Risk factor</em></td>
+          <td>Característica associada ao aumento da probabilidade de desenvolver doença</td>
+          <td>Tabagismo → câncer de pulmão (RR≈20)</td>
+        </tr>
+        <tr>
+          <td><strong>Fator de proteção</strong> / <em>Protective factor</em></td>
+          <td>Característica associada à redução do risco</td>
+          <td>Exercício físico → menor risco cardiovascular</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Fórmula Fundamental da Prevalência vs Incidência</span>
+    <div class="formula">
+<span class="comment">// Relação fundamental em doenças estáveis (estado estacionário)</span>
+Prevalência ≈ Incidência × Duração Média da Doença
+
+<span class="comment">// Exemplo clínico: HAS (Hipertensão Arterial Sistêmica)</span>
+<span class="highlight">Prevalência</span> = <span class="number">30%</span>  <span class="comment">// medida em corte transversal</span>
+<span class="highlight">Incidência</span>   = <span class="number">5%/ano</span> <span class="comment">// casos novos por ano</span>
+<span class="highlight">Duração</span>       = Prevalência / Incidência = 30% / 5% = <span class="number">6 anos</span>
+
+<span class="comment">// Interpretação: paciente médio com HAS leva ~6 anos sendo tratado/acompanhado</span>
+    </div>
+  </div>
+
+  <div class="ref">
+    Rothman KJ, Greenland S, Lash TL. <em>Modern Epidemiology</em>, 3rd ed. Lippincott Williams & Wilkins, 2008.
+    (<a href="https://www.lww.com/Products/9780781755474" target="_blank">https://www.lww.com/Products/9780781755474</a>)
+  </div>
+  <div class="ref">
+    Gordis L. <em>Epidemiology</em>, 5th ed. Elsevier/Saunders, 2014.
+    (<a href="https://www.elsevier.com/books/epidemiology/gordis/978-1-4557-3733-8" target="_blank">https://www.elsevier.com/books/epidemiology/gordis/978-1-4557-3733-8</a>)
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 2: MÉTODO QUANTITATIVO -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s2">
+  <span class="section-number">// 02 — Abordagem</span>
+  <h2>Método Quantitativo</h2>
+  <p class="section-intro">A abordagem quantitativa é a linguagem dos números, das probabilidades e das inferências estatísticas. É o paradigma dominante na epidemiologia clínica e na medicina baseada em evidências.</p>
+
+  <div class="etymology">
+    Do latim <em>quantitas</em> (quantidade) + <em>ivus</em> (relativo a). Refere-se à mensuração objetiva e à análise estatística de fenômenos observáveis.
+  </div>
+
+  <h3>Princípios Filosóficos e Lógica</h3>
+
+  <p>O método quantitativo está ancorado no <strong>positivismo</strong> (Auguste Comte, século XIX) e no <strong>empirismo lógico</strong> (Círculo de Viena). A premissa central é que a realidade é objetiva, mensurável e pode ser compreendida por leis universais identificadas mediante observação sistemática e teste de hipóteses.</p>
+
+  <p>Na prática médica, isso significa:</p>
+  <ul style="padding-left: 1.5rem; margin-bottom: 1.2rem;">
+    <li style="margin-bottom: 0.5rem;"><strong>Hipótese nula (H₀)</strong>: não existe diferença/associação (ex: "a droga X não reduz mortalidade")</li>
+    <li style="margin-bottom: 0.5rem;"><strong>Hipótese alternativa (H₁)</strong>: existe diferença/associação (ex: "a droga X reduz mortalidade")</li>
+    <li style="margin-bottom: 0.5rem;"><strong>Significância estatística</strong>: p &lt; 0,05 por convenção (5% de chance de falso positivo)</li>
+    <li style="margin-bottom: 0.5rem;"><strong>Inferência</strong>: a partir de uma amostra, tirar conclusões sobre a população</li>
+  </ul>
+
+  <h3>Características Fundamentais do Método Quantitativo</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Característica</th>
+          <th>Descrição Técnica</th>
+          <th>Implicação Prática</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Mensurabilidade</strong></td>
+          <td>Variáveis convertidas em números (contínuas, discretas, categóricas)</td>
+          <td>PA em mmHg, glicemia em mg/dL, escore APACHE II</td>
+        </tr>
+        <tr>
+          <td><strong>Replicabilidade</strong></td>
+          <td>O experimento pode ser repetido por outros pesquisadores</td>
+          <td>Protocolo idêntico → mesmo resultado (idealmente)</td>
+        </tr>
+        <tr>
+          <td><strong>Objetividade</strong></td>
+          <td>O pesquisador tenta minimizar influência subjetiva</td>
+          <td>Duplo-cego, aleatorização, máscaras</td>
+        </tr>
+        <tr>
+          <td><strong>Generalização</strong></td>
+          <td>Resultados de amostras aplicados à população-alvo</td>
+          <td>RCT com 5.000 pacientes → recomendação para milhões</td>
+        </tr>
+        <tr>
+          <td><strong>Teste de hipóteses</strong></td>
+          <td>Decisão estatística sobre H₀ vs H₁</td>
+          <td>Valor-p, IC 95%, poder do estudo</td>
+        </tr>
+        <tr>
+          <td><strong>Causalidade</strong></td>
+          <td>Com delineamento adequado, permite inferir causa-efeito</td>
+          <td>RCT (Randomized Controlled Trial) como padrão-ouro</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Tipos de Variáveis Quantitativas</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Definição</th>
+          <th>Exemplo Clínico</th>
+          <th>Teste Estatístico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Contínua</strong></td>
+          <td>Assume qualquer valor num intervalo; infinitas subdivisões</td>
+          <td>Pressão arterial (120,4 mmHg), hemoglobina (12,3 g/dL)</td>
+          <td>t de Student, ANOVA, correlação de Pearson</td>
+        </tr>
+        <tr>
+          <td><strong>Discreta</strong></td>
+          <td>Apenas valores inteiros; resultados contáveis</td>
+          <td>Número de episódios de fibrilação ventricular, paridade (0, 1, 2…)</td>
+          <td>Qui-quadrado, Mann-Whitney</td>
+        </tr>
+        <tr>
+          <td><strong>Nominal/Categórica</strong></td>
+          <td>Categorias sem ordem intrínseca</td>
+          <td>Tipo sanguíneo (A, B, AB, O), diagnóstico (DM, HAS, AVC)</td>
+          <td>Qui-quadrado, teste exato de Fisher</td>
+        </tr>
+        <tr>
+          <td><strong>Ordinal</strong></td>
+          <td>Categorias com ordem, mas intervalos não equidistantes</td>
+          <td>Escala de Glasgow (3–15), NYHA I–IV, NRS 0–10</td>
+          <td>Mann-Whitney, Kruskal-Wallis, Spearman</td>
+        </tr>
+        <tr>
+          <td><strong>Dicotômica/Binária</strong></td>
+          <td>Apenas dois valores possíveis</td>
+          <td>Óbito (sim/não), gestação (sim/não), resposta (respondedor/não)</td>
+          <td>Qui-quadrado, regressão logística</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>O Processo de Inferência Estatística — Fisiopatologia do Número</h3>
+
+  <p>Assim como um médico avalia sinais e sintomas para chegar a um diagnóstico, o epidemiologista avalia dados para chegar a uma conclusão estatística. Esse processo tem etapas bem definidas:</p>
+
+  <div class="box box-concept">
+    <span class="box-label">🔬 Princípio Físico & Lógico</span>
+    <p><strong>Lei dos Grandes Números (Jakob Bernoulli, 1713)</strong>: conforme o tamanho amostral aumenta, a média amostral converge para a média populacional verdadeira. É por isso que estudos com N pequeno são menos confiáveis — a variabilidade aleatória domina o sinal real. Em termos físicos, é como medir a temperatura de uma sala com 3 termômetros vs 3.000: a média de 3.000 medições estará muito mais próxima da temperatura real.</p>
+  </div>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Cálculo do Tamanho Amostral — Fórmula Fundamental</span>
+    <div class="formula">
+<span class="comment">// Para comparação de duas proporções (estudos epidemiológicos)</span>
+
+n = [ Z(α/2) √(2·p̄·q̄) + Zβ √(p₁·q₁ + p₂·q₂) ]² / (p₁ - p₂)²
+
+<span class="comment">// Onde:</span>
+Z(α/2) = <span class="number">1,96</span>  <span class="comment">// α = 0,05 → nível de confiança 95%</span>
+Zβ     = <span class="number">0,84</span>  <span class="comment">// β = 0,20 → poder do estudo = 80%</span>
+p₁     = proporção no grupo exposto
+p₂     = proporção no grupo controle
+p̄      = (p₁ + p₂) / 2  <span class="comment">// proporção média</span>
+q      = 1 - p
+
+<span class="comment">// Exemplo: estudo sobre eficácia de novo anti-hipertensivo</span>
+<span class="comment">// p₁ = 0,30 (controle BP &lt;140: 30%), p₂ = 0,50 (droga: 50%)</span>
+p̄ = (0,30 + 0,50)/2 = <span class="number">0,40</span>; q̄ = <span class="number">0,60</span>
+n = [1,96√(2·0,40·0,60) + 0,84√(0,30·0,70 + 0,50·0,50)]² / (0,50-0,30)²
+n ≈ <span class="number">93 por grupo</span> → total = 186 participantes
+    </div>
+  </div>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Valor-p: O Que Realmente Significa</span>
+    <div class="formula">
+<span class="comment">// Definição formal (frequentemente mal interpretada)</span>
+Valor-p = P(dados tão extremos ou mais extremos | H₀ é verdadeira)
+
+<span class="comment">// NÃO significa:</span>
+<span class="comment">// ❌ "probabilidade de H₀ ser verdadeira"</span>
+<span class="comment">// ❌ "probabilidade de o resultado ser por acaso"</span>
+<span class="comment">// ❌ "tamanho ou importância clínica do efeito"</span>
+
+<span class="comment">// SIGNIFICA:</span>
+<span class="comment">// ✅ "se H₀ fosse verdadeira, com que frequência</span>
+<span class="comment">//     veríamos resultados tão extremos quanto os observados?"</span>
+
+<span class="comment">// p &lt; 0,05 → convenção, não lei da natureza (Fisher, 1925)</span>
+<span class="comment">// Sempre associar ao IC 95% para relevância clínica</span>
+    </div>
+  </div>
+
+  <div class="ref">
+    Wasserstein RL, Lazar NA. "The ASA Statement on p-Values: Context, Process, and Purpose." <em>The American Statistician</em>, 2016.
+    (<a href="https://doi.org/10.1080/00031305.2016.1154108" target="_blank">https://doi.org/10.1080/00031305.2016.1154108</a>)
+  </div>
+  <div class="ref">
+    Greenhalgh T. <em>How to Read a Paper: The Basics of Evidence-Based Medicine</em>, 5th ed. Wiley-Blackwell, 2014.
+    (<a href="https://doi.org/10.1002/9781118980484" target="_blank">https://doi.org/10.1002/9781118980484</a>)
+  </div>
+
+  <h3>Intervalo de Confiança (IC) — O Mais Importante que o Valor-p</h3>
+
+  <p>O <abbr title="Intervalo de Confiança — Confidence Interval (CI)">IC (Intervalo de Confiança / Confidence Interval)</abbr> é, na prática clínica, muito mais informativo que o valor-p. Um IC 95% significa: "se repetirmos o estudo 100 vezes, 95 desses intervalos conterão o verdadeiro parâmetro populacional."</p>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Intervalo de Confiança — Construção</span>
+    <div class="formula">
+<span class="comment">// IC 95% para uma proporção (proporção amostral p̂, tamanho n)</span>
+IC 95% = p̂ ± 1,96 × √[ p̂(1-p̂)/n ]
+
+<span class="comment">// IC 95% para uma média (desvio padrão s, tamanho n)</span>
+IC 95% = x̄ ± 1,96 × (s/√n)   <span class="comment">// erro padrão da média = s/√n</span>
+
+<span class="comment">// Exemplo: Mortalidade em ECR de sepse</span>
+<span class="comment">// Grupo controle: 40/100 mortes → p̂ = 0,40</span>
+IC 95% = 0,40 ± 1,96 × √(0,40×0,60/100)
+       = 0,40 ± 1,96 × 0,049
+       = 0,40 ± 0,096
+IC 95% = <span class="highlight">[0,304 ; 0,496]</span>  <span class="comment">// ou seja: 30,4% a 49,6%</span>
+
+<span class="comment">// Se IC de diferença entre grupos NÃO cruzar o zero → p &lt; 0,05</span>
+<span class="comment">// Se IC de razão (RR, OR) NÃO cruzar 1,0 → p &lt; 0,05</span>
+    </div>
+  </div>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Aplicação Clínica — Leitura de Artigo Científico</span>
+    <p>Ao ler o artigo do estudo TRICC (Transfusion Requirements in Critical Care, NEJM 1999), você encontrará: "Mortalidade hospitalar: grupo restritivo 22,3% vs grupo liberal 28,1%; diferença −5,8% (IC 95%: −11,4% a −0,6%), p = 0,05." O IC não inclui 0, confirmando p &lt; 0,05. A magnitude: 5,8% de redução absoluta de mortalidade — clinicamente relevante para UTI.</p>
+    <p><strong>Implicação prática</strong>: Em UTI, transfusão restritiva de hemácias (apenas se Hb &lt; 7 g/dL) é tão segura quanto liberal e provavelmente superior em pacientes estáveis.</p>
+    <div class="ref">Hébert PC et al. NEJM 1999;340:409-417. (<a href="https://doi.org/10.1056/NEJM199902113400601" target="_blank">https://doi.org/10.1056/NEJM199902113400601</a>)</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 3: MÉTODO QUALITATIVO -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s3">
+  <span class="section-number">// 03 — Abordagem</span>
+  <h2>Método Qualitativo</h2>
+  <p class="section-intro">O método qualitativo captura o que os números não conseguem: experiências, significados, contextos, processos sociais. Na medicina, é fundamental para entender adesão ao tratamento, experiência do paciente, barreiras à saúde e cultura organizacional de serviços.</p>
+
+  <div class="etymology">
+    Do latim <em>qualitas</em> (qualidade, propriedade) + <em>ivus</em>. Refere-se à exploração de características, experiências e significados que não são redutíveis a números.
+  </div>
+
+  <h3>Paradigma Filosófico Subjacente</h3>
+
+  <p>O método qualitativo está ancorado no <strong>interpretativismo</strong> (Wilhelm Dilthey, Max Weber) e no <strong>construcionismo social</strong> (Peter Berger, Thomas Luckmann). A premissa é que a realidade social é <mark>construída pelos sujeitos</mark>, e que o pesquisador não pode ser totalmente neutro — ele também é um construtor de significados.</p>
+
+  <p>Na epidemiologia e saúde pública, o método qualitativo foi legitimado como ciência nas décadas de 1980–1990, impulsionado por pesquisadores como Kleinman (narrativa do adoecimento) e Geertz (etnografia densa).</p>
+
+  <h3>Características Fundamentais</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Característica</th>
+          <th>Quantitativo</th>
+          <th>Qualitativo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Pergunta de pesquisa</strong></td>
+          <td>"Quantos?" "Com que frequência?" "Qual a associação?"</td>
+          <td>"Por quê?" "Como?" "O que significa?"</td>
+        </tr>
+        <tr>
+          <td><strong>Amostra</strong></td>
+          <td>Aleatória, grande, representativa</td>
+          <td>Intencional/proposital, pequena, rica em informação</td>
+        </tr>
+        <tr>
+          <td><strong>Coleta</strong></td>
+          <td>Questionários estruturados, medições</td>
+          <td>Entrevistas, grupos focais, observação participante, documentos</td>
+        </tr>
+        <tr>
+          <td><strong>Análise</strong></td>
+          <td>Estatística (descritiva e inferencial)</td>
+          <td>Análise temática, análise de conteúdo, grounded theory, fenomenologia</td>
+        </tr>
+        <tr>
+          <td><strong>Produto</strong></td>
+          <td>Tabelas, gráficos, coeficientes, p-valores</td>
+          <td>Temas, categorias, narrativas, teorias fundamentadas</td>
+        </tr>
+        <tr>
+          <td><strong>Generalização</strong></td>
+          <td>Estatística (para a população-alvo)</td>
+          <td>Teórica / transferibilidade (para contextos semelhantes)</td>
+        </tr>
+        <tr>
+          <td><strong>Validade</strong></td>
+          <td>Interna (causalidade) e externa (generalização)</td>
+          <td>Credibilidade, transferibilidade, dependabilidade, confirmabilidade</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Principais Abordagens Qualitativas em Saúde</h3>
+
+  <h4>1. Fenomenologia</h4>
+  <div class="etymology">Do grego <em>phainomenon</em> (φαινόμενον = "o que aparece", "o que se manifesta") + <em>logos</em>. Fundada por Edmund Husserl (1900) e aprofundada por Martin Heidegger e Maurice Merleau-Ponty.</div>
+  <p>Objetivo: compreender a <strong>experiência vivida</strong> (lived experience) de um fenômeno — como é "viver com insuficiência cardíaca", "ser diagnosticado com câncer", "sentir dor crônica".</p>
+  <p>Método: entrevistas em profundidade não estruturadas, análise de significados essenciais (redução fenomenológica — epoché: colocar em suspensão os pré-julgamentos do pesquisador).</p>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Exemplo Clínico</span>
+    <p>Um estudo fenomenológico com pacientes submetidos a ventilação mecânica invasiva em UTI revelou que a incapacidade de falar era descrita como a experiência mais angustiante — mais do que a dor física. Esse achado fundamentou protocolos de comunicação aumentativa e alternativa (<abbr title="Augmentative and Alternative Communication — Comunicação Aumentativa e Alternativa">AAC</abbr>) em UTI e o desenvolvimento de pranchetas de comunicação.</p>
+    <div class="ref">Happ MB et al. "Communication ability, method, and content among nonspeaking nonsurviving patients treated with mechanical ventilation in the intensive care unit." <em>American Journal of Critical Care</em>, 2004. (<a href="https://doi.org/10.4037/ajcc2004.13.3.210" target="_blank">https://doi.org/10.4037/ajcc2004.13.3.210</a>)</div>
+  </div>
+
+  <h4>2. Grounded Theory (Teoria Fundamentada nos Dados)</h4>
+  <div class="etymology">Inglês: <em>grounded</em> (fundamentado, enraizado) + <em>theory</em> (teoria). Desenvolvida por Barney Glaser e Anselm Strauss (1967), posteriormente revisada por Kathy Charmaz (construcionista).</div>
+  <p>Objetivo: gerar teoria a partir dos dados (indução), não testar teoria pré-existente (dedução). O pesquisador entra no campo sem hipóteses rígidas e deixa que os padrões emergam.</p>
+  <p>Processo: coleta e análise simultâneas, codificação aberta → codificada → seletiva, amostragem teórica (continua coletando até saturação teórica), memos analíticos.</p>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Exemplo Clínico</span>
+    <p>Estudos de grounded theory sobre adesão ao tratamento antirretroviral em HIV revelaram que o processo central não era "lembrar de tomar o remédio" (modelo biomédico) mas sim "gerenciar a identidade social" — o paciente negociava quando e onde tomar os comprimidos para não revelar o diagnóstico. Isso transformou a abordagem das intervenções de adesão.</p>
+  </div>
+
+  <h4>3. Etnografia</h4>
+  <div class="etymology">Do grego <em>ethnos</em> (ἔθνος = povo, grupo cultural) + <em>graphia</em> (γραφία = escrita, descrição). Método originado na antropologia (Bronisław Malinowski, Franz Boas).</div>
+  <p>Objetivo: descrição densa de culturas, grupos sociais, organizações. Na saúde: cultura de serviços hospitalares, dinâmicas de equipes de UTI, práticas de cuidado em comunidades específicas.</p>
+  <p>Método: observação participante prolongada (meses/anos), diário de campo, entrevistas informais, análise de documentos, fotografias.</p>
+
+  <h4>4. Análise de Conteúdo e Análise Temática</h4>
+  <p>Métodos mais frequentemente usados na área da saúde por serem mais acessíveis e sistematizados. A <strong>Análise Temática</strong> de Braun e Clarke (2006) é o método qualitativo mais citado em revistas de saúde:</p>
+
+  <div class="box box-concept">
+    <span class="box-label">📋 As 6 Fases da Análise Temática (Braun & Clarke)</span>
+    <ol style="padding-left: 1.5rem;">
+      <li style="margin-bottom: 0.5rem;"><strong>Familiarização com os dados</strong>: leitura e releitura das transcrições</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Geração inicial de códigos</strong>: trechos relevantes são identificados e rotulados</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Busca de temas</strong>: agrupamento de códigos em temas potenciais</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Revisão de temas</strong>: verificar se temas fazem sentido em relação aos dados</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Definição e nomeação</strong>: elaborar a "essência" de cada tema</li>
+      <li style="margin-bottom: 0.5rem;"><strong>Produção do relatório</strong>: narrativa analítica com extratos ilustrativos</li>
+    </ol>
+    <div class="ref">Braun V, Clarke V. "Using thematic analysis in psychology." <em>Qualitative Research in Psychology</em>, 2006;3:77-101. (<a href="https://doi.org/10.1191/1478088706qp063oa" target="_blank">https://doi.org/10.1191/1478088706qp063oa</a>)</div>
+  </div>
+
+  <h4>5. Grupos Focais (Focus Groups)</h4>
+  <p>Discussão conduzida por um moderador com 6–12 participantes selecionados intencionalmente. A riqueza está na <strong>interação grupal</strong> — as ideias se constroem coletivamente (sinergismo), revelando consensos, tensões e diversidade de perspectivas que entrevistas individuais não capturam.</p>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Aplicação na Medicina Interna</span>
+    <p>Grupos focais com pacientes diabéticos tipo 2 revelaram barreiras ao uso de insulina ("insulinofobia"): medo de hipoglicemia, estigma social da injeção, custo do equipamento, crença de que insulina significa "fase final" da doença. Esses achados não aparecem nos questionários padronizados de adesão — eles só emergem na conversa aberta. O resultado prático foi a reformulação de programas de educação em diabetes nos EUA e Europa.</p>
+  </div>
+
+  <h3>Rigor na Pesquisa Qualitativa — Os 4 Critérios de Lincoln & Guba</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Critério Qualitativo</th>
+          <th>Equivalente Quantitativo</th>
+          <th>Como Garantir</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Credibilidade</strong></td>
+          <td>Validade interna</td>
+          <td>Triangulação, checagem pelos participantes (member checking), debriefing entre pesquisadores</td>
+        </tr>
+        <tr>
+          <td><strong>Transferibilidade</strong></td>
+          <td>Validade externa/generalização</td>
+          <td>Descrição densa do contexto, amostragem proposital variada</td>
+        </tr>
+        <tr>
+          <td><strong>Dependabilidade</strong></td>
+          <td>Confiabilidade/reprodutibilidade</td>
+          <td>Trilha de auditoria (audit trail), registro detalhado do processo</td>
+        </tr>
+        <tr>
+          <td><strong>Confirmabilidade</strong></td>
+          <td>Objetividade</td>
+          <td>Reflexividade do pesquisador (posicionamento explícito), triangulação de investigadores</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ref">
+    Lincoln YS, Guba EG. <em>Naturalistic Inquiry</em>. Beverly Hills: Sage, 1985.
+    (<a href="https://us.sagepub.com/en-us/nam/naturalistic-inquiry/book842" target="_blank">https://us.sagepub.com/en-us/nam/naturalistic-inquiry/book842</a>)
+  </div>
+  <div class="ref">
+    Creswell JW, Poth CN. <em>Qualitative Inquiry and Research Design</em>, 4th ed. Sage, 2018.
+    (<a href="https://us.sagepub.com/en-us/nam/qualitative-inquiry-and-research-design/book246896" target="_blank">https://us.sagepub.com/en-us/nam/qualitative-inquiry-and-research-design/book246896</a>)
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 4: MÉTODO MISTO -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s4">
+  <span class="section-number">// 04 — Abordagem</span>
+  <h2>Método Misto (Mixed Methods)</h2>
+  <p class="section-intro">O método misto integra as abordagens quantitativa e qualitativa em um único estudo. É a abordagem mais completa e crescentemente adotada em pesquisas de saúde complexas.</p>
+
+  <div class="etymology">
+    Do latim <em>mixtus</em> (misturado, combinado). O termo formal "mixed methods research" foi consolidado por John Creswell e Vicki Plano Clark em 2007. Também denominado "Pesquisa de Métodos Mistos" ou, em inglês, <em>Mixed Methods Research (MMR)</em>.
+  </div>
+
+  <h3>Por Que o Mundo Real Exige o Método Misto?</h3>
+
+  <p>A doença humana é simultaneamente um <strong>evento biológico mensurável</strong> (ferve nos números: PA, troponina, contagem de neutrófilos) e uma <strong>experiência subjetiva incomensurável</strong> (o que é sentir a dor, o medo do diagnóstico, a perda da identidade). Nenhum dos dois métodos isolados captura o fenômeno inteiro.</p>
+
+  <div class="box box-concept">
+    <span class="box-label">💡 Princípio da Complementaridade</span>
+    <p>Os métodos quantitativo e qualitativo não são opostos — são complementares. O quantitativo mede a extensão do fenômeno; o qualitativo explica o porquê e o como. Juntos, oferecem uma visão mais completa — a <strong>convergência de evidências</strong> aumenta a validade das conclusões (triangulação metodológica).</p>
+  </div>
+
+  <h3>Designs Principais de Métodos Mistos</h3>
+
+  <h4>1. Design Convergente (Triangulation Design)</h4>
+  <p>Quantitativo e qualitativo são coletados <strong>simultaneamente e independentemente</strong>, depois integrados na interpretação. Serve para confirmar, complementar ou contradizer achados.</p>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Exemplo</span>
+    <p>Estudo sobre síndrome de burnout em médicos intensivistas: questionário validado (<abbr title="Maslach Burnout Inventory — Inventário de Burnout de Maslach">MBI</abbr>) em 500 intensivistas (quantitativo) + entrevistas em profundidade com 20 deles (qualitativo). O quantitativo mostrou que 52% tinham burnout grave; o qualitativo revelou as narrativas específicas: "perder um paciente jovem que eu poderia ter salvo", "conflito com famílias" — ajudando a desenhar intervenções mais precisas.</p>
+  </div>
+
+  <h4>2. Design Explicativo Sequencial (Explanatory Sequential)</h4>
+  <p>Primeiro quantitativo → resultados inesperados → qualitativo para explicar. O qualitativo é guiado pelos resultados quantitativos.</p>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Exemplo</span>
+    <p>ECR (<abbr title="Ensaio Clínico Randomizado / Randomized Controlled Trial">ECR / RCT</abbr>) de novo anti-hipertensivo mostrou eficácia estatisticamente significativa, mas taxa de abandono de 40% — muito maior que o esperado. Fase qualitativa (entrevistas): pacientes relataram efeitos colaterais que os médicos não registravam ("sensação de cabeça pesada", "perda da sensação sexual" — que eles tinham vergonha de mencionar). O achado qualitativo explicou a não-adesão e levou à reformulação da posologia.</p>
+  </div>
+
+  <h4>3. Design Exploratório Sequencial (Exploratory Sequential)</h4>
+  <p>Primeiro qualitativo → explorar → depois quantitativo para testar/generalizar. Ideal para desenvolvimento de instrumentos e quando a literatura é escassa.</p>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Exemplo</span>
+    <p>Pesquisadores queriam criar uma escala de qualidade de vida para pacientes pós-sepse. Primeiro fizeram grupos focais e entrevistas (qualitativo) para identificar quais domínios eram relevantes para os sobreviventes (descobriram: fadiga, "névoa cognitiva", isolamento social, alterações do sono). Com esses domínios, criaram um questionário e o validaram em 800 pacientes (quantitativo).</p>
+  </div>
+
+  <h4>4. Design Aninhado / Embutido (Embedded Design)</h4>
+  <p>Um método é primário e o outro é secundário (aninhado dentro do principal). Frequente em ECRs que incluem subestudo qualitativo.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Design</th>
+          <th>Sequência</th>
+          <th>Relação</th>
+          <th>Melhor Para</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Convergente</strong></td>
+          <td>QUAN + QUAL simultâneos</td>
+          <td>Igual peso</td>
+          <td>Triangulação, confirmação</td>
+        </tr>
+        <tr>
+          <td><strong>Explicativo Sequencial</strong></td>
+          <td>QUAN → qual</td>
+          <td>QUAN dominante</td>
+          <td>Explicar resultados quantitativos surpreendentes</td>
+        </tr>
+        <tr>
+          <td><strong>Exploratório Sequencial</strong></td>
+          <td>QUAL → quan</td>
+          <td>QUAL dominante</td>
+          <td>Desenvolver instrumentos, teorias</td>
+        </tr>
+        <tr>
+          <td><strong>Aninhado</strong></td>
+          <td>QUAN(qual) ou QUAL(quan)</td>
+          <td>Um primário, outro secundário</td>
+          <td>ECRs, estudos longitudinais</td>
+        </tr>
+        <tr>
+          <td><strong>Transformativo</strong></td>
+          <td>Qualquer</td>
+          <td>Guiado por teoria crítica</td>
+          <td>Pesquisa de equidade, gênero, raça</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ref">
+    Creswell JW, Plano Clark VL. <em>Designing and Conducting Mixed Methods Research</em>, 3rd ed. Sage, 2018.
+    (<a href="https://us.sagepub.com/en-us/nam/designing-and-conducting-mixed-methods-research/book241842" target="_blank">https://us.sagepub.com/en-us/nam/designing-and-conducting-mixed-methods-research/book241842</a>)
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 5: ESTUDOS DESCRITIVOS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s5">
+  <span class="section-number">// 05 — Delineamentos</span>
+  <h2>Estudos Descritivos</h2>
+  <p class="section-intro">Os estudos descritivos respondem às perguntas QUEM, ONDE e QUANDO. Eles caracterizam a frequência e a distribuição de eventos de saúde, mas não testam hipóteses causais. São o ponto de partida de qualquer investigação epidemiológica.</p>
+
+  <h3>1. Relato de Caso (Case Report)</h3>
+
+  <div class="etymology">Do latim <em>casus</em> (queda, evento, circunstância). O relato de caso é a forma mais antiga de comunicação médica — remonta aos papiros egípcios (~1600 a.C.) e aos escritos de Hipócrates.</div>
+
+  <p>Descrição detalhada de um único paciente com apresentação clínica incomum, nova, ou que ensina algo relevante. Inclui: apresentação, diagnóstico, tratamento, evolução e revisão de literatura.</p>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header quant">Vantagens</div>
+      <div class="compare-card-body">
+        <ul>
+          <li>Detecta doenças raras ou novas</li>
+          <li>Gera hipóteses para estudos futuros</li>
+          <li>Alerta para efeitos adversos raros de medicamentos</li>
+          <li>Rápido, barato, sem necessidade de aprovação ética complexa</li>
+          <li>Preserva a narrativa clínica completa</li>
+        </ul>
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header qual">Limitações</div>
+      <div class="compare-card-body">
+        <ul>
+          <li>N=1: não generaliza</li>
+          <li>Não estabelece causalidade</li>
+          <li>Viés de publicação (casos positivos/raros)</li>
+          <li>Viés de seleção (casos incomuns são superrepresentados)</li>
+          <li>Não permite cálculo de frequência ou risco</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Impacto Histórico de Relatos de Caso</span>
+    <p><strong>HIV/AIDS (1981)</strong>: O CDC publicou um relato de 5 casos de pneumonia por <em>Pneumocystis carinii</em> em homens jovens homossexuais previamente saudáveis em Los Angeles (MMWR, junho 1981). Era a primeira descrição da AIDS. Um único relato de série de casos iniciou a maior pandemia da segunda metade do século XX.</p>
+    <div class="ref">Gottlieb MS et al. MMWR 1981;30:250-252. (<a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/june_5.htm" target="_blank">https://www.cdc.gov/mmwr/preview/mmwrhtml/june_5.htm</a>)</div>
+  </div>
+
+  <h3>2. Série de Casos (Case Series)</h3>
+  <p>Descrição de um grupo de pacientes com características comuns (doença, procedimento, exposição). Sem grupo comparador. N ≥ 2 (geralmente ≥ 5–20).</p>
+
+  <p><strong>Diferença do relato de caso</strong>: a série permite identificar padrões, calcular frequências de características clínicas e sugerir associações, ainda que sem controles.</p>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Exemplo</span>
+    <p>A série de casos de síndrome de Guillain-Barré associada à vacina contra influenza suína em 1976 nos EUA foi o sinal de farmacovigilância que levou à suspensão do programa de vacinação. Análises posteriores estimaram risco de ~1 caso extra/100.000 vacinados — pequeno, mas detectado pela série de casos.</p>
+  </div>
+
+  <h3>3. Estudo Transversal (Cross-Sectional Study)</h3>
+
+  <div class="etymology">Do latim <em>trans</em> (através) + <em>versalis</em> (que se estende). Em inglês: <em>cross-sectional</em> (corte transversal) ou <em>prevalence study</em> (estudo de prevalência). Também chamado de "fotografia epidemiológica" — captura a realidade em um único momento.</div>
+
+  <p>Mede exposição e desfecho <strong>simultaneamente</strong> em uma amostra da população, em um único ponto (ou curto período) no tempo. Responde: qual é a prevalência de X nesta população agora?</p>
+
+  <h4>Estrutura Lógica</h4>
+  <div class="formula">
+POPULAÇÃO → AMOSTRA → Mede (exposição + desfecho)
+                       simultaneamente
+                       ↓
+             Calcula PREVALÊNCIA
+             Estima ASSOCIAÇÕES (com cautela!)
+  </div>
+
+  <h4>Medida Associativa: Razão de Prevalência (RP) e Odds Ratio (OR) de Prevalência</h4>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Razão de Prevalência (RP / Prevalence Ratio — PR)</span>
+    <div class="formula">
+<span class="comment">// Tabela 2x2 básica:</span>
+                 DESFECHO+    DESFECHO-
+EXPOSIÇÃO+  |    a        |    b      |  a+b
+EXPOSIÇÃO-  |    c        |    d      |  c+d
+             a+c          b+d         N
+
+Prevalência nos Expostos    = a / (a+b)
+Prevalência nos Não-Expostos = c / (c+d)
+
+<span class="highlight">RP (Razão de Prevalência)</span> = [a/(a+b)] / [c/(c+d)]
+
+<span class="comment">// RP = 1,0 → sem associação</span>
+<span class="comment">// RP > 1,0 → exposição associada a MAIOR prevalência do desfecho</span>
+<span class="comment">// RP < 1,0 → exposição associada a MENOR prevalência (fator protetor)</span>
+
+<span class="highlight">OR de Prevalência</span> = (a×d) / (b×c)
+
+<span class="comment">// OR ≈ RP quando o desfecho é RARO (&lt;10%)</span>
+<span class="comment">// Para desfechos comuns: OR superestima RP → usar Regressão de Poisson</span>
+    </div>
+  </div>
+
+  <div class="box box-warning">
+    <span class="box-label">⚠️ Limitação Crítica do Transversal — Causalidade Reversa</span>
+    <p>Em um estudo transversal, não sabemos o que veio primeiro: a exposição ou o desfecho. Exemplo clássico: estudo transversal encontra associação entre "sedentarismo" e "depressão". Mas a depressão levou ao sedentarismo, ou o sedentarismo levou à depressão? O design não responde. Por isso, estudos transversais são bons para gerar hipóteses, mas inadequados para estabelecer causalidade.</p>
+  </div>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Grandes Estudos Transversais com Impacto Clínico</span>
+    <p><strong>VIGITEL</strong> (Vigilância de Fatores de Risco e Proteção para Doenças Crônicas por Inquérito Telefônico): inquérito transversal anual do Ministério da Saúde do Brasil, realizado desde 2006. Monitora prevalências de obesidade, tabagismo, hipertensão, diabetes, atividade física em capitais brasileiras. Base para políticas públicas nacionais.</p>
+    <div class="ref">Ministério da Saúde. VIGITEL Brasil 2023. (<a href="https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/v/vigitel" target="_blank">https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/v/vigitel</a>)</div>
+    <p><strong>National Health and Nutrition Examination Survey — NHANES</strong>: transversal contínuo dos EUA desde 1960, base de dados fundacional para normas laboratoriais (hemoglobina, creatinina, colesterol) e para entender a epidemia de obesidade americana.</p>
+    <div class="ref">CDC/NCHS. NHANES. (<a href="https://www.cdc.gov/nchs/nhanes/" target="_blank">https://www.cdc.gov/nchs/nhanes/</a>)</div>
+  </div>
+
+  <h3>4. Estudo Ecológico (Ecological Study)</h3>
+
+  <div class="etymology">Do grego <em>oikos</em> (οἶκος = casa, ambiente, habitação) + <em>logos</em>. Estuda grupos (populações, regiões, países), não indivíduos.</div>
+
+  <p>A unidade de análise é o <strong>grupo/população</strong>, não o indivíduo. Correlaciona dados agregados de exposição e desfecho entre populações diferentes (correlação ecológica).</p>
+
+  <div class="box box-danger">
+    <span class="box-label">🚨 Falácia Ecológica (Ecological Fallacy)</span>
+    <p>O maior perigo do estudo ecológico. Exemplo histórico: correlação entre consumo de gordura per capita e mortalidade por câncer de mama entre países. Países ricos consomem mais gordura E têm mais câncer de mama — mas isso reflete desenvolvimento econômico, não causalidade direta. A associação ecológica (entre países) NÃO necessariamente se aplica ao nível individual. Em termos moleculares: o mecanismo (gordura → câncer) precisa ser comprovado em nível individual, não apenas correlacionado em nível populacional.</p>
+  </div>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Aplicação — Hipótese de Snow sobre o Cólera (1854)</span>
+    <p>John Snow mapeou casos de cólera em Londres e os sobrepôs às bombas d'água públicas — era um estudo ecológico espacial. Identificou que a concentração de casos ao redor da bomba da Broad Street era muito maior que nas demais áreas. Esse achado ecológico levou à remoção da manivela da bomba e ao controle do surto — antes mesmo de se conhecer o agente causador (<em>Vibrio cholerae</em> foi identificado por Koch em 1883, 30 anos depois).</p>
+    <div class="ref">Snow J. <em>On the Mode of Communication of Cholera</em>, 2nd ed. London: Churchill, 1855. Disponível em: (<a href="https://www.ph.ucla.edu/epi/snow/snowbook.html" target="_blank">https://www.ph.ucla.edu/epi/snow/snowbook.html</a>)</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 6: ESTUDOS ANALÍTICOS OBSERVACIONAIS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s6">
+  <span class="section-number">// 06 — Delineamentos</span>
+  <h2>Estudos Analíticos Observacionais</h2>
+  <p class="section-intro">Os estudos analíticos observacionais buscam estabelecer associações e testar hipóteses causais sem intervenção do pesquisador. São a base da epidemiologia etiológica clínica.</p>
+
+  <h3>1. Estudo de Coorte (Cohort Study)</h3>
+
+  <div class="etymology">Do latim <em>cohors, cohortis</em> (coorte — divisão do exército romano; grupo de pessoas compartilhando uma característica). Uma coorte epidemiológica é um grupo de pessoas seguidas ao longo do tempo que compartilham uma exposição ou característica em comum.</div>
+
+  <p>No estudo de coorte, um grupo de pessoas <strong>sem o desfecho de interesse</strong> é identificado e seguido prospectivamente ao longo do tempo. A exposição é determinada no início (linha de base), e o pesquisador aguarda o desenvolvimento do desfecho.</p>
+
+  <h4>Estrutura Temporal</h4>
+  <div class="formula">
+TEMPO →→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→→
+
+Linha de Base          Follow-up               Desfecho
+(exposição definida)   (anos/décadas)          (doença, óbito)
+
+EXPOSTOS    ─────────────────────────────→  desenvolve desfecho? (a/b)
+NÃO-EXPOSTOS ────────────────────────────→  desenvolve desfecho? (c/d)
+
+Calcula: INCIDÊNCIA e RISCO RELATIVO (RR)
+  </div>
+
+  <h4>Principais Métricas do Estudo de Coorte</h4>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Risco Relativo (RR / Relative Risk) — A Medida de Associação da Coorte</span>
+    <div class="formula">
+<span class="comment">// Tabela 2x2:</span>
+                 DESFECHO+    DESFECHO-     TOTAL
+EXPOSTOS    |    a        |    b      |   a+b
+NÃO-EXPOS.  |    c        |    d      |   c+d
+
+Incidência nos Expostos     (Ie) = a / (a+b)
+Incidência nos Não-Expostos (Ic) = c / (c+d)
+
+<span class="highlight">RR (Risco Relativo)</span> = Ie / Ic = [a/(a+b)] / [c/(c+d)]
+
+<span class="comment">// RR = 1,0 → sem associação</span>
+<span class="comment">// RR = 2,0 → expostos têm o DOBRO do risco</span>
+<span class="comment">// RR = 0,5 → expostos têm METADE do risco (fator protetor)</span>
+
+<span class="highlight">Risco Atribuível (RA)</span> = Ie - Ic
+<span class="comment">// RA: quantos casos por 1.000 são atribuíveis à exposição?</span>
+
+<span class="highlight">Fração Atribuível (FA)</span> = (Ie - Ic) / Ie × 100%
+<span class="comment">// FA: que % dos casos nos expostos seria evitada sem a exposição?</span>
+
+<span class="highlight">Risco Atribuível Populacional (RAP)</span> = (I_pop - Ic) / I_pop × 100%
+<span class="comment">// RAP: impacto na população total se a exposição fosse eliminada</span>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-header">// Exercício 01 — Estudo de Coorte</div>
+    <h4>Tabagismo e Câncer de Pulmão — Doll & Hill (1950)</h4>
+    <p>Em um estudo de coorte clássico, 40.000 médicos britânicos foram seguidos por 10 anos. Ao final:</p>
+    <p>• Fumantes (n=20.000): 140 casos de câncer de pulmão</p>
+    <p>• Não-fumantes (n=20.000): 10 casos de câncer de pulmão</p>
+    <p><strong>Calcule:</strong> a) Incidência em cada grupo; b) RR; c) Risco Atribuível; d) Fração Atribuível; e) Interprete clinicamente.</p>
+    <div class="solution">
+      <span class="solution-label">// Solução Detalhada</span>
+      <p><strong>a) Incidências:</strong></p>
+      <p>• Ie (fumantes) = 140/20.000 = 7/1.000 = 0,007 (0,7%)</p>
+      <p>• Ic (não-fumantes) = 10/20.000 = 0,5/1.000 = 0,0005 (0,05%)</p>
+      <p><strong>b) RR = 0,007/0,0005 = 14,0</strong></p>
+      <p>→ Fumantes têm 14× mais risco de câncer de pulmão que não-fumantes</p>
+      <p><strong>c) Risco Atribuível = 0,007 − 0,0005 = 0,0065 (6,5/1.000)</strong></p>
+      <p>→ 6,5 casos em cada 1.000 fumantes são atribuíveis ao tabagismo</p>
+      <p><strong>d) Fração Atribuível = (0,0065/0,007) × 100% = 92,9%</strong></p>
+      <p>→ ~93% dos casos de câncer de pulmão nos fumantes seriam evitáveis se parassem de fumar</p>
+      <p><strong>e) Interpretação clínica:</strong> Um RR de 14 é enorme — para comparação, o tabagismo aumenta risco de IAM em RR≈2–4. A fração atribuível de 93% significa que o tabagismo é a causa DOMINANTE do câncer de pulmão. Implicação: prevenção do tabagismo é a intervenção mais eficaz na oncologia pulmonar — mais do que qualquer quimioterápico ou radioterapia.</p>
+    </div>
+  </div>
+
+  <h4>Tipos de Coorte quanto ao Tempo</h4>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Como Funciona</th>
+          <th>Tempo/Custo</th>
+          <th>Exemplo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Prospectiva</strong></td>
+          <td>Define expostos hoje → segue para o futuro → aguarda desfecho</td>
+          <td>Anos/décadas; muito caro</td>
+          <td>Framingham Heart Study (1948–hoje)</td>
+        </tr>
+        <tr>
+          <td><strong>Retrospectiva (Histórica)</strong></td>
+          <td>Usa dados passados: reconstrói coorte a partir de registros (prontuários, bancos de dados)</td>
+          <td>Meses; mais barato</td>
+          <td>Prontuários de trabalhadores expostos a amianto → câncer (já ocorrido)</td>
+        </tr>
+        <tr>
+          <td><strong>Ambidirecional</strong></td>
+          <td>Parte de um ponto passado, segue até o presente E para o futuro</td>
+          <td>Variável</td>
+          <td>Nurses' Health Study (EUA, 1976–hoje)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Framingham Heart Study — A Coorte Mais Importante da Medicina</span>
+    <p>Iniciado em 1948 em Framingham, Massachusetts, com 5.209 homens e mulheres de 30–62 anos. Já está na 3ª geração de participantes. Os achados moldaram toda a cardiologia preventiva:</p>
+    <ul style="padding-left: 1.5rem;">
+      <li>Identificou hipertensão, tabagismo, dislipidemia e DM como fatores de risco cardiovascular</li>
+      <li>Criou o "Escore de Framingham" — base das calculadoras de risco cardiovascular global</li>
+      <li>Demonstrou que FA (fibrilação atrial) aumenta risco de AVC em 5×</li>
+      <li>Identificou a importância do HDL (colesterol "bom")</li>
+    </ul>
+    <div class="ref">Kannel WB et al. "Factors of Risk in the Development of Coronary Heart Disease." <em>Ann Intern Med</em> 1961;55:33-50. (<a href="https://doi.org/10.7326/0003-4819-55-1-33" target="_blank">https://doi.org/10.7326/0003-4819-55-1-33</a>)</div>
+    <div class="ref">Framingham Heart Study. (<a href="https://www.framinghamheartstudy.org" target="_blank">https://www.framinghamheartstudy.org</a>)</div>
+  </div>
+
+  <h3>2. Estudo de Caso-Controle (Case-Control Study)</h3>
+
+  <div class="etymology">Do latim <em>casus</em> (evento, caso) + controle (do italiano <em>controllo</em>, registro paralelo para verificação). Delineamento retrospectivo que "olha para trás" a partir do desfecho.</div>
+
+  <p>No estudo caso-controle, a lógica é <strong>invertida em relação à coorte</strong>: partimos do desfecho (casos com a doença) e procuramos os controles (sem a doença), depois comparamos a prevalência de exposições passadas entre os dois grupos.</p>
+
+  <h4>Estrutura Lógica — "De trás para frente"</h4>
+  <div class="formula">
+TEMPO ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
+
+Desfecho conhecido         Olhar para o PASSADO → Exposição?
+(presente)
+
+CASOS    (com doença) ─────────→ Foram expostos? (a/a+c)
+CONTROLES (sem doença) ─────────→ Foram expostos? (b/b+d)
+
+Calcula: ODDS RATIO (OR)  ← NÃO calcula incidência nem RR diretamente
+  </div>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Odds Ratio (OR / Razão de Chances) — A Medida do Caso-Controle</span>
+    <div class="formula">
+<span class="comment">// Tabela 2x2:</span>
+                CASOS    CONTROLES
+EXPOSTOS   |    a    |    b    |
+NÃO-EXPOS. |    c    |    d    |
+
+<span class="highlight">OR</span> = (a/c) / (b/d) = (a × d) / (b × c)
+
+<span class="comment">// Odds de exposição nos CASOS vs odds de exposição nos CONTROLES</span>
+
+<span class="comment">// OR = 1,0 → sem associação</span>
+<span class="comment">// OR > 1,0 → exposição associada a maior chance de ter o desfecho</span>
+<span class="comment">// OR < 1,0 → exposição protetora</span>
+
+<span class="comment">// PROPRIEDADE IMPORTANTE: OR ≈ RR quando o desfecho é raro (&lt;10%)</span>
+<span class="comment">// Para desfechos comuns: OR SUPERESTIMA o RR</span>
+<span class="comment">// Fórmula de conversão (Zhang & Yu, 1998):</span>
+RR ≈ OR / [(1-P₀) + (P₀ × OR)]  <span class="comment">// P₀ = incidência nos não-expostos</span>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-header">// Exercício 02 — Caso-Controle</div>
+    <h4>Meningite Meningocócica e Tabagismo Passivo</h4>
+    <p>Estudo caso-controle em crianças com meningite meningocócica (100 casos) e 200 controles hospitalares.</p>
+    <p>• Exposição ao tabagismo passivo domiciliar:</p>
+    <p>• Casos: 60 expostos, 40 não-expostos</p>
+    <p>• Controles: 80 expostos, 120 não-expostos</p>
+    <p><strong>Calcule:</strong> a) OR; b) IC 95% do OR (fórmula de Woolf); c) Interprete clinicamente.</p>
+    <div class="solution">
+      <span class="solution-label">// Solução</span>
+      <p><strong>a) OR = (a×d)/(b×c) = (60×120)/(80×40) = 7.200/3.200 = 2,25</strong></p>
+      <p>Crianças expostas ao tabagismo passivo têm 2,25× mais chance de desenvolver meningite meningocócica.</p>
+      <p><strong>b) IC 95% do OR (método de Woolf / ln(OR) ± 1,96 × SE):</strong></p>
+      <p>SE[ln(OR)] = √(1/a + 1/b + 1/c + 1/d) = √(1/60 + 1/80 + 1/40 + 1/120)</p>
+      <p>= √(0,0167 + 0,0125 + 0,025 + 0,0083) = √(0,0625) = 0,25</p>
+      <p>ln(OR) = ln(2,25) = 0,811</p>
+      <p>IC 95% do ln(OR): 0,811 ± (1,96 × 0,25) = 0,811 ± 0,49 → [0,321 ; 1,301]</p>
+      <p>IC 95% do OR = [e^0,321 ; e^1,301] = <strong>[1,38 ; 3,67]</strong></p>
+      <p><strong>c) Interpretação:</strong> OR=2,25 (IC95%: 1,38–3,67). O IC não inclui 1,0 → p &lt; 0,05, associação estatisticamente significativa. O tabagismo passivo dobra aproximadamente o risco de meningite meningocócica em crianças. Mecanismo proposto: o tabaco danifica a integridade da mucosa nasofaríngea e prejudica clearance mucociliar, facilitando a invasão bacteriana. <strong>Aplicação prática</strong>: reforçar orientação sobre tabagismo passivo nas consultas pediátricas, especialmente para crianças não-vacinadas.</p>
+    </div>
+  </div>
+
+  <h4>Seleção dos Controles — O Ponto Crítico</h4>
+  <div class="box box-warning">
+    <span class="box-label">⚠️ Princípio da Comparabilidade</span>
+    <p>Os controles devem representar a população da qual os casos seriam selecionados se tivessem desenvolvido o desfecho (<em>study base</em>). Se um caso é um paciente com infarto admitido no Hospital X, o controle ideal seria outro paciente do Hospital X — não da comunidade, não de outra cidade. Controles inadequados geram <strong>viés de seleção</strong>, que invalida o OR calculado.</p>
+    <p><strong>Razão casos:controles</strong>: tipicamente 1:1 a 1:4. Aumentar além de 1:4 traz ganho marginal de poder estatístico — preferível aumentar N de casos.</p>
+  </div>
+
+  <h4>Tipos de Caso-Controle</h4>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Variante</th>
+          <th>Características</th>
+          <th>Quando Usar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Caso-controle clássico (incidente)</strong></td>
+          <td>Casos novos (incidentes); controles da mesma população-base</td>
+          <td>Estudos hospitalares, doenças raras</td>
+        </tr>
+        <tr>
+          <td><strong>Caso-controle aninhado em coorte</strong><br>(Nested case-control)</td>
+          <td>Casos emergem de uma coorte pré-existente; controles são da mesma coorte</td>
+          <td>Estudos com biomarcadores caros (analisa só amostras dos casos e controles selecionados)</td>
+        </tr>
+        <tr>
+          <td><strong>Caso-coorte</strong><br>(Case-cohort)</td>
+          <td>Controles = subcoorte aleatória da coorte base (pode ser controle para múltiplos desfechos)</td>
+          <td>Estudos com múltiplos desfechos na mesma coorte</td>
+        </tr>
+        <tr>
+          <td><strong>Caso-cruzado</strong><br>(Case-crossover)</td>
+          <td>Cada caso serve como seu próprio controle em períodos diferentes</td>
+          <td>Exposições transitórias (ex: uso de drogas, estresse agudo) e desfechos agudos (IAM, AVC)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Caso Emblemático — Talidomida e Focomelia (1961)</span>
+    <p>McBride (Austrália) e Lenz (Alemanha), independentemente, usaram raciocínio caso-controle informal: observaram que bebês com focomelia (ausência de membros) tinham mães que tomaram talidomida no 1º trimestre. Sem um controle formal, mas a associação era tão forte (OR estimado >100) que levou à retirada do mercado em 1961, salvando dezenas de milhares de crianças. Lição: estudos caso-controle bem conduzidos podem gerar sinais de farmacovigilância que salvam vidas — rapidamente e com baixo custo, mesmo para doenças raras.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 7: ESTUDOS EXPERIMENTAIS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s7">
+  <span class="section-number">// 07 — Delineamentos</span>
+  <h2>Estudos Experimentais</h2>
+  <p class="section-intro">Nos estudos experimentais, o pesquisador manipula a exposição (intervenção) e controla as condições do estudo. São os únicos designs que permitem estabelecer causalidade com alto grau de certeza.</p>
+
+  <h3>1. Ensaio Clínico Randomizado — ECR (RCT: Randomized Controlled Trial)</h3>
+
+  <div class="etymology">Do latim <em>experimentum</em> (tentativa, prova, experiência). <em>Randomized</em> vem de <em>random</em> (inglês antigo: aleatório, sem padrão definido), derivado do francês antigo <em>randon</em> (violência, rapidez, impulso). O primeiro ECR moderno com alocação aleatória formal foi o estudo de estreptomicina na tuberculose, conduzido por Austin Bradford Hill para o British Medical Research Council em 1948.</div>
+
+  <p>O ECR é o <strong>padrão-ouro (gold standard)</strong> para avaliar eficácia de intervenções. A randomização (alocação aleatória) distribui igualmente fatores confundidores conhecidos E desconhecidos entre os grupos, sendo a única forma de controlar confundimento por fatores que não medimos.</p>
+
+  <h4>Princípios Físico-Químicos da Randomização</h4>
+  <div class="box box-concept">
+    <span class="box-label">🔬 Por Que a Randomização Funciona? — Princípio Estatístico</span>
+    <p>A randomização cria grupos probabilisticamente equivalentes. Em termos de física estatística: é como embaralhar cartas de forma verdadeiramente aleatória. Em uma amostra suficientemente grande, a probabilidade de que fatores externos (idade, sexo, comorbidades, genética) se distribuam desequilibradamente entre os grupos diminui exponencialmente com o aumento do N. Com N=1.000 por grupo, a probabilidade de viés de confundimento residual por fatores não medidos é extremamente baixa — não porque zeramos todos os confundidores, mas porque os distribuímos aleatoriamente.</p>
+  </div>
+
+  <h4>Estrutura do ECR</h4>
+  <div class="formula">
+POPULAÇÃO ALVO
+      ↓
+CRITÉRIOS DE INCLUSÃO/EXCLUSÃO
+      ↓
+AMOSTRA ELEGÍVEL
+      ↓
+CONSENTIMENTO INFORMADO (TCLE)
+      ↓
+RANDOMIZAÇÃO ← segredo de alocação preservado
+   ↙          ↘
+INTERVENÇÃO   CONTROLE (placebo ou tratamento padrão)
+   ↓               ↓
+SEGUIMENTO    SEGUIMENTO
+   ↓               ↓
+DESFECHO      DESFECHO
+   ↓               ↓
+ANÁLISE → INTENTION TO TREAT (ITT) [primária]
+          PER-PROTOCOL (PP) [secundária]
+  </div>
+
+  <h4>Tipos de Mascaramento (Cegamento)</h4>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Quem está cego</th>
+          <th>Protege contra</th>
+          <th>Limitação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Simples-cego</strong><br>(Single-blind)</td>
+          <td>Apenas o participante</td>
+          <td>Viés de desempenho do paciente; efeito placebo</td>
+          <td>Pesquisador ainda pode influenciar</td>
+        </tr>
+        <tr>
+          <td><strong>Duplo-cego</strong><br>(Double-blind)</td>
+          <td>Participante E pesquisador/médico</td>
+          <td>Viés de performance e viés de detecção</td>
+          <td>Nem sempre possível (cirurgia, psicoterapia)</td>
+        </tr>
+        <tr>
+          <td><strong>Triplo-cego</strong><br>(Triple-blind)</td>
+          <td>Participante, pesquisador E analista estatístico</td>
+          <td>Viés de análise seletiva</td>
+          <td>Logisticamente complexo</td>
+        </tr>
+        <tr>
+          <td><strong>Aberto (Open-label)</strong></td>
+          <td>Ninguém está cego</td>
+          <td>—</td>
+          <td>Máximo risco de viés de performance e detecção</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Análise por Intenção de Tratar (ITT) vs Por Protocolo (PP)</h4>
+
+  <div class="box box-concept">
+    <span class="box-label">🔬 ITT — Intention to Treat</span>
+    <p><strong>Todos os randomizados são analisados no grupo original</strong>, independentemente de terem recebido ou completado o tratamento. É a análise primária porque preserva os benefícios da randomização e estima o efeito no "mundo real" (onde pacientes param tratamentos, tomam doses erradas, etc.). Um ECR com alta taxa de abandono que não usa ITT pode estar mascarando falha de tratamento.</p>
+    <p><strong>Variante moderna: mITT</strong> (modified ITT) — exclui apenas os que nunca receberam sequer uma dose, antes da análise de desfechos.</p>
+  </div>
+
+  <h4>Variações do ECR</h4>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Variante</th>
+          <th>Estrutura</th>
+          <th>Vantagem</th>
+          <th>Exemplo Clínico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Paralelo</strong></td>
+          <td>Cada participante em apenas 1 grupo</td>
+          <td>Simples, sem carryover</td>
+          <td>Maioria dos ECRs clínicos</td>
+        </tr>
+        <tr>
+          <td><strong>Cruzado (Crossover)</strong></td>
+          <td>Participante recebe ambas as intervenções em sequência</td>
+          <td>Cada participante = seu próprio controle; N menor</td>
+          <td>Estudos de analgésicos, broncodilatadores</td>
+        </tr>
+        <tr>
+          <td><strong>Fatorial</strong></td>
+          <td>Testa ≥2 intervenções simultaneamente em esquema fatorial (A+B, A, B, controle)</td>
+          <td>Eficiente (testa 2 perguntas em 1 estudo)</td>
+          <td>ASCOT: atenolol vs amlodipina × atorvastatina vs placebo</td>
+        </tr>
+        <tr>
+          <td><strong>Cluster (Conglomerados)</strong></td>
+          <td>Randomiza grupos (hospitais, escolas, UBSs) em vez de indivíduos</td>
+          <td>Evita contaminação entre grupos; logisticamente viável</td>
+          <td>Intervenções de saúde pública, treinamento de equipes</td>
+        </tr>
+        <tr>
+          <td><strong>Adaptativo</strong></td>
+          <td>Permite modificações pré-especificadas durante o estudo (N, alocação, grupos)</td>
+          <td>Eficiência; pode parar cedo se evidência forte</td>
+          <td>Estudos COVID-19 (RECOVERY, SOLIDARITY)</td>
+        </tr>
+        <tr>
+          <td><strong>N-of-1</strong></td>
+          <td>ECR de caso único: múltiplos crossovers em 1 paciente</td>
+          <td>Evidência para casos individuais; medicina de precisão</td>
+          <td>Tratamento de dor crônica; TDAH</td>
+        </tr>
+        <tr>
+          <td><strong>Pragmático</strong></td>
+          <td>Conduzido em condições reais de prática; inclusão ampla</td>
+          <td>Alta validade externa (generalização)</td>
+          <td>ALLHAT (anti-hipertensivos), SPRINT</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Estudo RECOVERY — O ECR que Salvou Mais Vidas na COVID-19</span>
+    <p>Iniciado em março de 2020 no Reino Unido, o RECOVERY (Randomised Evaluation of COVID-19 Therapy) foi um ECR adaptativo com plataforma aberta. Testou múltiplas drogas simultaneamente: dexametasona, lopinavir/ritonavir, hidroxicloroquina, azitromicina, tocilizumabe, baricitinibe, entre outras.</p>
+    <p><strong>Resultado mais impactante</strong>: dexametasona 6mg/dia por 10 dias reduziu mortalidade em <strong>35%</strong> em pacientes com O₂ suplementar (RR 0,65, IC95%: 0,51–0,82) e <strong>36%</strong> nos ventilados mecanicamente. Ao mesmo tempo, mostrou ausência de benefício (e possível dano) da hidroxicloroquina — o que evitou uso desnecessário de milhões de doses.</p>
+    <p><strong>Impacto estimado</strong>: >1 milhão de vidas salvas globalmente pela dexametasona nos primeiros 12 meses.</p>
+    <div class="ref">RECOVERY Collaborative Group. "Dexamethasone in Hospitalized Patients with Covid-19." NEJM 2021;384:693-704. (<a href="https://doi.org/10.1056/NEJMoa2021436" target="_blank">https://doi.org/10.1056/NEJMoa2021436</a>)</div>
+  </div>
+
+  <h3>2. Ensaio Clínico Não Randomizado (Quase-Experimental)</h3>
+  <p>Quando a randomização não é possível (ética, logística), usam-se designs quase-experimentais que tentam controlar o confundimento por outros meios:</p>
+  <ul style="padding-left: 1.5rem; margin-bottom: 1.2rem;">
+    <li><strong>Antes-depois (Before-after)</strong>: mesmos sujeitos antes e depois da intervenção — confundimento por eventos temporais</li>
+    <li><strong>Série temporal interrompida (ITS: Interrupted Time Series)</strong>: avalia mudança de tendência após intervenção; mais robusto que antes-depois simples</li>
+    <li><strong>Diferença em diferenças (DiD)</strong>: compara mudança no grupo intervenção vs mudança no grupo controle ao longo do tempo</li>
+    <li><strong>Regressão por descontinuidade (RD)</strong>: explora pontos de corte arbitrários de políticas/elegibilidade</li>
+  </ul>
+
+  <h3>3. Estudo de Intervenção Comunitária</h3>
+  <p>A intervenção é direcionada a uma comunidade inteira (não a indivíduos): campanhas de vacinação, fluoretação da água, restrição do tabagismo em espaços públicos. Avaliados por comparação com comunidades-controle, antes-depois, ou série temporal.</p>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Exemplo Histórico — Fluoretação da Água e Cárie Dental</span>
+    <p>Em 1945, Grand Rapids (Michigan, EUA) tornou-se a primeira cidade a fluorar a água potável. A cidade de Muskegon serviu como controle. Após 10 anos, a cárie em crianças havia diminuído ~60% em Grand Rapids vs sem mudança em Muskegon. Esse estudo de intervenção comunitária foi fundamental para disseminar a fluoretação — hoje considerada uma das 10 maiores realizações de saúde pública do século XX pelo CDC.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 8: REVISÕES SISTEMÁTICAS E META-ANÁLISE -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s8">
+  <span class="section-number">// 08 — Síntese de Evidências</span>
+  <h2>Revisão Sistemática e Meta-Análise</h2>
+  <p class="section-intro">No topo da pirâmide de evidências, as revisões sistemáticas com meta-análise sintetizam os resultados de múltiplos estudos primários, aumentando o poder estatístico e a precisão das estimativas de efeito.</p>
+
+  <div class="etymology">
+    <em>Revisão sistemática</em>: do latim <em>revisio</em> (exame, revisão) + grego <em>systema</em> (σύστημα = conjunto organizado). <em>Meta-análise</em>: do grego <em>meta</em> (μετά = além, sobre) + <em>analysis</em> (dissolução, decomposição para entender). O termo foi cunhado por Gene V. Glass em 1976 para descrever a "análise de análises" — aplicação de métodos estatísticos para combinar resultados de estudos individuais.
+  </div>
+
+  <h3>Diferença entre Revisão Narrativa, Sistemática e Meta-Análise</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Busca</th>
+          <th>Seleção</th>
+          <th>Síntese</th>
+          <th>Reprodutível?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Revisão Narrativa</strong></td>
+          <td>Informal, não sistemática</td>
+          <td>Critérios implícitos</td>
+          <td>Qualitativa/descritiva</td>
+          <td>Não</td>
+        </tr>
+        <tr>
+          <td><strong>Scoping Review</strong></td>
+          <td>Sistemática e transparente</td>
+          <td>Amplos, mapeamento</td>
+          <td>Descritiva, sem pooling</td>
+          <td>Parcialmente</td>
+        </tr>
+        <tr>
+          <td><strong>Revisão Sistemática</strong></td>
+          <td>Exaustiva, multi-base</td>
+          <td>Critérios explícitos e rigorosos</td>
+          <td>Qualitativa (síntese narrativa)</td>
+          <td>Sim</td>
+        </tr>
+        <tr>
+          <td><strong>Meta-Análise</strong></td>
+          <td>Exaustiva (dentro de RS)</td>
+          <td>Critérios explícitos e rigorosos</td>
+          <td>Estatística (pooling de efeitos)</td>
+          <td>Sim</td>
+        </tr>
+        <tr>
+          <td><strong>Umbrella Review</strong></td>
+          <td>Revisão de RS/MA</td>
+          <td>Inclui apenas RS e MA</td>
+          <td>Síntese de sínteses</td>
+          <td>Sim</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>O Processo da Revisão Sistemática — 7 Etapas (PRISMA 2020)</h3>
+
+  <div class="box box-concept">
+    <span class="box-label">📋 PRISMA — Preferred Reporting Items for Systematic Reviews and Meta-Analyses</span>
+    <ol style="padding-left: 1.5rem;">
+      <li style="margin-bottom: 0.6rem;"><strong>Protocolo a priori</strong>: registrar no PROSPERO antes de iniciar a busca (evita HARKing — Hypothesizing After Results are Known)</li>
+      <li style="margin-bottom: 0.6rem;"><strong>Estratégia de busca</strong>: PICO + termos MeSH + livres em múltiplas bases (PubMed/MEDLINE, EMBASE, Cochrane CENTRAL, LILACS, Web of Science)</li>
+      <li style="margin-bottom: 0.6rem;"><strong>Triagem de títulos/resumos</strong>: 2 revisores independentes; discordâncias resolvidas por consenso ou 3º revisor</li>
+      <li style="margin-bottom: 0.6rem;"><strong>Elegibilidade (texto completo)</strong>: critérios PICO aplicados ao texto completo</li>
+      <li style="margin-bottom: 0.6rem;"><strong>Extração de dados</strong>: formulário padronizado; 2 revisores independentes</li>
+      <li style="margin-bottom: 0.6rem;"><strong>Avaliação de risco de viés</strong>: RoB 2.0 (para ECRs), ROBINS-I (para observacionais), QUADAS-2 (diagnósticos)</li>
+      <li style="margin-bottom: 0.6rem;"><strong>Síntese e interpretação</strong>: meta-análise (se possível), análise de heterogeneidade, avaliação GRADE</li>
+    </ol>
+  </div>
+
+  <h3>Meta-Análise — A Lógica Estatística do Pooling</h3>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Modelo de Efeitos Fixos vs Efeitos Aleatórios</span>
+    <div class="formula">
+<span class="comment">// Efeito combinado (pooled effect) geral:</span>
+θ_pooled = Σ(wᵢ × θᵢ) / Σwᵢ
+
+<span class="comment">// Onde θᵢ = estimativa do estudo i (ln OR, diferença de médias, etc.)</span>
+<span class="comment">//       wᵢ = peso do estudo i</span>
+
+<span class="comment">// MODELO DE EFEITOS FIXOS (Mantel-Haenszel, Peto):</span>
+wᵢ = 1 / VARᵢ  <span class="comment">// peso = inverso da variância dentro do estudo</span>
+<span class="comment">// Pressuposto: um único efeito verdadeiro; variação = erro amostral</span>
+
+<span class="comment">// MODELO DE EFEITOS ALEATÓRIOS (DerSimonian-Laird):</span>
+wᵢ = 1 / (VARᵢ + τ²)  <span class="comment">// τ² = variância entre estudos (heterogeneidade)</span>
+<span class="comment">// Pressuposto: múltiplos efeitos verdadeiros; τ² captura heterogeneidade real</span>
+<span class="comment">// Preferido quando há heterogeneidade significativa (I² > 50%)</span>
+    </div>
+  </div>
+
+  <h4>Heterogeneidade — O Problema Central da Meta-Análise</h4>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Estatística I² de Higgins — Quantificando Heterogeneidade</span>
+    <div class="formula">
+<span class="comment">// Q de Cochran: testa se há mais variação entre estudos do que o esperado pelo acaso</span>
+Q = Σ wᵢ(θᵢ - θ_pooled)²
+
+<span class="comment">// I² de Higgins & Thompson (2002):</span>
+I² = [(Q - df) / Q] × 100%   <span class="comment">// df = graus de liberdade = k-1 estudos</span>
+
+<span class="comment">// I² = 0%    → sem heterogeneidade além do acaso</span>
+<span class="comment">// I² = 25%   → heterogeneidade baixa</span>
+<span class="comment">// I² = 50%   → heterogeneidade moderada</span>
+<span class="comment">// I² > 75%   → heterogeneidade alta → questionar pooling</span>
+
+<span class="comment">// Se I² alto: investigar por análise de subgrupos e metarregressão</span>
+<span class="comment">// Fontes possíveis: diferenças de população, dose, duração, desfecho, qualidade</span>
+    </div>
+  </div>
+
+  <h4>Forest Plot — A Visualização da Meta-Análise</h4>
+  <div class="box box-concept">
+    <span class="box-label">📊 Como Ler um Forest Plot</span>
+    <p>O forest plot (gráfico de floresta — pois parece uma floresta de linhas) exibe:</p>
+    <ul style="padding-left: 1.5rem;">
+      <li><strong>Cada linha horizontal</strong>: um estudo individual, com o quadrado representando a estimativa de efeito (OR, RR, DM) e a linha horizontal o IC 95%</li>
+      <li><strong>Tamanho do quadrado</strong>: proporcional ao peso do estudo na meta-análise (estudos maiores = quadrados maiores)</li>
+      <li><strong>Linha vertical em 1,0 (ou 0)</strong>: linha de nulidade — se o IC de um estudo cruza essa linha, p &gt; 0,05</li>
+      <li><strong>Diamante no final</strong>: efeito combinado (pooled effect) da meta-análise; largura = IC 95%</li>
+      <li><strong>Lado esquerdo da linha de nulidade</strong>: favorece controle; lado direito: favorece intervenção (ou vice-versa, dependendo da parametrização)</li>
+    </ul>
+  </div>
+
+  <h4>Funnel Plot e Viés de Publicação</h4>
+  <div class="box box-danger">
+    <span class="box-label">🚨 Viés de Publicação — O Grande Inimigo da Meta-Análise</span>
+    <p>Estudos com resultados positivos (significativos) têm muito maior probabilidade de ser publicados do que estudos negativos. Isso significa que a literatura publicada é uma amostra enviesada de toda a pesquisa realizada. O funnel plot (gráfico de funil) plota cada estudo com a estimativa de efeito no eixo X e a precisão (1/SE ou N) no eixo Y. Em ausência de viés, os pontos formam um funil simétrico. Assimetria (especialmente ausência de estudos pequenos negativos no canto inferior esquerdo) sugere viés de publicação.</p>
+    <p><strong>Testes formais</strong>: Egger (regressão), Begg (correlação de rank) — mas têm baixo poder com k &lt; 10 estudos.</p>
+  </div>
+
+  <h4>GRADE — Classificando a Certeza das Evidências</h4>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Nível GRADE</th>
+          <th>Certeza</th>
+          <th>Interpretação</th>
+          <th>Base Típica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-green">ALTA ⊕⊕⊕⊕</span></td>
+          <td>Muito provável que o efeito verdadeiro seja similar ao estimado</td>
+          <td>Confiança alta para recomendar</td>
+          <td>ECRs consistentes com baixo risco de viés</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">MODERADA ⊕⊕⊕⊝</span></td>
+          <td>Efeito verdadeiro provavelmente próximo ao estimado</td>
+          <td>Confiança moderada</td>
+          <td>ECRs com limitações OU coortes robustas</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-gold">BAIXA ⊕⊕⊝⊝</span></td>
+          <td>Efeito verdadeiro pode ser substancialmente diferente</td>
+          <td>Confiança limitada</td>
+          <td>Estudos observacionais bem conduzidos</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-red">MUITO BAIXA ⊕⊝⊝⊝</span></td>
+          <td>Grande incerteza sobre o efeito verdadeiro</td>
+          <td>Qualquer estimativa é muito incerta</td>
+          <td>Séries de casos, relatos, estudos com graves limitações</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ref">
+    Higgins JPT, Thomas J (eds). <em>Cochrane Handbook for Systematic Reviews of Interventions</em>, version 6.4. Cochrane, 2023.
+    (<a href="https://training.cochrane.org/handbook" target="_blank">https://training.cochrane.org/handbook</a>)
+  </div>
+  <div class="ref">
+    Page MJ et al. "The PRISMA 2020 statement." <em>BMJ</em> 2021;372:n71.
+    (<a href="https://doi.org/10.1136/bmj.n71" target="_blank">https://doi.org/10.1136/bmj.n71</a>)
+  </div>
+  <div class="ref">
+    Guyatt GH et al. "GRADE: an emerging consensus on rating quality of evidence and strength of recommendations." <em>BMJ</em> 2008;336:924.
+    (<a href="https://doi.org/10.1136/bmj.39489.470347.AD" target="_blank">https://doi.org/10.1136/bmj.39489.470347.AD</a>)
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 9: PIRÂMIDE DE EVIDÊNCIAS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s9">
+  <span class="section-number">// 09 — Hierarquia</span>
+  <h2>Pirâmide de Evidências</h2>
+  <p class="section-intro">A pirâmide de evidências organiza hierarquicamente os designs de estudo segundo sua capacidade de minimizar vieses e estabelecer causalidade. Quanto mais alto na pirâmide, maior a validade interna, menor a quantidade de estudos disponíveis.</p>
+
+  <div class="pyramid">
+    <div class="pyramid-level">
+      <span class="pyramid-label">Síntese</span>
+      <div class="pyramid-bar" style="background:#7b1a1a; clip-path: polygon(50% 0%, 100% 100%, 0% 100%);">Revisões Sistemáticas + Meta-análise</div>
+      <span class="pyramid-num">I</span>
+    </div>
+    <div class="pyramid-level">
+      <span class="pyramid-label">Experimental</span>
+      <div class="pyramid-bar" style="background:#a02020; width:88%;">ECR duplo-cego (RCT)</div>
+      <span class="pyramid-num">II</span>
+    </div>
+    <div class="pyramid-level">
+      <span class="pyramid-label">Quase-experi.</span>
+      <div class="pyramid-bar" style="background:#c0392b; width:78%;">ECR sem randomização / Quase-experimentais</div>
+      <span class="pyramid-num">III</span>
+    </div>
+    <div class="pyramid-level">
+      <span class="pyramid-label">Coorte</span>
+      <div class="pyramid-bar" style="background:#1a4a6b; width:70%;">Estudos de Coorte Prospectiva</div>
+      <span class="pyramid-num">IV</span>
+    </div>
+    <div class="pyramid-level">
+      <span class="pyramid-label">Caso-controle</span>
+      <div class="pyramid-bar" style="background:#1a6b4a; width:62%;">Estudos Caso-Controle</div>
+      <span class="pyramid-num">V</span>
+    </div>
+    <div class="pyramid-level">
+      <span class="pyramid-label">Transversal</span>
+      <div class="pyramid-bar" style="background:#4a6b1a; width:54%;">Estudos Transversais / Ecológicos</div>
+      <span class="pyramid-num">VI</span>
+    </div>
+    <div class="pyramid-level">
+      <span class="pyramid-label">Descritivo</span>
+      <div class="pyramid-bar" style="background:#6b4a1a; width:46%;">Série de Casos</div>
+      <span class="pyramid-num">VII</span>
+    </div>
+    <div class="pyramid-level">
+      <span class="pyramid-label">Anedótico</span>
+      <div class="pyramid-bar" style="background:#4a3a1a; width:38%;">Relato de Caso / Opinião de Especialista</div>
+      <span class="pyramid-num">VIII</span>
+    </div>
+  </div>
+
+  <div class="box box-warning">
+    <span class="box-label">⚠️ Crítica Moderna à Pirâmide Rígida</span>
+    <p>A pirâmide não é absoluta. Uma coorte bem conduzida com 100.000 pacientes pode ser mais informativa que um ECR mal desenhado com 50 pacientes. O sistema GRADE formaliza isso: a qualidade metodológica dentro de cada design importa tanto quanto o design em si. Além disso, para questões de <strong>dano/efeitos adversos raros</strong>, estudos observacionais (grandes coortes e caso-controle) frequentemente são a única fonte de evidência disponível — e são adequados para essa pergunta. O princípio é: <em>use o design certo para a pergunta certa</em>.</p>
+  </div>
+
+  <h3>O Acrônimo PICO(T) — Formulando Perguntas Clínicas Pesquisáveis</h3>
+
+  <div class="etymology">
+    PICO foi desenvolvido por Richardson et al. em 1995 como ferramenta para transformar dúvidas clínicas em perguntas estruturadas pesquisáveis.
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Letra</th>
+          <th>Elemento (EN/PT)</th>
+          <th>Pergunta</th>
+          <th>Exemplo Clínico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>P</strong></td>
+          <td>Population / População</td>
+          <td>Quem é o paciente/grupo?</td>
+          <td>Adultos ≥65 anos hospitalizados com pneumonia grave</td>
+        </tr>
+        <tr>
+          <td><strong>I</strong></td>
+          <td>Intervention / Intervenção</td>
+          <td>Qual é a intervenção ou exposição?</td>
+          <td>Corticoterapia com dexametasona 6mg/dia por 5 dias</td>
+        </tr>
+        <tr>
+          <td><strong>C</strong></td>
+          <td>Comparison / Comparação</td>
+          <td>Comparado com quê?</td>
+          <td>Placebo ou não uso de corticosteroide</td>
+        </tr>
+        <tr>
+          <td><strong>O</strong></td>
+          <td>Outcome / Desfecho</td>
+          <td>Qual o resultado de interesse?</td>
+          <td>Mortalidade hospitalar em 30 dias</td>
+        </tr>
+        <tr>
+          <td><strong>T</strong></td>
+          <td>Time / Tempo (opcional)</td>
+          <td>Em que período?</td>
+          <td>30 dias pós-hospitalização</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Pergunta PICO formulada</strong>: "Em adultos ≥65 anos hospitalizados com pneumonia grave (P), a corticoterapia com dexametasona 6mg/dia por 5 dias (I), comparada ao placebo (C), reduz a mortalidade hospitalar em 30 dias (O)?"</p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 10: VIESES E ERROS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s10">
+  <span class="section-number">// 10 — Metodologia Crítica</span>
+  <h2>Vieses, Erros e Validade</h2>
+  <p class="section-intro">Todo estudo epidemiológico está sujeito a erros sistemáticos (vieses) e aleatórios. Identificar, quantificar e controlar esses erros é o coração da epidemiologia crítica e da leitura inteligente de literatura científica.</p>
+
+  <div class="etymology">
+    <em>Viés</em> do francês <em>biais</em> (oblíquo, transversal, desvio). Em inglês: <em>bias</em>, do mesmo étimo francês. Em estatística: desvio sistemático e consistente da verdade.
+  </div>
+
+  <h3>Tipos Principais de Erro em Epidemiologia</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo de Erro</th>
+          <th>Natureza</th>
+          <th>Direção</th>
+          <th>Controle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Erro aleatório</strong> (acaso)</td>
+          <td>Variação não sistemática; imprecisão</td>
+          <td>Ambas as direções, média zero</td>
+          <td>Aumentar N; aumentar poder estatístico</td>
+        </tr>
+        <tr>
+          <td><strong>Erro sistemático (viés)</strong></td>
+          <td>Desvio consistente e direcional da verdade</td>
+          <td>Específica (subestima ou superestima)</td>
+          <td>Design adequado; aleatorização; cegamento; calibração</td>
+        </tr>
+        <tr>
+          <td><strong>Confundimento</strong></td>
+          <td>Terceira variável que explica (parte de) a associação observada</td>
+          <td>Pode inflacionar ou deflacionar a associação</td>
+          <td>Randomização; restrição; pareamento; análise multivariada</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Classificação dos Vieses</h3>
+
+  <h4>A. Vieses de Seleção</h4>
+  <div class="box box-danger">
+    <span class="box-label">🚨 Viés de Seleção — Quando a Amostra Não Representa a População</span>
+    <p>Ocorre quando a probabilidade de um indivíduo ser incluído no estudo está relacionada tanto à exposição quanto ao desfecho. Exemplos:</p>
+    <ul style="padding-left: 1.5rem;">
+      <li><strong>Viés de Berkson</strong>: estudos hospitalares tendem a selecionar pacientes mais graves ou com comorbidades específicas — não representam a doença na comunidade</li>
+      <li><strong>Viés do trabalhador saudável (Healthy Worker Effect)</strong>: trabalhadores são mais saudáveis que a população geral (enfermos não trabalham) → subestima riscos ocupacionais</li>
+      <li><strong>Viés de sobrevivência</strong>: estudar apenas quem sobreveu à doença; ignorar os que morreram antes da inclusão</li>
+      <li><strong>Viés de perda de seguimento (attrition bias)</strong>: em coortes, quem abandona o estudo frequentemente é diferente de quem permanece</li>
+    </ul>
+  </div>
+
+  <h4>B. Vieses de Informação (Mensuração)</h4>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Viés</th>
+          <th>Mecanismo</th>
+          <th>Exemplo</th>
+          <th>Efeito no Resultado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Viés de recordação (Recall bias)</strong></td>
+          <td>Casos lembram melhor exposições passadas por causa do diagnóstico</td>
+          <td>Mãe com filho com malformação lembra melhor uso de medicamentos</td>
+          <td>Superestima OR em caso-controle</td>
+        </tr>
+        <tr>
+          <td><strong>Viés do entrevistador</strong></td>
+          <td>Entrevistador sabe quem é caso/controle e sonda diferentemente</td>
+          <td>Pergunta mais detalhada sobre exposição aos casos</td>
+          <td>Superestima OR; controle: cegamento do entrevistador</td>
+        </tr>
+        <tr>
+          <td><strong>Viés de aferição</strong></td>
+          <td>Instrumento não mede o que pretende ou mede com erro</td>
+          <td>PA manual vs automático; escalas não validadas</td>
+          <td>Erro aleatório → atenuação da associação; sistemático → distorção</td>
+        </tr>
+        <tr>
+          <td><strong>Viés de desejabilidade social</strong></td>
+          <td>Participante responde o que acha que o pesquisador quer ouvir</td>
+          <td>Subestima consumo de álcool em questionários</td>
+          <td>Geralmente atenua a associação</td>
+        </tr>
+        <tr>
+          <td><strong>Viés de detecção (surveillance bias)</strong></td>
+          <td>Expostos são mais investigados → mais diagnósticos</td>
+          <td>Usuárias de pílula vão mais ao médico → mais diagnósticos de TVP detectados</td>
+          <td>Superestima associação exposição-doença</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>C. Confundimento — Princípio Físico e Controle</h4>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Critérios para Confundimento (Confounding)</span>
+    <div class="formula">
+<span class="comment">// Uma variável C é confundidora se satisfaz os 3 critérios:</span>
+
+1. C está ASSOCIADA à exposição (E) na população de estudo
+2. C está ASSOCIADA ao desfecho (D) independentemente de E
+3. C NÃO é intermediária na cadeia causal E → C → D
+   <span class="comment">// (se for intermediária = mediadora, não confundidora!)</span>
+
+<span class="comment">// Exemplo clássico: tabagismo confunde a associação café-câncer</span>
+Café (E) ←─── Tabagismo (C) ───→ Câncer (D)
+<span class="comment">// Bebedores de café tendem a fumar mais (1)</span>
+<span class="comment">// Tabagismo causa câncer (2)</span>
+<span class="comment">// Tabagismo não está na via: café → tabaco → câncer (3)</span>
+<span class="comment">// Logo: CONTROLAR o tabagismo (estratificar ou ajustar) revela a real associação café-câncer</span>
+
+<span class="comment">// MÉTODOS DE CONTROLE DO CONFUNDIMENTO:</span>
+No design: Randomização, Restrição, Pareamento
+Na análise: Estratificação (Mantel-Haenszel), Regressão multivariada,
+            Escore de Propensão (Propensity Score), Variável Instrumental
+    </div>
+  </div>
+
+  <h3>Validade Interna vs Validade Externa</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-card-header quant">Validade Interna</div>
+      <div class="compare-card-body">
+        <p><strong>Definição:</strong> Os resultados refletem fielmente a realidade no grupo estudado (ausência de viés e confundimento).</p>
+        <p><strong>Pergunta:</strong> "Os resultados deste estudo são verdadeiros para os participantes deste estudo?"</p>
+        <p><strong>Ameaças:</strong> Viés de seleção, informação, confundimento não controlado.</p>
+        <p><strong>Maximizada por:</strong> Randomização, cegamento, alocação oculta, análise ITT.</p>
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-card-header misto">Validade Externa</div>
+      <div class="compare-card-body">
+        <p><strong>Definição:</strong> Os resultados podem ser generalizados para outras populações/contextos.</p>
+        <p><strong>Pergunta:</strong> "Meu paciente é suficientemente parecido com os do estudo para aplicar esses resultados?"</p>
+        <p><strong>Ameaças:</strong> Critérios de elegibilidade muito restritivos, contexto muito controlado (Hawthorne effect).</p>
+        <p><strong>Maximizada por:</strong> Amostra representativa, estudos pragmáticos, critérios amplos de inclusão.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Paradoxo Fundamental da Pesquisa Clínica</span>
+    <p>Estudos com máxima validade interna (ECRs explanatórios, rígidos) frequentemente têm baixa validade externa — porque excluem idosos, gestantes, pacientes com múltiplas comorbidades (exatamente quem você vai tratar na vida real). Exemplo: os grandes ECRs de estatinas em prevenção primária frequentemente excluíam pacientes com doença renal, hepática, ou em uso de múltiplas drogas. Quando você aplica esses resultados a um paciente de 78 anos com 8 comorbidades e 14 medicamentos — a extrapolação exige julgamento clínico, não apenas estatística.</p>
+  </div>
+
+  <div class="ref">
+    Sackett DL. "Bias in analytic research." <em>Journal of Chronic Diseases</em>, 1979;32:51-63. 
+    (<a href="https://doi.org/10.1016/0021-9681(79)90012-2" target="_blank">https://doi.org/10.1016/0021-9681(79)90012-2</a>)
+    — Catálogo seminal de 35 tipos de viés, ainda referência padrão.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 11: MEDIDAS EPIDEMIOLÓGICAS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s11">
+  <span class="section-number">// 11 — Bioestatística</span>
+  <h2>Medidas de Frequência e Associação</h2>
+  <p class="section-intro">As medidas epidemiológicas são o vocabulário quantitativo da epidemiologia. Dominar seu cálculo, interpretação e limitações é indispensável para a prática baseada em evidências.</p>
+
+  <h3>Medidas de Frequência — Resumo Completo</h3>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Incidência — Dois Tipos Fundamentais</span>
+    <div class="formula">
+<span class="comment">// 1. RISCO (Incidência Cumulativa / Cumulative Incidence)</span>
+<span class="highlight">Risco</span> = Casos novos / População em risco no início do período
+
+<span class="comment">// Pressupõe: população fechada (sem entradas/saídas), período definido</span>
+<span class="comment">// Unidade: proporção (adimensional, 0–1 ou 0%–100%)</span>
+<span class="comment">// Ex: 50/1.000 = 0,05 = 5% de risco em 1 ano</span>
+
+<span class="comment">// 2. TAXA DE INCIDÊNCIA (Densidade de Incidência / Incidence Rate)</span>
+<span class="highlight">Taxa</span> = Casos novos / Pessoas-tempo em risco (Σ do tempo cada pessoa contribuiu)
+
+<span class="comment">// Pressupõe: população aberta (entradas/saídas permitidas)</span>
+<span class="comment">// Unidade: 1/tempo (ex: 5/100 pessoas-ano = 0,05 casos/pessoa-ano)</span>
+<span class="comment">// Vantagem: maneja dados censurados (perda de seguimento, óbito)</span>
+<span class="comment">// Calcula-se: cada pessoa contribui com o tempo ATÉ o evento ou censura</span>
+
+<span class="comment">// Exemplo: 100 pacientes seguidos, 5 desenvolvem DM2</span>
+<span class="comment">// Seguimento: 80 por 1 ano inteiro + 20 por 0,5 anos (entraram depois)</span>
+Pessoas-tempo = (80×1) + (20×0,5) = 80 + 10 = <span class="number">90 pessoas-ano</span>
+Taxa = 5/90 = <span class="number">0,056 casos/pessoa-ano</span> = 5,6 casos/100 pessoas-ano
+    </div>
+  </div>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Prevalência e Relação com Incidência</span>
+    <div class="formula">
+<span class="comment">// PREVALÊNCIA PONTUAL (Point Prevalence)</span>
+<span class="highlight">P_ponto</span> = Casos existentes em T₀ / Total de pessoas examinadas em T₀
+<span class="comment">// "Fotografia instantânea" da doença</span>
+
+<span class="comment">// PREVALÊNCIA DE PERÍODO (Period Prevalence)</span>
+<span class="highlight">P_período</span> = Casos existentes em qualquer momento de [T₀ a T₁] / Total exposto ao risco
+<span class="comment">// Inclui casos novos + casos prevalentes no início do período</span>
+
+<span class="comment">// RELAÇÃO FUNDAMENTAL (estado estacionário):</span>
+Prevalência ≈ Incidência × Duração média da doença
+P ≈ I × D
+
+<span class="comment">// Implicação: prevalência aumenta com:</span>
+<span class="comment">// (a) aumento da incidência (mais casos novos) OU</span>
+<span class="comment">// (b) aumento da duração (melhoria do tratamento que não cura, mas prolonga a vida)</span>
+
+<span class="comment">// Ex. clínico: HIV tem incidência caindo (prevenção eficaz)</span>
+<span class="comment">// mas prevalência SUBINDO (antirretrovirais aumentam longevidade → maior duração)</span>
+    </div>
+  </div>
+
+  <h3>Medidas de Associação — Tabela Mestre</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Medida</th>
+          <th>Sigla EN/PT</th>
+          <th>Fórmula</th>
+          <th>Tipo de Estudo</th>
+          <th>Valor Nulo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Risco Relativo</strong></td>
+          <td>RR / <em>Relative Risk</em></td>
+          <td>Ie / Ic</td>
+          <td>Coorte, ECR</td>
+          <td>1,0</td>
+        </tr>
+        <tr>
+          <td><strong>Razão de Taxas</strong></td>
+          <td>RT / <em>Rate Ratio</em></td>
+          <td>Ie_taxa / Ic_taxa</td>
+          <td>Coorte (aberta)</td>
+          <td>1,0</td>
+        </tr>
+        <tr>
+          <td><strong>Odds Ratio</strong></td>
+          <td>OR / <em>Odds Ratio</em></td>
+          <td>(a×d)/(b×c)</td>
+          <td>Caso-controle, Transversal, ECR</td>
+          <td>1,0</td>
+        </tr>
+        <tr>
+          <td><strong>Razão de Prevalência</strong></td>
+          <td>RP / <em>Prevalence Ratio</em></td>
+          <td>P_expostos / P_não-exp</td>
+          <td>Transversal</td>
+          <td>1,0</td>
+        </tr>
+        <tr>
+          <td><strong>Diferença de Risco</strong></td>
+          <td>DR / <em>Risk Difference (RD)</em></td>
+          <td>Ie − Ic</td>
+          <td>Coorte, ECR</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td><strong>Redução Absoluta do Risco</strong></td>
+          <td>RAR / <em>ARR: Absolute Risk Reduction</em></td>
+          <td>Ic − Ie (intervenção)</td>
+          <td>ECR</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td><strong>Redução Relativa do Risco</strong></td>
+          <td>RRR / <em>RRR: Relative Risk Reduction</em></td>
+          <td>(Ic − Ie)/Ic × 100%</td>
+          <td>ECR</td>
+          <td>0%</td>
+        </tr>
+        <tr>
+          <td><strong>Número Necessário Tratar</strong></td>
+          <td>NNT / <em>Number Needed to Treat</em></td>
+          <td>1/RAR</td>
+          <td>ECR</td>
+          <td>∞</td>
+        </tr>
+        <tr>
+          <td><strong>Número Necessário p/ Dano</strong></td>
+          <td>NND / <em>NNH: Number Needed to Harm</em></td>
+          <td>1/RAR_efeito adverso</td>
+          <td>ECR, Coorte</td>
+          <td>∞</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 NNT — A Medida Mais Clinicamente Útil</span>
+    <div class="formula">
+<span class="comment">// NNT = número de pacientes que preciso tratar para evitar 1 evento</span>
+NNT = 1 / RAR = 1 / (Ic - Ie)
+
+<span class="comment">// Exemplo: estudo de estatina na prevenção primária</span>
+Mortalidade CV no grupo placebo (Ic)     = <span class="number">3,0%</span> em 5 anos
+Mortalidade CV no grupo estatina (Ie)    = <span class="number">2,0%</span> em 5 anos
+RAR (Redução Absoluta do Risco)          = 3,0% - 2,0% = <span class="number">1,0%</span>
+RRR (Redução Relativa do Risco)          = 1,0% / 3,0% = <span class="number">33%</span>
+NNT = 1 / 0,01 = <span class="number">100 pacientes tratados por 5 anos para evitar 1 morte CV</span>
+
+<span class="comment">// ATENÇÃO: a indústria frequentemente divulga apenas o RRR (33%)</span>
+<span class="comment">// porque parece mais impressionante que o NNT (100) ou RAR (1%)</span>
+<span class="comment">// O médico deve SEMPRE calcular e comunicar o NNT ao paciente</span>
+
+<span class="comment">// Regra prática de interpretação:</span>
+NNT = 2–5  →  Tratamento muito eficaz (ex: antibiótico para pneumonia bacteriana)
+NNT = 5–20 →  Eficaz (ex: trombolítico no IAM)
+NNT = 20–50 → Moderadamente eficaz (ex: anti-hipertensivo prevenção primária)
+NNT > 100  →  Eficácia marginal (justificável apenas se baixo custo/risco)
+    </div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-header">// Exercício 03 — Medidas de Associação e NNT</div>
+    <h4>Estudo SPRINT — Controle Intensivo da Pressão Arterial</h4>
+    <p>O estudo SPRINT (NEJM 2015) randomizou 9.361 adultos com PA ≥130 mmHg e alto risco cardiovascular para controle intensivo (alvo PA sistólica &lt;120) vs padrão (&lt;140).</p>
+    <p>Resultado em ~3,3 anos de seguimento:</p>
+    <p>• Grupo intensivo: 243 eventos CV primários / 4.678 participantes</p>
+    <p>• Grupo padrão: 319 eventos CV primários / 4.683 participantes</p>
+    <p><strong>Calcule:</strong> a) Incidência cumulativa em cada grupo; b) RR; c) RAR; d) RRR; e) NNT; f) Interprete clinicamente com implicações para a prática.</p>
+    <div class="solution">
+      <span class="solution-label">// Solução Detalhada</span>
+      <p><strong>a) Incidências:</strong></p>
+      <p>• Ie (intensivo) = 243/4.678 = 0,0519 = 5,19%</p>
+      <p>• Ic (padrão) = 319/4.683 = 0,0681 = 6,81%</p>
+      <p><strong>b) RR = 5,19% / 6,81% = 0,762 (IC95% publicado: 0,649–0,895)</strong></p>
+      <p>→ Tratamento intensivo reduz risco em 24% relativamente</p>
+      <p><strong>c) RAR = 6,81% − 5,19% = 1,62%</strong></p>
+      <p>→ Controle intensivo evitou 1,62 eventos por 100 pacientes tratados por 3,3 anos</p>
+      <p><strong>d) RRR = 1,62% / 6,81% = 23,8% ≈ 24%</strong></p>
+      <p><strong>e) NNT = 1/0,0162 = 62 pacientes por 3,3 anos para evitar 1 evento CV</strong></p>
+      <p><strong>f) Interpretação:</strong> NNT=62 por 3,3 anos é clinicamente significativo para prevenção cardiovascular em alto risco. Entretanto, o estudo mostrou mais eventos adversos no grupo intensivo: hipotensão, síncope, hiponatremia, IRA (NNH≈50 para alguns desfechos). Isso gerou debate: benefício cardiovascular vs riscos. <strong>Aplicação</strong>: a AHA/ACC 2017 adotou metas mais restritivas (&lt;130/80 para alto risco), mas a meta individualizada deve considerar comorbidades, tolerância, qualidade de vida. Em idosos frágeis, controle muito intensivo pode ser prejudicial (fenômeno da curva J).</p>
+      <div class="ref">SPRINT Research Group. NEJM 2015;373:2103-2116. (<a href="https://doi.org/10.1056/NEJMoa1511939" target="_blank">https://doi.org/10.1056/NEJMoa1511939</a>)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 12: APLICAÇÕES CLÍNICAS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s12">
+  <span class="section-number">// 12 — Aplicação Prática</span>
+  <h2>Aplicações Clínicas e na Carreira Médica</h2>
+  <p class="section-intro">A epidemiologia não é apenas uma disciplina acadêmica — é a ferramenta essencial do médico clínico, do intensivista, do gestor em saúde e do pesquisador. Esta seção integra tudo o que estudamos com a prática real.</p>
+
+  <h3>1. Raciocínio Diagnóstico — Prevalência, Sensibilidade e Especificidade</h3>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Teorema de Bayes na Prática Clínica — Valores Preditivos</span>
+    <div class="formula">
+<span class="comment">// Tabela 2x2 para testes diagnósticos:</span>
+                  DOENTE (D+)  SAUDÁVEL (D-)
+TESTE POSITIVO |    VP     |     FP     |  VP+FP
+TESTE NEGATIVO |    FN     |     VN     |  FN+VN
+
+VP = Verdadeiro Positivo  |  FP = Falso Positivo
+VN = Verdadeiro Negativo  |  FN = Falso Negativo
+
+<span class="highlight">Sensibilidade (Se)</span>  = VP / (VP+FN)   <span class="comment">// "Quem tem doença, o teste detecta?"</span>
+<span class="highlight">Especificidade (Sp)</span> = VN / (VN+FP)   <span class="comment">// "Quem não tem, o teste exclui?"</span>
+
+<span class="highlight">VPP</span> (Valor Preditivo Positivo) = VP / (VP+FP)  <span class="comment">// Pós-teste positivo</span>
+<span class="highlight">VPN</span> (Valor Preditivo Negativo) = VN / (VN+FN)  <span class="comment">// Pós-teste negativo</span>
+
+<span class="comment">// ATENÇÃO: VPP e VPN dependem da PREVALÊNCIA (probabilidade pré-teste)!</span>
+<span class="comment">// Se prevalência = 1%: VPP de um teste com Se=99%, Sp=99% = apenas 50%!</span>
+<span class="comment">// Por isso: não peça teste HIV sem pré-teste de risco elevado</span>
+
+<span class="highlight">Razão de Verossimilhança Positiva (LR+)</span> = Se / (1-Sp)
+<span class="highlight">Razão de Verossimilhança Negativa (LR−)</span> = (1-Se) / Sp
+
+<span class="comment">// LR > 10: aumenta muito a probabilidade pós-teste</span>
+<span class="comment">// LR < 0,1: diminui muito a probabilidade pós-teste</span>
+<span class="comment">// LR não depende da prevalência → mais útil clinicamente</span>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-header">// Exercício 04 — Teste Diagnóstico com Teorema de Bayes</div>
+    <h4>D-Dímero no Diagnóstico de TEP em UTI</h4>
+    <p>Em uma UTI, o D-dímero tem sensibilidade (Se) = 96% e especificidade (Sp) = 45% para TEP (Tromboembolismo Pulmonar — Pulmonary Embolism). Considere dois cenários:</p>
+    <p><strong>Cenário A</strong>: Paciente jovem pós-cirurgia ortopédica, imobilizado, com taquicardia e dessaturação → probabilidade pré-teste estimada = 40%</p>
+    <p><strong>Cenário B</strong>: Paciente idoso internado por AVC, sem outros fatores, D-dímero colhido de rotina → probabilidade pré-teste = 5%</p>
+    <p><strong>Calcule</strong> o VPP nos dois cenários e interprete a decisão clínica.</p>
+    <div class="solution">
+      <span class="solution-label">// Solução — Usando Nomograma de Fagan ou Odds Pós-teste</span>
+      <p><strong>LR+ = Se / (1-Sp) = 0,96 / (1-0,45) = 0,96/0,55 = 1,745</strong></p>
+      <p><strong>LR− = (1-Se) / Sp = (1-0,96)/0,45 = 0,04/0,45 = 0,089</strong></p>
+      <p><strong>Cenário A — Pré-teste = 40% → odds pré-teste = 0,40/0,60 = 0,667</strong></p>
+      <p>Odds pós-teste (D+ positivo) = 0,667 × 1,745 = 1,163 → Probabilidade = 1,163/2,163 = <strong>53,8%</strong></p>
+      <p>Odds pós-teste (D− negativo) = 0,667 × 0,089 = 0,059 → Probabilidade = 0,059/1,059 = <strong>5,6%</strong></p>
+      <p>→ D-dímero negativo no Cenário A: reduce TEP de 40% para 5,6% → útil para excluir!</p>
+      <p><strong>Cenário B — Pré-teste = 5% → odds pré-teste = 0,05/0,95 = 0,0526</strong></p>
+      <p>Odds pós-teste (D+ positivo) = 0,0526 × 1,745 = 0,0918 → Probabilidade = <strong>8,4%</strong></p>
+      <p>→ D-dímero positivo no Cenário B: de 5% para apenas 8,4% → CLINICAMENTE INÚTIL como rastreio!</p>
+      <p><strong>Conclusão prática</strong>: O D-dímero é útil para EXCLUIR TEP em pacientes com baixa-moderada probabilidade pré-teste (o LR− de 0,089 é excelente). Mas tem pouco valor para CONFIRMAR TEP (LR+ de apenas 1,7). Em pacientes de UTI com probabilidade alta, pular direto para angioTC ou eco de beira de leito. Peça D-dímero apenas se vai usar para excluir (ajuste YEARS ou Wells).</p>
+    </div>
+  </div>
+
+  <h3>2. Medicina Baseada em Evidências (MBE) — O Processo de 5 Passos</h3>
+
+  <div class="etymology">
+    <em>Evidence-Based Medicine (EBM)</em>: termo cunhado por Gordon Guyatt em 1991, na McMaster University, Canadá. O movimento foi liderado pelo grupo de Sackett, Guyatt e Haynes — os fundadores da epidemiologia clínica moderna.
+  </div>
+
+  <div class="box box-concept">
+    <span class="box-label">📋 Os 5 Passos da MBE (Sackett et al.)</span>
+    <ol style="padding-left: 1.5rem;">
+      <li style="margin-bottom: 0.7rem;"><strong>Formular a pergunta clínica</strong>: usar o formato PICO para transformar uma dúvida clínica em pergunta pesquisável</li>
+      <li style="margin-bottom: 0.7rem;"><strong>Buscar a evidência</strong>: PubMed/MEDLINE, Cochrane Library, UpToDate, DynaMed — com estratégia de busca estruturada</li>
+      <li style="margin-bottom: 0.7rem;"><strong>Avaliar criticamente a evidência</strong>: design do estudo, risco de viés, relevância clínica (NNT, não apenas p-valor)</li>
+      <li style="margin-bottom: 0.7rem;"><strong>Aplicar ao paciente</strong>: integrar a evidência com as preferências do paciente, o contexto clínico e a experiência do médico</li>
+      <li style="margin-bottom: 0.7rem;"><strong>Avaliar o resultado</strong>: monitorar se a decisão baseada em evidência foi adequada para aquele paciente específico</li>
+    </ol>
+  </div>
+
+  <h3>3. Farmacovigilância e Epidemiologia de Medicamentos</h3>
+
+  <p>A epidemiologia dos medicamentos (<em>pharmacoepidemiology</em>) usa os métodos que estudamos para monitorar eficácia e segurança de drogas em condições reais de uso (estudos pós-marketing):</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Método</th>
+          <th>Aplicação em Farmacovigilância</th>
+          <th>Exemplo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Série de casos</td>
+          <td>Sinal inicial de reação adversa rara</td>
+          <td>Talidomida-focomelia (1961)</td>
+        </tr>
+        <tr>
+          <td>Caso-controle</td>
+          <td>Investigar reações raras; estudos de caso-controle aninhado em banco de dados</td>
+          <td>Rofecoxib (Vioxx) e risco de IAM</td>
+        </tr>
+        <tr>
+          <td>Coorte retrospectiva (base de dados)</td>
+          <td>Eventos adversos de longo prazo; efetividade em "mundo real"</td>
+          <td>CPRD (Clinical Practice Research Datalink, UK): 15 milhões de pacientes</td>
+        </tr>
+        <tr>
+          <td>Estudo de caso-cruzado</td>
+          <td>Exposições transitórias (dose única, uso agudo) e eventos agudos</td>
+          <td>IBP e risco de arritmia; AINE e AVC</td>
+        </tr>
+        <tr>
+          <td>Série temporal interrompida</td>
+          <td>Impacto de mudança de política/disponibilidade de droga</td>
+          <td>Introdução de vacina → queda de hospitalização por rotavírus</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>4. Epidemiologia em UTI — Aplicações Intensivistas</h3>
+
+  <div class="box box-clinical">
+    <span class="box-label">🏥 Escores Prognósticos — Aplicação Epidemiológica em Tempo Real</span>
+    <p>Escores como <abbr title="Acute Physiology and Chronic Health Evaluation II — Avaliação Fisiológica Aguda e Saúde Crônica II">APACHE II (Acute Physiology and Chronic Health Evaluation II)</abbr>, <abbr title="Sequential Organ Failure Assessment — Avaliação Sequencial de Falência de Órgãos">SOFA (Sequential Organ Failure Assessment)</abbr>, e <abbr title="Simplified Acute Physiology Score — Escore Simplificado de Fisiologia Aguda">SAPS III (Simplified Acute Physiology Score)</abbr> foram desenvolvidos com metodologia epidemiológica (coortes multicêntricas internacionais, regressão logística) para prever mortalidade em UTI. São aplicações diretas dos estudos de coorte e da bioestatística que estudamos:</p>
+    <ul style="padding-left: 1.5rem;">
+      <li><strong>APACHE II</strong>: validado em coorte de 5.815 pacientes em 13 hospitais (Knaus et al., 1985) — regressão logística multivariada → probabilidade de morte hospitalar</li>
+      <li><strong>SOFA</strong>: desenvolvido pelo grupo de Vincent (1996) para definir e monitorar sepse — cada ponto adicional de SOFA acima de 2 aumenta mortalidade ~10%</li>
+      <li><strong>qSOFA</strong>: ferramenta de triagem (3 itens: PA, FR, Glasgow) derivada epidemiologicamente para identificar sepse fora da UTI — Se≈70%, Sp≈75%</li>
+    </ul>
+    <div class="ref">Singer M et al. "The Third International Consensus Definitions for Sepsis and Septic Shock (Sepsis-3)." JAMA 2016;315:801-810. (<a href="https://doi.org/10.1001/jama.2016.0287" target="_blank">https://doi.org/10.1001/jama.2016.0287</a>)</div>
+  </div>
+
+  <h3>5. Epidemiologia e Diagnóstico — ROC e Ponto de Corte</h3>
+
+  <div class="box box-formula">
+    <span class="box-label">📐 Curva ROC — Receiver Operating Characteristic</span>
+    <div class="formula">
+<span class="comment">// A curva ROC plota todos os pares (1-Sp, Se) para todos os pontos de corte</span>
+<span class="comment">// possíveis de um teste diagnóstico contínuo (ex: troponina, PCR, NTproBNP)</span>
+
+<span class="comment">// AUC (Area Under the Curve / Área Sob a Curva) = discriminação do teste:</span>
+AUC = <span class="number">0,5</span>   → teste sem valor discriminatório (= chance)
+AUC = <span class="number">0,7–0,8</span> → discriminação aceitável
+AUC = <span class="number">0,8–0,9</span> → boa discriminação
+AUC = <span class="number">&gt;0,9</span>   → excelente discriminação
+
+<span class="comment">// Escolha do ponto de corte: depende do trade-off Se vs Sp</span>
+<span class="comment">// Para doença grave e tratável: maximize Se (menor FN) → menor ponto de corte</span>
+<span class="comment">// Ex: Troponina ultrassensível (TnI-US) para SCA em UPA:</span>
+<span class="comment">// Ponto de corte ultra-baixo → Se=99% (não quer perder nenhum IAM)</span>
+<span class="comment">// Em troca: menor Sp, mais internações desnecessárias (FP aceitável)</span>
+    </div>
+  </div>
+
+  <h3>6. Vigilância Epidemiológica — O Epidemiologista no Hospital</h3>
+
+  <p>A vigilância epidemiológica hospitalar (<em>hospital epidemiology & infection control</em>) usa métodos epidemiológicos em tempo real para detectar e controlar surtos nosocomiais:</p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <span class="timeline-year">DETECÇÃO</span>
+      <p>Aumento acima da taxa endêmica de IRAS → ativa investigação de surto (série de casos, definição de caso)</p>
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-year">HIPÓTESE</span>
+      <p>Identificação de cluster temporal e espacial (estudo ecológico/transversal rápido)</p>
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-year">TESTE</span>
+      <p>Estudo caso-controle de surto: compara exposições dos casos vs controles do mesmo período</p>
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-year">INTERVENÇÃO</span>
+      <p>Implementação de medidas baseadas no achado (ex: isolar fonte, higiene de mãos, descontaminação)</p>
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-year">AVALIAÇÃO</span>
+      <p>Série temporal interrompida: avaliar se intervenção reduziu taxa de IRAS</p>
+    </div>
+  </div>
+
+  <div class="ref">
+    Mayhall CG (ed). <em>Hospital Epidemiology and Infection Control</em>, 4th ed. Lippincott Williams & Wilkins, 2012.
+    (<a href="https://www.lww.com/Products/9781451118117" target="_blank">https://www.lww.com/Products/9781451118117</a>)
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SEÇÃO 13: EXERCÍCIOS FINAIS -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="s13">
+  <span class="section-number">// 13 — Consolidação</span>
+  <h2>Exercícios de Consolidação</h2>
+  <p class="section-intro">Exercícios integrados para consolidar todos os conceitos. Resista à tentação de ver a solução antes de tentar. O processo de tentativa-e-erro é indispensável para a fixação.</p>
+
+  <div class="exercise">
+    <div class="exercise-header">// Exercício 05 — Identificação de Design de Estudo</div>
+    <h4>Classifique o Design de Cada Estudo Abaixo</h4>
+    <p>Para cada situação, identifique o design mais adequado E justifique:</p>
+    <p><strong>A.</strong> Você quer saber se infecção por H. pylori aumenta risco de câncer gástrico. Você tem acesso ao Registro Nacional de Câncer e aos prontuários de 20 anos de um hospital.</p>
+    <p><strong>B.</strong> Surto de diarreia em um navio de cruzeiro. Você precisa identificar a fonte em 48h para uma viagem de 5 dias.</p>
+    <p><strong>C.</strong> Você quer saber qual % da população de São Paulo tem síndrome metabólica hoje.</p>
+    <p><strong>D.</strong> Novo antibiótico para infecções por MRSA precisa de aprovação. Precisa de evidência de eficácia máxima.</p>
+    <p><strong>E.</strong> Você quer entender por que pacientes com câncer de próstata recusam quimioterapia em uma comunidade específica.</p>
+    <div class="solution">
+      <span class="solution-label">// Gabarito Comentado</span>
+      <p><strong>A → Coorte Retrospectiva Aninhada em Caso-Controle:</strong> Usar os prontuários de 20 anos para construir uma coorte histórica. Pode também usar caso-controle (casos = câncer gástrico; controles = sem câncer) e olhar retroativamente para evidência de H. pylori. A coorte oferece RR; o caso-controle oferece OR. Com dados históricos, ambos são viáveis. O caso-controle seria mais eficiente se câncer gástrico for raro.</p>
+      <p><strong>B → Estudo de Caso-Controle de Surto:</strong> Urgência e acesso limitado aos dados. Defina caso (quem tem diarreia), controle (passageiros sem diarreia). Compare exposições alimentares (buffets, horários). Calcule OR para cada alimento. Em 24–48h você identifica a fonte. Alternativa rápida: coorte retrospectiva se você tem a lista de todos os passageiros e o que comeram.</p>
+      <p><strong>C → Estudo Transversal (inquérito de prevalência):</strong> Amostra representativa de São Paulo, medição simultânea de critérios de síndrome metabólica (PA, glicemia, circunferência abdominal, triglicérides, HDL). Calcula prevalência pontual. Exemplo real: Estudo ELSA-Brasil.</p>
+      <p><strong>D → Ensaio Clínico Randomizado Duplo-Cego (Fase III):</strong> Padrão-ouro para aprovação por agências regulatórias (ANVISA, FDA, EMA). Compara novo antibiótico vs vancomicina (padrão atual). Desfecho primário: cura microbiológica em D7. Análise ITT. Sem isso, não há aprovação.</p>
+      <p><strong>E → Método Qualitativo (Fenomenologia ou Grounded Theory):</strong> A pergunta é "por quê?" — motivações, valores, medos, contexto cultural, experiências prévias. Entrevistas em profundidade ou grupos focais revelarão os determinantes da recusa que nenhum questionário estruturado vai captar. O achado guiará intervenções de comunicação médica e counseling.</p>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-header">// Exercício 06 — Cálculo e Interpretação Integrados</div>
+    <h4>Meta-Análise Hipotética — Antidepressivos na Depressão Maior</h4>
+    <p>Uma meta-análise incluiu 4 ECRs sobre eficácia de antidepressivos (AD) vs placebo na depressão maior (desfecho: remissão em 8 semanas).</p>
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; margin: 0.75rem 0; color: rgba(245,240,232,0.7);">
+    Estudo 1 (n=100): Taxa remissão AD=50%, Placebo=30% | RR=1,67 | IC95%: 1,12–2,49<br>
+    Estudo 2 (n=200): Taxa remissão AD=45%, Placebo=35% | RR=1,29 | IC95%: 1,02–1,63<br>
+    Estudo 3 (n=80):  Taxa remissão AD=55%, Placebo=25% | RR=2,20 | IC95%: 1,41–3,43<br>
+    Estudo 4 (n=150): Taxa remissão AD=40%, Placebo=38% | RR=1,05 | IC95%: 0,82–1,35
+    </div>
+    <p><strong>Questões:</strong> a) Qual estudo individualmente não é significativo? b) Há heterogeneidade aparente? O que fazemos? c) Calcule o RR ponderado pelos inversos das variâncias (efeitos fixos, simplificado). d) Qual seria a classificação GRADE da evidência? e) Como comunicar ao paciente?</p>
+    <div class="solution">
+      <span class="solution-label">// Solução</span>
+      <p><strong>a)</strong> Estudo 4: IC95% [0,82–1,35] cruza 1,0 → p &gt; 0,05 → não significativo individualmente. Pode refletir baixo N ou verdadeira ausência de efeito — a meta-análise ajudará a responder.</p>
+      <p><strong>b)</strong> Sim, há heterogeneidade visual considerável: os RRs variam de 1,05 a 2,20. Se o I² calculado for &gt;50%, o modelo de efeitos aleatórios é mais adequado. Devemos investigar as fontes: diferenças de população (depressão leve vs grave), tipo de AD (ISRS vs tricíclico), duração, qualidade metodológica. Fazer análise de subgrupo.</p>
+      <p><strong>c)</strong> Pesos proporcionais ao N (simplificação): w1=100, w2=200, w3=80, w4=150 (total=530)<br>
+      RR ponderado = (100×1,67 + 200×1,29 + 80×2,20 + 150×1,05) / 530<br>
+      = (167 + 258 + 176 + 157,5) / 530 = 758,5 / 530 = <strong>1,43</strong><br>
+      → Antidepressivos associados a 43% maior chance de remissão vs placebo (estimativa grosseira — análise real usaria ln(RR) e variâncias)</p>
+      <p><strong>d)</strong> GRADE: Moderado a Alto se os ECRs têm baixo risco de viés, poucos problemas de imprecisão (IC estreito do pooled) e ausência de viés de publicação. Se heterogeneidade alta e viés de publicação sugerido no funnel plot: rebaixar para Moderado ou Baixo.</p>
+      <p><strong>e)</strong> Comunicação ao paciente: "Estudos mostram que para cada 5–7 pessoas com depressão moderada-grave que tomam antidepressivos por 8 semanas, 1 pessoa a mais fica bem comparado ao placebo. Metade melhora com o medicamento, um terço melhora com placebo (efeito do tratamento em si, da atenção recebida). O medicamento funciona, mas não em todo mundo. Vamos acompanhar você de perto."</p>
+    </div>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-header">// Exercício 07 — Viés</div>
+    <h4>Identifique e Explique o Viés Principal em Cada Cenário</h4>
+    <p><strong>A.</strong> Um estudo transversal mostra que pacientes que tomam estatinas têm maior prevalência de doença renal. Conclusão: "estatinas causam doença renal".</p>
+    <p><strong>B.</strong> Estudo caso-controle sobre câncer de ovário: casos (mulheres com câncer) relatam muito mais uso de talco genital que controles. O pesquisador sabe quem tem câncer ao entrevistar.</p>
+    <p><strong>C.</strong> Um estudo de coorte sobre obesidade e mortalidade encontra que obesos têm MENOS mortalidade que pessoas com peso normal. Os pesquisadores excluíram do follow-up todos que tiveram "alguma doença grave" no primeiro ano.</p>
+    <div class="solution">
+      <span class="solution-label">// Gabarito</span>
+      <p><strong>A → Causalidade Reversa (Reverse Causality) + Indicação pelo Confundimento (Confounding by Indication):</strong> Em um estudo transversal, não podemos saber se a estatina veio antes da DRC ou vice-versa. Além disso, médicos prescrevem estatinas para pacientes com mais fatores de risco cardiovascular — que são os mesmos que têm mais DRC. A DRC pode preceder o uso de estatina. Solução: coorte prospectiva com controle de fatores de risco.</p>
+      <p><strong>B → Viés do Entrevistador + Viés de Recall:</strong> O entrevistador sabe quem tem câncer e pode inconscientemente fazer perguntas mais detalhadas sobre exposições passadas (viés do entrevistador). Além disso, mulheres com câncer tendem a rever mais a fundo sua história de exposições (viés de recall). Solução: cegamento do entrevistador para o status de caso/controle.</p>
+      <p><strong>C → Viés do Sobrevivente Saudável (Healthy Survivor Bias / Immortal Time Bias):</strong> Excluir quem ficou doente no primeiro ano seleciona para análise os obesos que, apesar da obesidade, sobreviveram sem complicações — os mais saudáveis entre os obesos. Isso cria uma coorte artificialmente saudável de obesos. É uma versão do "paradoxo da obesidade" — que frequentemente desaparece com metodologia mais rigorosa.</p>
+    </div>
+  </div>
+
+  <div class="divider"><span>// Tabela Resumo Final</span></div>
+
+  <h3>Tabela Mestre: Todos os Designs de Estudo</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Design</th>
+          <th>Tipo</th>
+          <th>Tempo</th>
+          <th>Medida de Assoc.</th>
+          <th>Nível de Evidência</th>
+          <th>Melhor Para</th>
+          <th>Limitação Principal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Relato de caso</td>
+          <td>Descritivo</td>
+          <td>Retrospectivo</td>
+          <td>—</td>
+          <td>VIII</td>
+          <td>Doenças raras, hipótese</td>
+          <td>N=1; não generaliza</td>
+        </tr>
+        <tr>
+          <td>Série de casos</td>
+          <td>Descritivo</td>
+          <td>Retrospectivo</td>
+          <td>Frequência</td>
+          <td>VII</td>
+          <td>Padrão clínico; farmacovigilância</td>
+          <td>Sem controle</td>
+        </tr>
+        <tr>
+          <td>Transversal</td>
+          <td>Descritivo/Analítico</td>
+          <td>Ponto no tempo</td>
+          <td>OR, RP, Prevalência</td>
+          <td>VI</td>
+          <td>Prevalência; triagem</td>
+          <td>Causalidade reversa</td>
+        </tr>
+        <tr>
+          <td>Ecológico</td>
+          <td>Descritivo/Analítico</td>
+          <td>Variável</td>
+          <td>Correlação ecológica</td>
+          <td>VI</td>
+          <td>Hipóteses, saúde pública</td>
+          <td>Falácia ecológica</td>
+        </tr>
+        <tr>
+          <td>Caso-controle</td>
+          <td>Analítico Observacional</td>
+          <td>Retrospectivo</td>
+          <td>OR</td>
+          <td>V</td>
+          <td>Doenças raras; surtos; farmacovigilância</td>
+          <td>Viés de recall; OR ≠ RR</td>
+        </tr>
+        <tr>
+          <td>Coorte</td>
+          <td>Analítico Observacional</td>
+          <td>Prospectivo/Retrospectivo</td>
+          <td>RR, Incidência</td>
+          <td>IV</td>
+          <td>Múltiplos desfechos; incidência; causalidade</td>
+          <td>Custo; tempo; perda de seguimento</td>
+        </tr>
+        <tr>
+          <td>ECR</td>
+          <td>Experimental</td>
+          <td>Prospectivo</td>
+          <td>RR, NNT, RAR</td>
+          <td>II–III</td>
+          <td>Eficácia de intervenções</td>
+          <td>Custo; validade externa limitada</td>
+        </tr>
+        <tr>
+          <td>Revisão Sistemática + Meta-análise</td>
+          <td>Síntese</td>
+          <td>Vários</td>
+          <td>RR/OR pooled, I²</td>
+          <td>I</td>
+          <td>Síntese de evidências; guias clínicos</td>
+          <td>Heterogeneidade; viés de publicação</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ref">
+    Szklo M, Nieto FJ. <em>Epidemiology: Beyond the Basics</em>, 4th ed. Jones & Bartlett, 2019.
+    (<a href="https://www.jblearning.com/catalog/productdetails/9781284116595" target="_blank">https://www.jblearning.com/catalog/productdetails/9781284116595</a>)
+  </div>
+  <div class="ref">
+    Hulley SB et al. <em>Designing Clinical Research</em>, 4th ed. Lippincott Williams & Wilkins, 2013.
+    (<a href="https://www.lww.com/Products/9781608318049" target="_blank">https://www.lww.com/Products/9781608318049</a>)
+  </div>
+  <div class="ref">
+    Vandenbroucke JP et al. "Strengthening the Reporting of Observational Studies in Epidemiology (STROBE): Explanation and Elaboration." <em>PLoS Med</em> 2007;4:e297.
+    (<a href="https://doi.org/10.1371/journal.pmed.0040297" target="_blank">https://doi.org/10.1371/journal.pmed.0040297</a>)
+  </div>
+  <div class="ref">
+    Schulz KF, Altman DG, Moher D. "CONSORT 2010 Statement: Updated Guidelines for Reporting Parallel Group Randomised Trials." <em>BMJ</em> 2010;340:c332.
+    (<a href="https://doi.org/10.1136/bmj.c332" target="_blank">https://doi.org/10.1136/bmj.c332</a>)
+  </div>
+  <div class="ref">
+    Cochrane Library — Revisões Sistemáticas e Meta-análises:
+    (<a href="https://www.cochranelibrary.com" target="_blank">https://www.cochranelibrary.com</a>)
+  </div>
+  <div class="ref">
+    PROSPERO — Registro Internacional de Revisões Sistemáticas:
+    (<a href="https://www.crd.york.ac.uk/prospero/" target="_blank">https://www.crd.york.ac.uk/prospero/</a>)
+  </div>
+
+</section>
+
+</div><!-- /container -->
+
+<!-- SCROLL TO TOP -->
+<a href="#" class="scroll-top" title="Voltar ao topo">↑</a>
+
+<!-- FOOTER -->
+<footer>
+  <p>Epidemiologia Clínica — Métodos de Estudos &nbsp;|&nbsp; Nível Medicina Interna & Intensiva</p>
+  <p style="margin-top:0.5rem; font-size:0.65rem;">Fontes: Rothman & Greenland · Gordis · Cochrane · PRISMA 2020 · GRADE · Framingham · RECOVERY · SPRINT · NIH · CDC · Ministério da Saúde</p>
+</footer>
+
+<script>
+  // Scroll to top smooth
+  document.querySelector('.scroll-top').addEventListener('click', function(e) {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // TOC toggle
+  const tocNav = document.getElementById('tocNav');
+  const tocBar = document.getElementById('tocBar');
+  const tocBtn = document.getElementById('tocToggleBtn');
+  const tocDropdown = document.getElementById('tocDropdown');
+  const tocActiveLabel = document.getElementById('tocActiveLabel');
+
+  tocBar.addEventListener('click', function() {
+    const isOpen = tocNav.classList.toggle('open');
+    tocBtn.childNodes[0].textContent = isOpen ? 'Minimizar ' : 'Expandir ';
+  });
+
+  // Section names map
+  const sectionNames = {
+    s1: 'Fundamentos',
+    s2: 'Método Quantitativo',
+    s3: 'Método Qualitativo',
+    s4: 'Método Misto',
+    s5: 'Estudos Descritivos',
+    s6: 'Estudos Analíticos',
+    s7: 'Estudos Experimentais',
+    s8: 'Revisões & Meta-análise',
+    s9: 'Pirâmide de Evidências',
+    s10: 'Vieses & Erros',
+    s11: 'Medidas Epidemiológicas',
+    s12: 'Aplicações Clínicas',
+    s13: 'Exercícios'
+  };
+
+  // Highlight active section in nav + update label
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.toc-links a');
+
+  function onScroll() {
+    let current = 's1';
+    sections.forEach(sec => {
+      if (sec.getBoundingClientRect().top <= 90) current = sec.id;
+    });
+
+    navLinks.forEach(link => {
+      const active = link.getAttribute('href') === '#' + current;
+      link.classList.toggle('active', active);
+    });
+
+    // Update the label shown in collapsed bar
+    if (sectionNames[current]) {
+      tocActiveLabel.textContent = sectionNames[current];
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll(); // run once on load
+
+  // Close TOC when a link is clicked
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      tocNav.classList.remove('open');
+      tocBtn.childNodes[0].textContent = 'Expandir ';
+    });
+  });
+</script>
+</body>
+</html>
