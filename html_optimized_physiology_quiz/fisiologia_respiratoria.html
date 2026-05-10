@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fisiologia Respiratória — Mapa Mental</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2332;
+    --border: #1e3a5f;
+    --accent1: #00d4ff;
+    --accent2: #00ff9d;
+    --accent3: #ff6b6b;
+    --accent4: #ffd93d;
+    --accent5: #c77dff;
+    --accent6: #ff9f43;
+    --text: #e2e8f0;
+    --text-muted: #7a8fa6;
+    --text-dim: #4a5a70;
+    --glow1: rgba(0,212,255,0.15);
+    --glow2: rgba(0,255,157,0.15);
+    --glow3: rgba(255,107,107,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID DE FUNDO */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: linear-gradient(180deg, rgba(0,212,255,0.05) 0%, transparent 100%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent1);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 4.5rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 50%, var(--accent5) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 300;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* NAVEGAÇÃO */
+  .nav-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,14,23,0.95);
+    backdrop-filter: blur(20px);
+    z-index: 100;
+  }
+
+  .nav-pills a {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .nav-pills a:hover { transform: translateY(-2px); filter: brightness(1.2); }
+
+  .p1 { color: var(--accent1); border-color: rgba(0,212,255,0.4); }
+  .p2 { color: var(--accent2); border-color: rgba(0,255,157,0.4); }
+  .p3 { color: var(--accent3); border-color: rgba(255,107,107,0.4); }
+  .p4 { color: var(--accent4); border-color: rgba(255,217,61,0.4); }
+  .p5 { color: var(--accent5); border-color: rgba(199,125,255,0.4); }
+  .p6 { color: var(--accent6); border-color: rgba(255,159,67,0.4); }
+
+  /* LAYOUT */
+  .content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* SEÇÕES */
+  .section {
+    margin-bottom: 60px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+
+  .section-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  /* CARDS GRID */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0,212,255,0.3);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card p, .card li {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+
+  .card ul { list-style: none; padding: 0; }
+  .card ul li {
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+  .card ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    opacity: 0.5;
+    font-size: 10px;
+    top: 6px;
+  }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: var(--surface2);
+    border-left: 3px solid;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 0.85rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+  }
+
+  /* FORMULA BOX */
+  .formula-box {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 10px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+    color: var(--accent4);
+    line-height: 1.8;
+  }
+
+  /* TAG */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* FULL CARD */
+  .card-full {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .card-full h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* TREE */
+  .tree {
+    padding: 0;
+    list-style: none;
+  }
+
+  .tree li {
+    padding: 6px 0 6px 24px;
+    position: relative;
+    font-size: 0.87rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    border-left: 1px solid var(--border);
+    margin-left: 8px;
+  }
+
+  .tree li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 14px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .tree > li:last-child { border-left-color: transparent; }
+
+  .tree .branch {
+    font-weight: 500;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    margin-top: 12px;
+  }
+
+  th {
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(30,58,95,0.4);
+    color: var(--text-muted);
+    line-height: 1.5;
+    vertical-align: top;
+  }
+
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* CITATION */
+  .cite {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-top: 10px;
+    font-style: italic;
+    border-top: 1px solid rgba(30,58,95,0.4);
+    padding-top: 8px;
+  }
+
+  .cite a { color: var(--accent1); text-decoration: none; }
+  .cite a:hover { text-decoration: underline; }
+
+  /* BADGE CLINICO */
+  .badge-clinical {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,107,107,0.1);
+    border: 1px solid rgba(255,107,107,0.3);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 10px;
+    color: var(--accent3);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .badge-formula {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,217,61,0.08);
+    border: 1px solid rgba(255,217,61,0.3);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 10px;
+    color: var(--accent4);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* CENTRAL NODE */
+  .central-node {
+    text-align: center;
+    padding: 48px 20px;
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .central-node::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,212,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .central-circle {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(0,255,157,0.1));
+    border: 2px solid rgba(0,212,255,0.4);
+    border-radius: 50%;
+    width: 180px;
+    height: 180px;
+    line-height: 180px;
+    font-size: 64px;
+    margin-bottom: 20px;
+    position: relative;
+    box-shadow: 0 0 60px rgba(0,212,255,0.2), inset 0 0 40px rgba(0,212,255,0.05);
+    animation: breathe 4s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(0,212,255,0.2); }
+    50% { transform: scale(1.04); box-shadow: 0 0 100px rgba(0,212,255,0.35); }
+  }
+
+  .branches-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .branch-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .branch-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+
+  .branch-card .bc-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+  .branch-card .bc-title { font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+  .branch-card .bc-sub { font-size: 0.72rem; color: var(--text-dim); }
+
+  /* ALVEOLO DIAGRAM */
+  .alveo-diagram {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent2);
+    line-height: 1.6;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--accent1), var(--accent2), transparent);
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent1);
+    box-shadow: 0 0 10px var(--accent1);
+  }
+
+  .tl-item h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .tl-item p {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* COLORS BY SECTION */
+  .c1 { --sec: var(--accent1); }
+  .c2 { --sec: var(--accent2); }
+  .c3 { --sec: var(--accent3); }
+  .c4 { --sec: var(--accent4); }
+  .c5 { --sec: var(--accent5); }
+  .c6 { --sec: var(--accent6); }
+
+  .section h2 { color: var(--sec, var(--accent1)); }
+  .section-icon { background: rgba(var(--sec, 0,212,255), 0.1); }
+  .card::before { background: var(--sec, var(--accent1)); }
+  .highlight { border-color: var(--sec, var(--accent1)); }
+  .tag { background: rgba(var(--sec, 0,212,255), 0.1); color: var(--sec, var(--accent1)); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .branches-grid { grid-template-columns: repeat(2, 1fr); }
+    .alveo-diagram { font-size: 0.65rem; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* SEPARATOR */
+  .sep {
+    width: 60px;
+    height: 2px;
+    border-radius: 2px;
+    margin: 16px 0;
+  }
+
+  .note-box {
+    background: rgba(199,125,255,0.06);
+    border: 1px solid rgba(199,125,255,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin: 10px 0;
+  }
+
+  .warn-box {
+    background: rgba(255,107,107,0.06);
+    border: 1px solid rgba(255,107,107,0.25);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 0.84rem;
+    color: #ff9a9a;
+    line-height: 1.65;
+    margin: 10px 0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    line-height: 1.8;
+    position: relative;
+    z-index: 1;
+  }
+
+  footer a { color: var(--accent1); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-label">🫁 Mapa Mental · Medicina Interna & Intensiva</div>
+  <h1>Fisiologia Respiratória</h1>
+  <p>Do alvéolo ao leito intensivo — anatomia, física, química e clínica integradas num único mapa</p>
+</header>
+
+<!-- NAVEGAÇÃO -->
+<nav class="nav-pills">
+  <a href="#anatomia" class="p1">🫁 Anatomia</a>
+  <a href="#mecanica" class="p2">⚙️ Mecânica</a>
+  <a href="#volumes" class="p3">📊 Volumes</a>
+  <a href="#troca" class="p4">🔄 Trocas Gasosas</a>
+  <a href="#transporte" class="p5">🩸 Transporte</a>
+  <a href="#controle" class="p6">🧠 Controle Neural</a>
+  <a href="#vq" class="p1">⚖️ V/Q</a>
+  <a href="#clinica" class="p3">🏥 Clínica</a>
+  <a href="#formulas" class="p4">🧮 Fórmulas</a>
+</nav>
+
+<div class="content">
+
+  <!-- NÓ CENTRAL -->
+  <div class="central-node">
+    <div class="central-circle">🫁</div>
+    <h2 style="font-family:'Playfair Display',serif; font-size:1.8rem; background:linear-gradient(135deg,#00d4ff,#00ff9d); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px;">Sistema Respiratório</h2>
+    <p style="color:var(--text-muted); max-width:600px; margin:0 auto; font-size:0.9rem;">
+      Do latim <em>respirare</em> = re (novamente) + spirare (soprar). A respiração é o processo vital de troca de O₂ e CO₂ entre o organismo e o meio externo, integrando ventilação, difusão, perfusão e controle neural.
+    </p>
+    <div class="branches-grid" style="max-width:900px; margin:32px auto 0;">
+      <a href="#anatomia" class="branch-card" style="border-color:rgba(0,212,255,0.3);">
+        <span class="bc-icon">🫁</span>
+        <div class="bc-title" style="color:var(--accent1)">Anatomia & Histologia</div>
+        <div class="bc-sub">Vias aéreas, alvéolos, surfactante</div>
+      </a>
+      <a href="#mecanica" class="branch-card" style="border-color:rgba(0,255,157,0.3);">
+        <span class="bc-icon">⚙️</span>
+        <div class="bc-title" style="color:var(--accent2)">Mecânica Ventilatória</div>
+        <div class="bc-sub">Complacência, resistência, work of breathing</div>
+      </a>
+      <a href="#volumes" class="branch-card" style="border-color:rgba(255,107,107,0.3);">
+        <span class="bc-icon">📊</span>
+        <div class="bc-title" style="color:var(--accent3)">Volumes & Capacidades</div>
+        <div class="bc-sub">VT, CV, FRC, TLC, espirometria</div>
+      </a>
+      <a href="#troca" class="branch-card" style="border-color:rgba(255,217,61,0.3);">
+        <span class="bc-icon">🔄</span>
+        <div class="bc-title" style="color:var(--accent4)">Trocas Gasosas</div>
+        <div class="bc-sub">Difusão, lei de Fick, PAO₂</div>
+      </a>
+      <a href="#transporte" class="branch-card" style="border-color:rgba(199,125,255,0.3);">
+        <span class="bc-icon">🩸</span>
+        <div class="bc-title" style="color:var(--accent5)">Transporte de Gases</div>
+        <div class="bc-sub">Hemoglobina, curva O₂, CO₂</div>
+      </a>
+      <a href="#controle" class="branch-card" style="border-color:rgba(255,159,67,0.3);">
+        <span class="bc-icon">🧠</span>
+        <div class="bc-title" style="color:var(--accent6)">Controle Neural</div>
+        <div class="bc-sub">Quimiorreceptores, drive ventilatório</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ============================== -->
+  <!-- 1. ANATOMIA -->
+  <!-- ============================== -->
+  <section class="section c1" id="anatomia">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <div class="section-icon">🫁</div>
+      <h2>Anatomia, Histologia & Desenvolvimento</h2>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,212,255,0.1);color:var(--accent1)">VIAS AÉREAS SUPERIORES</div>
+        <h3 style="color:var(--accent1)">🦷 Nariz → Faringe → Laringe</h3>
+        <ul>
+          <li><strong>Epitélio respiratório:</strong> colunar pseudoestratificado ciliado com células caliciformes — secreta 100 mL de muco/dia</li>
+          <li><strong>Conchas nasais (cornetos):</strong> aumentam a área de superfície, umidificam e aquecem o ar a 37°C e 100% umidade</li>
+          <li><strong>Epiglote:</strong> cartilagem elástica que protege a glote durante a deglutição — reflexo vagal mediado pelo nervo glossofaríngeo (IX) e vago (X)</li>
+          <li><strong>Cordas vocais verdadeiras:</strong> epitélio escamoso estratificado (alta fricção mecânica)</li>
+        </ul>
+        <div class="highlight" style="border-color:var(--accent1)">
+          <strong>Clínica:</strong> Síndromes de apneia obstrutiva do sono (AOS) envolvem colapso da orofaringe por hipotonia muscular — CPAP (Continuous Positive Airway Pressure / Pressão Positiva Contínua nas Vias Aéreas) stenta a via aérea superior.
+        </div>
+        <div class="cite">Guyton & Hall, Textbook of Medical Physiology, 14ª ed. (<a href="https://www.elsevier.com/books/guyton-and-hall-textbook-of-medical-physiology/hall/978-0-323-59712-8" target="_blank">elsevier.com</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,212,255,0.1);color:var(--accent1)">VIAS AÉREAS INFERIORES</div>
+        <h3 style="color:var(--accent1)">🌳 Árvore Traqueobrônquica</h3>
+        <div class="timeline">
+          <div class="tl-item"><h4>Traqueia (geração 0)</h4><p>16–20 anéis de cartilagem em C, diâmetro ≈ 18 mm, comprimento ≈ 11 cm. Epitélio pseudoestratificado ciliado. Músculo traqueal posterior (traquealismo).</p></div>
+          <div class="tl-item"><h4>Brônquios principais (geração 1)</h4><p>Direito: mais curto, vertical e largo → mais aspirações. Esquerdo: mais longo e horizontal.</p></div>
+          <div class="tl-item"><h4>Brônquios lobares → segmentares (gen 2–4)</h4><p>Cartilagem em placas irregulares. Músculo liso (espasmo = broncoespasmo asma).</p></div>
+          <div class="tl-item"><h4>Bronquíolos (gen 5–16)</h4><p>Sem cartilagem — dependência de pressão transpulmonar para manter-se abertos. Células de Clara (secretoras, metabolizadoras).</p></div>
+          <div class="tl-item"><h4>Bronquíolos terminais (gen 16)</h4><p>Última geração de via aérea de condução. Diâmetro ≈ 0.6 mm. Início do acino pulmonar.</p></div>
+          <div class="tl-item"><h4>Bronquíolos respiratórios (gen 17–19)</h4><p>Primeira zona de troca gasosa. Alvéolos na parede.</p></div>
+          <div class="tl-item"><h4>Ductos alveolares → sacos alveolares (gen 20–23)</h4><p>Espessura da membrana alvéolo-capilar: 0,2–0,5 μm. ≈ 300–500 milhões de alvéolos.</p></div>
+        </div>
+        <div class="cite">West JB. Respiratory Physiology: The Essentials, 10ª ed. (<a href="https://shop.lww.com/Respiratory-Physiology/p/9781496339065" target="_blank">lww.com</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,212,255,0.1);color:var(--accent1)">HISTOLOGIA ALVEOLAR</div>
+        <h3 style="color:var(--accent1)">🔬 Células do Alvéolo</h3>
+        <table>
+          <thead><tr><th>Tipo</th><th>Função</th><th>Clínica</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Pneumócito I</strong><br>(95% área)</td><td>Troca gasosa. Célula plana, ≈ 0.1 μm de espessura</td><td>Destruída em SARA/ARDS</td></tr>
+            <tr><td><strong>Pneumócito II</strong><br>(5% área, 60% células)</td><td>Produz surfactante. Regenera pneumócito I. Corpo lamelar = grânulo de surfactante</td><td>Prematuridade = síndrome de angústia respiratória neonatal</td></tr>
+            <tr><td><strong>Macrófago alveolar</strong></td><td>Defesa imunológica, fagocita partículas. Secretam TNF-α, IL-1, IL-6</td><td>Silicose, fibrose, DPOC</td></tr>
+            <tr><td><strong>Células de Clara</strong><br>(bronquíolos)</td><td>Metabolismo de xenobióticos, produzem CC16 (proteína de Clara)</td><td>Marcador de lesão de via aérea</td></tr>
+          </tbody>
+        </table>
+        <div class="cite">Murray & Nadel, Textbook of Respiratory Medicine (<a href="https://www.elsevier.com/books/murray-and-nadels-textbook-of-respiratory-medicine/broaddus/978-1-4557-3383-5" target="_blank">elsevier.com</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,212,255,0.1);color:var(--accent1)">SURFACTANTE PULMONAR</div>
+        <h3 style="color:var(--accent1)">🧴 Física do Surfactante</h3>
+        <p style="font-size:0.85rem; margin-bottom:10px; color:var(--text-muted)">Do latim <em>surfactant</em> = <strong>surf</strong>ace <strong>act</strong>ive ag<strong>ent</strong> = agente ativo de superfície.</p>
+        <div class="highlight" style="border-color:var(--accent1)">
+          <strong>Lei de Laplace:</strong> P = 2T/r<br>
+          Onde P = pressão interna, T = tensão superficial, r = raio.<br>
+          Sem surfactante, alvéolos pequenos (r↓) teriam P↑ e colapsariam em alvéolos grandes → atelectasia progressiva.
+        </div>
+        <ul>
+          <li><strong>Composição:</strong> 80% fosfolipídeos (principalmente DPPC — dipalmitoilfosfatidilcolina), 10% proteínas (SP-A, SP-B, SP-C, SP-D), 10% lipídeos neutros</li>
+          <li><strong>Meia-vida:</strong> 4–12 horas — produção contínua</li>
+          <li><strong>Mecanismo:</strong> moléculas anfipáticas reduzem tensão superficial de 72 mN/m (água) para &lt; 5 mN/m na expiração</li>
+          <li><strong>Histerese:</strong> tensão superficial varia com área alveolar (inspiração vs expiração)</li>
+        </ul>
+        <div class="badge-clinical">🏥 Uso clínico: surfactante exógeno (beractante, poractante) em prematuros com SDR neonatal</div>
+        <div class="cite">Whitsett JA et al. NEJM 2010 (<a href="https://www.nejm.org/doi/full/10.1056/NEJMra0903580" target="_blank">nejm.org</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,212,255,0.1);color:var(--accent1)">CIRCULAÇÃO PULMONAR</div>
+        <h3 style="color:var(--accent1)">🩸 Dupla Circulação</h3>
+        <ul>
+          <li><strong>Circulação pulmonar:</strong> VD → artéria pulmonar → capilares alveolares → veias pulmonares → AE. Pressão sistólica normal: 15–30 mmHg (sistêmica: 90–140)</li>
+          <li><strong>Circulação brônquica:</strong> aorta → artérias brônquicas → nutre parênquima pulmonar. 1–3% do DC.</li>
+          <li><strong>Resistência Vascular Pulmonar (RVP/PVR):</strong> Normal = 80–120 dinas·s·cm⁻⁵. Hipertensão pulmonar: ≥ 25 mmHg em repouso (PAP média)</li>
+          <li><strong>Hipoxia pulmonar:</strong> única circulação que VASOCONSTRICIONA com hipóxia (HPVH — Hipoxia Pulmonar Vasoconstrictora / Hypoxic Pulmonary Vasoconstriction) → redireciona sangue para alvéolos ventilados</li>
+        </ul>
+        <div class="cite">Naeije R, Vachiéry JL. Pulmonary hypertension. Curr Opin Crit Care 2015 (<a href="https://pubmed.ncbi.nlm.nih.gov/26398910/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,212,255,0.1);color:var(--accent1)">MEMBRANA ALVÉOLO-CAPILAR</div>
+        <h3 style="color:var(--accent1)">🔬 Barreira de Difusão</h3>
+        <div class="alveo-diagram">  CAPILAR PULMONAR
+  ┌─────────────────────────────┐
+  │  Endotélio (0.1-0.3 μm)    │
+  │  Membrana basal endotelial  │
+  │  Espaço intersticial        │
+  │  Membrana basal epitelial   │
+  │  Pneumócito tipo I          │
+  └─────────────────────────────┘
+        ↕  Espessura total: 0.2–0.5 μm
+  ┌─────────────────────────────┐
+  │       ALVÉOLO               │
+  │  (filme de surfactante)     │
+  └─────────────────────────────┘
+Área total: ~70-100 m² (≈ quadra de tênis)</div>
+        <div class="cite">Weibel ER. The pathway for oxygen. Harvard Univ Press, 1984 (<a href="https://www.hup.harvard.edu/catalog.php?isbn=9780674657809" target="_blank">hup.harvard.edu</a>)</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 2. MECÂNICA VENTILATÓRIA -->
+  <!-- ============================== -->
+  <section class="section c2" id="mecanica">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <div class="section-icon">⚙️</div>
+      <h2>Mecânica Ventilatória</h2>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,255,157,0.1);color:var(--accent2)">PRINCÍPIO FÍSICO</div>
+        <h3 style="color:var(--accent2)">💨 Lei de Boyle & Pressões</h3>
+        <div class="highlight" style="border-color:var(--accent2)">
+          <strong>Lei de Boyle (1662):</strong> P₁V₁ = P₂V₂ (temperatura constante)<br>
+          Quando o diafragma contrai → V↑ → P intrapulmonar↓ → ar entra (gradiente de pressão atmosfera → pulmão)
+        </div>
+        <ul>
+          <li><strong>Pressão atmosférica (Patm):</strong> 760 mmHg = 101.3 kPa ao nível do mar</li>
+          <li><strong>Pressão intrapulmonar (Palv):</strong> 0 mmHg em repouso. -1 mmHg na inspiração. +1 mmHg na expiração.</li>
+          <li><strong>Pressão intrapleural (Pip):</strong> -5 mmHg em repouso (pressão subatmosférica = "vácuo" pleural)</li>
+          <li><strong>Pressão transpulmonar (Ptp):</strong> Palv − Pip = 5 mmHg. Mantém os alvéolos abertos.</li>
+          <li><strong>Pneumotórax:</strong> entrada de ar no espaço pleural → Pip sobe → Ptp↓ → colapso pulmonar</li>
+        </ul>
+        <div class="badge-clinical">🏥 Manobra de Valsalva: expiração forçada com glote fechada → ↑ Pip → ↓ retorno venoso → síncope</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,255,157,0.1);color:var(--accent2)">MÚSCULOS RESPIRATÓRIOS</div>
+        <h3 style="color:var(--accent2)">💪 Motor da Ventilação</h3>
+        <table>
+          <thead><tr><th>Músculo</th><th>Fase</th><th>Inervação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Diafragma</strong></td><td>Inspiração principal (70-80% do trabalho)</td><td>Frênico (C3-C5)</td></tr>
+            <tr><td>Intercostais externos</td><td>Inspiração</td><td>Intercostais (T1-T11)</td></tr>
+            <tr><td>Escalenos</td><td>Inspiração acessória</td><td>Cervicais (C3-C8)</td></tr>
+            <tr><td>Esternocleidomastoideo</td><td>Inspiração acessória</td><td>Espinal acessório (XI)</td></tr>
+            <tr><td>Intercostais internos</td><td>Expiração forçada</td><td>Intercostais</td></tr>
+            <tr><td>Abdominais (reto, oblíquos)</td><td>Expiração forçada</td><td>T7-L1</td></tr>
+          </tbody>
+        </table>
+        <div class="warn-box">⚠️ Expiração em repouso é PASSIVA (retração elástica). Em doença (DPOC), paciente usa musculatura acessória — sinal de gravidade.</div>
+        <div class="cite">De Troyer A, Loring SH. Action of the respiratory muscles. Compr Physiol (<a href="https://pubmed.ncbi.nlm.nih.gov/22589729/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,255,157,0.1);color:var(--accent2)">COMPLACÊNCIA PULMONAR</div>
+        <h3 style="color:var(--accent2)">📐 Compliance (C)</h3>
+        <div class="formula-box">
+  C = ΔV / ΔP
+  
+  Normal (pulmão): 200 mL/cmH₂O
+  Normal (sistema: pulmão + tórax): 100 mL/cmH₂O
+  Normal (tórax isolado): 200 mL/cmH₂O
+        </div>
+        <div class="highlight" style="border-color:var(--accent2)">
+          Analogia: C é como a "elasticidade" de um balão.<br>
+          Balão rígido (fibrose) = C↓ → precisa mais pressão para a mesma expansão.<br>
+          Balão flácido (enfisema) = C↑ → pulmão hiperexpande com pequena pressão, mas perde retração elástica.
+        </div>
+        <table>
+          <thead><tr><th>Condição</th><th>Complacência</th><th>Causa</th></tr></thead>
+          <tbody>
+            <tr><td>Fibrose pulmonar</td><td>↓↓ (pulmão rígido)</td><td>Fibrose intersticial</td></tr>
+            <tr><td>SARA/ARDS</td><td>↓↓</td><td>Edema, consolidação</td></tr>
+            <tr><td>Enfisema</td><td>↑↑</td><td>Destruição do parênquima</td></tr>
+            <tr><td>Prematuridade</td><td>↓</td><td>Falta de surfactante</td></tr>
+          </tbody>
+        </table>
+        <div class="cite">Gattinoni L et al. The future of mechanical ventilation. Crit Care 2017 (<a href="https://pubmed.ncbi.nlm.nih.gov/28228094/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,255,157,0.1);color:var(--accent2)">RESISTÊNCIA DAS VIAS AÉREAS</div>
+        <h3 style="color:var(--accent2)">🌀 Raw (Airway Resistance)</h3>
+        <div class="formula-box">
+  Lei de Poiseuille:
+  R = 8ηL / πr⁴
+  
+  R = resistência
+  η = viscosidade do gás
+  L = comprimento do tubo
+  r = raio interno (elevado à 4ª potência!)
+        </div>
+        <div class="highlight" style="border-color:var(--accent2)">
+          <strong>Implicação crítica:</strong> reduzir o raio pela metade → resistência aumenta 16 vezes!<br>
+          Por isso broncoespasmo leve já causa dispneia intensa.
+        </div>
+        <ul>
+          <li><strong>Normal:</strong> Raw = 0.5–2.5 cmH₂O/L/s</li>
+          <li><strong>Asma:</strong> Raw pode chegar a 10–30 cmH₂O/L/s</li>
+          <li><strong>Maior resistência:</strong> glote e brônquios de médio calibre (não os menores — são paralelos e somam conductâncias)</li>
+          <li><strong>Fluxo laminar vs turbulento:</strong> Número de Reynolds (Re) = ρVD/η. Re &gt; 2000 = turbulento (traqueia). Hélio-oxigênio (Heliox) reduz turbulência (menor densidade).</li>
+        </ul>
+        <div class="badge-clinical">🏥 Heliox (70% He + 30% O₂) em estridor pós-extubação e asma grave — reduz resistência turbulenta</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,255,157,0.1);color:var(--accent2)">TRABALHO RESPIRATÓRIO</div>
+        <h3 style="color:var(--accent2)">🔋 Work of Breathing (WOB)</h3>
+        <div class="formula-box">
+  WOB = ∫ P · dV
+  
+  Componentes:
+  1. Trabalho elástico: vencer complacência
+  2. Trabalho resistivo: vencer resistência das vias aéreas
+  3. Trabalho viscoso: deformação tecidual
+        </div>
+        <ul>
+          <li><strong>Normal:</strong> WOB ≈ 0.5 J/L de ventilação. Consume ≈ 1-3% do VO₂ total</li>
+          <li><strong>DPOC/Asma grave:</strong> WOB pode consumir 30-40% do VO₂</li>
+          <li><strong>Fadiga diafragmática:</strong> leva à hipercapnia e necessidade de VMI (Ventilação Mecânica Invasiva)</li>
+          <li><strong>FR ótima:</strong> ponto onde WOB total é mínimo (≈ 15 rpm adultos). Pulmão rígido → taquipneia. DPOC → bradipneia relativa.</li>
+        </ul>
+        <div class="badge-clinical">🏥 VNI (Ventilação Não Invasiva / CPAP ou BiPAP) reduz WOB — indicação principal: DPOC exacerbado, EAP cardiogênico</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,255,157,0.1);color:var(--accent2)">CURVA PRESSÃO-VOLUME</div>
+        <h3 style="color:var(--accent2)">📈 Curva P-V em UTI</h3>
+        <div class="highlight" style="border-color:var(--accent2)">
+          A curva P-V do sistema respiratório em ARDS tem formato de S sigmóide com dois pontos de inflexão:<br><br>
+          <strong>Ponto de inflexão inferior (LIP):</strong> pressão onde alvéolos colapsados começam a se recrutar. Estratégia: PEEP (Positive End-Expiratory Pressure / Pressão Positiva Expiratória Final) acima deste ponto evita colapso cíclico (atelectrauma).<br><br>
+          <strong>Ponto de inflexão superior (UIP):</strong> pressão de hiperdistensão. Volume corrente deve permanecer abaixo — evitar volutrauma.
+        </div>
+        <div class="cite">Slutsky AS, Ranieri VM. Ventilator-induced lung injury. NEJM 2013 (<a href="https://www.nejm.org/doi/full/10.1056/NEJMra1208707" target="_blank">nejm.org</a>)</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 3. VOLUMES E CAPACIDADES -->
+  <!-- ============================== -->
+  <section class="section c3" id="volumes">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <div class="section-icon">📊</div>
+      <h2>Volumes, Capacidades & Espirometria</h2>
+    </div>
+
+    <div class="card-full">
+      <h3 style="color:var(--accent3)">📊 Mapa Completo de Volumes Pulmonares</h3>
+      <div class="alveo-diagram" style="color:var(--accent3)">
+  ▲ Volume
+  │
+  │◄────────────── CPT (Capacidade Pulmonar Total = 6L) ──────────────────►│
+  │                                                                          │
+  │  ┌──────────────────────────────────────────────────────────────────┐   │
+  │  │                   VRI (Volume de Reserva                         │   │
+  │  │                   Inspiratória = 3.0L)                           │   │
+  6L─┤  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─  ─┤   │
+  │  │                   VT (Volume Corrente = 0.5L)                    │   │
+  │  │                   ← respiração tranquila →                       │   │
+  4.5├─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─┤   │
+  │  │                   VRE (Volume de Reserva                         │   │
+  │  │                   Expiratória = 1.2L)                            │   │
+  2.4├─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─┤   │
+  │  │                   VR (Volume Residual = 1.2L)                    │   │
+  │  │                   (não é medido pela espirometria)                │   │
+  0L─┴──────────────────────────────────────────────────────────────────┘   │
+  
+  CAPACIDADES:
+  CI (Capacidade Inspiratória) = VT + VRI = 3.5L
+  CRF (Capacidade Residual Funcional) = VRE + VR = 2.4L  ← ponto de equilíbrio
+  CV (Capacidade Vital) = VRI + VT + VRE = 4.7L
+  CPT (Capacidade Pulmonar Total) = CV + VR = 6.0L
+      </div>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,107,107,0.1);color:var(--accent3)">CRF — POSIÇÃO NEUTRA</div>
+        <h3 style="color:var(--accent3)">⚖️ Capacidade Residual Funcional</h3>
+        <div class="highlight" style="border-color:var(--accent3)">
+          <strong>CRF (FRC — Functional Residual Capacity):</strong> volume no final de uma expiração tranquila. É o ponto onde a força de retração elástica do pulmão (para dentro) iguala a força de retração do tórax (para fora).
+        </div>
+        <ul>
+          <li><strong>Normal adulto:</strong> ≈ 2.4L (40% CPT)</li>
+          <li><strong>Importância:</strong> "tampão" gasoso — evita grandes variações de PO₂ e PCO₂ durante o ciclo respiratório</li>
+          <li><strong>↓ CRF:</strong> obesidade (↑ pressão abdominal), decúbito dorsal, gravidez, pós-operatório abdominal, SDRA</li>
+          <li><strong>↑ CRF:</strong> DPOC, enfisema (perda de retração elástica)</li>
+        </ul>
+        <div class="badge-clinical">🏥 PEEP aumenta CRF → recruta alvéolos colapsados → melhora oxigenação em ARDS</div>
+        <div class="cite">Hedenstierna G, Edmark L. Anaesthesia 2010 (<a href="https://pubmed.ncbi.nlm.nih.gov/20883316/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,107,107,0.1);color:var(--accent3)">ESPIROMETRIA</div>
+        <h3 style="color:var(--accent3)">🌬️ Medidas Dinâmicas</h3>
+        <table>
+          <thead><tr><th>Parâmetro</th><th>Definição</th><th>Normal</th></tr></thead>
+          <tbody>
+            <tr><td><strong>CVF</strong> (FVC)</td><td>Capacidade Vital Forçada — volume total expirado ao máximo</td><td>&gt;80% previsto</td></tr>
+            <tr><td><strong>VEF₁</strong> (FEV₁)</td><td>Volume Expirado Forçado no 1º segundo</td><td>&gt;80% previsto</td></tr>
+            <tr><td><strong>VEF₁/CVF</strong> (FEV₁/FVC)</td><td>Índice de Tiffeneau — relação obstrução</td><td>&gt;70-75%</td></tr>
+            <tr><td><strong>FEF 25-75%</strong></td><td>Fluxo expiratório forçado médio — detecta obstrução precoce de pequenas vias</td><td>&gt;65% previsto</td></tr>
+            <tr><td><strong>PFE</strong> (PEF)</td><td>Pico de Fluxo Expiratório — monitoramento asma</td><td>&gt;80% melhor pessoal</td></tr>
+          </tbody>
+        </table>
+        <div class="formula-box">
+  Padrão OBSTRUTIVO: VEF₁/CVF &lt; 70% (DPOC, Asma)
+  VEF₁ ↓ mais que CVF
+  
+  Padrão RESTRITIVO: VEF₁/CVF normal ou ↑, CVF ↓
+  (Fibrose, cifoescoliose, obesidade grave)
+  
+  Padrão MISTO: ambos alterados
+        </div>
+        <div class="cite">Global Initiative for Chronic Obstructive Lung Disease (GOLD) 2024 (<a href="https://goldcopd.org/2024-gold-report/" target="_blank">goldcopd.org</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,107,107,0.1);color:var(--accent3)">ESPAÇO MORTO</div>
+        <h3 style="color:var(--accent3)">🕳️ Dead Space (VD)</h3>
+        <div class="highlight" style="border-color:var(--accent3)">
+          <strong>Espaço morto:</strong> volume de ar que ventila mas NÃO participa de trocas gasosas.
+        </div>
+        <ul>
+          <li><strong>VD anatômico:</strong> vias aéreas de condução (nariz → bronquíolos terminais). ≈ 150 mL (≈ 2 mL/kg em adultos)</li>
+          <li><strong>VD alveolar:</strong> alvéolos ventilados mas não perfundidos (V/Q = ∞). Normal ≈ 0</li>
+          <li><strong>VD fisiológico:</strong> anatômico + alveolar. Normal ≈ 150-200 mL</li>
+        </ul>
+        <div class="formula-box">
+  Equação de Bohr:
+  VD/VT = (PaCO₂ - PeCO₂) / PaCO₂
+  
+  PaCO₂ = PCO₂ arterial
+  PeCO₂ = PCO₂ expirado médio
+  Normal: VD/VT ≈ 0.3 (30%)
+        </div>
+        <div class="badge-clinical">🏥 TEP (Tromboembolismo Pulmonar): ↑ VD alveolar → gradiente PaCO₂-EtCO₂ ↑ → EtCO₂ cai abruptamente</div>
+        <div class="formula-box">
+  Ventilação alveolar (VA):
+  VA = FR × (VT − VD)
+  = 15 rpm × (500 − 150) mL
+  = 5.25 L/min
+        </div>
+        <div class="cite">Robertson HT. Dead space: the physiology of wasted ventilation. Eur Respir J 2015 (<a href="https://erj.ersjournals.com/content/45/6/1704" target="_blank">erj.ersjournals.com</a>)</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 4. TROCAS GASOSAS -->
+  <!-- ============================== -->
+  <section class="section c4" id="troca">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <div class="section-icon">🔄</div>
+      <h2>Trocas Gasosas — Difusão Alveolar</h2>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,217,61,0.1);color:var(--accent4)">LEI DE FICK</div>
+        <h3 style="color:var(--accent4)">🔬 Lei de Difusão de Fick (1855)</h3>
+        <div class="formula-box">
+  Vgas = A/T × D × (P₁ - P₂)
+  
+  Vgas = taxa de difusão (mL/min)
+  A = área da membrana (≈ 70 m²)
+  T = espessura da membrana (≈ 0.2-0.5 μm)
+  D = coeficiente de difusão do gás
+  P₁-P₂ = gradiente de pressão parcial
+        </div>
+        <div class="highlight" style="border-color:var(--accent4)">
+          <strong>D ∝ Solubilidade / √Peso Molecular</strong><br>
+          CO₂: solubilidade 20× maior que O₂ → difunde 20× mais rápido, mesmo com menor gradiente.<br>
+          Por isso: hipoxemia aparece antes de hipercapnia em distúrbios de difusão.
+        </div>
+        <table>
+          <thead><tr><th>Gás</th><th>Gradiente P (mmHg)</th><th>Velocidade relativa</th></tr></thead>
+          <tbody>
+            <tr><td>O₂</td><td>100 (alv) → 40 (cap) = 60↓</td><td>1×</td></tr>
+            <tr><td>CO₂</td><td>45 (cap) → 40 (alv) = 5↓</td><td>20×</td></tr>
+            <tr><td>CO</td><td>Praticamente zero — limitado por difusão</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <div class="cite">Fick A. Über diffusion. Ann Phys Chem 1855 | Revisão: Wagner PD. J Appl Physiol 2015 (<a href="https://pubmed.ncbi.nlm.nih.gov/25539930/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,217,61,0.1);color:var(--accent4)">EQUAÇÃO DO GÁS ALVEOLAR</div>
+        <h3 style="color:var(--accent4)">🧮 PAO₂ — Equação do Ar Alveolar</h3>
+        <div class="formula-box">
+  PAO₂ = FiO₂ × (Patm − PH₂O) − PaCO₂/R
+  
+  PAO₂ = pressão parcial de O₂ alveolar
+  FiO₂ = fração inspirada de O₂ (0.21 = ar ambiente)
+  Patm = 760 mmHg (nível do mar)
+  PH₂O = 47 mmHg (vapor d'água a 37°C)
+  PaCO₂ = CO₂ arterial (≈ 40 mmHg)
+  R = quociente respiratório (≈ 0.8)
+  
+  EXEMPLO (ar ambiente, nível do mar):
+  PAO₂ = 0.21 × (760 − 47) − 40/0.8
+  PAO₂ = 0.21 × 713 − 50
+  PAO₂ = 149.7 − 50 = 99.7 ≈ 100 mmHg
+        </div>
+        <div class="badge-formula">🧮 Gradiente A-a: P(A-a)O₂ = PAO₂ − PaO₂. Normal: &lt; 15 mmHg (jovem) / &lt; 25 mmHg (idoso)</div>
+        <div class="highlight" style="border-color:var(--accent4)">
+          <strong>Por que P(A-a) aumenta?</strong><br>
+          1. Distúrbio V/Q (causa mais comum)<br>
+          2. Shunt intrapulmonar<br>
+          3. Defeito de difusão (fibrose, edema)<br>
+          Normal em altitude ou hipoventilação pura.
+        </div>
+        <div class="cite">West JB. Causes of and compensations for hypoxemia and hypercapnia. Compr Physiol 2011 (<a href="https://pubmed.ncbi.nlm.nih.gov/23227298/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,217,61,0.1);color:var(--accent4)">DLCO</div>
+        <h3 style="color:var(--accent4)">🫁 Capacidade de Difusão do CO (DLCO)</h3>
+        <div class="highlight" style="border-color:var(--accent4)">
+          CO (monóxido de carbono) tem afinidade 250× maior pela hemoglobina que o O₂. Por isso a Pco no sangue ≈ 0 → gradiente alveolar-capilar de CO é máximo e constante → a difusão é limitada apenas pela membrana (não pela perfusão). Medida ideal da capacidade de difusão.
+        </div>
+        <table>
+          <thead><tr><th>Condição</th><th>DLCO</th><th>Mecanismo</th></tr></thead>
+          <tbody>
+            <tr><td>Fibrose pulmonar</td><td>↓↓</td><td>Espessamento membrana + ↓ área</td></tr>
+            <tr><td>Enfisema</td><td>↓</td><td>Destruição de alvéolos (↓ área)</td></tr>
+            <tr><td>Hemorragia alveolar</td><td>↑</td><td>Hemoglobina extra no alvéolo capta CO</td></tr>
+            <tr><td>Asma</td><td>Normal</td><td>Membrana intacta</td></tr>
+            <tr><td>TEP</td><td>↓</td><td>↓ Perfusão → ↓ superfície de troca</td></tr>
+            <tr><td>Anemia</td><td>↓ (corrigir para Hb)</td><td>Menos Hb para captar CO</td></tr>
+          </tbody>
+        </table>
+        <div class="cite">American Thoracic Society. Single-breath carbon monoxide diffusing capacity. Am J Respir Crit Care Med 1995 (<a href="https://pubmed.ncbi.nlm.nih.gov/7881654/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,217,61,0.1);color:var(--accent4)">LIMITAÇÃO DIFUSÃO vs PERFUSÃO</div>
+        <h3 style="color:var(--accent4)">⏱️ Limitação por Difusão vs Perfusão</h3>
+        <div class="highlight" style="border-color:var(--accent4)">
+          O sangue passa pelo capilar alveolar em ≈ <strong>0.75 segundos</strong> em repouso.<br>
+          O equilíbrio de O₂ alvéolo-capilar ocorre em ≈ <strong>0.25 segundos</strong>.<br>
+          → Há reserva de 3× para difusão = limitação por <strong>perfusão</strong> em condições normais.
+        </div>
+        <table>
+          <thead><tr><th>Limitação por PERFUSÃO</th><th>Limitação por DIFUSÃO</th></tr></thead>
+          <tbody>
+            <tr><td>Normal em repouso</td><td>Exercício intenso em altitude</td></tr>
+            <tr><td>O₂ e CO₂ normais</td><td>Fibrose pulmonar grave</td></tr>
+            <tr><td>Equilíbrio rápido</td><td>SARA com membrana espessada</td></tr>
+          </tbody>
+        </table>
+        <div class="cite">West JB. Respiratory Physiology 10ª ed. Ch. 3 (<a href="https://shop.lww.com/Respiratory-Physiology/p/9781496339065" target="_blank">lww.com</a>)</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 5. TRANSPORTE DE GASES -->
+  <!-- ============================== -->
+  <section class="section c5" id="transporte">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <div class="section-icon">🩸</div>
+      <h2>Transporte de Gases no Sangue</h2>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="tag" style="background:rgba(199,125,255,0.1);color:var(--accent5)">TRANSPORTE DE O₂</div>
+        <h3 style="color:var(--accent5)">🔴 Hemoglobina & O₂</h3>
+        <div class="formula-box">
+  Conteúdo de O₂ arterial (CaO₂):
+  CaO₂ = (Hb × 1.34 × SaO₂) + (PaO₂ × 0.003)
+  
+  Onde:
+  Hb = hemoglobina (g/dL)
+  1.34 = mL O₂ ligado por grama Hb (100% sat)
+  SaO₂ = saturação arterial de O₂
+  0.003 = solubilidade O₂ no plasma
+  
+  EXEMPLO (normal):
+  CaO₂ = (15 × 1.34 × 0.98) + (100 × 0.003)
+  CaO₂ = 19.7 + 0.3 = 20 mL O₂/dL
+        </div>
+        <div class="formula-box">
+  Conteúdo venoso (CvO₂) ≈ 15 mL/dL
+  
+  DO₂ (Oferta de O₂ / Oxygen Delivery):
+  DO₂ = CaO₂ × DC × 10
+  Normal: 950-1150 mL O₂/min
+  
+  DC = Débito Cardíaco (L/min)
+  
+  VO₂ (Consumo de O₂):
+  VO₂ = DC × (CaO₂ − CvO₂) × 10
+  Normal: 200-250 mL/min
+        </div>
+        <div class="badge-clinical">🏥 ScvO₂ (Saturação venosa central): meta &gt; 70% em sepse (Rivers Protocol) — indica oferta/demanda O₂</div>
+        <div class="cite">Rivers E et al. Early goal-directed therapy in sepsis. NEJM 2001 (<a href="https://www.nejm.org/doi/full/10.1056/nejmoa010307" target="_blank">nejm.org</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(199,125,255,0.1);color:var(--accent5)">CURVA DE DISSOCIAÇÃO</div>
+        <h3 style="color:var(--accent5)">📉 Curva de Dissociação Hb-O₂</h3>
+        <div class="alveo-diagram" style="color:var(--accent5)">
+  SaO₂
+  100% ─┐                         ╔══════╗
+        │                    ╔════╝      ║
+   90% ─┤               ╔═══╝            ║
+        │           ╔══╝                 ║
+   75% ─┤       ╔══╝    ← PvO₂ = 40      ║
+        │   ╔══╝           (normal)       ║
+   50% ─┤  ╝                              ║
+        │╝   P50 ≈ 27 mmHg               ║
+    0% ─┴──────────────────────────────
+        0   20  40  60  80  100    PO₂ (mmHg)
+        </div>
+        <div class="highlight" style="border-color:var(--accent5)">
+          <strong>Efeito Bohr:</strong> ↑PCO₂, ↑H⁺ (↓pH), ↑temperatura, ↑2,3-DPG → curva DESLOCA PARA DIREITA → Hb libera mais O₂ para tecidos (↑P50). Nos pulmões (↓PCO₂, ↑pH) → desloca para esquerda → Hb capta mais O₂.
+        </div>
+        <table>
+          <thead><tr><th>Fator</th><th>Efeito na Curva</th><th>P50</th></tr></thead>
+          <tbody>
+            <tr><td>↑ pH / ↓ CO₂</td><td>← Esquerda (↑afinidade)</td><td>↓</td></tr>
+            <tr><td>↓ pH / ↑ CO₂</td><td>→ Direita (↓afinidade)</td><td>↑</td></tr>
+            <tr><td>↑ Temperatura</td><td>→ Direita</td><td>↑</td></tr>
+            <tr><td>↑ 2,3-DPG</td><td>→ Direita</td><td>↑</td></tr>
+            <tr><td>HbF (fetal)</td><td>← Esquerda</td><td>↓</td></tr>
+            <tr><td>MetHb / HbCO</td><td>← Esquerda</td><td>↓</td></tr>
+          </tbody>
+        </table>
+        <div class="cite">Benesch R, Benesch RE. The effect of organic phosphates from the human erythrocyte on the allosteric properties of hemoglobin. Biochem Biophys Res Commun 1967 (<a href="https://pubmed.ncbi.nlm.nih.gov/6059935/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(199,125,255,0.1);color:var(--accent5)">TRANSPORTE DE CO₂</div>
+        <h3 style="color:var(--accent5)">🟢 Três Formas de Transporte do CO₂</h3>
+        <ul>
+          <li>
+            <strong>1. Bicarbonato (HCO₃⁻) — 70%:</strong><br>
+            <div class="formula-box" style="margin:6px 0; font-size:0.8rem;">CO₂ + H₂O ⇌ H₂CO₃ ⇌ H⁺ + HCO₃⁻<br>(catalisado pela anidrase carbônica — 1000× mais rápido!)</div>
+            HCO₃⁻ sai da hemácia (troca por Cl⁻ = efeito Hamburger/chloride shift)
+          </li>
+          <li>
+            <strong>2. Carbaminocompostos — 23%:</strong><br>
+            CO₂ liga-se ao grupo amino (−NH₂) da globina:<br>
+            Hb-NH₂ + CO₂ → Hb-NH-COO⁻ + H⁺ (carbamino-hemoglobina)
+          </li>
+          <li>
+            <strong>3. Dissolvido no plasma — 7%:</strong><br>
+            PaCO₂ normal = 40 mmHg. Henry: [CO₂] = α × PCO₂ (α = 0.03 mmol/L/mmHg)
+          </li>
+        </ul>
+        <div class="highlight" style="border-color:var(--accent5)">
+          <strong>Efeito Haldane:</strong> a desoxigenação da Hb (nos tecidos) aumenta a capacidade de carregar CO₂ como carbaminocomposto e facilita a formação de bicarbonato (Hb desoxigenada é melhor tampão de H⁺). Inverso no pulmão.
+        </div>
+        <div class="cite">Geers C, Gros G. Carbon dioxide transport and carbonic anhydrase in blood and muscle. Physiol Rev 2000 (<a href="https://pubmed.ncbi.nlm.nih.gov/10747205/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(199,125,255,0.1);color:var(--accent5)">OXIMETRIA DE PULSO</div>
+        <h3 style="color:var(--accent5)">📡 Princípio Físico do Oxímetro</h3>
+        <div class="highlight" style="border-color:var(--accent5)">
+          A HbO₂ (oxihemoglobina) e Hb desoxigenada absorvem comprimentos de onda diferentes:<br>
+          • <strong>660 nm (vermelho):</strong> HbO₂ absorve menos → luz passa mais → sangue "vermelho brilhante"<br>
+          • <strong>940 nm (infravermelho):</strong> Hb desox absorve menos<br>
+          O oxímetro calcula a razão das absorções → SaO₂ (SpO₂).
+        </div>
+        <div class="warn-box">⚠️ Falsos normais de SpO₂: HbCO (intoxicação por CO), MetHb (nitrato, dapsona, benzocaína). Use CO-oximetria para diferenciar!</div>
+        <ul>
+          <li><strong>Limitações:</strong> perfusão periférica ruim, esmalte de unhas escuro, bilirrubina alta, melanina (leve subestimação em pele escura — FDA revisou isso em 2021)</li>
+        </ul>
+        <div class="cite">Sjoding MW et al. Racial bias in pulse oximetry measurement. NEJM 2020 (<a href="https://www.nejm.org/doi/full/10.1056/NEJMc2029240" target="_blank">nejm.org</a>)</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 6. CONTROLE NEURAL -->
+  <!-- ============================== -->
+  <section class="section c6" id="controle">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <div class="section-icon">🧠</div>
+      <h2>Controle Neural da Respiração</h2>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,159,67,0.1);color:var(--accent6)">CENTRO RESPIRATÓRIO</div>
+        <h3 style="color:var(--accent6)">🧠 Neurônios do Tronco Cerebral</h3>
+        <ul>
+          <li><strong>Grupo Respiratório Dorsal (GRD/DRG):</strong> bulbo, perto do NTS (núcleo do trato solitário) — neurônios I (inspiratórios), recebe aferências de quimiorreceptores e mecanorreceptores pulmonares (vago)</li>
+          <li><strong>Grupo Respiratório Ventral (GRV/VRG):</strong> coluna bulbar — neurônios I e E. Inclui o complexo Bötzinger (expiratório) e pré-Bötzinger (marca-passo da respiração rítmica)</li>
+          <li><strong>Centro Pneumotáxico (Apnêustico):</strong> ponte, núcleo parabraquial → termina inspiração (limita volume). Lesão = apneusis (inspiração prolongada)</li>
+          <li><strong>Centro Apnêustico:</strong> ponte inferior → prolonga inspiração. Lesão isolada = respiração apnêustica (gasping)</li>
+          <li><strong>Córtex cerebral:</strong> controle voluntário (fala, natação, hiperventilação voluntária, Valsalva)</li>
+        </ul>
+        <div class="cite">Smith JC et al. Pre-Bötzinger complex: a brainstem region that may generate respiratory rhythm in mammals. Science 1991 (<a href="https://pubmed.ncbi.nlm.nih.gov/1759801/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,159,67,0.1);color:var(--accent6)">QUIMIORRECEPTORES</div>
+        <h3 style="color:var(--accent6)">🔬 Sensores Químicos</h3>
+        <table>
+          <thead><tr><th></th><th>Central</th><th>Periférico</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Localização</strong></td><td>Superfície ventral do bulbo (área quimiossensível)</td><td>Corpúsculos carotídeos (IX par), aórticos (X par)</td></tr>
+            <tr><td><strong>Estímulo</strong></td><td>↑ H⁺ no LCR (induzido por ↑PCO₂)</td><td>↓PO₂ (&lt;60 mmHg), ↑PCO₂, ↓pH</td></tr>
+            <tr><td><strong>Importância</strong></td><td>Controlador dominante (70-80% da resposta ao CO₂)</td><td>Resposta rápida à hipóxia. 20-30% da resposta ao CO₂</td></tr>
+            <tr><td><strong>Barreira</strong></td><td>BHE: CO₂ atravessa livremente (não HCO₃⁻ ou H⁺)</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <div class="formula-box">
+  Resposta ventilatória ao CO₂:
+  Δ Ventilação ≈ 2-3 L/min por 1 mmHg ↑ PaCO₂
+  
+  Resposta ventilatória ao O₂ (hipóxia):
+  Ativação significativa apenas quando PaO₂ &lt; 60 mmHg
+  (ponto de inflexão da curva Hb-O₂)
+        </div>
+        <div class="warn-box">⚠️ "Drive hipóxico" em DPOC: em pacientes cronicamente hipercápnicos, o receptor central se adapta ao CO₂ elevado. Teórica dependência de O₂ baixo para respirar — mas não contraindica O₂ adequado! Meta SpO₂ 88-92% em DPOC grave exacerbado.</div>
+        <div class="cite">O'Donnell DE, Laveneziana P. The clinical importance of dynamic lung hyperinflation in COPD. COPD 2006 (<a href="https://pubmed.ncbi.nlm.nih.gov/16959814/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,159,67,0.1);color:var(--accent6)">REFLEXOS PULMONARES</div>
+        <h3 style="color:var(--accent6)">🔁 Reflexos que Modulam a Respiração</h3>
+        <ul>
+          <li><strong>Reflexo de Hering-Breuer (inflação):</strong> receptores de estiramento de adaptação lenta (SARs) nas vias aéreas → impulso vagal → inibe inspiração. Mais importante em neonatos e durante respiração profunda em adultos.</li>
+          <li><strong>Reflexo de deflação:</strong> colapso pulmonar → estimula inspiração</li>
+          <li><strong>Receptores de irritação (RAR):</strong> mucosa brônquica → tosse, broncoconstrição, hiperpneia. Ativados por fumaça, poeira, histamina</li>
+          <li><strong>Receptores justakapilares (fibras J):</strong> interstício alveolar → dispneia, taquipneia rápida. Ativados por edema pulmonar, embolia, inflamação</li>
+          <li><strong>Proprioceptores musculares:</strong> fusos neuromusculares do diafragma → ajuste de força em obstrução</li>
+        </ul>
+        <div class="cite">Coleridge HM, Coleridge JC. Reflexes evoked from the tracheobronchial tree and lungs. Compr Physiol 1986 (<a href="https://pubmed.ncbi.nlm.nih.gov/3516579/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(255,159,67,0.1);color:var(--accent6)">PADRÕES RESPIRATÓRIOS PATOLÓGICOS</div>
+        <h3 style="color:var(--accent6)">😮‍💨 Respirações Anormais</h3>
+        <table>
+          <thead><tr><th>Padrão</th><th>Característica</th><th>Causa típica</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Cheyne-Stokes</strong></td><td>Ciclos crescentes-decrescentes com apneia central</td><td>ICC, AVC, altitude</td></tr>
+            <tr><td><strong>Kussmaul</strong></td><td>Respirações profundas, rápidas e regulares</td><td>Acidose metabólica (cetoacidose diabética, uremia)</td></tr>
+            <tr><td><strong>Biot</strong></td><td>Respirações irregulares com pausas abruptas</td><td>Lesão bulbar, meningite</td></tr>
+            <tr><td><strong>Apnêustica</strong></td><td>Inspiração prolongada com pausa</td><td>Lesão pontina</td></tr>
+            <tr><td><strong>Gasping (boquejos)</strong></td><td>Inspirações súbitas e irregulares</td><td>Hipóxia grave, PCR</td></tr>
+            <tr><td><strong>Paradoxal</strong></td><td>Tórax desce na inspiração</td><td>Fratura de costelas em série (tórax instável)</td></tr>
+          </tbody>
+        </table>
+        <div class="cite">Tobin MJ. Advances in mechanical ventilation. NEJM 2001 (<a href="https://www.nejm.org/doi/full/10.1056/NEJMra010114" target="_blank">nejm.org</a>)</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 7. V/Q -->
+  <!-- ============================== -->
+  <section class="section c1" id="vq">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <div class="section-icon">⚖️</div>
+      <h2>Relação Ventilação-Perfusão (V̇/Q̇)</h2>
+    </div>
+
+    <div class="card-full">
+      <h3 style="color:var(--accent1)">⚖️ O Conceito Mais Importante da Fisiologia Respiratória</h3>
+      <div class="cards-grid" style="margin-top:16px;">
+        <div style="background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:20px;">
+          <div class="formula-box">
+  V̇/Q̇ normal = 0.8
+  (VA ≈ 4 L/min / Q ≈ 5 L/min)
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-top:10px; line-height:1.6;">
+            V̇ = ventilação alveolar (L/min)<br>
+            Q̇ = perfusão capilar alveolar (L/min)
+          </p>
+        </div>
+        <div style="background:var(--surface2); border:1px solid rgba(255,107,107,0.3); border-radius:12px; padding:20px;">
+          <strong style="color:var(--accent3); font-size:0.9rem;">V̇/Q̇ = 0 → Shunt</strong>
+          <p style="font-size:0.83rem; color:var(--text-muted); margin-top:8px; line-height:1.6;">
+            Perfusão sem ventilação. Unidade alveolar colapsa ou preenchida (pneumonia, ARDS, edema). O₂ suplementar NÃO corrige completamente (sangue "bypassa" os alvéolos). Shunt verdadeiro.
+          </p>
+        </div>
+        <div style="background:var(--surface2); border:1px solid rgba(0,212,255,0.3); border-radius:12px; padding:20px;">
+          <strong style="color:var(--accent1); font-size:0.9rem;">V̇/Q̇ = ∞ → Espaço Morto</strong>
+          <p style="font-size:0.83rem; color:var(--text-muted); margin-top:8px; line-height:1.6;">
+            Ventilação sem perfusão. TEP (tromboembolia), choque hipovolêmico, PEEP excessivo. CO₂ arterial sobe (↑ VD), mas O₂ pode ser mantido por hiperventilação compensatória.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,212,255,0.1);color:var(--accent1)">GRADIENTE VERTICAL V/Q</div>
+        <h3 style="color:var(--accent1)">🏔️ Zonas de West</h3>
+        <div class="alveo-diagram">
+  ÁPICE PULMONAR (zona 1):
+  ┌─────────────────────────────┐
+  │  Pa > PA > Pv              │
+  │  V/Q alto (≈ 3.3)          │
+  │  PO₂ ≈ 130 mmHg            │
+  │  PCO₂ ≈ 28 mmHg            │
+  └─────────────────────────────┘
+           ↓ gravidade
+  MEIO PULMONAR (zona 2):
+  ┌─────────────────────────────┐
+  │  PA > Pa > Pv              │
+  │  V/Q médio (≈ 1.0)         │
+  │  PO₂ ≈ 100 mmHg            │
+  └─────────────────────────────┘
+           ↓ gravidade
+  BASE PULMONAR (zona 3):
+  ┌─────────────────────────────┐
+  │  PA > Pv > Pa              │
+  │  V/Q baixo (≈ 0.6)         │
+  │  PO₂ ≈ 90 mmHg             │
+  │  PCO₂ ≈ 42 mmHg            │
+  └─────────────────────────────┘
+
+  Pa = Pressão arterial pulmonar
+  PA = Pressão alveolar
+  Pv = Pressão venosa pulmonar
+        </div>
+        <div class="cite">West JB, Dollery CT, Naimark A. Distribution of blood flow in isolated lung. J Appl Physiol 1964 (<a href="https://pubmed.ncbi.nlm.nih.gov/14155827/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,212,255,0.1);color:var(--accent1)">SHUNT vs DISTÚRBIO V/Q</div>
+        <h3 style="color:var(--accent1)">🔀 Diferenciando Mecanismos de Hipóxia</h3>
+        <table>
+          <thead><tr><th>Teste</th><th>Shunt</th><th>Distúrbio V/Q</th></tr></thead>
+          <tbody>
+            <tr><td>O₂ 100% por 20 min</td><td>PaO₂ não sobe para &gt;500 mmHg</td><td>PaO₂ sobe significativamente</td></tr>
+            <tr><td>P(A-a)O₂</td><td>↑</td><td>↑</td></tr>
+            <tr><td>Resposta a O₂</td><td>Parcial apenas</td><td>Boa</td></tr>
+            <tr><td>PaCO₂</td><td>Normal (compensa hiperventilando)</td><td>Pode ↑ se grave</td></tr>
+          </tbody>
+        </table>
+        <div class="formula-box">
+  Fração de Shunt (Qs/Qt):
+  Qs/Qt = (CcO₂ − CaO₂) / (CcO₂ − CvO₂)
+  
+  CcO₂ = conteúdo O₂ capilar pulmonar (calculado)
+  Normal: Qs/Qt &lt; 5%
+  ARDS grave: Qs/Qt pode ser 30-50%
+        </div>
+        <div class="cite">Dantzker DR. Ventilation-perfusion inequality in lung disease. Chest 1987 (<a href="https://pubmed.ncbi.nlm.nih.gov/3803766/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="tag" style="background:rgba(0,212,255,0.1);color:var(--accent1)">5 CAUSAS DE HIPOXEMIA</div>
+        <h3 style="color:var(--accent1)">🚨 Mecanismos de Hipóxia</h3>
+        <ul>
+          <li><strong>1. Hipoventilação:</strong> ↑ PaCO₂ → ↓ PAO₂ → ↓ PaO₂. P(A-a) NORMAL. Ex: depressão SNC, fraqueza muscular. Corrige com O₂ e trata causa.</li>
+          <li><strong>2. Distúrbio V/Q:</strong> causa mais comum. P(A-a) ↑. Corrige com O₂. Ex: DPOC, asma, pneumonia, TEP.</li>
+          <li><strong>3. Shunt intrapulmonar:</strong> P(A-a) ↑. NÃO corrige completamente com O₂. Ex: ARDS, atelectasia massiva, malformação AV, síndrome hepatopulmonar.</li>
+          <li><strong>4. Distúrbio de difusão:</strong> incomum em repouso; manifesta no exercício. P(A-a) ↑. Ex: fibrose grave, enfisema.</li>
+          <li><strong>5. Baixa FiO₂:</strong> altitude elevada. P(A-a) NORMAL. Corrige com O₂.</li>
+        </ul>
+        <div class="note-box">📝 Mnemônico: <strong>"HDSDB"</strong> — Hipoventilação, Distúrbio V/Q, Shunt, Difusão, Baixa FiO₂</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 8. CLÍNICA -->
+  <!-- ============================== -->
+  <section class="section c3" id="clinica">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <div class="section-icon">🏥</div>
+      <h2>Aplicações Clínicas & Terapêuticas</h2>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="card">
+        <div class="badge-clinical">🏥 Ventilação Mecânica</div>
+        <h3 style="color:var(--accent3)">🤖 Ventilação Protetora em ARDS</h3>
+        <div class="highlight" style="border-color:var(--accent3)">
+          Baseado no estudo ARDSnet (NEJM 2000): VT baixo (6 mL/kg de peso ideal) reduziu mortalidade de 39.8% para 31% em comparação com VT 12 mL/kg.
+        </div>
+        <div class="formula-box">
+  Estratégia protetora:
+  VT = 6 mL/kg PBW (Peso Ideal / Predicted Body Weight)
+  PBW homem = 50 + 0.91 × (altura cm − 152.4)
+  PBW mulher = 45.5 + 0.91 × (altura cm − 152.4)
+  
+  Platô (Pplat) ≤ 30 cmH₂O
+  PEEP otimizado (evitar colapso)
+  FR: ajuste para manter pH ≥ 7.30
+  FiO₂: mínima para SpO₂ 88-95%
+        </div>
+        <ul>
+          <li><strong>VILI (Ventilator-Induced Lung Injury):</strong> barotrauma (↑pressão), volutrauma (↑volume), atelectrauma (colapso-abertura cíclico), biotrauma (inflamação)</li>
+          <li><strong>Driving pressure (ΔP):</strong> Pplat − PEEP. ΔP &lt; 15 cmH₂O associado a menor mortalidade (Amato et al. NEJM 2015)</li>
+        </ul>
+        <div class="cite">ARDS Network. Ventilation with lower tidal volumes vs traditional tidal volumes. NEJM 2000 (<a href="https://www.nejm.org/doi/full/10.1056/NEJM200005043421801" target="_blank">nejm.org</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="badge-clinical">🏥 Gasometria Arterial</div>
+        <h3 style="color:var(--accent3)">🩸 Interpretação de Gasometria</h3>
+        <div class="formula-box">
+  Valores normais (gasometria arterial):
+  pH:    7.35 – 7.45
+  PaO₂:  80 – 100 mmHg
+  PaCO₂: 35 – 45 mmHg
+  HCO₃⁻: 22 – 26 mEq/L
+  BE:    -2 a +2 mEq/L
+  SaO₂:  95 – 99%
+        </div>
+        <div class="tree">
+          <li class="branch">Passo 1: pH alterado?</li>
+          <li class="branch">Passo 2: PCO₂ ou HCO₃⁻ explica o pH?
+            <ul class="tree">
+              <li>↑PCO₂ + ↓pH = Acidose Respiratória</li>
+              <li>↓PCO₂ + ↑pH = Alcalose Respiratória</li>
+              <li>↓HCO₃⁻ + ↓pH = Acidose Metabólica</li>
+              <li>↑HCO₃⁻ + ↑pH = Alcalose Metabólica</li>
+            </ul>
+          </li>
+          <li class="branch">Passo 3: Compensação adequada?</li>
+          <li class="branch">Passo 4: P(A-a) O₂?</li>
+          <li class="branch">Passo 5: Se acidose metabólica → anion gap?</li>
+        </div>
+        <div class="formula-box">
+  Compensações esperadas:
+  Acid. Resp. Aguda: ↑1 HCO₃⁻ por ↑10 PCO₂
+  Acid. Resp. Crônica: ↑3.5 HCO₃⁻ por ↑10 PCO₂
+  Acid. Metab.: PCO₂ = 1.5 × [HCO₃⁻] + 8 ± 2 (Winter)
+  Alc. Metab.: ↑0.7 PCO₂ por ↑1 HCO₃⁻
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge-clinical">🏥 Oxigenoterapia</div>
+        <h3 style="color:var(--accent3)">💨 Dispositivos de Oxigênio</h3>
+        <table>
+          <thead><tr><th>Dispositivo</th><th>FiO₂</th><th>Fluxo</th></tr></thead>
+          <tbody>
+            <tr><td>Cânula nasal</td><td>24–44%</td><td>1–6 L/min</td></tr>
+            <tr><td>Máscara simples</td><td>35–50%</td><td>6–10 L/min</td></tr>
+            <tr><td>Máscara Venturi</td><td>24, 28, 31, 35, 40, 60%</td><td>Controlado</td></tr>
+            <tr><td>Máscara sem reinalação</td><td>60–80%</td><td>10–15 L/min</td></tr>
+            <tr><td>OAF (O₂ alto fluxo / HFNO)</td><td>21–100%</td><td>30–60 L/min</td></tr>
+            <tr><td>VNI (CPAP/BiPAP)</td><td>21–100%</td><td>Variável</td></tr>
+            <tr><td>VMI (IOT)</td><td>21–100%</td><td>Controlado</td></tr>
+          </tbody>
+        </table>
+        <div class="note-box">📝 Máscara Venturi usa efeito Venturi (Bernoulli): fluxo de O₂ acelera num orifício estreito → pressão negativa aspira ar ambiente → mistura precisa de FiO₂ controlada. Ideal em DPOC.</div>
+        <div class="cite">Bateman NT, Leach RM. Acute oxygen therapy. BMJ 1998 (<a href="https://www.bmj.com/content/317/7161/798" target="_blank">bmj.com</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="badge-clinical">🏥 Exacerbação de DPOC</div>
+        <h3 style="color:var(--accent3)">🫁 DPOC na UTI</h3>
+        <ul>
+          <li><strong>Diagnóstico:</strong> VEF₁/CVF &lt; 0.70 pós-broncodilatador. Estadiamento GOLD 1-4.</li>
+          <li><strong>Hiperinsuflação dinâmica (auto-PEEP / PEEP intrínseca):</strong> ar preso por obstrução → pulmão hiperexpandido → WOB ↑ → dispneia. Medir com pausa expiratória &gt; 3 seg.</li>
+          <li><strong>VNI em exacerbação:</strong> reduz intubação em 65% e mortalidade (Cochrane). Critérios: pH 7.25-7.35, PCO₂ &gt; 45, FR &gt; 25.</li>
+          <li><strong>Broncodilatadores:</strong> β₂-agonistas (salbutamol → ↑AMPc → relaxa músculo liso), anticolinérgicos (ipratrópio → bloqueia M₃ → broncodilatação), corticosteroides sistêmicos (5 dias)</li>
+          <li><strong>Ventilação: evitar hiperventilação</strong> → normalizar pH, não PCO₂ (pode ser crônico)</li>
+        </ul>
+        <div class="cite">Global Initiative for Chronic Obstructive Lung Disease GOLD 2024 (<a href="https://goldcopd.org/2024-gold-report/" target="_blank">goldcopd.org</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="badge-clinical">🏥 Asma Grave</div>
+        <h3 style="color:var(--accent3)">⚡ Status Asmaticus</h3>
+        <ul>
+          <li><strong>Fisiopatologia:</strong> broncoespasmo (músculo liso) + edema mucoso + tampões mucosos. Raw↑↑ → hiperinsuflação → risco de pneumotórax</li>
+          <li><strong>Sinal de alerta:</strong> PCO₂ "normalizando" de 30 para 40 mmHg em crise = fadiga muscular e necessidade de IOT iminente</li>
+          <li><strong>Tratamento UTI:</strong> O₂, salbutamol nebulizado contínuo, ipratrópio, corticoide IV (metilprednisolona 1-2 mg/kg), sulfato de magnésio IV (2g em 20 min — antagonista Ca²⁺, broncodilatação)</li>
+          <li><strong>Se IOT:</strong> FR baixa (8-12 rpm), VT moderado, tempo expiratório longo (I:E 1:3 ou 1:4), tolerar hipercapnia permissiva</li>
+          <li><strong>Heliox:</strong> pode reduzir WOB e facilitar nebulização</li>
+        </ul>
+        <div class="cite">Rodrigo GJ et al. Heliox for non-intubated acute asthma patients. Cochrane 2006 (<a href="https://pubmed.ncbi.nlm.nih.gov/16856003/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+      <div class="card">
+        <div class="badge-clinical">🏥 ARDS / SARA</div>
+        <h3 style="color:var(--accent3)">🔥 Síndrome do Desconforto Respiratório Agudo</h3>
+        <div class="highlight" style="border-color:var(--accent3)">
+          <strong>Definição de Berlim (2012):</strong> início em ≤ 7 dias, infiltrado bilateral na TC/RX (não explicado por coração), PaO₂/FiO₂ ≤ 300 com PEEP ≥ 5 cmH₂O.
+        </div>
+        <table>
+          <thead><tr><th>Gravidade</th><th>PaO₂/FiO₂ (P:F)</th><th>Mortalidade</th></tr></thead>
+          <tbody>
+            <tr><td>Leve</td><td>200–300</td><td>27%</td></tr>
+            <tr><td>Moderada</td><td>100–200</td><td>32%</td></tr>
+            <tr><td>Grave</td><td>&lt;100</td><td>45%</td></tr>
+          </tbody>
+        </table>
+        <ul>
+          <li><strong>Pronação (decúbito ventral):</strong> 16h/dia em ARDS grave → ↓ mortalidade (PROSEVA trial: 16% vs 32.8%). Melhora V/Q, recruta alvéolos dorsais.</li>
+          <li><strong>Bloqueio neuromuscular precoce:</strong> 48h em ARDS grave — ACURASYS (↓ mortalidade, mas ROSE trial neutro)</li>
+          <li><strong>Fluidos:</strong> estratégia restritiva (FACTT trial)</li>
+          <li><strong>Inalação de NO:</strong> vasodilatador pulmonar seletivo → melhora V/Q → hipoxemia grave refratária</li>
+        </ul>
+        <div class="cite">ARDS Definition Task Force. Berlin Definition of ARDS. JAMA 2012 (<a href="https://pubmed.ncbi.nlm.nih.gov/22797452/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- 9. FÓRMULAS CONSOLIDADAS -->
+  <!-- ============================== -->
+  <section class="section c4" id="formulas">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <div class="section-icon">🧮</div>
+      <h2>Fórmulas Essenciais & Exercícios Práticos</h2>
+    </div>
+
+    <div class="card-full">
+      <h3 style="color:var(--accent4)">🧮 Exercício Clínico Integrado</h3>
+      <div class="highlight" style="border-color:var(--accent4); margin-bottom:16px;">
+        <strong>Caso:</strong> Homem, 65 anos, DPOC, internado por dispneia. FR=28, SpO₂=84% em ar ambiente. Gasometria: pH 7.28, PaCO₂=65 mmHg, HCO₃⁻=30 mEq/L, PaO₂=48 mmHg.
+      </div>
+      <div class="cards-grid">
+        <div style="background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:18px;">
+          <strong style="color:var(--accent4); font-size:0.9rem;">① Tipo de distúrbio?</strong>
+          <div class="formula-box" style="margin-top:8px; font-size:0.82rem;">
+pH = 7.28 → Acidemia
+PCO₂ = 65 ↑ → Acidose Respiratória
+HCO₃⁻ = 30 ↑ → Compensação renal
+Compensação esperada crônica:
+↑3.5 HCO₃⁻ por ↑10 PCO₂
+ΔCO₂ = 65-40 = 25 → ↑HCO₃⁻ = 3.5×2.5 = 8.75
+HCO₃⁻ esperado = 24+8.75 = 32.75
+HCO₃⁻ real = 30 → Compensação adequada
+→ Acidose respiratória crônica agudizada
+          </div>
+        </div>
+        <div style="background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:18px;">
+          <strong style="color:var(--accent4); font-size:0.9rem;">② Gradiente A-a?</strong>
+          <div class="formula-box" style="margin-top:8px; font-size:0.82rem;">
+PAO₂ = 0.21×(760-47) − 65/0.8
+PAO₂ = 0.21×713 − 81.25
+PAO₂ = 149.7 − 81.25 = 68.5 mmHg
+
+P(A-a) = PAO₂ − PaO₂
+P(A-a) = 68.5 − 48 = 20.5 mmHg
+
+Normal para 65 anos: &lt; [(65/4)+4] = 20.2 mmHg
+→ P(A-a) levemente aumentada
+→ Distúrbio V/Q + hipoventilação
+          </div>
+        </div>
+        <div style="background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:18px;">
+          <strong style="color:var(--accent4); font-size:0.9rem;">③ Oferta de O₂?</strong>
+          <div class="formula-box" style="margin-top:8px; font-size:0.82rem;">
+CaO₂ = (Hb × 1.34 × SaO₂) + (PaO₂ × 0.003)
+Hb=14, SaO₂≈80% (SpO₂ 84%)
+CaO₂ = (14×1.34×0.80) + (48×0.003)
+CaO₂ = 15.0 + 0.14 = 15.14 mL/dL
+
+DO₂ = CaO₂ × DC × 10
+DC normal ≈ 5 L/min
+DO₂ = 15.14 × 5 × 10 = 757 mL/min
+Normal: 950-1150 → DO₂ REDUZIDA
+          </div>
+        </div>
+        <div style="background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:18px;">
+          <strong style="color:var(--accent4); font-size:0.9rem;">④ Conduta?</strong>
+          <div style="font-size:0.83rem; color:var(--text-muted); line-height:1.7; margin-top:8px;">
+            → O₂ por máscara Venturi 28% (meta SpO₂ 88-92%)<br>
+            → Monitorar para não suprimir drive hipóxico<br>
+            → VNI se pH &lt; 7.35 + PCO₂ &gt; 45 + dispneia<br>
+            → Salbutamol + Ipratrópio nebulizados<br>
+            → Corticoide sistêmico (metilprednisolona)<br>
+            → Antibiótico se infecção bacteriana suspeita<br>
+            → Repetir gasometria em 1 hora após VNI
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="badge-formula">🧮 Fórmulas Respiratórias Essenciais</div>
+        <h3 style="color:var(--accent4)">📋 Compêndio de Fórmulas</h3>
+        <div class="formula-box">
+  1. Equação do Gás Alveolar:
+  PAO₂ = FiO₂×(Patm−PH₂O) − PaCO₂/R
+
+  2. Gradiente A-a:
+  P(A-a)O₂ = PAO₂ − PaO₂
+  
+  3. Ventilação Alveolar:
+  VA = FR × (VT − VD)
+  
+  4. Relação VD/VT (Bohr):
+  VD/VT = (PaCO₂ − PeCO₂)/PaCO₂
+  
+  5. Conteúdo O₂:
+  CaO₂ = Hb×1.34×SaO₂ + PaO₂×0.003
+  
+  6. Oferta O₂:
+  DO₂ = CaO₂ × DC × 10
+  
+  7. Consumo O₂ (Fick reverso):
+  VO₂ = DC × (CaO₂−CvO₂) × 10
+  
+  8. Shunt:
+  Qs/Qt = (CcO₂−CaO₂)/(CcO₂−CvO₂)
+  
+  9. Complacência:
+  C = ΔV/ΔP
+  
+  10. Lei de Poiseuille (Resistência):
+  R = 8ηL/πr⁴
+  
+  11. Laplace (Superfície):
+  P = 2T/r (alvéolos esféricos)
+  P = T/r (alvéolos cilíndricos)
+  
+  12. PBW (Peso Ideal):
+  Homem: 50 + 0.91×(cm−152.4)
+  Mulher: 45.5 + 0.91×(cm−152.4)
+  
+  13. Driving Pressure:
+  ΔP = Pplat − PEEP
+  Meta: &lt; 15 cmH₂O
+  
+  14. Compensações (Henderson-Hasselbalch):
+  pH = 6.1 + log([HCO₃⁻] / 0.03×PCO₂)
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="badge-formula">🧮 Nomograma de Hipóxia</div>
+        <h3 style="color:var(--accent4)">🗺️ Como Classificar Hipoxemia</h3>
+        <div class="tree">
+          <li class="branch">PaO₂ &lt; 80 mmHg = Hipoxemia</li>
+          <li class="branch">Calcular PAO₂ e P(A-a)
+            <ul class="tree">
+              <li>P(A-a) NORMAL + PCO₂ ↑ → <strong>Hipoventilação pura</strong><br>(depressão SNC, fraqueza muscular)</li>
+              <li>P(A-a) NORMAL + PCO₂ normal → <strong>↓ FiO₂</strong><br>(altitude, espaço confinado)</li>
+              <li>P(A-a) ↑ + Melhora com O₂ 100% → <strong>Distúrbio V/Q ou Difusão</strong></li>
+              <li>P(A-a) ↑ + NÃO melhora com O₂ 100% → <strong>Shunt</strong><br>(cardíaco ou intrapulmonar)</li>
+            </ul>
+          </li>
+        </div>
+        <div class="note-box">
+          📝 Shunt extrapulmonar: CIA/CIV com inversão (síndrome de Eisenmenger), fístula arteriovenosa hepática (síndrome hepatopulmonar).<br>
+          Shunt intrapulmonar: ARDS, pneumonia consolidante, atelectasia.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABELA RESUMO FINAL -->
+  <div class="card-full" style="margin-top:40px;">
+    <h3 style="color:var(--accent5); font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:20px;">🏆 Resumo Mestre — Fisiologia Respiratória em Tabela</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Tópico</th>
+          <th>Parâmetro chave</th>
+          <th>Normal</th>
+          <th>Significado clínico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Ventilação</td><td>VA (ventilação alveolar)</td><td>4–5 L/min</td><td>↓VA → hipoventilação → ↑PCO₂</td></tr>
+        <tr><td>Oxigenação</td><td>PaO₂</td><td>80–100 mmHg</td><td>&lt;60 mmHg = hipóxia grave, ativa quimiorreceptores</td></tr>
+        <tr><td>Ventilação</td><td>PaCO₂</td><td>35–45 mmHg</td><td>Barômetro de ventilação alveolar</td></tr>
+        <tr><td>Mecânica</td><td>Complacência (C)</td><td>200 mL/cmH₂O</td><td>↓ fibrose/ARDS; ↑ enfisema</td></tr>
+        <tr><td>Mecânica</td><td>Resistência (Raw)</td><td>0.5–2.5 cmH₂O/L/s</td><td>↑ asma/DPOC; Poiseuille: ∝ 1/r⁴</td></tr>
+        <tr><td>Difusão</td><td>DLCO</td><td>&gt;75% previsto</td><td>↓ fibrose, enfisema, TEP; ↑ hemorragia</td></tr>
+        <tr><td>V/Q</td><td>Gradiente A-a</td><td>&lt;15 mmHg jovem</td><td>↑ = distúrbio V/Q, shunt, difusão</td></tr>
+        <tr><td>V/Q</td><td>Razão VD/VT</td><td>0.3</td><td>↑ TEP (espaço morto alveolar)</td></tr>
+        <tr><td>Transporte</td><td>CaO₂</td><td>~20 mL/dL</td><td>Anemia + hipóxia = risco crítico DO₂</td></tr>
+        <tr><td>Transporte</td><td>P50 Hb</td><td>27 mmHg</td><td>↑ direita = libera O₂; ↓ esquerda = retém O₂</td></tr>
+        <tr><td>Controle</td><td>Drive CO₂</td><td>2–3 L/min/mmHg PCO₂</td><td>Deprimido por opioides, sedativos</td></tr>
+        <tr><td>VMI</td><td>VT protetor</td><td>6 mL/kg PBW</td><td>Reduz VILI em ARDS (ARDSnet)</td></tr>
+        <tr><td>VMI</td><td>Driving Pressure</td><td>&lt;15 cmH₂O</td><td>Maior preditor de mortalidade em ARDS</td></tr>
+        <tr><td>UTI</td><td>ScvO₂</td><td>&gt;70%</td><td>↓ = oferta insuficiente ou ↑ consumo (sepse)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong style="color:var(--text)">Referências Principais</strong><br><br>
+  Guyton AC, Hall JE. Textbook of Medical Physiology, 14ª ed. Elsevier 2021. (<a href="https://www.elsevier.com/books/guyton-and-hall-textbook-of-medical-physiology/hall/978-0-323-59712-8" target="_blank">elsevier.com</a>) |
+  West JB. Respiratory Physiology: The Essentials, 10ª ed. LWW 2016. (<a href="https://shop.lww.com/Respiratory-Physiology/p/9781496339065" target="_blank">lww.com</a>) |
+  Murray & Nadel. Textbook of Respiratory Medicine, 7ª ed. Elsevier. (<a href="https://www.elsevier.com/books/murray-and-nadels-textbook-of-respiratory-medicine/broaddus/978-1-4557-3383-5" target="_blank">elsevier.com</a>) |
+  ARDS Network. NEJM 2000 (<a href="https://www.nejm.org/doi/full/10.1056/NEJM200005043421801" target="_blank">nejm.org</a>) |
+  GOLD 2024 Report (<a href="https://goldcopd.org/2024-gold-report/" target="_blank">goldcopd.org</a>) |
+  Berlin Definition of ARDS. JAMA 2012 (<a href="https://pubmed.ncbi.nlm.nih.gov/22797452/" target="_blank">pubmed.ncbi.nlm.nih.gov</a>)<br><br>
+  <span style="color:var(--text-dim)">Mapa Mental de Fisiologia Respiratória · Nível Medicina Interna & Intensiva · 2026</span>
+</footer>
+
+</body>
+</html>
