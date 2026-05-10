@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Osso Temporal — Anatomia Aprofundada</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e2a;
+    --border: #252a38;
+    --accent: #c8a96e;
+    --accent2: #7eb8c9;
+    --accent3: #a87db8;
+    --danger: #d4685a;
+    --success: #6aab82;
+    --text: #e8e4dc;
+    --text-muted: #8a8fa0;
+    --text-dim: #5a5f72;
+    --gold: #d4a843;
+    --teal: #4db8b0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── SIDEBAR NAV ── */
+  #sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 240px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    padding: 32px 0 32px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-logo {
+    padding: 0 20px 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .sidebar-logo .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-logo .title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .nav-section {
+    padding: 0 20px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 16px;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 7px 20px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+    line-height: 1.4;
+  }
+
+  .nav-link:hover {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(200, 169, 110, 0.05);
+    padding-left: 24px;
+  }
+
+  /* ── MAIN CONTENT ── */
+  #main {
+    margin-left: 240px;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0d0f14 0%, #141824 50%, #0f1219 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 60px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(200,169,110,0.3);
+    padding: 5px 14px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+    background: rgba(200,169,110,0.05);
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-muted);
+    font-weight: 300;
+    font-style: italic;
+    max-width: 600px;
+    margin-bottom: 36px;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .hero-tag.accent { border-color: rgba(200,169,110,0.4); color: var(--accent); }
+  .hero-tag.teal { border-color: rgba(126,184,201,0.4); color: var(--accent2); }
+  .hero-tag.purple { border-color: rgba(168,125,184,0.4); color: var(--accent3); }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    padding: 0 60px 80px;
+    max-width: 1100px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding-top: 60px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(200,169,110,0.08);
+    border: 1px solid rgba(200,169,110,0.2);
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .subsection {
+    margin-top: 36px;
+    padding-left: 20px;
+    border-left: 2px solid var(--border);
+  }
+
+  .subsection h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .subsection h3::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .subsection h4 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 18px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.85rem;
+  }
+
+  p { margin-bottom: 14px; color: var(--text); }
+
+  /* ── TABLES ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead { background: var(--surface2); }
+
+  thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  tbody td {
+    padding: 11px 16px;
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  tbody td:first-child {
+    font-weight: 600;
+    color: var(--accent2);
+    white-space: nowrap;
+    font-size: 13px;
+  }
+
+  tbody td strong { color: var(--accent); }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    display: flex;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin: 18px 0;
+    border: 1px solid;
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  .callout-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .callout-body { flex: 1; }
+  .callout-body strong { display: block; margin-bottom: 4px; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  .callout.pearl {
+    background: rgba(200,169,110,0.06);
+    border-color: rgba(200,169,110,0.25);
+    color: #d4c09a;
+  }
+  .callout.pearl strong { color: var(--gold); }
+
+  .callout.danger {
+    background: rgba(212,104,90,0.06);
+    border-color: rgba(212,104,90,0.25);
+    color: #e09b90;
+  }
+  .callout.danger strong { color: var(--danger); }
+
+  .callout.info {
+    background: rgba(126,184,201,0.06);
+    border-color: rgba(126,184,201,0.25);
+    color: #9fcfdb;
+  }
+  .callout.info strong { color: var(--accent2); }
+
+  .callout.purple-call {
+    background: rgba(168,125,184,0.06);
+    border-color: rgba(168,125,184,0.25);
+    color: #c4a0d4;
+  }
+  .callout.purple-call strong { color: var(--accent3); }
+
+  /* ── NERVE PATHWAY ── */
+  .pathway {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .pathway-title {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pathway-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.04);
+  }
+
+  .pathway-step:last-child { border-bottom: none; }
+
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .step-dot.branch { background: var(--accent2); }
+
+  .step-main { color: var(--text); font-size: 12.5px; line-height: 1.5; }
+  .step-sub { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+  .step-tag {
+    margin-left: 8px;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(200,169,110,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(200,169,110,0.2);
+  }
+
+  .arrow {
+    color: var(--text-dim);
+    padding: 4px 0 4px 20px;
+    font-size: 14px;
+  }
+
+  /* ── KEY POINTS ── */
+  .keypoints {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .keypoints-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--success);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .keypoints-title::before {
+    content: '';
+    display: inline-block;
+    width: 18px; height: 1px;
+    background: var(--success);
+  }
+
+  .kp-item {
+    display: flex;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px;
+  }
+
+  .kp-item:last-child { border-bottom: none; }
+  .kp-check { color: var(--success); flex-shrink: 0; margin-top: 2px; }
+  .kp-text { color: var(--text); line-height: 1.55; }
+
+  /* ── QUIZ ── */
+  .quiz-section {
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(20,24,36,0.8) 100%);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin-top: 48px;
+  }
+
+  .quiz-header {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .quiz-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+
+  .quiz-item {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .quiz-item:last-child { border-bottom: none; }
+  .quiz-item:hover .quiz-q { color: var(--accent); }
+
+  .quiz-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(200,169,110,0.08);
+    border: 1px solid rgba(200,169,110,0.2);
+    padding: 3px 8px;
+    border-radius: 2px;
+    height: fit-content;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .quiz-q {
+    font-size: 14.5px;
+    color: var(--text);
+    transition: color 0.2s;
+    line-height: 1.55;
+  }
+
+  .quiz-answer {
+    display: none;
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: rgba(106,171,130,0.06);
+    border-left: 3px solid var(--success);
+    border-radius: 0 4px 4px 0;
+    font-size: 13.5px;
+    color: #a0c8b0;
+    line-height: 1.6;
+  }
+
+  .quiz-answer.visible { display: block; }
+
+  .quiz-toggle {
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+    user-select: none;
+  }
+
+  .quiz-toggle:hover { color: var(--success); }
+
+  /* ── PARTS GRID ── */
+  .parts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .part-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .part-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .part-card.escamosa::before { background: var(--accent); }
+  .part-card.timpanica::before { background: var(--accent2); }
+  .part-card.petrosa::before { background: var(--accent3); }
+  .part-card.mastoidea::before { background: var(--success); }
+
+  .part-card:hover { border-color: rgba(200,169,110,0.3); transform: translateY(-2px); }
+
+  .part-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .part-latin {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .part-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+
+  .part-card.escamosa .part-badge { background: rgba(200,169,110,0.1); color: var(--accent); border: 1px solid rgba(200,169,110,0.2); }
+  .part-card.timpanica .part-badge { background: rgba(126,184,201,0.1); color: var(--accent2); border: 1px solid rgba(126,184,201,0.2); }
+  .part-card.petrosa .part-badge { background: rgba(168,125,184,0.1); color: var(--accent3); border: 1px solid rgba(168,125,184,0.2); }
+  .part-card.mastoidea .part-badge { background: rgba(106,171,130,0.1); color: var(--success); border: 1px solid rgba(106,171,130,0.2); }
+
+  .part-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── CODE / MONO ── */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    background: rgba(255,255,255,0.06);
+    padding: 2px 7px;
+    border-radius: 3px;
+    color: var(--accent2);
+  }
+
+  /* ── LIST ── */
+  ul, ol {
+    padding-left: 20px;
+    margin-bottom: 14px;
+  }
+
+  li { margin-bottom: 6px; color: var(--text); line-height: 1.6; }
+  li strong { color: var(--accent); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 40px 0;
+  }
+
+  /* ── SCROLL TOP ── */
+  #scrollTop {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 40px; height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 200;
+  }
+
+  #scrollTop.visible { opacity: 1; pointer-events: all; }
+  #scrollTop:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    #sidebar { display: none; }
+    #main { margin-left: 0; }
+    .hero { padding: 48px 24px 40px; }
+    .content { padding: 0 24px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <span class="label">Anatomia — Med Interna</span>
+    <div class="title">Osso Temporal</div>
+  </div>
+
+  <div class="nav-section">Visão Geral</div>
+  <a class="nav-link" href="#overview">Localização & Articulações</a>
+  <a class="nav-link" href="#divisoes">Divisões / Partes</a>
+
+  <div class="nav-section">Partes</div>
+  <a class="nav-link" href="#escamosa">Parte Escamosa</a>
+  <a class="nav-link" href="#timpanica">Parte Timpânica</a>
+  <a class="nav-link" href="#petrosa">Parte Petrosa (Rochedo)</a>
+  <a class="nav-link" href="#estiloide">Processo Estilóide</a>
+  <a class="nav-link" href="#mastoidea">Parte Mastóidea</a>
+
+  <div class="nav-section">Bordos</div>
+  <a class="nav-link" href="#bordos">Margens & Suturas</a>
+
+  <div class="nav-section">Clínica</div>
+  <a class="nav-link" href="#forames">Forames & Canais</a>
+  <a class="nav-link" href="#facial">Trajeto NC VII</a>
+  <a class="nav-link" href="#jugular">Forame Jugular</a>
+  <a class="nav-link" href="#clinica">Relações Clínicas</a>
+
+  <div class="nav-section">Revisão</div>
+  <a class="nav-link" href="#keypoints">Pontos-Chave</a>
+  <a class="nav-link" href="#quiz">Active Recall</a>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">Anatomia Aprofundada · Neurocirurgia & Otolaringologia</div>
+    <h1>Osso <span>Temporal</span></h1>
+    <p class="hero-sub">Faces, margens, partes, acidentes ósseos e importância clínica — abordagem completa e estruturada para domínio real</p>
+    <div class="hero-tags">
+      <span class="hero-tag accent">NC VII · NC VIII · NC IX · X · XI</span>
+      <span class="hero-tag teal">Carótida Interna · Seio Sigmoide</span>
+      <span class="hero-tag purple">Ouvido Médio · Labirinto · ATM</span>
+      <span class="hero-tag">Fratura de Base · Ptérion</span>
+      <span class="hero-tag">Mastoidite · Colesteatoma</span>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="section" id="overview">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2>Visão Geral e Articulações</h2>
+      </div>
+
+      <p>O osso temporal é um osso <strong>par, pneumatizado e de enorme complexidade anatômica</strong>, posicionado na base e na parede lateral do crânio. É considerado um dos ossos mais complexos do corpo humano, abrigando o <strong>órgão vestibulococlear</strong> (ouvido interno), a articulação temporomandibular (ATM), e sendo cruzado por estruturas neurovasculares de importância vital.</p>
+
+      <div class="callout info">
+        <span class="callout-icon">🦴</span>
+        <div class="callout-body">
+          <strong>Articulações do Temporal (5 ossos)</strong>
+          Parietal (superior/posterior) · Occipital (posterior/inferior) · Esfenoide (anterior) · Zigomático (anterior/lateral) · Mandíbula (via ATM)
+        </div>
+      </div>
+    </div>
+
+    <!-- DIVISOES -->
+    <div class="section" id="divisoes">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2>Divisões / Partes do Temporal</h2>
+      </div>
+
+      <p>O osso temporal é classicamente dividido em <strong>4 partes principais</strong> (alguns autores descrevem 5, separando o processo estilóide):</p>
+
+      <div class="parts-grid">
+        <div class="part-card escamosa">
+          <div class="part-badge">Membranosa</div>
+          <div class="part-name">Escamosa</div>
+          <div class="part-latin">Squama temporalis</div>
+          <div class="part-desc">Lateral/superior. Forma a parede lateral do crânio e a fossa temporal.</div>
+        </div>
+        <div class="part-card timpanica">
+          <div class="part-badge">Membranosa</div>
+          <div class="part-name">Timpânica</div>
+          <div class="part-latin">Pars tympanica</div>
+          <div class="part-desc">Ântero-inferior. Forma as paredes do meato acústico externo.</div>
+        </div>
+        <div class="part-card petrosa">
+          <div class="part-badge">Endocondral ★</div>
+          <div class="part-name">Petrosa (Rochedo)</div>
+          <div class="part-latin">Pars petrosa / Pyramis</div>
+          <div class="part-desc">Medial/profunda. A mais complexa. Contém ouvido interno, canal facial e canal carotídeo.</div>
+        </div>
+        <div class="part-card mastoidea">
+          <div class="part-badge">Membranosa</div>
+          <div class="part-name">Mastóidea</div>
+          <div class="part-latin">Processus mastoideus</div>
+          <div class="part-desc">Posterior. Pneumatizada por células aéreas. Contém seio sigmoide.</div>
+        </div>
+      </div>
+
+      <div class="callout pearl">
+        <span class="callout-icon">🔑</span>
+        <div class="callout-body">
+          <strong>Pérola Clínica — Origem Endocondral da Petrosa</strong>
+          A parte petrosa é a única de origem endocondral (as demais são membranosas). Isso explica sua maior densidade radiológica na TC e sua resistência a fraturas. Quando fratura, é sempre evento grave com alto risco de lesão neurovascular.
+        </div>
+      </div>
+    </div>
+
+    <!-- ESCAMOSA -->
+    <div class="section" id="escamosa">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2>Parte Escamosa</h2>
+      </div>
+
+      <div class="subsection">
+        <h3>Faces</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Face</th><th>Características</th></tr></thead>
+            <tbody>
+              <tr><td>Temporal (externa/lateral)</td><td>Lisa, levemente convexa; local de origem do <strong>músculo temporal</strong>; apresenta sulco da a. temporal média</td></tr>
+              <tr><td>Cerebral (interna/medial)</td><td>Côncava; impressões digitiformes (giros cerebrais), sulcos vasculares para artéria meníngea média</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Acidentes Ósseos — Principais</h3>
+
+        <h4>1. Processo Zigomático (Apófise Zigomática)</h4>
+        <p>Projeção anterior que se une ao osso zigomático → forma o <strong>arco zigomático</strong>. Possui três raízes:</p>
+        <ul>
+          <li><strong>Raiz anterior:</strong> forma o <strong>tubérculo articular</strong> (eminência articular da ATM)</li>
+          <li><strong>Raiz posterior:</strong> forma a <strong>crista supramastóidea</strong></li>
+          <li><strong>Raiz medial:</strong> forma o <strong>teto da fossa mandibular</strong></li>
+        </ul>
+        <div class="callout info">
+          <span class="callout-icon">📌</span>
+          <div class="callout-body">
+            <strong>Importância Clínica</strong>
+            Ponto de reparo para craniotomias, acesso à ATM, abordagens à fossa craniana média e reduções cirúrgicas de fraturas zigomáticas.
+          </div>
+        </div>
+
+        <h4>2. Fossa Mandibular (Fossa Glenoide)</h4>
+        <p>Depressão entre o tubérculo articular (anterior) e o processo pós-glenoide (posterior). Recebe o côndilo mandibular. O teto é formado pela escama → osso delgado → pode ser perfurado em traumas da ATM → comunicação com a fossa craniana média.</p>
+
+        <h4>3. Tubérculo Articular (Eminência Articular)</h4>
+        <p>Saliência anterior à fossa mandibular. O côndilo mandibular desliza anteriormente sobre ele durante a abertura bucal.</p>
+        <div class="callout danger">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Pegadinha Clínica</strong>
+            O achatamento ou a ausência do tubérculo articular predispõe à <strong>luxação anterior da mandíbula</strong> — o côndilo passa além da eminência e não retorna. Redução: manobra de Hippocrates.
+          </div>
+        </div>
+
+        <h4>4. Crista Supramastóidea</h4>
+        <p>Crista horizontal posterior ao processo zigomático que separa a fossa temporal da região mastóidea. Referência para craniotomias e localização do antro mastóideo.</p>
+      </div>
+    </div>
+
+    <!-- TIMPANICA -->
+    <div class="section" id="timpanica">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2>Parte Timpânica</h2>
+      </div>
+
+      <p>Forma em <strong>ferradura incompleta</strong> (aberta superiormente pela fissura de Glaser). Constitui a parede anterior, inferior e parte da parede posterior do <strong>meato acústico externo (MAE)</strong>.</p>
+
+      <div class="subsection">
+        <h3>Acidentes Ósseos</h3>
+
+        <h4>1. Meato Acústico Externo (MAE)</h4>
+        <ul>
+          <li>Canal ósseo em direção ao ouvido médio; ~2,5 cm de comprimento</li>
+          <li>Composição: <strong>1/3 lateral cartilaginoso + 2/3 medial ósseo</strong></li>
+          <li>Importância: otoscopia, coleta de material, otite externa, exostose do surfista (hiperostose pelo estímulo de água fria)</li>
+        </ul>
+
+        <h4>2. Fissura Petrotimpânica (Fissura de Glaser)</h4>
+        <p>Fissura entre as partes petrosa e timpânica. Por ela emerge a <strong>corda do tímpano</strong> (ramo do NC VII) ao sair do crânio em direção à língua.</p>
+        <div class="callout danger">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Lesão da Corda do Tímpano</strong>
+            Trauma ou fratura na região → <strong>disgeusia ipsilateral</strong> (alteração do paladar nos 2/3 anteriores da língua) + <strong>xerostomia</strong> (redução da salivação das glândulas submandibular e sublingual). Lembre: a corda do tímpano viaja pelo interior do ouvido médio antes de emergir por aqui.
+          </div>
+        </div>
+
+        <h4>3. Fissura Timpanosquamosa</h4>
+        <p>Entre as partes timpânica e escamosa; local de fusão durante o desenvolvimento. Sem relevância clínica direta no adulto.</p>
+      </div>
+    </div>
+
+    <!-- PETROSA -->
+    <div class="section" id="petrosa">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2>Parte Petrosa (Rochedo)</h2>
+      </div>
+
+      <div class="callout purple-call">
+        <span class="callout-icon">🔬</span>
+        <div class="callout-body">
+          <strong>A Parte Mais Complexa do Temporal</strong>
+          Pirâmide triangular com eixo oblíquo ântero-medial. Vértice aponta para o seio cavernoso (fossa craniana média). Base contígua ao processo mastóideo. Contém: ouvido interno, canal de Falópio (NC VII), canal carotídeo, cóclea, canais semicirculares.
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Face Anterior (Superior) — Voltada para a Fossa Craniana Média</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Acidente</th><th>Descrição</th><th>Importância</th></tr></thead>
+            <tbody>
+              <tr><td>Tegmen tympani</td><td>Teto ósseo delgado do ouvido médio</td><td><strong>Fratura → otorreia de LCR</strong>; colesteatoma pode erodir → abcesso cerebral temporal</td></tr>
+              <tr><td>Eminência arqueada</td><td>Saliência produzida pelo canal semicircular anterior subjacente</td><td>Reparo cirúrgico; orienta posição do labirinto</td></tr>
+              <tr><td>Hiato do n. petroso maior</td><td>Abertura do nervo petroso maior (ramo NC VII, pós-geniculado)</td><td>Lesão → olho seco (glândula lacrimal) + anidrose facial</td></tr>
+              <tr><td>Hiato do n. petroso menor</td><td>Abertura do nervo petroso menor (derivado do NC IX — nervo de Jacobson)</td><td>Segue ao gânglio ótico → glândula parótida</td></tr>
+              <tr><td>Impressão trigeminal</td><td>Depressão no ápice para o gânglio de Gasser (NC V)</td><td>Neuralgia do trigêmeo, lesões expansivas no ápice da petrosa</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Face Posterior — Voltada para a Fossa Craniana Posterior</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Acidente</th><th>Descrição</th><th>Importância</th></tr></thead>
+            <tbody>
+              <tr><td>Meato Acústico Interno (MAI)</td><td>Abertura ~1 cm de diâmetro</td><td>Contém NC VII, NC VIII (coclear + vestibular sup. + inf.) e <strong>artéria labiríntica</strong> (ramo da AICA)</td></tr>
+              <tr><td>Fóvea subarcuata</td><td>Pequena depressão acima do MAI</td><td>Vestigio do saco endolinfático; referência cirúrgica</td></tr>
+              <tr><td>Aqueduto do vestíbulo</td><td>Abertura do ducto endolinfático</td><td>Comunica labirinto membranoso com espaço subaracnóideo; alargamento → hidrops endolinfático (Ménière)</td></tr>
+              <tr><td>Aqueduto da cóclea</td><td>Mais inferior; canal do ducto perilinfático</td><td>Comunica escala timpânica com espaço subaracnóideo</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout pearl">
+          <span class="callout-icon">🔑</span>
+          <div class="callout-body">
+            <strong>Conteúdo do MAI — Alto Rendimento</strong>
+            NC VII (anterior-superior) · N. vestibular superior (posterior-superior) · N. coclear (anterior-inferior) · N. vestibular inferior (posterior-inferior) · Artéria labiríntica. Mnemônico para ordem: "VII Cima-Frente, Cóclea Baixo-Frente". Tumor aqui (schwannoma vestibular): surdez + zumbido + vertigem progressiva.
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Face Inferior (Externa) — Voltada para a Base do Crânio Externamente</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Acidente</th><th>Descrição</th><th>Importância</th></tr></thead>
+            <tbody>
+              <tr><td>Processo estilóide</td><td>Projeção longa e fina (ver seção própria)</td><td>Buquê de Riolano; Síndrome de Eagle</td></tr>
+              <tr><td>Forame estilomastóideo</td><td>Entre processo estilóide e mastóide</td><td><strong>Saída do NC VII do crânio</strong>; lesão → paralisia facial periférica</td></tr>
+              <tr><td>Fóvea jugular (fossa jugular)</td><td>Depressão que forma o teto do bulbo superior da veia jugular interna</td><td>Tromboflebite do bulbo jugular; paraganglioma jugulotimpânico</td></tr>
+              <tr><td>Canal carotídeo</td><td>Canal que transmite a ACI em seu segmento petroso</td><td>Aneurisma intracavernoso, fístula carótido-cavernosa, dissecção</td></tr>
+              <tr><td>Canalículo timpânico</td><td>Transmite o nervo de Jacobson (ramo NC IX)</td><td>Origem do nervo petroso menor → parotidite após cirurgia (síndrome de Frey)</td></tr>
+              <tr><td>Canalículo mastóideo</td><td>Ramo auricular do NC X (nervo de Arnold)</td><td>Reflexo de tosse ao limpar o MAE; herpes zoster auricular</td></tr>
+              <tr><td>Fissura petrotimpânica</td><td>Saída da corda do tímpano</td><td>Ageusia + xerostomia ipsilateral se lesada</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Ápice da Petrosa</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Estrutura</th><th>Conteúdo / Relação</th></tr></thead>
+            <tbody>
+              <tr><td>Forame lácero</td><td>Pseudoforame preenchido por fibrocartilagem em vida; <strong>cruzado superiormente pela ACI</strong> ao entrar no canal cavernoso</td></tr>
+              <tr><td>Canal carotídeo (entrada)</td><td>Artéria carótida interna entra na base do crânio aqui, em direção vertical, depois curva ântero-medialmente</td></tr>
+              <tr><td>Impressão trigeminal</td><td>Gânglio de Gasser (NC V) — petrosite de Gradenigo: otite média → petrosite → NC VI (diplopia) + NC V (dor facial) + NC VII (paralisia)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout danger">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Síndrome de Gradenigo — Não Esqueça!</strong>
+            Tríade clássica: <strong>otorreia + diplopia (NC VI) + dor facial (NC V)</strong>. Mecanismo: otite média → petrosite apical → inflamação dos nervos adjacentes ao ápice. Raro hoje em dia com antibioticoterapia, mas ainda cobrado em provas.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTILOIDE -->
+    <div class="section" id="estiloide">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2>Processo Estilóide</h2>
+      </div>
+
+      <p>Projeção cilíndrica e delgada de comprimento variável (média 2–3 cm, pode chegar a 7–8 cm). Origem embriológica: <strong>2º arco branquial (cartilagem de Reichert)</strong>.</p>
+
+      <div class="subsection">
+        <h3>Buquê de Riolano — Inserções</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Estrutura</th><th>Tipo</th><th>Função / Importância</th></tr></thead>
+            <tbody>
+              <tr><td>M. estiloioideo</td><td>Músculo</td><td>Elevação do hioide durante deglutição</td></tr>
+              <tr><td>M. estiloglosso</td><td>Músculo</td><td>Retração e elevação da língua</td></tr>
+              <tr><td>M. estilofaríngeo</td><td>Músculo (NC IX)</td><td>Elevação da faringe na deglutição</td></tr>
+              <tr><td>Lig. estilomandibular</td><td>Ligamento</td><td>Une processo estilóide ao ângulo da mandíbula</td></tr>
+              <tr><td>Lig. estilo-hióideo</td><td>Ligamento</td><td>Une processo estilóide ao corno menor do hioide</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="callout pearl">
+        <span class="callout-icon">🔑</span>
+        <div class="callout-body">
+          <strong>Síndrome de Eagle</strong>
+          Processo estilóide elongado (&gt;3 cm) ou calcificação do lig. estilo-hióideo → dor faríngea, odinofagia, sensação de corpo estranho na garganta, dor cervical irradiada para o ouvido. Diagnóstico: <strong>TC</strong> (panorâmica pode sugestionar). Tratamento: ressecção cirúrgica (abordagem intraoral ou cervical).
+        </div>
+      </div>
+    </div>
+
+    <!-- MASTOIDEA -->
+    <div class="section" id="mastoidea">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2>Parte Mastóidea</h2>
+      </div>
+
+      <p>Projeção posterior e inferior, <strong>pneumatizada</strong> por células aéreas mastóideas que comunicam com o ouvido médio via <strong>antro mastóideo</strong>. Desenvolve-se apenas após o nascimento — no recém-nascido está ausente, tornando o NC VII mais superficial e suscetível a lesões no parto.</p>
+
+      <div class="subsection">
+        <h3>Faces</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Face</th><th>Conteúdo / Características</th></tr></thead>
+            <tbody>
+              <tr><td>Lateral (externa)</td><td>Rugosa; inserção do <strong>ECM (esternocleidomastóideo)</strong>; forame mastóideo (veia emissária mastóidea + ramo meníngeo da a. occipital)</td></tr>
+              <tr><td>Medial (cerebral)</td><td><strong>Sulco sigmoide</strong> (seio venoso sigmoide); sulco do seio petroso inferior; impressões cerebelosas</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Acidentes Ósseos</h3>
+
+        <h4>1. Processo Mastóideo</h4>
+        <p>Projeção inferior palpável posterior à orelha. Inserção de: ECM, músculo esplênio da cabeça, músculo longuíssimo da cabeça.</p>
+        <div class="callout danger">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Sinal de Battle</strong>
+            Equimose retroauricular sobre o processo mastóideo → indica <strong>fratura da base do crânio</strong> (petrosa/mastóide). Aparece com 24–48h de latência (não é imediato!). Cobra-se nas provas a diferença com os "olhos de guaxinim" (fratura da fossa anterior).
+          </div>
+        </div>
+
+        <h4>2. Incisura Mastóidea (Incisura Digástrica)</h4>
+        <p>Sulco medial ao processo mastóideo. Inserção do <strong>ventre posterior do músculo digástrico</strong>. Referência cirúrgica no acesso à mastóide.</p>
+
+        <h4>3. Sulco da Artéria Occipital</h4>
+        <p>Medial à incisura digástrica. Aloja a artéria occipital (ramo da a. carótida externa).</p>
+
+        <h4>4. Canal do Nervo Facial (Canal de Falópio)</h4>
+        <p>Canal intrapetroso que conduz o NC VII em três segmentos: labiríntico → timpânico → mastóideo. O canal está separado do ouvido médio por uma delgada parede óssea que pode ser dehiscente em variantes normais, favorecendo lesão do facial em cirurgias do ouvido médio.</p>
+
+        <h4>5. Antro Mastóideo</h4>
+        <p>Maior célula aérea mastóidea, diretamente posterior e superior ao ouvido médio, comunicando-se com ele pelo <strong>ádito do antro</strong>.</p>
+        <div class="callout danger">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Mastoidite Aguda</strong>
+            Otite média aguda → infecção propaga-se ao antro → <strong>mastoidite</strong>: dor e eritema retroauricular, deslocamento anterior/inferior do pavilhão auricular, febre. Complicações: abcesso subperiosteal, trombose do seio sigmoide, meningite, abcesso cerebral, paralisia facial.
+          </div>
+        </div>
+
+        <h4>6. Sulco Sigmoide (Face Medial)</h4>
+        <p>Sulco profundo na face cerebral/medial da mastóide que aloja o <strong>seio venoso sigmoide</strong> (continuação do seio transverso, drena na veia jugular interna).</p>
+        <div class="callout danger">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Trombose do Seio Sigmoide</strong>
+            Complicação grave da mastoidite. Apresentação: febre em picos ("fever spikes" em fogueira), cefaleia, síndrome de hipertensão intracraniana. Diagnóstico: RM/angioRM ou TC com contraste. Tratamento: mastoidectomia + antibioticoterapia + anticoagulação (controversa).
+          </div>
+        </div>
+
+        <h4>7. Forame Mastóideo</h4>
+        <p>Localizado na face lateral/posterior. Transmite a <strong>veia emissária mastóidea</strong> (comunica o seio sigmoide com as veias do escalpe) e um ramo da artéria occipital. Via de transmissão de infecções do escalpe ao seio sigmoide (tromboflebite retrógrada).</p>
+      </div>
+    </div>
+
+    <!-- BORDOS -->
+    <div class="section" id="bordos">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2>Bordos / Margens e Suturas</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Bordo</th><th>Articula com</th><th>Sutura / Característica</th><th>Importância</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Superior (parietal)</td>
+              <td>Osso parietal</td>
+              <td><strong>Sutura escamosa</strong> (bisel — temporal sobrepõe o parietal)</td>
+              <td>Região do <strong>ptérion</strong>; bisel aumenta risco de laceração da a. meníngea média em trauma</td>
+            </tr>
+            <tr>
+              <td>Posterior</td>
+              <td>Osso occipital</td>
+              <td>Sutura occipitomastóidea; inclui incisura jugular</td>
+              <td>Forma o forame jugular junto ao occipital</td>
+            </tr>
+            <tr>
+              <td>Anterior (escamoso)</td>
+              <td>Osso esfenoide (grande asa)</td>
+              <td>Sutura esfenossquamosa</td>
+              <td>Parte do ptérion; região do pteríon é a mais frágil do crânio</td>
+            </tr>
+            <tr>
+              <td>Anterior (petroso)</td>
+              <td>Esfenoide (corpo)</td>
+              <td>Sutura esfenopetrosa</td>
+              <td>Fissura petro-occipital e forame lácero na junção</td>
+            </tr>
+            <tr>
+              <td>Inferior</td>
+              <td>Livre (base do crânio)</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout pearl">
+        <span class="callout-icon">🔑</span>
+        <div class="callout-body">
+          <strong>Ptérion — Alta Relevância em Provas!</strong>
+          Junção das suturas frontal, parietal, temporal e esfenoide — ponto mais delgado do crânio (~2–3 mm). Por baixo passa a <strong>artéria meníngea média</strong>. Trauma (ex.: fratura por golpe na têmpora) → ruptura da artéria → <strong>hematoma extradural (epidural)</strong>. TC: imagem lenticular hiperdensa. "Lucid interval" clássico. Neurocirurgia de urgência.
+        </div>
+      </div>
+    </div>
+
+    <!-- FORAMES -->
+    <div class="section" id="forames">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2>Forames e Canais — Tabela de Alto Rendimento</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Forame / Canal</th><th>Conteúdo</th><th>Parte do Temporal</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Meato acústico externo (MAE)</td><td>Conduz ao tímpano</td><td>Timpânica</td></tr>
+            <tr><td>Meato acústico interno (MAI)</td><td>NC VII, NC VIII (coclear + vestibular), a. labiríntica</td><td>Petrosa (face posterior)</td></tr>
+            <tr><td>Forame estilomastóideo</td><td><strong>NC VII (saída do crânio)</strong></td><td>Entre petrosa e mastóidea</td></tr>
+            <tr><td>Canal carotídeo</td><td>A. carótida interna, plexo simpático pericarotídeo</td><td>Petrosa (ápice/face inferior)</td></tr>
+            <tr><td>Fóvea jugular / Forame jugular</td><td>V. jugular interna, NC IX, NC X, NC XI</td><td>Petrosa (face inf.) + occipital</td></tr>
+            <tr><td>Hiato do n. petroso maior</td><td>N. petroso maior (ramo NC VII — fibras parassimpáticas)</td><td>Petrosa (face anterior)</td></tr>
+            <tr><td>Hiato do n. petroso menor</td><td>N. petroso menor (ramo NC IX — fibras parassimpáticas)</td><td>Petrosa (face anterior)</td></tr>
+            <tr><td>Aqueduto do vestíbulo</td><td>Ducto endolinfático</td><td>Petrosa (face posterior)</td></tr>
+            <tr><td>Aqueduto da cóclea</td><td>Ducto perilinfático</td><td>Petrosa (face posterior inferior)</td></tr>
+            <tr><td>Canalículo timpânico</td><td>N. de Jacobson (ramo NC IX)</td><td>Petrosa (face inferior)</td></tr>
+            <tr><td>Fissura petrotimpânica (Glaser)</td><td>Corda do tímpano (ramo NC VII)</td><td>Entre petrosa e timpânica</td></tr>
+            <tr><td>Canal de Falópio (facial)</td><td>NC VII (trajeto intrapetroso)</td><td>Petrosa / mastóidea</td></tr>
+            <tr><td>Forame mastóideo</td><td>V. emissária mastóidea, ramo meníngeo a. occipital</td><td>Mastóidea</td></tr>
+            <tr><td>Canalículo mastóideo</td><td>N. auricular (ramo NC X — nervo de Arnold)</td><td>Petrosa (face inferior)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FACIAL -->
+    <div class="section" id="facial">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2>Trajeto do NC VII (Nervo Facial) no Temporal</h2>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">🧠</span>
+        <div class="callout-body">
+          <strong>Por Que Isso É Crítico</strong>
+          O NC VII percorre ~3 cm dentro do osso temporal — o mais longo trajeto intrapetroso de qualquer nervo craniano. Qualquer lesão ao longo desse trajeto produz padrões distintos de déficit que permitem localizar topograficamente o nível da lesão.
+        </div>
+      </div>
+
+      <div class="pathway">
+        <div class="pathway-title">Trajeto Intrapetroso do NC VII — Segmentos e Ramos</div>
+
+        <div class="pathway-step">
+          <div class="step-dot"></div>
+          <div>
+            <div class="step-main">Meato Acústico Interno (MAI) <span class="step-tag">Entrada</span></div>
+            <div class="step-sub">Entra junto com NC VIII e artéria labiríntica</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="pathway-step">
+          <div class="step-dot"></div>
+          <div>
+            <div class="step-main">Segmento Labiríntico</div>
+            <div class="step-sub">Mais curto e mais estreito (~3 mm). Sem ramos. Entre MAI e gânglio geniculado.</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="pathway-step">
+          <div class="step-dot branch"></div>
+          <div>
+            <div class="step-main">Gânglio Geniculado (1ª curva / genu) <span class="step-tag">Ramo: N. Petroso Maior</span></div>
+            <div class="step-sub">Emite o nervo petroso maior → gânglio pterigopalatino → glândula lacrimal, mucosa nasal, palatina. Lesão aqui: paralisia facial + olho seco + ageusia + hiperacusia.</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="pathway-step">
+          <div class="step-dot branch"></div>
+          <div>
+            <div class="step-main">Segmento Timpânico <span class="step-tag">Ramo: N. do Estapédio</span></div>
+            <div class="step-sub">Corre sobre a parede medial do ouvido médio sob o tegmen. Emite ramo para m. estapédico. Lesão: hiperacusia (reflexo estapédico ausente).</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="pathway-step">
+          <div class="step-dot"></div>
+          <div>
+            <div class="step-main">2ª Curva (Joelho Posterior)</div>
+            <div class="step-sub">Curva posterior e inferior rumo ao segmento mastóideo.</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="pathway-step">
+          <div class="step-dot branch"></div>
+          <div>
+            <div class="step-main">Segmento Mastóideo <span class="step-tag">Ramo: Corda do Tímpano</span></div>
+            <div class="step-sub">Desce verticalmente pela mastóide. Emite corda do tímpano → fissura petrotimpânica → língua (2/3 anteriores: paladar + fibras parassimpáticas para submandibular/sublingual).</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="pathway-step">
+          <div class="step-dot"></div>
+          <div>
+            <div class="step-main">Forame Estilomastóideo <span class="step-tag">Saída do Crânio</span></div>
+            <div class="step-sub">NC VII emerge do crânio e entra na loja parotídea.</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+
+        <div class="pathway-step">
+          <div class="step-dot branch"></div>
+          <div>
+            <div class="step-main">Ramos Terminais (na parótida)</div>
+            <div class="step-sub">Temporal · Zigomático · Bucal · Marginal mandibular · Cervical. Mnemônico: "To Zanzibar By Motor Car"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Localização Topográfica da Lesão do NC VII</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Nível da Lesão</th><th>Quadro Clínico</th><th>Causa Típica</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>MAI / Ângulo pontocerebelar</td><td>Paralisia facial + surdez neurossensorial + vertigem</td><td>Schwannoma vestibular, meningioma</td></tr>
+              <tr><td>Gânglio geniculado</td><td>Paralisia facial + olho seco + ageusia + hiperacusia</td><td><strong>Síndrome de Ramsay-Hunt</strong> (herpes zoster), fratura petrosa</td></tr>
+              <tr><td>Segmento timpânico</td><td>Paralisia facial + hiperacusia + ageusia (sem olho seco)</td><td>Colesteatoma, otite média crônica</td></tr>
+              <tr><td>Abaixo da corda do tímpano</td><td>Paralisia facial isolada (sem hiperacusia, sem ageusia)</td><td>Fratura mastóidea, cirurgia</td></tr>
+              <tr><td>Forame estilomastóideo / distal</td><td>Paralisia facial motora pura</td><td>Paralisia de Bell, parotidite, tumor parotídeo</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- JUGULAR -->
+    <div class="section" id="jugular">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <h2>Forame Jugular — Anatomia e Síndromes</h2>
+      </div>
+
+      <p>Formado pela <strong>incisura jugular do temporal</strong> (anterior/lateral) + incisura jugular do occipital (posterior/medial). Dividido em dois compartimentos: <strong>petroso</strong> (anteromedial — nervos) e <strong>sigmoide</strong> (posterolateral — veia).</p>
+
+      <div class="callout info">
+        <span class="callout-icon">📋</span>
+        <div class="callout-body">
+          <strong>Conteúdo do Forame Jugular — Mnemônico "GVA"</strong>
+          (de medial/anterior para lateral/posterior)<br>
+          <strong>G</strong>lossofaríngeo (NC IX) — compartimento petroso<br>
+          <strong>V</strong>ago (NC X)<br>
+          <strong>A</strong>cessório (NC XI)<br>
+          + Veia jugular interna (maior estrutura, compartimento sigmoide)
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Síndromes do Forame Jugular</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Síndrome</th><th>Nervos Lesados</th><th>Manifestações</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Vernet</strong> (forame jugular)</td><td>NC IX + X + XI</td><td>Disfagia, disfonia, paralisia do véu palatino, fraqueza do ECM e trapézio ipsilaterais</td></tr>
+              <tr><td><strong>Collet-Sicard</strong></td><td>NC IX + X + XI + XII</td><td>Vernet + paralisia ipsilateral da língua (desvio para o lado lesado)</td></tr>
+              <tr><td><strong>Villaret</strong></td><td>NC IX + X + XI + XII + simpático cervical</td><td>Collet-Sicard + síndrome de Horner ipsilateral</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout pearl">
+          <span class="callout-icon">🔑</span>
+          <div class="callout-body">
+            <strong>Paraganglioma Jugulotimpânico (Glomus Jugulare)</strong>
+            Tumor mais comum do forame jugular. Apresentação: zumbido pulsátil, surdez condutiva, massa atrás da membrana timpânica ("massa vermelha"). Pode causar síndrome de Vernet. Diagnóstico: TC + RM + angiografia. Tratamento: embolização + cirurgia ± radioterapia.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLINICA -->
+    <div class="section" id="clinica">
+      <div class="section-header">
+        <span class="section-num">12</span>
+        <h2>Relações Clínicas de Alto Rendimento</h2>
+      </div>
+
+      <div class="subsection">
+        <h3>Fratura da Base do Crânio — Parte Petrosa</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Tipo</th><th>Direção</th><th>Frequência</th><th>Achados Clínicos</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Longitudinal</strong></td>
+                <td>Paralela ao eixo da petrosa</td>
+                <td>+comum (~80%)</td>
+                <td>Hemotímpano, ruptura timpânica, surdez condutiva, lesão da corda do tímpano (ageusia), otorreia de LCR, paralisia facial tardia (20%)</td>
+              </tr>
+              <tr>
+                <td><strong>Transversal</strong></td>
+                <td>Perpendicular ao eixo da petrosa</td>
+                <td>~20%</td>
+                <td><strong>Surdez neurossensorial permanente</strong>, paralisia facial periférica imediata (50%), vertigem grave, hemotímpano sem perfuração, fístula perilinfática</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout danger">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <strong>Sinais Físicos de Fratura da Base</strong>
+            Sinal de Battle (equimose mastóidea — fratura petrosa/mastóide, surge em 24–48h) · Olhos de guaxinim/raccoon eyes (equimose periorbital bilateral — fratura da fossa anterior) · Hemotímpano · Otorreia/Rinorreia de LCR (confirmar com β2-transferrina ou "halo sign" no curativo)
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Colesteatoma</h3>
+        <p>Cisto de epitélio escamoso queratinizante no ouvido médio ou mastóide que cresce por descamação e <strong>erode estruturas ósseas</strong> por enzimas líticas. Pode ser congênito ou adquirido (via bolsa de retração).</p>
+        <ul>
+          <li>Erosão da parede do canal facial → <strong>paralisia facial</strong></li>
+          <li>Erosão do tegmen tympani → <strong>meningite, abcesso cerebral temporal</strong></li>
+          <li>Erosão do labirinto → <strong>fístula labiríntica, surdez, vertigem</strong></li>
+          <li>Erosão da parede do seio sigmoide → <strong>trombose, sepse</strong></li>
+        </ul>
+        <div class="callout info">
+          <span class="callout-icon">📌</span>
+          <div class="callout-body">
+            <strong>Diagnóstico e Tratamento</strong>
+            TC de ossos temporais (avalia erosões), RM (avalia extensão intracraniana, DWI positivo em colesteatoma — restrição à difusão). Tratamento: mastoidectomia (canal wall up ou canal wall down).
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Schwannoma Vestibular (Neurinoma do Acústico)</h3>
+        <p>Tumor benigno das células de Schwann do nervo vestibular no MAI / ângulo pontocerebelar. Representa ~90% dos tumores do MAI.</p>
+        <ul>
+          <li><strong>1º sintoma:</strong> surdez neurossensorial unilateral progressiva (principalmente para altas frequências)</li>
+          <li>Zumbido unilateral, desequilíbrio leve, hiperacusia</li>
+          <li>Grande porte → paralisia facial, NC V (dormência facial), hidrocefalia</li>
+        </ul>
+        <div class="callout pearl">
+          <span class="callout-icon">🔑</span>
+          <div class="callout-body">
+            <strong>Diagnóstico e Tratamento</strong>
+            <strong>RM com gadolínio</strong> é o padrão-ouro (realce no MAI). ABR (BERA) alterado. Tratamento: observação (pequenos, idosos), radiocirurgia estereotáxica (Gamma Knife) ou ressecção cirúrgica (via translabintine, retrossigmoide ou fossa média).
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>Ptérion e Hematoma Extradural</h3>
+        <p>O ptérion é a junção das suturas esfenoide, frontal, parietal e temporal — ponto mais delgado do crânio (~2–3 mm). Abaixo passa a <strong>artéria meníngea média</strong> (ramo da a. maxilar interna). Trauma lateral → fratura linear → ruptura arterial → <strong>hematoma extradural (epidural)</strong>.</p>
+        <ul>
+          <li>TC: imagem <strong>lenticular hiperdensa</strong> (bicôncava/biconvexa), não cruza suturas</li>
+          <li>Clínica: trauma → "intervalo lúcido" → deterioração neurológica progressiva (herniação uncal)</li>
+          <li>Tratamento: craniotomia de urgência + hemostasia</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- KEY POINTS -->
+    <div class="section" id="keypoints">
+      <div class="section-header">
+        <span class="section-num">13</span>
+        <h2>Pontos-Chave & Revisão Rápida</h2>
+      </div>
+
+      <div class="keypoints">
+        <div class="keypoints-title">Revisão de Alta Eficiência</div>
+
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text">O temporal tem <strong>4 partes</strong>: escamosa, timpânica, petrosa e mastóidea. A petrosa é a única de origem <strong>endocondral</strong>.</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text">NC VII percorre todo o <strong>canal de Falópio</strong> dentro do temporal e sai pelo <strong>forame estilomastóideo</strong>. O nível da lesão determina o padrão clínico.</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text">NC VIII entra pelo MAI mas <strong>não sai do temporal</strong> — termina no labirinto ósseo (cóclea + canais semicirculares).</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text"><strong>Ptérion</strong> = ponto mais fraco do crânio → artéria meníngea média → hematoma extradural (lenticular, intervalo lúcido).</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text"><strong>Sinal de Battle</strong> = fratura petrosa/mastóidea. Aparece com 24–48h. Diferente dos "olhos de guaxinim" (fratura da fossa anterior).</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text">Forame jugular: <strong>NC IX + X + XI + Veia jugular interna</strong>. Mnemônico GVA (Glossofaríngeo, Vago, Acessório).</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text"><strong>Fissura petrotimpânica (Glaser)</strong> → corda do tímpano → lesão = ageusia nos 2/3 anteriores da língua + xerostomia.</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text">Fratura longitudinal da petrosa (80%): surdez condutiva, hemotímpano, otorreia de LCR. Fratura transversal (20%): surdez neurossensorial permanente, paralisia facial imediata.</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text"><strong>Processo estilóide elongado (&gt;3 cm) → Síndrome de Eagle</strong>: dor faríngea, odinofagia, sensação de corpo estranho. TC diagnóstica.</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text"><strong>Tegmen tympani</strong>: teto delgado do ouvido médio na face anterior da petrosa. Fratura ou erosão por colesteatoma → risco de meningite e abcesso cerebral temporal.</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text">MAI contém NC VII + NC VIII (coclear + vestibular sup. + inf.) + artéria labiríntica. Schwannoma vestibular: 1º sintoma = surdez unilateral progressiva. RM com gadolínio.</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text"><strong>Síndrome de Gradenigo</strong>: petrosite apical = otorreia + diplopia (NC VI) + dor facial (NC V). Complicação de otite média antes dos antibióticos.</div>
+        </div>
+        <div class="kp-item">
+          <span class="kp-check">✓</span>
+          <div class="kp-text">Mastoidite aguda → pode complicar com trombose do seio sigmoide (febre em picos "em fogueira", cefaleia, HIC). Tratamento: mastoidectomia + ATB ± anticoagulação.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="section" id="quiz">
+      <div class="section-header">
+        <span class="section-num">14</span>
+        <h2>Active Recall — Questões Clínicas</h2>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">Teste Seu Conhecimento</div>
+        <div class="quiz-sub">Clique em "ver resposta" para revelar. Tente responder antes!</div>
+
+        <div class="quiz-item">
+          <div class="quiz-num">Q01</div>
+          <div>
+            <div class="quiz-q">Quais nervos cranianos saem pelo forame jugular? Qual estrutura vascular também passa? Como diferenciar a síndrome de Vernet da de Collet-Sicard?</div>
+            <div class="quiz-toggle" onclick="toggleAnswer(this)">▶ ver resposta</div>
+            <div class="quiz-answer">NC IX (glossofaríngeo), NC X (vago) e NC XI (acessório) + veia jugular interna. Síndrome de Vernet = IX+X+XI (disfagia, disfonia, paralisia do ECM/trapézio). Collet-Sicard adiciona NC XII → paralisia da língua ipsilateral (desvio para o lado lesado). Villaret adiciona síndrome de Horner.</div>
+          </div>
+        </div>
+
+        <div class="quiz-item">
+          <div class="quiz-num">Q02</div>
+          <div>
+            <div class="quiz-q">Qual o trajeto do NC VII dentro do osso temporal? Quais ramos emite em cada segmento? Como a localização da lesão determina o quadro clínico?</div>
+            <div class="quiz-toggle" onclick="toggleAnswer(this)">▶ ver resposta</div>
+            <div class="quiz-answer">MAI → seg. labiríntico → gânglio geniculado (emite n. petroso maior → lacrimação/mucosa nasal) → seg. timpânico (emite ramo para m. estapédico → hiperacusia se lesado) → joelho posterior → seg. mastóideo (emite corda do tímpano → ageusia + xerostomia) → forame estilomastóideo → ramos terminais. Quanto mais proximal a lesão, mais completo o déficit (motor + sensitivo + autonômico).</div>
+          </div>
+        </div>
+
+        <div class="quiz-item">
+          <div class="quiz-num">Q03</div>
+          <div>
+            <div class="quiz-q">O que é o tegmen tympani? Onde se localiza? Quais as implicações de sua fratura ou erosão?</div>
+            <div class="quiz-toggle" onclick="toggleAnswer(this)">▶ ver resposta</div>
+            <div class="quiz-answer">Lâmina óssea muito delgada que forma o teto do ouvido médio, localizada na face anterior (superior) da parte petrosa do temporal, voltada para a fossa craniana média. Fratura: otorreia de LCR. Erosão por colesteatoma: pode levar a meningite, encefalite e abcesso cerebral temporal por contiguidade.</div>
+          </div>
+        </div>
+
+        <div class="quiz-item">
+          <div class="quiz-num">Q04</div>
+          <div>
+            <div class="quiz-q">Por qual canal passa a artéria carótida interna dentro do temporal? Qual o seu trajeto neste segmento?</div>
+            <div class="quiz-toggle" onclick="toggleAnswer(this)">▶ ver resposta</div>
+            <div class="quiz-answer">A ACI entra pelo canal carotídeo na face inferior da parte petrosa, faz uma curva em "J" invertido (1º segmento vertical, depois horizontal e ântero-medial) e emerge pelo ápice da petrosa próximo ao forame lácero, entrando no seio cavernoso. Importante: o canal carotídeo separa a ACI do ouvido médio apenas por parede óssea delgada — aneurisma ou tumor erosivo pode mimetizar massa pulsátil no ouvido.</div>
+          </div>
+        </div>
+
+        <div class="quiz-item">
+          <div class="quiz-num">Q05</div>
+          <div>
+            <div class="quiz-q">O que é o ptérion e por que é clinicamente importante? Qual o mecanismo do hematoma extradural?</div>
+            <div class="quiz-toggle" onclick="toggleAnswer(this)">▶ ver resposta</div>
+            <div class="quiz-answer">Ptérion é a junção das suturas frontal, parietal, escamosa (temporal) e esfenoide — ponto mais delgado do crânio (~2–3 mm). Por baixo passa a artéria meníngea média (ramo da a. maxilar interna). Trauma lateral → fratura linear no ptérion → laceração arterial → sangramento entre a tábua interna e a dura-máter (hematoma extradural). Clínica: interavalo lúcido pós-trauma seguido de deterioração. TC: imagem lenticular hiperdensa biconvexa, não cruza suturas. Emergência neurocirúrgica.</div>
+          </div>
+        </div>
+
+        <div class="quiz-item">
+          <div class="quiz-num">Q06</div>
+          <div>
+            <div class="quiz-q">Compare fratura longitudinal vs. transversal da petrosa em termos de frequência, achados e prognóstico auditivo.</div>
+            <div class="quiz-toggle" onclick="toggleAnswer(this)">▶ ver resposta</div>
+            <div class="quiz-answer">Longitudinal (~80%): paralela ao eixo da petrosa, por trauma temporal. Surdez condutiva (hemotímpano, ruptura timpânica), ageusia (corda do tímpano), otorreia de LCR; paralisia facial em ~20% (geralmente tardia e recuperável). Prognóstico auditivo bom com tratamento. Transversal (~20%): perpendicular ao eixo, por trauma occipital/frontal. Atravessa labirinto → surdez neurossensorial permanente, vertigem grave, nistagmo, paralisia facial imediata em ~50% (pior prognóstico). Hemotímpano sem perfuração da membrana.</div>
+          </div>
+        </div>
+
+        <div class="quiz-item">
+          <div class="quiz-num">Q07</div>
+          <div>
+            <div class="quiz-q">Quais as 5 estruturas que se inserem no processo estilóide (Buquê de Riolano)? O que é a Síndrome de Eagle?</div>
+            <div class="quiz-toggle" onclick="toggleAnswer(this)">▶ ver resposta</div>
+            <div class="quiz-answer">Músculos: estiloioideo, estiloglosso e estilofaríngeo. Ligamentos: estilomandibular e estilo-hióideo. Síndrome de Eagle: processo estilóide elongado (>3 cm) ou calcificação do lig. estilo-hióideo → dor faríngea, odinofagia, sensação de corpo estranho, dor cervical irradiada ao ouvido. Diagnóstico por TC. Tratamento cirúrgico (ressecção).</div>
+          </div>
+        </div>
+
+        <div class="quiz-item">
+          <div class="quiz-num">Q08</div>
+          <div>
+            <div class="quiz-q">Qual nervo passa pela fissura petrotimpânica? Qual sua origem, trajeto e função? O que ocorre se for lesado?</div>
+            <div class="quiz-toggle" onclick="toggleAnswer(this)">▶ ver resposta</div>
+            <div class="quiz-answer">A corda do tímpano, ramo do NC VII, origina-se no segmento mastóideo do canal facial, atravessa o ouvido médio entre o martelo e a bigorna, emerge pelo canalículo da corda do tímpano e sai pelo crânio pela fissura petrotimpânica (fissura de Glaser), juntando-se ao nervo lingual (ramo do NC V3). Funções: gustativa nos 2/3 anteriores da língua + fibras parassimpáticas para glândulas submandibular e sublingual. Lesão: ageusia ipsilateral nos 2/3 anteriores da língua + xerostomia parcial.</div>
+          </div>
+        </div>
+
+        <div class="quiz-item">
+          <div class="quiz-num">Q09</div>
+          <div>
+            <div class="quiz-q">Onde se insere o ventre posterior do músculo digástrico no temporal? Qual a importância desse reparo?</div>
+            <div class="quiz-toggle" onclick="toggleAnswer(this)">▶ ver resposta</div>
+            <div class="quiz-answer">Na incisura mastóidea (incisura digástrica), sulco medial ao processo mastóideo. Importância cirúrgica: é referência anatômica durante a mastoidectomia para localizar o nervo facial — o forame estilomastóideo (saída do NC VII) está logo medial e ligeiramente anterior à incisura digástrica.</div>
+          </div>
+        </div>
+
+        <div class="quiz-item">
+          <div class="quiz-num">Q10</div>
+          <div>
+            <div class="quiz-q">Quais estruturas passam pelo meato acústico interno (MAI)? Qual tumor mais frequente nesta região? Qual o primeiro sintoma e o exame de escolha?</div>
+            <div class="quiz-toggle" onclick="toggleAnswer(this)">▶ ver resposta</div>
+            <div class="quiz-answer">NC VII (anterior-superior), nervo vestibular superior (posterior-superior), nervo coclear (anterior-inferior), nervo vestibular inferior (posterior-inferior) e artéria labiríntica. Tumor mais frequente: schwannoma vestibular (neurinoma do acústico), originado das células de Schwann do nervo vestibular. 1º sintoma: surdez neurossensorial unilateral progressiva (especialmente para altas frequências). Exame de escolha: RM com gadolínio (realce no MAI).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // Scroll top button
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scrollTop');
+    btn.classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // Quiz toggle
+  function toggleAnswer(el) {
+    const answer = el.nextElementSibling;
+    const isVisible = answer.classList.contains('visible');
+    answer.classList.toggle('visible', !isVisible);
+    el.textContent = isVisible ? '▶ ver resposta' : '▼ ocultar';
+  }
+
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.style.color = '';
+          link.style.borderLeftColor = 'transparent';
+          link.style.background = '';
+        });
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) {
+          active.style.color = 'var(--accent)';
+          active.style.borderLeftColor = 'var(--accent)';
+          active.style.background = 'rgba(200,169,110,0.05)';
+        }
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '-20% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
