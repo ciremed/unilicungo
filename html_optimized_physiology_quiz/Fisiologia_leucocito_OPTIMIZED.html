@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz · Leucócitos & Leucopoiese</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --surface:   #111827;
+  --card:      #151e2e;
+  --border:    #1e2d42;
+  --border2:   #253044;
+  --primary:   #4f9cf9;
+  --primary2:  #2563eb;
+  --accent:    #f87171;
+  --gold:      #f59e0b;
+  --emerald:   #34d399;
+  --rose:      #fb7185;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --muted2:    #94a3b8;
+  --correct-bg:#0a2e1f;
+  --correct-b: #34d399;
+  --wrong-bg:  #2e0a14;
+  --wrong-b:   #fb7185;
+  --just-bg:   #0d1b2e;
+  --just-b:    #4f9cf9;
+  --radius:    14px;
+  --trans:     all .28s cubic-bezier(.4,0,.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.5rem 1rem 3rem;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND MESH ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(79,156,249,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 90%, rgba(248,113,113,.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 40%, rgba(52,211,153,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  width:100%;max-width:820px;
+  text-align:center;
+  margin-bottom:2rem;
+  position:relative;z-index:1;
+}
+.header-badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  border-radius:50px;
+  padding:.3rem .9rem;
+  font-size:.75rem;font-weight:500;
+  color:var(--primary);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.header h1{
+  font-family:'Crimson Pro',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;
+  line-height:1.2;
+  color:#f1f5f9;
+  letter-spacing:-.02em;
+}
+.header h1 span{color:var(--primary);}
+.header p{
+  color:var(--muted2);
+  font-size:.92rem;
+  margin-top:.5rem;
+}
+
+/* ── QUIZ CONTAINER ── */
+#quiz-container{
+  width:100%;max-width:820px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:2.2rem 2rem;
+  position:relative;z-index:1;
+  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+}
+
+/* top accent line */
+#quiz-container::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary2),var(--primary),var(--accent));
+  border-radius:22px 22px 0 0;
+}
+
+/* ── PROGRESS ── */
+.progress-wrapper{
+  display:flex;align-items:center;gap:.9rem;
+  margin-bottom:1.8rem;
+}
+.progress-track{
+  flex:1;height:6px;
+  background:var(--border2);
+  border-radius:50px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary2),var(--primary));
+  border-radius:50px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 10px rgba(79,156,249,.5);
+}
+.progress-label{
+  font-size:.78rem;font-weight:500;
+  color:var(--muted2);
+  white-space:nowrap;min-width:60px;text-align:right;
+  font-family:'DM Mono',monospace;
+}
+
+/* ── QUESTION CARD ── */
+.question-card{
+  display:none;flex-direction:column;align-items:stretch;
+  animation:slideIn .38s cubic-bezier(.4,0,.2,1);
+}
+.question-card.active{display:flex;}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.q-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.4rem;
+}
+.q-num{
+  font-family:'DM Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  color:var(--muted);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.q-type-badge{
+  font-size:.68rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:50px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-multi{background:rgba(79,156,249,.15);color:var(--primary);border:1px solid rgba(79,156,249,.3);}
+.badge-tf{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+
+.question-text{
+  font-family:'Crimson Pro',serif;
+  font-size:1.28rem;font-weight:400;
+  line-height:1.6;
+  color:#f1f5f9;
+  margin-bottom:1.6rem;
+  padding-bottom:1.4rem;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── OPTIONS ── */
+.options-container{display:flex;flex-direction:column;gap:.65rem;}
+.tf-options-container{display:flex;gap:.75rem;justify-content:center;}
+
+.mc-option{
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  cursor:pointer;
+  transition:var(--trans);
+  color:var(--text);
+  font-size:.95rem;
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.mc-option::after{
+  content:'';position:absolute;inset:0;
+  background:var(--primary);
+  opacity:0;transition:opacity .2s;
+}
+.mc-option:hover:not(.disabled){
+  border-color:var(--primary);
+  transform:translateX(4px);
+  box-shadow:0 4px 16px rgba(79,156,249,.15);
+}
+.mc-option.selected{
+  border-color:var(--primary);
+  background:rgba(79,156,249,.08);
+}
+
+.tf-option{
+  flex:1;max-width:200px;
+  padding:1rem 1.5rem;
+  border-radius:var(--radius);
+  font-size:1rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.tf-option.tf-v{
+  background:rgba(52,211,153,.08);
+  border:1.5px solid rgba(52,211,153,.25);
+  color:var(--emerald);
+}
+.tf-option.tf-f{
+  background:rgba(251,113,133,.08);
+  border:1.5px solid rgba(251,113,133,.25);
+  color:var(--rose);
+}
+.tf-option:hover:not(.disabled){transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+.tf-option.selected{box-shadow:0 0 0 3px rgba(79,156,249,.4);}
+.tf-option.tf-v.selected{background:rgba(52,211,153,.18);border-color:var(--emerald);}
+.tf-option.tf-f.selected{background:rgba(251,113,133,.18);border-color:var(--rose);}
+
+/* correct / incorrect highlights */
+.mc-option.correct,.tf-option.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.mc-option.incorrect,.tf-option.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.mc-option.disabled,.tf-option.disabled{cursor:not-allowed;}
+
+.option-indicator{
+  min-width:28px;height:28px;
+  border-radius:8px;
+  background:var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:.78rem;font-weight:600;
+  color:var(--muted2);
+  flex-shrink:0;
+  transition:var(--trans);
+}
+.mc-option.selected .option-indicator{background:var(--primary);color:#fff;}
+.mc-option.correct  .option-indicator{background:var(--emerald);color:#0a2e1f;}
+.mc-option.incorrect .option-indicator{background:var(--rose);color:#2e0a14;}
+
+/* ── FEEDBACK BOX ── */
+.feedback{
+  margin-top:1.4rem;
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:none;
+  animation:slideIn .35s ease;
+}
+.feedback.correct{display:block;}
+.feedback.incorrect{display:block;}
+
+.feedback-verdict{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.75rem 1.1rem;
+  font-weight:600;font-size:.95rem;
+}
+.feedback.correct .feedback-verdict{
+  background:rgba(52,211,153,.15);
+  color:var(--emerald);
+  border-left:4px solid var(--emerald);
+}
+.feedback.incorrect .feedback-verdict{
+  background:rgba(251,113,133,.15);
+  color:var(--rose);
+  border-left:4px solid var(--rose);
+}
+
+/* ── JUSTIFICATION PANEL ── */
+.justification{
+  background:var(--just-bg);
+  border:1px solid rgba(79,156,249,.18);
+  border-top:none;
+  padding:1.1rem 1.3rem;
+}
+.just-label{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--primary);
+  margin-bottom:.65rem;
+  opacity:.8;
+}
+.just-label i{font-size:.8rem;}
+.just-text{
+  font-size:.9rem;
+  line-height:1.75;
+  color:#b8cce4;
+}
+.just-text strong{color:var(--primary);font-weight:600;}
+.just-text em{color:var(--gold);font-style:normal;}
+.just-text .correct-list{
+  margin-top:.6rem;padding-left:1rem;
+  list-style:none;
+}
+.just-text .correct-list li{
+  padding:.25rem 0;
+  padding-left:1.1rem;
+  position:relative;
+  color:#c7ddf4;
+}
+.just-text .correct-list li::before{
+  content:'✦';
+  position:absolute;left:0;
+  color:var(--emerald);font-size:.7rem;
+  top:.35rem;
+}
+.just-text .tag{
+  display:inline-block;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  color:var(--primary);
+  border-radius:4px;
+  padding:.05rem .35rem;
+  font-family:'DM Mono',monospace;
+  font-size:.8em;
+}
+
+/* ── NAVIGATION BUTTONS ── */
+#navigation-buttons{
+  display:flex;justify-content:center;
+  gap:.75rem;flex-wrap:wrap;
+  margin-top:1.8rem;
+}
+.nav-btn{
+  display:none;align-items:center;gap:.5rem;
+  padding:.7rem 1.5rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+  border:none;
+}
+.nav-btn.show{display:flex;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.nav-btn:hover:not(:disabled){transform:translateY(-2px);}
+
+#prev-btn{
+  background:transparent;
+  color:var(--primary);
+  border:1.5px solid rgba(79,156,249,.4);
+}
+#prev-btn:hover:not(:disabled){background:rgba(79,156,249,.08);}
+#answer-btn{
+  background:linear-gradient(135deg,var(--primary2),var(--primary));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(79,156,249,.35);
+}
+#answer-btn:hover:not(:disabled){box-shadow:0 6px 24px rgba(79,156,249,.5);}
+#next-btn{
+  background:var(--surface);
+  color:var(--text);
+  border:1.5px solid var(--border);
+}
+#next-btn:hover:not(:disabled){border-color:var(--primary);}
+#submit-btn{
+  background:linear-gradient(135deg,#7c3aed,var(--primary2));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(124,58,237,.35);
+}
+
+/* ── RESULTS ── */
+#results-container,#report-container{
+  display:none;flex-direction:column;align-items:center;
+}
+.score-ring-wrap{position:relative;margin:1rem auto 1.5rem;}
+.score-ring-wrap svg{display:block;}
+.score-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.score-pct{
+  font-family:'Crimson Pro',serif;
+  font-size:2.8rem;font-weight:700;
+  color:var(--primary);line-height:1;
+}
+.score-label{font-size:.75rem;color:var(--muted2);margin-top:.15rem;}
+.score-stat{
+  font-size:1.1rem;color:var(--muted2);margin-bottom:.5rem;
+}
+.score-stat strong{color:var(--text);}
+.feedback-msg{
+  font-family:'Crimson Pro',serif;
+  font-size:1.4rem;font-weight:400;
+  color:#e2e8f0;
+  margin-bottom:1.5rem;text-align:center;
+}
+.action-buttons{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;}
+.action-btn{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;border:none;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.action-btn:hover{transform:translateY(-2px);}
+.btn-report{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+.btn-retry{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;box-shadow:0 4px 16px rgba(79,156,249,.3);}
+
+/* ── REPORT ── */
+.report-item{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.1rem 1.3rem;
+  margin-bottom:.8rem;
+  text-align:left;
+  border-left:4px solid;
+}
+.report-item.correct{border-left-color:var(--emerald);}
+.report-item.incorrect{border-left-color:var(--rose);}
+.report-item p{font-size:.88rem;line-height:1.6;color:var(--muted2);}
+.report-item p strong{color:var(--text);}
+.report-item .ri-q{font-size:.95rem;color:var(--text);margin-bottom:.4rem;font-weight:500;}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:2rem;
+  font-size:.75rem;
+  color:var(--muted);
+  text-align:center;
+  position:relative;z-index:1;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #quiz-container{padding:1.4rem 1rem;}
+  .question-text{font-size:1.1rem;}
+  .tf-options-container{flex-direction:column;align-items:stretch;}
+  .tf-option{max-width:none;}
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><i class="fas fa-atom"></i> Medicina · Hematologia</div>
+  <h1>Leucócitos <span>&</span> leucopoiese</h1>
+  <p>Quiz de alta performance com justificativas clínico-moleculares</p>
+</div>
+
+<div id="quiz-container">
+  <div class="progress-wrapper">
+    <div class="progress-track"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
+  </div>
+
+  <div id="quiz-content"></div>
+
+  <div id="navigation-buttons">
+    <button id="prev-btn"   class="nav-btn"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <button id="answer-btn" class="nav-btn show">Responder <i class="fas fa-check"></i></button>
+    <button id="next-btn"   class="nav-btn">Próximo <i class="fas fa-arrow-right"></i></button>
+    <button id="submit-btn" class="nav-btn"><i class="fas fa-flag-checkered"></i> Ver Resultados</button>
+  </div>
+
+  <div id="results-container">
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="65" fill="none" stroke="#1e2d42" stroke-width="12"/>
+        <circle id="score-ring" cx="80" cy="80" r="65" fill="none"
+                stroke="url(#ringGrad)" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="408.4"
+                stroke-dashoffset="408.4"
+                transform="rotate(-90 80 80)"
+                style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#4f9cf9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-center">
+        <div class="score-pct" id="pct-display">0%</div>
+        <div class="score-label">acertos</div>
+      </div>
+    </div>
+    <div class="score-stat" id="score-display"></div>
+    <div class="feedback-msg" id="feedback-message"></div>
+    <div class="action-buttons">
+      <button id="show-report-btn" class="action-btn btn-report"><i class="fas fa-list-alt"></i> Ver Correção</button>
+      <button id="retry-btn"       class="action-btn btn-retry"><i class="fas fa-redo"></i> Tentar Novamente</button>
+    </div>
+  </div>
+
+  <div id="report-container">
+    <h3 style="color:var(--primary);margin-bottom:1.2rem;font-family:'Crimson Pro',serif;font-size:1.4rem;">
+      <i class="fas fa-clipboard-list"></i> Correção Detalhada
+    </h3>
+    <div id="report-list" style="width:100%"></div>
+    <div class="action-buttons" style="margin-top:1rem;">
+      <button id="back-btn" class="action-btn btn-report"><i class="fas fa-arrow-left"></i> Voltar ao Resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Fisiologia Médica · Quiz gerado para estudo intensivo</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+/* ══════════════════════════════════════════════
+   BANCO DE QUESTÕES COM JUSTIFICATIVAS
+══════════════════════════════════════════════ */
+const quizData = [
+  {
+    "question": "A denominação 'leucócito' deriva do grego leukós (branco) + kýtos (célula), referindo-se à camada esbranquiçada (buffy coat) visível após centrifugação do sangue. A coloração esverdeada observada nessa camada quando muito espessa deve-se a qual componente molecular?",
+    "options": [
+      "Lactoferrina dos grânulos específicos dos neutrófilos, que absorve comprimentos de onda verde",
+      "Mieloperoxidase (MPO) dos grânulos azurófilos dos neutrófilos, que contém heme e confere coloração esverdeada",
+      "Bilirrubina liberada por hemólise associada nos granulócitos maduros",
+      "Eosinofilia dos grânulos de eosinófilos, que em alta concentração refrata a luz como verde"
+    ],
+    "answer": ["Mieloperoxidase (MPO) dos grânulos azurófilos dos neutrófilos, que contém heme e confere coloração esverdeada"],
+    "type": "multi",
+    "justification": "O <strong>buffy coat</strong> pode apresentar coloração <em>esverdeada</em> quando há grande quantidade de neutrófilos — condição observada em pus. A responsável é a <strong>MPO (Mieloperoxidase)</strong>, uma hemoproteína dos grânulos azurófilos primários que contém um grupo heme especial capaz de conferir essa cor característica.<br><br>A MPO catalisa: <strong>H₂O₂ + Cl⁻ → HOCl (ácido hipocloroso)</strong> — um dos mais potentes agentes microbicidas do neutrófilo.<br><br><em>Aplicação clínica:</em> a coloração citoquímica de peroxidase (MPO positiva em blastos mieloides, negativa em linfoblastos) é fundamental no diagnóstico diferencial de leucemias agudas: LMA vs LLA."
+  },
+  {
+    "question": "Os leucócitos representam aproximadamente 40–45% do volume total do sangue em adultos saudáveis, fração denominada leucócrito, medida rotineiramente no hemograma.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O valor de 40–45% corresponde ao <strong>hematócrito</strong> — fração ocupada pelos <em>eritrócitos</em>. Os leucócitos representam apenas <strong>~1% do volume sanguíneo total</strong>, constituindo a fina camada esbranquiçada (buffy coat) acima dos eritrócitos após centrifugação.<br><br>Em números absolutos: eritrócitos ≈ 5×10¹²/L vs leucócitos ≈ 4–11×10⁹/L — diferença de 3 ordens de magnitude. Apesar desta proporção ínfima, a ausência de neutrófilos por 48–72h em um paciente neutropênico pode ser fatal.<br><br><em>O termo 'leucócrito' não é utilizado clinicamente.</em> Usa-se a contagem absoluta diferencial no CBC (Complete Blood Count — Hemograma Completo)."
+  },
+  {
+    "question": "Qual das seguintes células NÃO se origina do CMP (Common Myeloid Progenitor — Progenitor Mieloide Comum) durante a hematopoiese?",
+    "options": [
+      "Neutrófilo, via GMP (Granulocyte-Monocyte Progenitor)",
+      "Plaquetas, via MEP (Megakaryocyte-Erythroid Progenitor) → megacariócito",
+      "Eritrócitos, via MEP → BFU-E → CFU-E",
+      "Linfócito T CD4+, via progenitor linfoide T comprometido no timo"
+    ],
+    "answer": ["Linfócito T CD4+, via progenitor linfoide T comprometido no timo"],
+    "type": "multi",
+    "justification": "O <strong>CMP</strong> dá origem exclusivamente à <em>linhagem mieloide</em>: neutrófilos, eosinófilos, basófilos, monócitos/macrófagos, eritrócitos e plaquetas.<br><br>Os <strong>linfócitos T</strong> derivam do <strong>CLP (Common Lymphoid Progenitor)</strong> → progenitores T migram para o <strong>timo</strong> onde completam a maturação sob influência da IL-7 e do microambiente epitelial tímico.<br><br><em>Implicação diagnóstica:</em> leucemias agudas são classificadas como LMA (mieloide — MPO+, CD33+, CD117+) ou LLA (linfoide — TdT+, CD19+/CD3+) com base em critérios imunofenotípicos — determina tratamento e prognóstico."
+  },
+  {
+    "question": "Na hematopoiese embrionária, a sequência cronológica correta dos sítios de produção hematopoiética é: saco vitelino → fígado fetal/baço → medula óssea.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A hematopoiese percorre trajeto anatômico definido:<ul><li><strong>Saco vitelino (3ª–8ª semana):</strong> hematopoiese primitiva — eritrócitos nucleados com hemoglobinas embrionárias Gower 1, Gower 2 e Portland</li><li><strong>Fígado fetal (6ª semana – nascimento):</strong> principal sítio até a 7ª semana pós-natal; produz HbF (α₂γ₂)</li><li><strong>Medula óssea:</strong> assume definitivamente após o nascimento</li></ul><em>Relevância clínica:</em> em mielofibrose ou anemia falciforme grave, pode ocorrer <strong>hematopoiese extramedular</strong> com retorno da produção ao fígado e baço — manifesta como hepatoesplenomegalia e eritroblastos circulantes (quadro leucoeritroblástico)."
+  },
+  {
+    "question": "O fármaco plerixafor (AMD3100) mobiliza HSCs (Hematopoietic Stem Cells — Células-Tronco Hematopoiéticas) da medula para o sangue periférico. Qual é o mecanismo molecular correto?",
+    "options": [
+      "Agonista do CXCR4 — induz hipersinalização que paradoxalmente expulsa HSCs do nicho",
+      "Antagonista do CXCR4 — bloqueia o receptor nas HSCs, interrompendo o sinal de retenção mediado por CXCL12 do nicho estromal",
+      "Antagonista de CXCL12 — bloqueia a quimiocina no plasma antes de atingir o receptor",
+      "Inibidor de JAK2 — reduz sinalização de SCF/c-Kit, liberando HSCs do nicho osteoblástico"
+    ],
+    "answer": ["Antagonista do CXCR4 — bloqueia o receptor nas HSCs, interrompendo o sinal de retenção mediado por CXCL12 do nicho estromal"],
+    "type": "multi",
+    "justification": "O eixo <strong>CXCL12 (SDF-1) / CXCR4</strong> é o principal mecanismo de retenção das HSCs no nicho: células estromais secretam CXCL12 → liga-se ao CXCR4 nas HSCs → ativação de Gi → PI3K/Akt e Rac1 → adesão e retenção.<br><br>O <strong>plerixafor</strong> bloqueia o CXCR4 → HSCs perdem o sinal de retenção → mobilização em 6–9 horas (mais rápido que G-CSF isolado, que leva 4–5 dias).<br><br><em>Uso clínico:</em> combinado com G-CSF para mobilização de células CD34+ antes de coleta por aférese para transplante autólogo em mieloma múltiplo e linfoma não-Hodgkin."
+  },
+  {
+    "question": "A via JAK-STAT é a principal via de sinalização intracelular usada pela maioria das citocinas hematopoiéticas. A mutação ativadora JAK2 V617F está presente em ~95% dos casos de policitemia vera, não de leucemia mieloide crônica (LMC).",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A mutação <strong>JAK2 V617F</strong> é característica das <em>neoplasias mieloproliferativas Philadelphia-negativas</em>: policitemia vera (~95%), mielofibrose (~50%) e trombocitemia essencial (~50–60%).<br><br>A <strong>LMC</strong> é definida pela translocação <strong>t(9;22) → BCR-ABL1</strong> com atividade constitutiva de tirosina-quinase — alvo do imatinibe (inibidor de BCR-ABL1, não de JAK2).<br><br><em>Os inibidores de JAK</em> (ruxolitinibe, fedratinibe) tratam mielofibrose e policitemia vera; tofacitinibe e baricitinibe tratam artrite reumatoide e GvHD (Graft-versus-Host Disease — Doença Enxerto-versus-Hospedeiro)."
+  },
+  {
+    "question": "Quais fatores de transcrição e suas respectivas linhagens estão associados CORRETAMENTE? (pode haver mais de uma correta)",
+    "options": [
+      "C/EBPα → granulopoiese; sua mutação está associada à LMA (Leucemia Mieloide Aguda)",
+      "FOXP3 → células T reguladoras; mutações causam síndrome IPEX",
+      "Ikaros → granulopoiese exclusivamente; camundongos sem Ikaros carecem apenas de neutrófilos e eosinófilos",
+      "PAX5 → comprometimento da linhagem B; sua deleção permite reprogramação de células B maduras em progenitores",
+      "GATA-3 → eritropoiese; essencial para síntese de hemoglobina fetal"
+    ],
+    "answer": [
+      "C/EBPα → granulopoiese; sua mutação está associada à LMA (Leucemia Mieloide Aguda)",
+      "FOXP3 → células T reguladoras; mutações causam síndrome IPEX",
+      "PAX5 → comprometimento da linhagem B; sua deleção permite reprogramação de células B maduras em progenitores"
+    ],
+    "type": "multi",
+    "justification": "Análise das opções:<ul><li><strong>C/EBPα ✓:</strong> fator mestre da granulopoiese; mutações bialélicas em ~10% das LMA</li><li><strong>FOXP3 ✓:</strong> fator mestre das Tregs; mutações causam IPEX (Immune Polydysregulation Polyendocrinopathy Enteropathy X-linked) — autoimunidade multissistêmica fatal</li><li><strong>Ikaros ✗:</strong> regula linhagem <em>linfoide</em> (T, B e NK), não granulocítica. Camundongos sem Ikaros carecem de células B, NK e T</li><li><strong>PAX5 ✓:</strong> 'guardião da identidade B'. Sua deleção em camundongos permite que células B periféricas maduras revertam a progenitores — fenômeno com implicações na LLA</li><li><strong>GATA-3 ✗:</strong> GATA-3 é o fator mestre das células Th2. GATA-1 é o relevante para eritropoiese e megacariocitopoiese</li></ul>"
+  },
+  {
+    "question": "Os grânulos azurófilos (primários) dos neutrófilos, os primeiros a se formarem na maturação, contêm principalmente lactoferrina e colagenase (MMP-8), sendo responsáveis pela privação de ferro ao patógeno.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Esta descrição corresponde aos <strong>grânulos específicos (secundários)</strong>. Os três tipos de grânulos têm conteúdos distintos:<ul><li><strong>Azurófilos (primários):</strong> MPO, elastase, catepsina G, defensinas, azurocidina, BPI — atividade microbicida oxidativa e proteolítica</li><li><strong>Específicos (secundários):</strong> lactoferrina, colagenase (MMP-8), vitamina B12-proteína ligante — privação de nutrientes e migração tecidual</li><li><strong>Gelatinase (terciários):</strong> MMP-9, receptores CR3 — degradação de membrana basal para diapedese</li></ul><em>Relevância clínica:</em> deficiência de grânulos específicos causa infecções bacterianas graves desde a infância, neutrófilos com núcleo bilobulado (pseudo-Pelger-Huët) e ausência de lactoferrina plasmática."
+  },
+  {
+    "question": "A sequência correta das reações enzimáticas do burst respiratório dos neutrófilos, do substrato inicial ao produto microbicida final, é:",
+    "options": [
+      "MPO (H₂O₂) → SOD (O₂•⁻) → NADPH oxidase (HOCl) → Fenton (OH•)",
+      "NADPH oxidase (NADPH → O₂•⁻) → SOD (O₂•⁻ → H₂O₂) → MPO (H₂O₂ + Cl⁻ → HOCl) / Fenton (H₂O₂ + Fe²⁺ → OH•)",
+      "NADPH oxidase (O₂ → H₂O₂) → Fenton (H₂O₂ → OH•) → MPO (OH• + Cl⁻ → HOCl)",
+      "SOD (O₂ → O₂•⁻) → NADPH oxidase (O₂•⁻ → H₂O₂) → Fenton (HOCl)"
+    ],
+    "answer": ["NADPH oxidase (NADPH → O₂•⁻) → SOD (O₂•⁻ → H₂O₂) → MPO (H₂O₂ + Cl⁻ → HOCl) / Fenton (H₂O₂ + Fe²⁺ → OH•)"],
+    "type": "multi",
+    "justification": "O <strong>burst respiratório</strong> é uma cascata enzimática sequencial:<br><br><strong>1ª etapa — NADPH oxidase (NOX2):</strong><br>NADPH + 2O₂ → NADP⁺ + H⁺ + 2<strong>O₂•⁻</strong> (superóxido)<br><br><strong>2ª etapa — SOD (Superóxido Dismutase):</strong><br>2O₂•⁻ + 2H⁺ → <strong>H₂O₂</strong> + O₂<br><br><strong>3ª etapa — MPO:</strong><br>H₂O₂ + Cl⁻ → <strong>HOCl</strong> (ácido hipocloroso)<br><br><strong>Reação de Fenton (paralela):</strong><br>H₂O₂ + Fe²⁺ → <strong>OH•</strong> (radical hidroxil — o mais reativo dos ROS)<br><br><em>Na CGD (Chronic Granulomatous Disease — Doença Granulomatosa Crônica):</em> defeito em qualquer subunidade do NOX2 → ausência de burst → NBT (Nitroblue Tetrazolium) negativo → infecções bacterianas e fúngicas recorrentes desde a infância."
+  },
+  {
+    "question": "Na Doença Granulomatosa Crônica (CGD), o teste do NBT (Nitroblue Tetrazolium) é POSITIVO nos neutrófilos do paciente, pois mesmo com defeito no burst há produção residual de superóxido suficiente para a reação colorimétrica.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Na CGD, o NBT é <strong>negativo</strong> — os neutrófilos <em>não convertem</em> o NBT amarelo para azul (formazana) porque não produzem superóxido.<br><br><strong>Mecanismo do teste:</strong> O₂•⁻ reduz o NBT → formazana azul precipitada intracelularmente. Neutrófilos normais: >95% com grânulos azuis. CGD: 0–5% → NBT negativo.<br><br>O teste moderno é o <strong>DHR (Dihydrorhodamine 123)</strong> por citometria de fluxo, mais sensível e quantitativo.<br><br><em>Genética:</em> mutações em <strong>gp91phox (CYBB)</strong> → forma ligada ao X (70% dos casos, mais grave); mutações em p47phox (NCF1) → forma autossômica recessiva mais comum (25%). Tratamento: profilaxia com itraconazol + cotrimoxazol; IFN-γ; transplante de medula como cura."
+  },
+  {
+    "question": "As subunidades do complexo NADPH oxidase estão associadas CORRETAMENTE em quais das seguintes opções? (pode haver mais de uma correta)",
+    "options": [
+      "gp91phox (NOX2) — subunidade catalítica de membrana, codificada por CYBB, transfere elétrons para O₂",
+      "p47phox — subunidade citoplasmática organizadora, ativada por fosforilação em resíduos de serina",
+      "p67phox — subunidade de membrana que ancora gp91phox ao citoesqueleto de actina",
+      "p22phox — subunidade catalítica solúvel que gera O₂•⁻ independentemente de gp91phox",
+      "Rac2 — GTPase citoplasmática essencial para montagem e ativação do complexo oxidase"
+    ],
+    "answer": [
+      "gp91phox (NOX2) — subunidade catalítica de membrana, codificada por CYBB, transfere elétrons para O₂",
+      "p47phox — subunidade citoplasmática organizadora, ativada por fosforilação em resíduos de serina",
+      "Rac2 — GTPase citoplasmática essencial para montagem e ativação do complexo oxidase"
+    ],
+    "type": "multi",
+    "justification": "Análise das subunidades do NOX2:<ul><li><strong>gp91phox ✓:</strong> subunidade catalítica transmembrana — contém FAD e heme; transfere elétrons de NADPH para O₂; codificada por CYBB no cromossomo X</li><li><strong>p47phox ✓:</strong> 'organizador' citoplasmático; fosforilado em múltiplos resíduos de serina por PKC durante ativação → migra para membrana e organiza o complexo</li><li><strong>p67phox ✗:</strong> é citoplasmático (não de membrana); é o 'ativador' — interage diretamente com gp91phox para maximizar a transferência de elétrons</li><li><strong>p22phox ✗:</strong> é subunidade de membrana (não solúvel) que estabiliza e ancora gp91phox; sem atividade catalítica independente</li><li><strong>Rac2 ✓:</strong> GTPase da família Rho; essencial — mutações em Rac2 causam forma de imunodeficiência semelhante à CGD</li></ul>"
+  },
+  {
+    "question": "A diapedese (transmigração) dos neutrófilos ocorre predominantemente pela via transcelular (através do corpo da célula endotelial), sendo a via paracelular (entre células endoteliais) uma rota excepcional e minoritária.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A transmigração ocorre <strong>predominantemente pela via paracelular</strong> (~85–90%) — entre células endoteliais adjacentes, nas junções intercelulares, mediada por PECAM-1 (CD31), CD99 e JAMs (Junctional Adhesion Molecules). A via transcelular existe mas é minoritária (~10–15%).<br><br>A sequência completa da diapedese:<br><strong>1. Rolagem:</strong> E/P-selectina ↔ PSGL-1<br><strong>2. Ativação:</strong> CXCL8/CXCR2 → integrinas de baixa → alta afinidade<br><strong>3. Adesão firme:</strong> LFA-1/MAC-1 ↔ ICAM-1<br><strong>4. Rastejamento e transmigração paracelular:</strong> PECAM-1 ↔ PECAM-1<br><strong>5. Degradação da membrana basal:</strong> MMP-9 dos grânulos terciários<br><br><em>LAD-1 (Leukocyte Adhesion Deficiency type 1):</em> defeito em CD18 impede as etapas 3–5 → leucocitose paradoxal com infecções graves sem formação de pus."
+  },
+  {
+    "question": "As NETs (Neutrophil Extracellular Traps — Armadilhas Extracelulares de Neutrófilos) são exclusivamente benéficas ao hospedeiro, capturando e matando patógenos sem consequências patológicas, mesmo em ativação prolongada.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> As NETs têm papel <em>duplo</em> — protetor e patogênico:<br><br><strong>Papel protetor:</strong> capturam bactérias, fungos (Candida, Aspergillus) e parasitas por DNA + MPO + elastase + catepsina G incorporados nas fibras.<br><br><strong>Papel patogênico (NETose excessiva):</strong><ul><li><strong>Trombose:</strong> DNA e histonas ativam plaquetas e fator XII → relevante na COVID-19 grave e sepse</li><li><strong>ARDS:</strong> NETs alveolares contribuem para lesão endotelial</li><li><strong>LES:</strong> DNA das NETs é fonte de autoantígenos → anticorpos anti-dsDNA</li><li><strong>Aterosclerose:</strong> NETs na placa promovem instabilidade</li></ul><em>Alvo terapêutico emergente:</em> inibidores de PAD4 (Peptidylarginine Deiminase 4 — enzima que induz descondensação da cromatina) estão em estudos clínicos."
+  },
+  {
+    "question": "A quimiotaxia dos neutrófilos é mediada por gradientes de moléculas quimiotáticas. Qual das seguintes moléculas é um peptídeo formilado produzido exclusivamente por bactérias que sinaliza infecção bacteriana ativa aos neutrófilos?",
+    "options": [
+      "CXCL8 / IL-8 — produzido por macrófagos e células endoteliais ativados",
+      "C5a — fragmento do complemento gerado pela ativação da cascata",
+      "fMLP (formil-Metionil-Leucil-Fenilalanina) — peptídeo formilado bacteriano que sinaliza infecção ativa via receptor FPR1",
+      "LTB4 (Leucotrieno B4) — derivado do ácido araquidônico via 5-LOX"
+    ],
+    "answer": ["fMLP (formil-Metionil-Leucil-Fenilalanina) — peptídeo formilado bacteriano que sinaliza infecção ativa via receptor FPR1"],
+    "type": "multi",
+    "justification": "O <strong>fMLP (formil-Metionil-Leucil-Fenilalanina)</strong> é produzido por bactérias e mitocôndrias danificadas — as proteínas bacterianas e mitocondriais iniciam com N-formil-metionina (característica prokariota/mitocondrial, ausente nas proteínas citoplasmáticas eucarióticas).<br><br>É reconhecido pelo receptor <strong>FPR1 (Formyl Peptide Receptor 1)</strong> — receptor acoplado à proteína Gi nos neutrófilos → ativação de PI3K → quimiotaxia direcional.<br><br>Os demais quimioatraentes para neutrófilos incluem: <strong>C5a</strong> (receptor C5aR/CD88), <strong>CXCL8/IL-8</strong> (receptor CXCR2) e <strong>LTB4</strong> (receptor BLT1). Cada um sinaliza uma fase diferente da resposta imune inata.<br><br><em>Uso experimental:</em> gradientes de fMLP são usados in vitro para testar a função quimiotática de neutrófilos em pacientes com suspeita de imunodeficiência neutrofílica."
+  },
+  {
+    "question": "Um neutrófilo com 6 ou mais lóbulos nucleares (hipersegmentação) no esfregaço de sangue periférico é marcador morfológico precoce de qual alteração metabólica primária?",
+    "options": [
+      "Deficiência de ferro com falha na síntese de heme comprometendo a divisão nuclear",
+      "Intoxicação por chumbo que inibe a ferroquelatase e compromete a maturação granulocítica",
+      "Deficiência de vitamina B12 ou ácido fólico — falha na síntese de dTMP impede divisão nuclear normal, resultando em núcleos com lobulações aberrantes acumuladas",
+      "Uso de G-CSF em altas doses que acelera a maturação e hipersegmenta os neutrófilos"
+    ],
+    "answer": ["Deficiência de vitamina B12 ou ácido fólico — falha na síntese de dTMP impede divisão nuclear normal, resultando em núcleos com lobulações aberrantes acumuladas"],
+    "type": "multi",
+    "justification": "A <strong>hipersegmentação neutrofílica</strong> (≥5% com ≥5 lóbulos, ou qualquer neutrófilo com ≥6 lóbulos) é marcador precoce e sensível de <strong>hematopoiese megaloblástica</strong>.<br><br>Mecanismo molecular: deficiência de B12 → <em>methylfolate trap</em> (THF preso como 5-metil-THF) → ↓5,10-metileno-THF → timidilato sintase sem substrato → ↓dTMP → <strong>falha na síntese de DNA</strong>. Células tentam dividir-se mas não completam a mitose → núcleo acumula lobulações aberrantes.<br><br><em>Valor diagnóstico:</em> pode preceder a anemia macrocítica em semanas. Um único neutrófilo com 6 lóbulos com contexto clínico adequado (vegano, gastrectomia, anemia perniciosa) justifica dosagem de B12, folato, homocisteína e ácido metilmalônico."
+  },
+  {
+    "question": "Qual característica morfológica distingue INEQUIVOCAMENTE os eosinófilos dos neutrófilos no esfregaço corado com Giemsa, além da coloração dos grânulos?",
+    "options": [
+      "O citoplasma do eosinófilo é completamente agranular vs grânulos finos lilás do neutrófilo",
+      "O eosinófilo tem núcleo bilobulado (dois lóbulos similares unidos por filamento fino) vs núcleo multilobulado (3–5 lóbulos) do neutrófilo",
+      "O eosinófilo é sistematicamente maior (>25 µm) que o neutrófilo, diferença visível a baixo aumento",
+      "O eosinófilo tem nucléolo proeminente, ausente nos neutrófilos maduros"
+    ],
+    "answer": ["O eosinófilo tem núcleo bilobulado (dois lóbulos similares unidos por filamento fino) vs núcleo multilobulado (3–5 lóbulos) do neutrófilo"],
+    "type": "multi",
+    "justification": "<strong>Eosinófilo:</strong> tamanho 12–17 µm; núcleo <strong>bilobulado</strong> — dois lóbulos de tamanho similar, aspecto de 'óculos'; grânulos grandes, proeminentes, corados em rosa-laranja intenso pela eosina.<br><br><strong>Neutrófilo:</strong> tamanho 12–15 µm; núcleo <strong>multilobulado (3–5 lóbulos)</strong>; grânulos finos, lilás pálido.<br><br><strong>Conteúdo dos grânulos eosinofílicos:</strong><ul><li><strong>MBP (Major Basic Protein):</strong> tóxica para parasitas e epitélio brônquico</li><li><strong>ECP (Eosinophil Cationic Protein):</strong> cria poros nas membranas</li><li><strong>EPO (Eosinophil Peroxidase):</strong> gera ROS</li><li><strong>EDN (Eosinophil-Derived Neurotoxin):</strong> ribonuclease antiviral</li></ul><em>Eosinofilia clínica (mnemônico NAACP):</em> Neoplasias, Asma/Atopia, Alergias, Colagenoses, Parasitoses."
+  },
+  {
+    "question": "A IL-5 (Interleucina-5) é a principal citocina que regula produção, ativação e sobrevivência dos eosinófilos, sendo produzida principalmente por linfócitos Th2. O mepolizumab bloqueia o receptor de IL-5 (IL-5Rα), enquanto o benralizumab bloqueia a IL-5 circulante diretamente.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Os papéis estão invertidos:<ul><li><strong>Mepolizumab:</strong> anticorpo anti-<em>IL-5</em> circulante (não o receptor)</li><li><strong>Benralizumab:</strong> anticorpo anti-<em>IL-5Rα</em> (receptor) nas células — adicionalmente recruta NK via ADCC (Antibody-Dependent Cellular Cytotoxicity), depletando eosinófilos mais rapidamente (>90% em 24–48h vs 50–70% com mepolizumab em semanas)</li></ul><strong>Reslizumab</strong> é o terceiro anti-IL-5 IV.<br><br><em>A IL-5 é verdadeiramente o fator central dos eosinófilos:</em> produzida por Th2, ILC2 (Innate Lymphoid Cells type 2) e mastócitos → sobrevivência, ativação e recrutamento tecidual de eosinófilos. Sem IL-5, eosinófilos entram rapidamente em apoptose."
+  },
+  {
+    "question": "Qual proteína dos grânulos eosinofílicos é considerada a mais tóxica para larvas de parasitas helmínticos e também contribui para dano brônquico na asma, por mecanismos distintos?",
+    "options": [
+      "ECP (Eosinophil Cationic Protein) — cria poros nas membranas de parasitas e células epiteliais",
+      "EPO (Eosinophil Peroxidase) — gera ROS que destroem parasitas e oxidam surfactante alveolar",
+      "MBP (Major Basic Protein) — proteína altamente catiônica que desestabiliza membranas de parasitas e ativa mastócitos/basófilos, além de comprometer o epitélio brônquico",
+      "EDN (Eosinophil-Derived Neurotoxin) — ribonuclease que degrada RNA de parasitas e vírus"
+    ],
+    "answer": ["MBP (Major Basic Protein) — proteína altamente catiônica que desestabiliza membranas de parasitas e ativa mastócitos/basófilos, além de comprometer o epitélio brônquico"],
+    "type": "multi",
+    "justification": "A <strong>MBP (Major Basic Protein — Proteína Básica Principal)</strong> é o componente mais abundante e citotóxico dos grânulos eosinofílicos (representa ~50% do conteúdo granular).<br><br><strong>Mecanismos de ação:</strong><ul><li>Alta carga positiva (pI >11) → desestabiliza membranas fosfolipídicas carregadas negativamente de parasitas (teleangectasia, lise osmótica)</li><li>Ativa diretamente mastócitos e basófilos → degranulação → histamina e leucotrienos (amplifica inflamação alérgica)</li><li>Tóxica ao epitélio brônquico → perda de células ciliadas → hiperresponsividade brônquica na asma</li></ul><em>Na asma eosinofílica:</em> lavado broncoalveolar e escarro revelam cristais de Charcot-Leyden (lisofosfolipase dos grânulos eosinofílicos) e MBP livre — marcadores de atividade eosinofílica tecidual."
+  },
+  {
+    "question": "Os basófilos possuem grânulos metacromáticos que contêm histamina, heparina, leucotrienos e PAF, e expressam receptores FcεRI de alta afinidade para IgE. A basofilia é um achado marcante na leucemia mieloide crônica (LMC).",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Ambas as afirmações são corretas:<br><br><strong>Grânulos basofílicos:</strong> contêm histamina (vasodilatação, broncoconstrição), heparina (anticoagulante local), PAF (Platelet Activating Factor), leucotrienos LTC4/LTD4 e SRS-A (Slow-Reacting Substance of Anaphylaxis).<br><br><strong>FcεRI:</strong> receptor de alta afinidade para IgE — o mesmo presente em mastócitos. Cross-linking por alérgeno → degranulação e anafilaxia.<br><br><strong>Basofilia na LMC:</strong> a contagem de basófilos elevada (>100/µL) é característica da LMC e reflete a expansão clonal do clone BCR-ABL1+ que também afeta a linhagem basofílica. Uma basofilia inexplicável em adulto deve sempre levantar suspeita de síndrome mieloproliferativa.<br><br><em>Metacromasia:</em> grânulos basofílicos se coram em violeta/roxo com corantes azuis (azul de toluidina, hematoxilina) devido ao alto conteúdo de proteoglicanos — os corantes mudam de cor ao se ligarem."
+  },
+  {
+    "question": "Na cascata molecular da anafilaxia, o segundo contato com o alérgeno provoca ligação direta ao receptor FcεRI — e não ao IgE — resultando na ativação direta de Lyn e Syk.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Na segunda exposição, o alérgeno liga-se ao <strong>IgE</strong> (já fixado ao FcεRI desde a sensibilização), <em>não diretamente ao receptor</em>. O cross-linking de duas moléculas de IgE adjacentes pelo alérgeno é o gatilho:<br><br><strong>Sequência correta:</strong><br>1ª exposição: alérgeno → IgE → fixa ao FcεRI (sensibilização)<br>2ª exposição: alérgeno forma <em>pontes cruzadas entre dois IgE</em> → aproximação de dois FcεRI → ativação de <strong>Lyn</strong> → fosforila ITAMs → recruta <strong>Syk</strong> → PLCγ → IP3+DAG → Ca²⁺↑ → degranulação<br><br><em>A necessidade de cross-linking</em> explica por que antígenos monovalentes não provocam degranulação. Clinicamente, isso é o racional de terapias de dessensibilização: doses progressivamente maiores de alérgeno promovem tolerância sem triggering de anafilaxia."
+  },
+  {
+    "question": "Um paciente desenvolve broncoespasmo grave, hipotensão e urticária 15 minutos após ingestão de amendoim. O tratamento de primeira linha é adrenalina (epinefrina) 1:1000 IM. Quais ações farmacológicas são relevantes neste contexto? (pode haver mais de uma correta)",
+    "options": [
+      "Ação α1-adrenérgica → vasoconstricção periférica → reverte hipotensão e edema de glote",
+      "Ação β2-adrenérgica → broncodilatação + inibição da degranulação de mastócitos via ↑AMPc",
+      "Ação β1-adrenérgica → inotrópico e cronotrópico positivo → aumenta débito cardíaco",
+      "Ação α2-adrenérgica → inibe liberação de noradrenalina endógena → efeito anti-inflamatório sistêmico",
+      "Inibição direta da síntese de leucotrienos via bloqueio da 5-LOX (5-lipooxigenase)"
+    ],
+    "answer": [
+      "Ação α1-adrenérgica → vasoconstricção periférica → reverte hipotensão e edema de glote",
+      "Ação β2-adrenérgica → broncodilatação + inibição da degranulação de mastócitos via ↑AMPc",
+      "Ação β1-adrenérgica → inotrópico e cronotrópico positivo → aumenta débito cardíaco"
+    ],
+    "type": "multi",
+    "justification": "A <strong>adrenalina (epinefrina)</strong> é o único tratamento de primeira linha da anafilaxia por atuar simultaneamente em todos os sistemas comprometidos:<ul><li><strong>α1 (vasculares):</strong> vasoconstricção → ↑RVP (Resistência Vascular Periférica) → reverte hipotensão e edema de glote</li><li><strong>β1 (cardíacos):</strong> ↑frequência cardíaca + ↑contratilidade → ↑débito cardíaco</li><li><strong>β2 (pulmões + mastócitos/basófilos):</strong> broncodilatação + ↑AMPc → PKA ativa → <em>inibe</em> a degranulação (estabilizador de membrana)</li></ul>A ação α2 é clinicamente mínima; a adrenalina não inibe a 5-LOX diretamente (isso é feito por zileutom).<br><br><em>Via de administração:</em> IM na face anterolateral da coxa — absorção mais rápida que SC. Dose adulto: 0,3–0,5 mg. Repetir a cada 5–15 min se necessário."
+  },
+  {
+    "question": "Qual é a diferença entre basófilos e mastócitos quanto à localização, origem e vida útil?",
+    "options": [
+      "Ambos circulam no sangue periférico e têm vida útil similar de dias; diferem apenas pelo conteúdo de serotonina (presente só nos mastócitos)",
+      "Basófilos circulam no sangue (dias de vida); mastócitos residem nos tecidos após diferenciação de progenitores da medula, com vida útil de meses a anos",
+      "Mastócitos circulam no sangue periférico; basófilos residem nos tecidos como sentinelas imunes de longa duração",
+      "Basófilos e mastócitos são a mesma célula em estágios diferentes de maturação, sem distinção funcional relevante"
+    ],
+    "answer": ["Basófilos circulam no sangue (dias de vida); mastócitos residem nos tecidos após diferenciação de progenitores da medula, com vida útil de meses a anos"],
+    "type": "multi",
+    "justification": "Apesar de funções similares e expressão de FcεRI em ambos, são células distintas:<br><br><table><tr><th>Característica</th><th>Basófilo</th><th>Mastócito</th></tr><tr><td>Localização</td><td>Sangue periférico</td><td>Tecidos (pele, mucosas, pulmão)</td></tr><tr><td>Vida útil</td><td>Dias</td><td>Meses a anos</td></tr><tr><td>Serotonina (humanos)</td><td>Ausente</td><td>Presente</td></tr><tr><td>Triptase</td><td>Ausente/baixa</td><td>Alta — marcador sérico de anafilaxia</td></tr></table><br><em>Aplicação clínica:</em> a <strong>triptase sérica</strong> (pico em 1–2h após anafilaxia) é marcador diagnóstico de reação mediada por mastócitos — útil quando há dúvida diagnóstica retrospectiva sobre a natureza de um evento anafilático."
+  },
+  {
+    "question": "Os monócitos são as maiores células do sangue periférico (~15–18 µm). Após sair da circulação e entrar nos tecidos, diferenciam-se em macrófagos com nomes específicos. Qual associação tecido/macrófago está INCORRETA?",
+    "options": [
+      "Fígado → células de Kupffer",
+      "Sistema nervoso central → microglia",
+      "Osso → osteoclastos",
+      "Pulmão → células de Langerhans alveolares"
+    ],
+    "answer": ["Pulmão → células de Langerhans alveolares"],
+    "type": "multi",
+    "justification": "A associação incorreta é a última: o pulmão contém <strong>macrófagos alveolares</strong> (não células de Langerhans). As <strong>células de Langerhans</strong> são células dendríticas da <em>epiderme</em>, não macrófagos alveolares.<br><br>Nomes corretos dos macrófagos teciduais:<ul><li>Fígado → <strong>Células de Kupffer</strong></li><li>SNC → <strong>Microglia</strong></li><li>Osso → <strong>Osteoclastos</strong> (macrófagos multinucleados)</li><li>Pulmão → <strong>Macrófagos alveolares</strong></li><li>Pele (derme) → <strong>Histiócitos</strong></li><li>Pele (epiderme) → <strong>Células de Langerhans</strong> (dendríticas)</li><li>Placenta → <strong>Células de Hofbauer</strong></li><li>Baço → <strong>Macrófagos esplênicos</strong></li></ul>"
+  },
+  {
+    "question": "A polarização macrofágica M2, induzida por IL-4/IL-13, é caracterizada pela expressão predominante de iNOS (Inducible Nitric Oxide Synthase — Óxido Nítrico Sintase Induzível) e produção de NO, favorecendo a destruição de patógenos intracelulares.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A polarização M2 é caracterizada por <strong>arginase-1</strong>, não iNOS. A iNOS e o NO são marcas do fenótipo <strong>M1</strong>:<br><br><strong>M1 (pró-inflamatório):</strong> IFN-γ + LPS → iNOS → L-arginina → <strong>NO</strong> + citrulina → microbicida. Citocinas: TNF-α, IL-1β, IL-12<br><br><strong>M2 (anti-inflamatório/reparador):</strong> IL-4/IL-13 → arginase-1 → L-arginina → <strong>ornitina</strong> → prolina (síntese de colágeno) + poliaminas (proliferação celular). Citocinas: IL-10, TGF-β<br><br><em>TAMs (Tumor-Associated Macrophages):</em> predominantemente M2 → IL-10, TGF-β e VEGF → imunossupressão tumoral e angiogênese. Alvo de imunoterapia com anti-CSF1R (depleção de TAMs) em tumores sólidos."
+  },
+  {
+    "question": "Durante a seleção tímica, aproximadamente qual percentual dos timócitos sobrevive e é exportado como célula T madura para a periferia?",
+    "options": [
+      "50–60% — a maioria sobrevive, sendo apenas os mais autorreativos eliminados",
+      "25–30% — um quarto sobrevive às duas seleções",
+      "2–5% — a grande maioria morre por apoptose nas seleções positiva e negativa",
+      "80–90% — processo altamente eficiente com mínimo de descarte celular"
+    ],
+    "answer": ["2–5% — a grande maioria morre por apoptose nas seleções positiva e negativa"],
+    "type": "multi",
+    "justification": "Apenas <strong>2–5%</strong> dos timócitos sobrevivem e atingem a maturidade — um processo de altíssima seletividade:<br><br><strong>Seleção positiva (córtex tímico):</strong> timócitos duplo-positivos (CD4+CD8+) cujo TCR reconhece MHC próprio sobrevivem. Os que não reconhecem → apoptose por negligência (~70–80% dos timócitos)<br><br><strong>Seleção negativa (junção córtex-medula/medula tímica):</strong> timócitos com TCR de alta afinidade por MHC-self → apoptose (clonal deletion). A proteína AIRE expressa antígenos periféricos para eliminar autorreativos → ~15–20% adicionais eliminados<br><br><em>Resultado:</em> células T maduras que reconhecem MHC próprio mas não atacam self — equilíbrio entre sensibilidade e tolerância central. Falha na seleção negativa → autoimunidade (mutações AIRE → síndrome poliglandular autoimune APS-1)."
+  },
+  {
+    "question": "A proteína AIRE (AutoImmune REgulator — Regulador AutoImune), expressa no epitélio tímico, é responsável pela seleção POSITIVA das células T, garantindo que apenas as com TCR funcional sobrevivam.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O AIRE atua na <strong>seleção negativa</strong>, não positiva. As seleções têm papéis opostos:<br><br><strong>AIRE na seleção negativa:</strong> células epiteliais medulares tímicas expressam AIRE → transcrevem antígenos periféricos (insulina, tireoglobulina, antígenos hepáticos) → apresentam via MHC a timócitos → timócitos com alta afinidade → apoptose (eliminação de potenciais autorreativos)<br><br><strong>Mutações em AIRE → Síndrome APS-1 (Autoimmune Polyendocrinopathy-Candidiasis-Ectodermal Dystrophy — APECED):</strong> sem apresentação de antígenos periféricos no timo → células T autorreativas escapam → hipoparatiroidismo, insuficiência adrenal, candidíase mucocutânea crônica — tríade clássica.<br><br><em>A seleção positiva</em> é realizada pelas células epiteliais <em>corticais</em> do timo, independentemente do AIRE."
+  },
+  {
+    "question": "Quais associações entre subtipo de célula T CD4+, fator de transcrição mestre e citocina efetora principal são CORRETAS? (pode haver mais de uma correta)",
+    "options": [
+      "Th1 — T-bet — IFN-γ: imunidade contra patógenos intracelulares",
+      "Th2 — RORγt — IL-4: imunidade contra parasitas e alergias",
+      "Th17 — RORγt — IL-17A: imunidade contra fungos e bactérias extracelulares",
+      "Treg — FOXP3 — IL-12: supressão de respostas autoimunes",
+      "Tfh — Bcl-6 — IL-21: auxílio às células B nos centros germinativos"
+    ],
+    "answer": [
+      "Th1 — T-bet — IFN-γ: imunidade contra patógenos intracelulares",
+      "Th17 — RORγt — IL-17A: imunidade contra fungos e bactérias extracelulares",
+      "Tfh — Bcl-6 — IL-21: auxílio às células B nos centros germinativos"
+    ],
+    "type": "multi",
+    "justification": "Análise das opções:<ul><li><strong>Th1 ✓:</strong> T-bet + IFN-γ → ativa macrófagos M1 contra micobactérias, Leishmania, vírus</li><li><strong>Th2 ✗:</strong> o fator mestre é <strong>GATA-3</strong>, não RORγt (RORγt é o fator do Th17). Th2 produz IL-4, IL-5, IL-13</li><li><strong>Th17 ✓:</strong> RORγt + IL-17A → recrutamento de neutrófilos, defesa contra Candida e S. aureus. Hiperativação → espondilite anquilosante, artrite psoriásica, doença de Crohn</li><li><strong>Treg ✗:</strong> FOXP3 é correto, mas a citocina supressora é <strong>IL-10 e TGF-β</strong>, não IL-12. IL-12 é produzida por macrófagos e induz Th1</li><li><strong>Tfh ✓:</strong> Bcl-6 + IL-21 → auxílio a células B nos centros germinativos → hipermutação somática e maturação de afinidade dos anticorpos</li></ul>"
+  },
+  {
+    "question": "Um paciente com CD4 de 180/µL, candidíase oral recorrente e pneumonia por Pneumocystis jirovecii preenche o critério diagnóstico de AIDS (Acquired Immunodeficiency Syndrome) pelos critérios do CDC, definido por CD4 abaixo de qual valor?",
+    "options": [
+      "CD4 < 500/µL — definição de imunossupressão moderada pelo CDC",
+      "CD4 < 350/µL — critério para início de TARV em países de baixa renda",
+      "CD4 < 200/µL — definição de AIDS pelos critérios do CDC",
+      "CD4 < 100/µL — definição de AIDS grave com risco iminente de infecções fúngicas invasivas"
+    ],
+    "answer": ["CD4 < 200/µL — definição de AIDS pelos critérios do CDC"],
+    "type": "multi",
+    "justification": "O <strong>CDC (Centers for Disease Control and Prevention)</strong> define AIDS por:<ul><li>CD4 < <strong>200 células/µL</strong> (independentemente dos sintomas), OU</li><li>Presença de uma das <strong>doenças definidoras de AIDS</strong> (pneumocistose, toxoplasmose cerebral, criptococose, CMV, sarcoma de Kaposi, etc.) independentemente da contagem de CD4</li></ul><strong>Estratificação clínica do HIV/AIDS:</strong><ul><li>CD4 > 500/µL: imunocompetente</li><li>CD4 200–500/µL: imunossupressão leve-moderada</li><li>CD4 < 200/µL: AIDS — risco de Pneumocystis jirovecii, toxoplasmose, criptosporidiose</li><li>CD4 < 100/µL: risco adicional de CMV, MAC, criptococose</li><li>CD4 < 50/µL: risco de linfoma SNC, retinite por CMV, MAC disseminado</li></ul>"
+  },
+  {
+    "question": "Os linfócitos T citotóxicos (CTLs — CD8+) reconhecem antígenos apresentados via MHC de classe II (HLA-DR) nas células apresentadoras de antígenos profissionais como células dendríticas e macrófagos.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Os CTLs (CD8+) reconhecem antígenos via <strong>MHC de classe I (HLA-A, B, C)</strong>, presente em <em>todas as células nucleadas</em> do organismo — não apenas nas APCs profissionais.<br><br><strong>Regra fundamental do MHC:</strong><ul><li><strong>MHC-I (CD8+):</strong> apresenta peptídeos endógenos (proteínas citoplasmáticas, virais, tumorais) → surveillância de células infectadas/transformadas</li><li><strong>MHC-II (CD4+):</strong> apresenta peptídeos exógenos (proteínas fagocitadas) → expresso em APCs profissionais (células dendríticas, macrófagos, células B)</li></ul>O MHC-I apresenta peptídeos de 8–10 aa gerados no proteassoma → translocados ao RE pelo TAP → carregados na molécula MHC-I → exibidos na superfície → reconhecidos pelo TCR do CTL (CD8 atua como co-receptor ligando ao domínio α3 do MHC-I)."
+  },
+  {
+    "question": "O mecanismo pelo qual granzimas de CTLs (Cytotoxic T Lymphocytes) induzem apoptose na célula-alvo após entrada pelos poros de perforina envolve qual cascata molecular?",
+    "options": [
+      "Granzima B ativa NF-κB nuclear, bloqueando a transcrição de genes antiapoptóticos",
+      "Granzima B cliva e ativa caspase-3 diretamente E cliva BID em tBID → ativação da via mitocondrial (Bax/Bak → citocromo c → apoptossomo → caspase-9 → caspase-3)",
+      "Perforina ativa diretamente caspase-9 sem necessidade de granzimas como cofatores",
+      "Granzima A ativa exclusivamente a via Fas/FasL, independentemente de caspases"
+    ],
+    "answer": ["Granzima B cliva e ativa caspase-3 diretamente E cliva BID em tBID → ativação da via mitocondrial (Bax/Bak → citocromo c → apoptossomo → caspase-9 → caspase-3)"],
+    "type": "multi",
+    "justification": "A <strong>granzima B</strong> é a principal granzima citotóxica humana, ativando a apoptose por duas vias simultâneas:<br><br><strong>Via direta:</strong> Granzima B → cliva e ativa <strong>caspase-3</strong> (caspase executora) → apoptose<br><br><strong>Via mitocondrial (amplificação):</strong> Granzima B → cliva <strong>BID</strong> em <strong>tBID</strong> (truncated BID) → tBID ativa <strong>Bax/Bak</strong> → permeabilização da membrana mitocondrial externa → liberação de <strong>citocromo c</strong> → apoptossomo (citocromo c + Apaf-1 + procaspase-9) → <strong>caspase-9</strong> → <strong>caspase-3</strong><br><br>Via <strong>Fas/FasL</strong> é um segundo mecanismo independente dos CTLs: FasL na superfície do CTL liga ao Fas (CD95) na célula-alvo → DISC (Death-Inducing Signaling Complex) → caspase-8 → caspase-3.<br><br><em>A perforina</em> apenas forma poros na membrana para entrada das granzimas — não ativa caspases diretamente."
+  },
+  {
+    "question": "O bloqueio do checkpoint imunológico CTLA-4 por ipilimumab aumenta a ativação de células T antitumorais porque o CTLA-4 normalmente fornece um sinal coestimulatório de ativação às células T — seu bloqueio reduz esse sinal e paradoxalmente potencializa a resposta imune.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O CTLA-4 fornece um sinal <em>inibitório</em>, não coestimulatório. O mecanismo correto:<br><br><strong>CD28 (coestimulatório):</strong> liga-se a B7 (CD80/CD86) nas APCs → sinal de ativação de células T (Sinal 2)<br><br><strong>CTLA-4 (inibitório):</strong> expressa com maior afinidade por B7 que o CD28 → <em>compete</em> com CD28 e 'rouba' o ligante → sem sinal coestimulatório → anergia ou apoptose da célula T. CTLA-4 é superexpresso em células T ativadas e Tregs → mecanismo de 'freio' fisiológico para prevenir autoimunidade<br><br><strong>Ipilimumab (anti-CTLA-4):</strong> bloqueia o sinal inibitório → CD28 livre para se ligar ao B7 → ativação robusta de células T → resposta antitumoral. Nobel de Medicina 2018 (Allison & Honjo).<br><br>Efeitos adversos: colite, hepatite, pneumonite, endocrinopatias — todos mediados por autoimunidade."
+  },
+  {
+    "question": "A síndrome IPEX (Immune Polydysregulation Polyendocrinopathy Enteropathy X-linked) é causada por mutações no gene FOXP3. Quais manifestações clínicas são características desta síndrome? (pode haver mais de uma correta)",
+    "options": [
+      "Diabetes mellitus tipo 1 neonatal por destruição autoimune das células β pancreáticas",
+      "Enteropatia autoimune grave com diarreia intratable desde os primeiros meses de vida",
+      "Infecções bacterianas recorrentes por encapsulados por ausência de opsonização com IgG",
+      "Eczema (dermatite atópica) refratário com IgE elevada",
+      "Neutropenia profunda com aplasia medular progressiva"
+    ],
+    "answer": [
+      "Diabetes mellitus tipo 1 neonatal por destruição autoimune das células β pancreáticas",
+      "Enteropatia autoimune grave com diarreia intratable desde os primeiros meses de vida",
+      "Eczema (dermatite atópica) refratário com IgE elevada"
+    ],
+    "type": "multi",
+    "justification": "A <strong>IPEX</strong> é uma imunodeficiência primária ligada ao X caracterizada pela ausência de <strong>células T reguladoras (Tregs)</strong> funcionais, resultando em autoimunidade sistêmica grave:<br><br><strong>Tríade clássica:</strong><ul><li><strong>Diabetes mellitus tipo 1 neonatal:</strong> células T autorreativas destroem ilhotas pancreáticas sem regulação de Tregs</li><li><strong>Enteropatia autoimune:</strong> diarreia intratable com má absorção e falha no crescimento</li><li><strong>Eczema e elevação de IgE:</strong> inflamação cutânea por hiperatividade Th2 não regulada</li></ul>Outras manifestações: tiroidite, citopenias autoimunes, nefropatia, artrite.<br><br>As infecções bacterianas recorrentes e neutropenia <strong>não</strong> são características — o defeito é na <em>regulação</em> imune, não na produção de anticorpos ou neutrófilos.<br><br><em>Tratamento:</em> imunossupressão (sirolimo, tacrolimo) + transplante de células-tronco hematopoiéticas como único tratamento curativo."
+  },
+  {
+    "question": "Na agamaglobulinemia de Bruton (XLA — X-Linked Agammaglobulinemia), o desenvolvimento das células B está bloqueado na transição de pré-B para B imaturo por deficiência da tirosina-quinase Btk, resultando em maior susceptibilidade a vírus com envelope lipídico como o HIV.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A suscetibilidade na XLA é principalmente a <strong>bactérias encapsuladas</strong> (Streptococcus pneumoniae, Haemophilus influenzae, Staphylococcus aureus, Pseudomonas) que requerem anticorpos opsonizantes para eliminação eficiente.<br><br>Pacientes com XLA têm imunidade celular <em>preservada</em> (células T funcionais) → conseguem controlar a maioria dos vírus com envelope normalmente. Entretanto, são suscetíveis a <em>enterovírus</em> (Echovírus, Poliovírus) que requerem IgA intestinal secretória e IgG sérica para controle.<br><br><strong>Defeito molecular:</strong> mutação em <strong>BTK (Bruton's Tyrosine Kinase)</strong> → bloqueio na transição pró-B → pré-B (a cadeia pesada µ não consegue sinalizar sem BTK) → ausência de células B maduras → pan-hipogamaglobulinemia (IgG, IgA, IgM todas baixas).<br><br><em>Tratamento:</em> IVIG (Intravenous Immunoglobulin) a cada 3–4 semanas, indefinidamente. Ibrutinibe (inibidor de BTK) é usado em LLC e linfoma do manto — não na XLA."
+  },
+  {
+    "question": "A enzima AID (Activation-Induced Cytidine Deaminase — Desaminase de Citidina Induzida por Ativação) é essencial nos centros germinativos para dois processos simultâneos. Quais são eles?",
+    "options": [
+      "Seleção positiva e seleção negativa dos linfócitos B autorreativos no centro germinativo",
+      "Hipermutação somática (diversificação e aumento de afinidade do BCR) e troca de classe de imunoglobulina (class switching)",
+      "Rearranjo V(D)J e recombinação dos genes de cadeia leve da imunoglobulina",
+      "Diferenciação em plasmócito e formação de células B de memória de longa duração"
+    ],
+    "answer": ["Hipermutação somática (diversificação e aumento de afinidade do BCR) e troca de classe de imunoglobulina (class switching)"],
+    "type": "multi",
+    "justification": "A <strong>AID</strong> é uma desaminase que converte <strong>citosina (C) → uracil (U)</strong> no DNA dos genes de imunoglobulina durante a resposta imune adaptativa nos centros germinativos:<br><br><strong>1. SHM (Somatic Hypermutation — Hipermutação Somática):</strong> AID age nas regiões variáveis (CDRs) → mutações pontuais → diversificação do BCR → seleção de clones de maior afinidade (maturação de afinidade)<br><br><strong>2. CSR (Class Switch Recombination — Troca de Classe):</strong> AID age nas regiões Switch (Sµ, Sγ, Sα, Sε) → quebras de fita dupla → recombinação → mudança do isótipo (IgM → IgG/IgA/IgE) mantendo a especificidade antigênica<br><br><em>Síndrome do Hiper-IgM tipo 2:</em> mutações em AID → células B só produzem IgM → infecções de repetição e ausência de memória imunológica eficaz."
+  },
+  {
+    "question": "Para ativação plena de uma célula B por antígenos T-dependentes, são necessários dois sinais: o Sinal 1 (antígeno ligando-se ao BCR) e o Sinal 2. Qual molécula fornece o Sinal 2 e em qual célula ela é expressa?",
+    "options": [
+      "IL-2 secretada por células T CD4+ ativadas atua de forma parácrina como Sinal 2 nas células B adjacentes",
+      "CD40L (CD154), expresso na célula T CD4+ ativada, liga-se ao CD40 na célula B — o Sinal 2 obrigatório",
+      "B7 (CD80/CD86), expresso na célula B, liga-se ao CD28 na célula T para fornecer o Sinal 2 à célula B",
+      "MHCII-peptídeo, expresso na APC, fornece simultaneamente os sinais 1 e 2 à célula B"
+    ],
+    "answer": ["CD40L (CD154), expresso na célula T CD4+ ativada, liga-se ao CD40 na célula B — o Sinal 2 obrigatório"],
+    "type": "multi",
+    "justification": "A ativação de células B T-dependentes requer dois sinais:<br><br><strong>Sinal 1:</strong> antígeno liga-se ao BCR → ativação de Btk, Syk, PLCγ2 → Ca²⁺↑ → NFAT → transcrição de genes de ativação<br><br><strong>Sinal 2 (coestimulação):</strong> <strong>CD40L (CD154)</strong> na célula T CD4+ ativada → liga-se ao <strong>CD40</strong> na célula B → sinalização via TRAF → ativação de NF-κB → sobrevivência, proliferação e diferenciação<br><br>Sem Sinal 2 → célula B torna-se <em>anérgica</em> ou entra em apoptose (mecanismo de tolerância periférica)<br><br><em>Síndrome do Hiper-IgM tipo 1:</em> mutações em CD40L (ligada ao X) → células B recebem apenas Sinal 1 → sem troca de classe → apenas IgM produzida → infecções por pneumocistis, criptosporídio (organismos que requerem IgG/IgA)."
+  },
+  {
+    "question": "A filosofia 'missing self' das células NK estabelece que células tumorais que perdem a expressão de MHC-I para escapar dos CTLs tornam-se alvos das NK. O receptor NKG2D reconhece MICA/MICB expressos em células estressadas, fornecendo sinal ativador. Células normais com MHC-I intacto são protegidas pela ativação de qual receptor inibitório?",
+    "options": [
+      "NKp46 — receptor ativador de citotoxicidade natural que reconhece hemaglutininas virais",
+      "KIRs (Killer Immunoglobulin-like Receptors — Receptores Tipo Imunoglobulina Assassinos) — reconhecem MHC-I, fornecendo sinal inibitório que protege células normais",
+      "DNAM-1 (CD226) — receptor ativador que reconhece CD155/CD112 em células normais e tumorais igualmente",
+      "CD94/NKG2D — heterodímero ativador que reconhece HLA-E expresso em células normais"
+    ],
+    "answer": ["KIRs (Killer Immunoglobulin-like Receptors — Receptores Tipo Imunoglobulina Assassinos) — reconhecem MHC-I, fornecendo sinal inibitório que protege células normais"],
+    "type": "multi",
+    "justification": "As células NK tomam a decisão de matar baseada no <strong>balanço entre sinais ativadores e inibitórios</strong>:<br><br><strong>Receptores inibitórios:</strong><ul><li><strong>KIRs (KIR2DL1, KIR2DL2/3, KIR3DL1):</strong> reconhecem HLA-C, HLA-A, HLA-B respectivamente → sinal inibitório → proteção de células normais</li><li><strong>CD94/NKG2A:</strong> reconhece HLA-E → inibitório</li></ul><strong>Receptores ativadores:</strong><ul><li><strong>NKG2D:</strong> MICA, MICB, ULBPs (células estressadas/tumorais)</li><li><strong>NKp46, NKp44, NKp30:</strong> NCRs (Natural Cytotoxicity Receptors) para ligantes virais/tumorais</li><li><strong>DNAM-1:</strong> CD155/CD112 em células tumorais e infectadas</li></ul><em>Efeito GvL no transplante:</em> NKs do doador com KIRs incompatíveis com o HLA do receptor reconhecem células leucêmicas como 'missing self alogênico' → morte tumoral seletiva."
+  },
+  {
+    "question": "Na síndrome HLH (Hemophagocytic Lymphohistiocytosis — Linfo-histiocitose Hemofagocítica), células NK e CTLs são HIPERATIVAS, destruindo excessivamente macrófagos e eritrócitos, resultando em pancitopenia por destruição direta.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Na HLH, células NK e CTLs são <strong>disfuncionais</strong> (hipoativas), não hiperativas:<br><br><strong>Fisiopatologia da HLH:</strong> defeito na função citotóxica (perforina, granzimas, degranulação) → NK e CTLs não conseguem matar células-alvo e macrófagos ativados → macrófagos acumulam, ativam-se e fagocitam hemácias, plaquetas e leucócitos (hemofagocitose) + produzem tempestade de citocinas (IFN-γ, IL-6, TNF-α, sCD25) → pancitopenia + disfunção de múltiplos órgãos<br><br><strong>Critérios diagnósticos (HLH-2004):</strong> 5 de 8 critérios: febre, esplenomegalia, bicitopenia/pancitopenia, hipertrigliceridemia/hipofibrinogenemia, hemofagocitose na biópsia, atividade NK baixa/ausente, ferritina >500 ng/mL, sCD25 >2400 U/mL<br><br><em>Tratamento:</em> etoposídeo + dexametasona (protocolo HLH-94) ± ciclosporina; transplante de medula para formas familiares. Ruxolitinibe (inibidor de JAK) para HLH refratária."
+  },
+  {
+    "question": "Qual é o critério de neutropenia GRAVE que define risco muito elevado de infecções bacterianas e fúngicas oportunistas, sendo usado para indicar antibioticoterapia empírica urgente (neutropenia febril)?",
+    "options": [
+      "ANC (Absolute Neutrophil Count) < 1.800/µL — limite inferior da normalidade",
+      "ANC < 1.000/µL — neutropenia moderada com risco aumentado",
+      "ANC < 500/µL — critério para neutropenia grave; ANC < 100/µL = neutropenia profunda",
+      "Leucócitos totais < 3.000/µL independentemente do diferencial"
+    ],
+    "answer": ["ANC < 500/µL — critério para neutropenia grave; ANC < 100/µL = neutropenia profunda"],
+    "type": "multi",
+    "justification": "<strong>ANC (Absolute Neutrophil Count — Contagem Absoluta de Neutrófilos)</strong> = % neutrófilos + % bastões × leucócitos totais:<ul><li><strong>Neutropenia leve:</strong> 1.000–1.800/µL — risco mínimo</li><li><strong>Neutropenia moderada:</strong> 500–1.000/µL — risco aumentado</li><li><strong>Neutropenia grave:</strong> < <strong>500/µL</strong> — alto risco</li><li><strong>Neutropenia profunda:</strong> < 100/µL — risco extremo</li></ul><strong>Neutropenia febril:</strong> ANC < 500/µL + febre (>38,3°C única OU >38,0°C por >1h) → <em>emergência médica oncológica</em> → hemoculturas + antibioticoterapia empírica de amplo espectro em <strong>≤1 hora</strong> (mortalidade aumenta ~7% por hora de atraso).<br><br><em>Escore de Masariá (MASCC):</em> classifica risco para definir internação vs tratamento ambulatorial. G-CSF profilático indicado quando risco de neutropenia febril > 20% pelo regime quimioterápico."
+  },
+  {
+    "question": "O corticosteroide dexametasona causa neutrofilia por estimular diretamente a medula óssea via receptor de glicocorticoide nuclear a produzir mais neutrófilos — mecanismo idêntico ao do G-CSF exógeno.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O mecanismo é completamente distinto do G-CSF:<br><br><strong>Glicocorticoides → neutrofilia por dois mecanismos rápidos (não por produção medular):</strong><ul><li><strong>Desmarginalização:</strong> reduzem expressão de selectinas e ICAM-1 endoteliais → neutrófilos do <em>pool marginal</em> (~50% do total, aderidos ao endotélio) entram na circulação → dobra da contagem em horas sem nova produção</li><li><strong>Anti-apoptose:</strong> induzem Bcl-2/Bcl-xL nos neutrófilos → prolongam meia-vida de 6–8h para 24–48h</li></ul><strong>G-CSF</strong> age na medula → estimula granulopoiese → efeito em 3–5 dias.<br><br><em>Concomitantemente, glicocorticoides causam:</em><ul><li>Linfopenia: redistribuição para baço/linfonodos + apoptose de linfócitos T via receptores de glicocorticoide</li><li>Eosinopenia: supressão da IL-5 + sequestração esplênica</li><li>Monocitopenia transitória</li></ul>"
+  },
+  {
+    "question": "Um paciente em uso crônico de prednisona 40mg/dia por artrite reumatoide realiza hemograma de rotina. Qual padrão leucocitário é ESPERADO?",
+    "options": [
+      "Neutropenia + linfocitose + eosinofilia — padrão de supressão granulocítica por glicocorticoide",
+      "Pancitopenia leve — supressão global da medula óssea pelo glicocorticoide crônico",
+      "Neutrofilia + linfopenia + eosinopenia — desmarginalização de neutrófilos + apoptose linfocitária + sequestração de eosinófilos",
+      "Monocitose + basofilia — redistribuição dessas células para circulação periférica"
+    ],
+    "answer": ["Neutrofilia + linfopenia + eosinopenia — desmarginalização de neutrófilos + apoptose linfocitária + sequestração de eosinófilos"],
+    "type": "multi",
+    "justification": "O padrão característico de uso de corticosteroides no hemograma é chamado <strong>'leucograma do estresse'</strong>:<ul><li><strong>Neutrofilia:</strong> desmarginalização + anti-apoptose (discutido na questão anterior)</li><li><strong>Linfopenia:</strong> redistribuição de linfócitos para baço/linfonodos + indução de apoptose de células T via GRE (Glucocorticoid Response Elements) ativando genes pró-apoptóticos (Bim, Puma)</li><li><strong>Eosinopenia:</strong> supressão da IL-5 + sequestração esplênica de eosinófilos → eosinopenia é tão consistente que sua ausência em paciente usando corticoide adequadamente deve levantar suspeita de não-adesão ao tratamento</li><li><strong>Monocitopenia transitória</strong> também pode ocorrer</li></ul><em>Nota clínica:</em> este padrão deve ser reconhecido para não confundir com infecção bacteriana (neutrofilia sem desvio à esquerda nem granulações tóxicas com contexto de uso de corticoide)."
+  },
+  {
+    "question": "A contagem diferencial leucocitária normal em adultos está associada CORRETAMENTE em qual das seguintes opções?",
+    "options": [
+      "Neutrófilos 50–70%, Linfócitos 20–40%, Monócitos 2–8%, Eosinófilos 1–4%, Basófilos <1%",
+      "Neutrófilos 20–40%, Linfócitos 50–70%, Monócitos 1–4%, Eosinófilos 2–8%, Basófilos <1%",
+      "Neutrófilos 50–70%, Eosinófilos 20–30%, Linfócitos 10–15%, Monócitos 2–8%, Basófilos <1%",
+      "Neutrófilos 40–50%, Monócitos 20–30%, Linfócitos 10–15%, Eosinófilos 5–10%, Basófilos 2–5%"
+    ],
+    "answer": ["Neutrófilos 50–70%, Linfócitos 20–40%, Monócitos 2–8%, Eosinófilos 1–4%, Basófilos <1%"],
+    "type": "multi",
+    "justification": "A contagem diferencial normal em adultos, em ordem decrescente — mnemônico <strong>'Never Let Monkeys Eat Bananas'</strong>:<ul><li><strong>Neutrófilos (N):</strong> 50–70% → 1.800–7.700/µL</li><li><strong>Linfócitos (L):</strong> 20–40% → 1.000–4.800/µL</li><li><strong>Monócitos (M):</strong> 2–8% → 200–800/µL</li><li><strong>Eosinófilos (E):</strong> 1–4% → 100–500/µL</li><li><strong>Basófilos (B):</strong> <1% → 0–100/µL</li></ul>Em crianças: linfócitos são predominantes até os ~6–8 anos (inversão fisiológica da proporção neutrófilos/linfócitos).<br><br><em>Valor total normal:</em> 4.000–11.000/µL. Leucocitose: >11.000/µL. Leucopenia: <4.000/µL."
+  },
+  {
+    "question": "O 'desvio à esquerda' (left shift) no hemograma, com presença de bastões >10% e aparecimento de metamielócitos ou mielócitos no sangue periférico, indica qual processo fisiopatológico?",
+    "options": [
+      "Leucemia mieloide crônica com expansão clonal de células B maduras na circulação",
+      "Demanda aumentada por neutrófilos com liberação de formas imaturas da medula óssea, mediada por G-CSF e GM-CSF endógenos elevados",
+      "Infecção viral com expansão policlonal de linfócitos atípicos circulantes",
+      "Aplasia medular com liberação compensatória de progenitores precoces"
+    ],
+    "answer": ["Demanda aumentada por neutrófilos com liberação de formas imaturas da medula óssea, mediada por G-CSF e GM-CSF endógenos elevados"],
+    "type": "multi",
+    "justification": "O <strong>desvio à esquerda</strong> reflete a necessidade urgente de neutrófilos com liberação de formas imaturas da medula:<br><br><strong>Nomenclatura de maturação granulocítica (da mais jovem à mais madura):</strong><br>Mieloblasto → Promielócito → Mielócito → Metamielócito → <strong>Bastão (band)</strong> → Neutrófilo segmentado<br><br>Em infecções bacterianas graves, IL-1β, TNF-α e LPS estimulam produção endógena de G-CSF → medula libera células imediatamente (incluindo bastões e metamielócitos) antes que completem a maturação.<br><br><strong>Outros achados de ativação neutrofílica:</strong><ul><li>Granulações tóxicas (grânulos azurófilos proeminentes)</li><li>Vacuolização citoplasmática (fagolisossomos ativos)</li><li>Corpúsculos de Döhle (fragmentos de retículo endoplasmático)</li></ul><em>Na LMC:</em> também há formas imaturas, mas com <em>toda</em> a hierarquia granulocítica representada e sem granulações tóxicas — distinção diagnóstica importante."
+  },
+  {
+    "question": "Quais das seguintes condições clínicas estão associadas a NEUTROFILIA? (pode haver mais de uma correta)",
+    "options": [
+      "Infecção bacteriana aguda com desvio à esquerda e granulações tóxicas",
+      "Uso de glicocorticoides sistêmicos em doses anti-inflamatórias",
+      "Infecção viral aguda por CMV (Citomegalovírus) com linfócitos atípicos",
+      "Leucemia mieloide crônica (LMC) com cromossomo Philadelphia positivo",
+      "Aplasia de medula óssea grave por quimioterapia mieloablativa"
+    ],
+    "answer": [
+      "Infecção bacteriana aguda com desvio à esquerda e granulações tóxicas",
+      "Uso de glicocorticoides sistêmicos em doses anti-inflamatórias",
+      "Leucemia mieloide crônica (LMC) com cromossomo Philadelphia positivo"
+    ],
+    "type": "multi",
+    "justification": "Causas de <strong>neutrofilia</strong> (>7.700/µL ou >70% do diferencial):<ul><li>Infecções bacterianas (mais comum) — com desvio à esquerda</li><li>Glicocorticoides — desmarginalização (sem desvio à esquerda)</li><li>LMC — proliferação clonal BCR-ABL1+ de toda a linhagem granulocítica</li><li>Exercício físico intenso, pós-cirurgia, gravidez, infarto agudo do miocárdio</li><li>G-CSF exógeno (filgrastim)</li></ul><strong>CMV e outros vírus</strong> causam preferencialmente <em>linfocitose</em> com linfócitos atípicos (células de Downey = células T reativas expandidas em resposta ao vírus).<br><br><strong>Aplasia medular</strong> causa <em>pancitopenia</em> incluindo neutropenia grave — o oposto da neutrofilia."
+  },
+  {
+    "question": "A linfopenia (linfócitos <1.000/µL) é um achado característico na infecção aguda pelo HIV e é usada como critério diagnóstico de AIDS independentemente da contagem de CD4.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A <em>linfopenia total</em> não é critério diagnóstico de AIDS — o critério é especificamente <strong>CD4 < 200 células/µL</strong> (ou doença definidora de AIDS).<br><br>Na infecção aguda pelo HIV, pode haver linfocitose transitória, não linfopenia. A linfopenia com depleção seletiva de CD4+ ocorre <em>progressivamente</em> ao longo de anos na infecção crônica não tratada.<br><br><strong>Causas de linfopenia:</strong><ul><li>HIV/AIDS (depleção de CD4+)</li><li>Glicocorticoides sistêmicos (redistribuição + apoptose)</li><li>Quimioterapia e radioterapia</li><li>Sepse grave e COVID-19 grave</li><li>LES (especialmente linfopenia de células T)</li><li>SCID (Severe Combined Immunodeficiency)</li></ul><em>Linfopenia grave (<500/µL)</em> eleva risco de infecções oportunistas fúngicas e virais independentemente da etiologia."
+  },
+  {
+    "question": "A restrição de cadeia leve (apenas kappa OU apenas lambda em todas as células B de uma amostra) em citometria de fluxo indica monoclonalidade neoplásica, pois em populações B reativas a proporção kappa:lambda é de aproximadamente 2:1.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Este é um princípio diagnóstico fundamental em hematologia:<br><br><strong>Populações B policlonais (normais/reativas):</strong> cada clone expressa exclusivamente kappa OU lambda (comprometimento alélico — allelic exclusion). Múltiplos clones → mistura → razão kappa:lambda <strong>≈ 2:1</strong> (fisiológica, pois loci kappa são reorganizados antes de lambda)<br><br><strong>Neoplasia B monoclonal:</strong> expansão de um único clone → todas as células expressam apenas kappa OU apenas lambda → razão extremamente desviada (>6:1 ou <0,25:1) = <em>restrição de cadeia leve</em><br><br><em>Aplicações clínicas:</em><ul><li>LLC: CD19+/CD5+/CD23+ com IgM fraca + restrição</li><li>Mieloma: pico monoclonal (proteína M) em eletroforese + proteína de Bence-Jones urinária (cadeias leves livres da mesma restrição)</li><li>Infecção por EBV: linfocitose <em>policlonal</em> (mistura de kappa e lambda) — nunca com restrição em processo reativo puro</li></ul>"
+  },
+  {
+    "question": "Qual das seguintes combinações de imunofenotipagem por citometria de fluxo é DIAGNÓSTICA de leucemia linfocítica crônica (LLC)?",
+    "options": [
+      "CD3+, CD4+, CD25+, FOXP3+ — perfil de células T reguladoras expandidas",
+      "CD34+, CD117+, CD33+, MPO+ — perfil de blastos mieloides (LMA)",
+      "CD19+, CD5+, CD23+, IgM de superfície fraca, com restrição de cadeia leve",
+      "CD16+, CD56+, CD3- — perfil de células NK expandidas (leucemia de células NK)"
+    ],
+    "answer": ["CD19+, CD5+, CD23+, IgM de superfície fraca, com restrição de cadeia leve"],
+    "type": "multi",
+    "justification": "O padrão diagnóstico da <strong>LLC (Leucemia Linfocítica Crônica — Chronic Lymphocytic Leukemia)</strong>:<ul><li><strong>CD19+ e CD20fraco:</strong> marcadores B (CD20 mais fraco que células B normais)</li><li><strong>CD5+:</strong> marcador tipicamente de células T, aberrantemente coexpresso na LLC (e fisiologicamente em células B-1)</li><li><strong>CD23+:</strong> diferencia LLC do linfoma do manto (CD23-)</li><li><strong>IgM/IgD de superfície fraca:</strong> vs forte nas células B normais</li><li><strong>Restrição de cadeia leve:</strong> monoclonalidade</li></ul><strong>Fatores prognósticos importantes:</strong><ul><li>CD38+ / ZAP-70+ → pior prognóstico</li><li>Deleção 17p ou mutação TP53 → resistência a quimioterapia, indicação de venetoclax + ibrutinibe</li><li>IGHV mutado → melhor prognóstico</li></ul><em>Critério de tratamento (iwCLL):</em> doença sintomática/progressiva — 'watch and wait' em estádio 0–I assintomático."
+  },
+  {
+    "question": "A translocação t(9;22) gerando BCR-ABL1 está presente exclusivamente na leucemia mieloide crônica (LMC), não sendo encontrada em outros tipos de leucemia.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O cromossomo Philadelphia (Ph+) e a fusão <strong>BCR-ABL1</strong> estão presentes em:<ul><li><strong>LMC:</strong> ~95–100% — marcador diagnóstico; proteína predominante p210</li><li><strong>LLA em adultos:</strong> ~25–30% — pior prognóstico; proteína predominante p190 (ponto de quebra diferente em BCR)</li><li><strong>LLA pediátrica:</strong> ~3–5%</li><li><strong>LMA:</strong> raramente (<1%)</li></ul><em>Implicação terapêutica:</em> adição de TKIs (imatinibe, dasatinibe, ponatinibe) à quimioterapia da LLA Ph+ transformou seu prognóstico. A mutação de resistência <strong>T315I</strong> ('mutação gatekeeper') é resistente a todos os TKIs de 1ª e 2ª geração — apenas o ponatinibe (3ª geração) mantém atividade."
+  },
+  {
+    "question": "Na leucemia promielocítica aguda (APL — LMA M3), a translocação t(15;17) gera PML-RARα, que bloqueia a diferenciação dos promielócitos. O ATRA trata esta leucemia ao inibir a atividade tirosina-quinase desta proteína de fusão.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A PML-RARα <em>não tem atividade tirosina-quinase</em> — é um fator de transcrição aberrante. O mecanismo correto do ATRA é completamente diferente:<br><br><strong>Fisiopatologia:</strong> PML-RARα recruta co-repressores (NCoR, SMRT, HDAC) → cromatina condensada → genes de diferenciação granulocítica silenciados → bloqueio no estágio promielocítico<br><br><strong>ATRA em concentração farmacológica (~10⁻⁶ M):</strong> liga-se ao domínio RARα da PML-RARα → mudança conformacional → liberação dos co-repressores + recrutamento de co-ativadores (HATs) → genes de diferenciação ativados → promielócitos se diferenciam em granulócitos maduros<br><br><strong>ATO (Arsenic Trioxide — Trióxido de Arsênio):</strong> degrada diretamente a PML-RARα via SUMOilação + ubiquitinação → proteassoma. A combinação ATRA + ATO sem quimioterapia alcança remissão em >95% dos casos — revolução terapêutica na oncologia.<br><br><em>Risco inicial:</em> CIVD (Coagulação Intravascular Disseminada) pelos conteúdos pró-coagulantes dos grânulos de promielócitos → emergência hematológica."
+  },
+  {
+    "question": "O rituximabe, anticorpo monoclonal anti-CD20 usado no esquema R-CHOP para linfoma difuso de grandes células B (DLBCL), atua por qual mecanismo?",
+    "options": [
+      "Bloqueia o receptor de IL-6 em células B linfomatosas, reduzindo a sinalização proliferativa via STAT3",
+      "Inibe a tirosina-quinase BTK, bloqueando a sinalização do BCR e induzindo apoptose das células linfomatosas",
+      "Liga-se ao CD20 nas células B tumorais, marcando-as para destruição por ADCC, CDC e apoptose direta",
+      "Bloqueia o checkpoint PD-1/PD-L1, reativando células T antitumorais que atacam as células B do linfoma"
+    ],
+    "answer": ["Liga-se ao CD20 nas células B tumorais, marcando-as para destruição por ADCC, CDC e apoptose direta"],
+    "type": "multi",
+    "justification": "O <strong>rituximabe</strong> é um anticorpo monoclonal quimérico (parte humana, parte murina) anti-<strong>CD20</strong>, expresso em células B maduras normais e na maioria das neoplasias B.<br><br><strong>Mecanismos de destruição celular:</strong><ul><li><strong>ADCC (Antibody-Dependent Cellular Cytotoxicity):</strong> células NK e macrófagos reconhecem o Fc do rituximabe via FcγRIII (CD16) → lise da célula B tumoral</li><li><strong>CDC (Complement-Dependent Cytotoxicity):</strong> rituximabe ativa o complemento via C1q → MAC (Membrane Attack Complex) → lise osmótica</li><li><strong>Apoptose direta:</strong> cross-linking de CD20 → sinalização apoptótica intrínseca</li></ul><em>R-CHOP:</em> Rituximabe + Ciclofosfamida + doxorrubicina (Hydroxydaunorubicin) + Oncovin (vincristina) + Prednisona → padrão ouro para DLBCL. A adição do R ao CHOP aumentou a taxa de cura em ~15%."
+  },
+  {
+    "question": "A biópsia de medula óssea é realizada preferencialmente na crista ilíaca póstero-superior, coletando-se aspirado (para análise citológica) e fragmento (para análise histológica da arquitetura). A biópsia do esterno é preferida em adultos por maior segurança e facilidade técnica.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A biópsia do esterno é <strong>evitada em adultos</strong> por risco de perfuração cardíaca e pericárdica — complicação rara mas fatal. O sítio de eleição é a <strong>crista ilíaca póstero-superior</strong> (CIPS) em adultos e crianças maiores.<br><br>Em neonatos e lactentes (<18 meses) onde a CIPS é pequeníssima, usa-se a tíbia proximal.<br><br><strong>O procedimento coleta dois materiais distintos:</strong><ul><li><strong>Aspirado medular (mielograma):</strong> análise morfológica/citológica de células individuais, imunofenotipagem, citogenética (FISH, cariótipo), biologia molecular (PCR para BCR-ABL1, mutações)</li><li><strong>Fragmento ósseo (histologia):</strong> análise da arquitetura medular — celularidade, fibrose (reticulina e colágeno), infiltração tumoral, granulomas</li></ul><em>Indicações:</em> pancitopenia inexplicada, suspeita de leucemia/linfoma/mieloma, estadiamento de linfomas, diagnóstico de aplasia medular, síndrome mielodisplásica."
+  },
+  {
+    "question": "A presença de corpúsculos de Auer (Auer rods — bastões de Auer) no esfregaço de sangue periférico é patognomônica de leucemia linfoblástica aguda de células B (LLA-B) em adultos jovens.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Os corpúsculos de Auer são achados em <strong>leucemias mieloides agudas (LMA)</strong>, especialmente na LMA M3 (APL — leucemia promielocítica aguda), e <em>jamais</em> ocorrem em LLA.<br><br><strong>O que são os corpúsculos de Auer:</strong> inclusões citoplasmáticas em forma de agulha ou fuso nos blastos mieloides; formados pela fusão de grânulos azurófilos anormais. Compostos por MPO, lisozima e fosfolipídios — coram em rosa-avermelhado com Giemsa.<br><br><strong>Achados diagnósticos por subtipo:</strong><ul><li>LMA M3 (APL): promielócitos com Auer rods múltiplos em feixe — 'fagots' = emergência por risco de CIVD</li><li>LMA M2: bastões de Auer em mieloblastos</li><li>LLA: blastos TdT+, sem Auer, MPO-negativa</li></ul><em>A MPO citoplasmática</em> vista na coloração histoquímica é o marcador que confirma linhagem mieloide nos blastos — negativa em linfoblastos."
+  },
+  {
+    "question": "Quais dos seguintes mediadores moleculares inflamatórios estão CORRETAMENTE descritos? (pode haver mais de uma correta)",
+    "options": [
+      "C5a atua como anafilatoxina vasoativa e principal agente quimiotático do complemento para neutrófilos, via receptor C5aR (CD88)",
+      "IL-6 é o principal indutor hepático de proteínas de fase aguda (PCR, fibrinogênio, SAA) e mediador sistêmico da febre junto com IL-1β via PGE2 hipotalâmica",
+      "LTB4 (Leucotrieno B4) causa broncoconstrição mais potente que a histamina, enquanto LTC4/LTD4 são os principais quimioatraentes para neutrófilos",
+      "TNF-α é produzido exclusivamente por mastócitos ativados por IgE e não participa de respostas a infecções bacterianas",
+      "Histamina é sintetizada de novo durante cada resposta inflamatória pela histidina descarboxilase, sem ser pré-armazenada em grânulos"
+    ],
+    "answer": [
+      "C5a atua como anafilatoxina vasoativa e principal agente quimiotático do complemento para neutrófilos, via receptor C5aR (CD88)",
+      "IL-6 é o principal indutor hepático de proteínas de fase aguda (PCR, fibrinogênio, SAA) e mediador sistêmico da febre junto com IL-1β via PGE2 hipotalâmica"
+    ],
+    "type": "multi",
+    "justification": "Análise detalhada:<ul><li><strong>C5a ✓:</strong> anafilatoxina (vasodilatação, degranulação de mastócitos) + quimioatrativo via C5aR/CD88 em neutrófilos e monócitos</li><li><strong>IL-6 ✓:</strong> principal indutor das proteínas de fase aguda tipo II via STAT3 hepático. Mediador sistêmico da febre com IL-1β. Alvo do tocilizumabe em AR, COVID-19 grave e CRS (Cytokine Release Syndrome) por CAR-T</li><li><strong>LTB4/LTC4 ✗:</strong> papéis invertidos — <strong>LTB4</strong> é o quimioatrativo para neutrófilos (receptor BLT1); <strong>LTC4/LTD4/LTE4</strong> (cisteinil-leucotrienos, via CysLT1) causam broncoconstrição (~1000× mais potente que histamina)</li><li><strong>TNF-α ✗:</strong> produzido principalmente por <em>macrófagos ativados</em> em resposta a LPS (bactérias gram-negativas). Mastócitos também produzem, mas macrófagos são a fonte principal na sepse</li><li><strong>Histamina ✗:</strong> é <em>pré-armazenada</em> em grânulos de mastócitos e basófilos — a liberação imediata depende da degranulação exocítica pré-formada, não de síntese de novo durante a resposta</li></ul>"
+  },
+  {
+    "question": "A procalcitonina (PCT) é mais específica para infecção bacteriana do que a PCR (Proteína C-Reativa), sendo amplamente usada na UTI para guiar início e cessação de antibioticoterapia. A PCR é mais útil no seguimento de doenças inflamatórias crônicas por sua maior estabilidade ao longo do tempo.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Comparação dos marcadores inflamatórios:<br><br><table><tr><th>Marcador</th><th>Início ↑</th><th>Pico</th><th>Retorno</th><th>Especificidade bacteriana</th></tr><tr><td>PCT</td><td>2–4h</td><td>24h</td><td>Rápido com ATB</td><td>Alta</td></tr><tr><td>PCR</td><td>6–8h</td><td>48h</td><td>Mais lento</td><td>Moderada</td></tr><tr><td>IL-6</td><td>1–2h</td><td>6h</td><td>Rápido</td><td>Baixa</td></tr></table><br>A PCT é produzida em múltiplos tecidos em resposta a endotoxinas bacterianas e mediadores como IL-1β, TNF-α — mas <em>não</em> em resposta a vírus (IFN-γ viral suprime a produção de PCT).<br><br><em>Uso clínico da PCT:</em> guia de descalonamento de antibióticos na UTI (interromper ATB quando PCT < 0,25 ng/mL ou queda >80% do valor inicial); diferenciação de pneumonia bacteriana vs viral; sepse (PCT >2 ng/mL indica alta probabilidade de sepse bacteriana)."
+  },
+  {
+    "question": "Qual das seguintes sequências descreve CORRETAMENTE a ordem cronológica de chegada celular ao sítio de inflamação aguda bacteriana?",
+    "options": [
+      "Linfócitos T CD8+ (0–2h) → Eosinófilos (4–12h) → Neutrófilos (24–48h) → Macrófagos (>72h)",
+      "Mastócitos locais (minutos) → Neutrófilos (0–24h) → Monócitos/Macrófagos (24–48h) → Linfócitos (dias a semanas)",
+      "Basófilos circulantes (minutos) → Células NK (2–4h) → Células dendríticas (8–12h) → Plasmócitos (24h)",
+      "Neutrófilos (0–4h) → Eosinófilos (4–12h) → Basófilos (12–24h) → Linfócitos NK (24–48h)"
+    ],
+    "answer": ["Mastócitos locais (minutos) → Neutrófilos (0–24h) → Monócitos/Macrófagos (24–48h) → Linfócitos (dias a semanas)"],
+    "type": "multi",
+    "justification": "A cronologia da resposta inflamatória aguda:<br><br><strong>Minutos:</strong> <em>Mastócitos</em> teciduais reconhecem PAMPs via TLRs ou ativação por complemento → degranulação imediata (histamina, TNF-α pré-formado) → vasodilatação + quimioatração inicial<br><br><strong>0–24h:</strong> <em>Neutrófilos</em> chegam em ondas (primeira resposta celular circulante). 'Primeiros socorristas' da imunidade inata. Fagocitam e destroem bactérias<br><br><strong>24–48h:</strong> <em>Monócitos</em> chegam e diferenciam-se em macrófagos. Assumem o controle: fagocitam neutrófilos apoptóticos (efferocitose), detritos e microrganismos. Produzem citocinas para ativação da resposta adaptativa<br><br><strong>Dias a semanas:</strong> <em>Linfócitos T e B</em> chegam para imunidade adaptativa específica<br><br><em>Inflamação crônica:</em> linfócitos e macrófagos dominam o infiltrado (vs aguda: neutrófilos dominam)."
+  },
+  {
+    "question": "A hematopoiese extramedular com retorno da produção ao fígado e baço em adultos é um achado fisiológico normal após infecções bacterianas graves, sem necessariamente indicar doença hematológica subjacente.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A hematopoiese extramedular é <em>sempre patológica</em> em adultos — não ocorre fisiologicamente em resposta a infecções simples.<br><br><strong>Causas de hematopoiese extramedular em adultos:</strong><ul><li>Mielofibrose primária ou secundária (fibrose substitui a medula → hematopoiese migra)</li><li>Anemia falciforme grave com dano medular crônico</li><li>Talassemia maior (eritropoiese ineficaz severa)</li><li>Neoplasias com infiltração medular (carcinoma, linfoma)</li><li>Osteopetrose (medula óssea obliterada por osso denso)</li></ul><strong>Manifestações:</strong> hepatoesplenomegalia volumosa + eritroblastos e formas imaturas no esfregaço (reação leucoeritroblástica) + dacriócitos (células em lágrima) na mielofibrose.<br><br><em>Em infecções bacterianas graves,</em> ocorre apenas aumento da granulopoiese na medula óssea normal — sem necessidade de sites extramedularess."
+  },
+  {
+    "question": "O TLR4 (Toll-Like Receptor 4 — Receptor do Tipo Toll 4) dos leucócitos reconhece especificamente o LPS (lipopolissacarídeo) de bactérias gram-negativas como um PAMP (Pathogen-Associated Molecular Pattern), ativando a via de sinalização MyD88 → NF-κB → transcrição de citocinas pró-inflamatórias.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O <strong>TLR4</strong> é o PRR (Pattern Recognition Receptor) clássico que reconhece LPS, componente da membrana externa de bactérias gram-negativas.<br><br><strong>Complexo de reconhecimento do LPS:</strong><br>LPS → se liga a LBP (LPS-Binding Protein) no plasma → complexo LPS-LBP se liga ao CD14 na membrana → LPS é transferido ao TLR4/MD-2 → dimerização de TLR4 → ativação de vias intracelulares:<ul><li><strong>Via MyD88:</strong> MyD88 → IRAK → TRAF6 → IKK → NF-κB → transcrição de TNF-α, IL-1β, IL-6, IL-8</li><li><strong>Via TRIF:</strong> TRIF → TBK1 → IRF3 → IFN-β (interferon tipo I)</li></ul><em>Relevância clínica:</em> superativação do TLR4 pelo LPS na sepse gram-negativa → tempestade de citocinas → choque séptico. Polimorfismos do TLR4 (D299G) estão associados a maior susceptibilidade a sepse gram-negativa."
+  },
+  {
+    "question": "Quais das seguintes afirmativas sobre a opsonização e fagocitose pelos neutrófilos estão CORRETAS? (pode haver mais de uma correta)",
+    "options": [
+      "Opsoninas como IgG e C3b revestem o patógeno, facilitando seu reconhecimento pelos receptores FcγRII (CD32) e CR3 (CD11b/CD18) do fagócito",
+      "A polimerização de actina via GTPases Rac1/Cdc42 é essencial para a extensão de pseudópodes ao redor do patógeno opsonizado",
+      "O fagolisossomo é formado pela fusão do fagossomo com o lisossomo e representa o compartimento onde ocorre a morte do patógeno",
+      "A opsonização é o processo de expulsão do patógeno fagocitado para o espaço extracelular através de exocitose reversa",
+      "IgE e C5a são as principais opsoninas que facilitam a fagocitose por neutrófilos em infecções bacterianas"
+    ],
+    "answer": [
+      "Opsoninas como IgG e C3b revestem o patógeno, facilitando seu reconhecimento pelos receptores FcγRII (CD32) e CR3 (CD11b/CD18) do fagócito",
+      "A polimerização de actina via GTPases Rac1/Cdc42 é essencial para a extensão de pseudópodes ao redor do patógeno opsonizado",
+      "O fagolisossomo é formado pela fusão do fagossomo com o lisossomo e representa o compartimento onde ocorre a morte do patógeno"
+    ],
+    "type": "multi",
+    "justification": "Análise das opções:<ul><li><strong>IgG+C3b ✓:</strong> opsoninas clássicas. IgG se liga via FcγRII/FcγRIII; C3b se liga via CR3 (MAC-1 = CD11b/CD18) e CR1 (CD35). Sinergismo entre as duas opsoninas aumenta eficiência fagocítica 10–100×</li><li><strong>Actina via Rac1/Cdc42 ✓:</strong> a extensão de pseudópodes para envolver o patógeno requer polimerização de actina (via Rac1 e Cdc42 → Arp2/3 → actina-F). Sem esse processo → o patógeno não é englobado</li><li><strong>Fagolisossomo ✓:</strong> após formação do fagossomo → fusão com lisossomos → pH ácido (4–5) + enzimas hidrolíticas + ROS do burst oxidativo → morte e degradação do patógeno</li><li><strong>Exocitose reversa ✗:</strong> opsonização é o <em>revestimento</em> do patógeno por proteínas para facilitar reconhecimento. O processo de exocitose é a degranulação, não opsonização</li><li><strong>IgE e C5a ✗:</strong> IgE opera em basófilos/mastócitos, não na fagocitose por neutrófilos. C5a é quimioatrativo, não opsonina clássica</li></ul>"
+  },
+  {
+    "question": "Um paciente séptico com ANC de 18.000/µL, 12% de bastões, granulações tóxicas e vacuolização nos neutrófilos apresenta lactato de 4,2 mmol/L e PCT de 45 ng/mL. O que explica a presença de granulações tóxicas?",
+    "options": [
+      "Acúmulo de lipídios oxidados nos grânulos secundários por peroxidação lipídica durante burst prolongado",
+      "Liberação de granulócitos imaturos da medula pela demanda de G-CSF endógeno elevado — grânulos azurófilos primários persistem proeminentes por maturação incompleta",
+      "Criação de novos grânulos por síntese aumentada de MPO em resposta à infecção nos neutrófilos circulantes",
+      "Fagolisossomos não digeridos que persistem como inclusões citoplasmáticas densas"
+    ],
+    "answer": ["Liberação de granulócitos imaturos da medula pela demanda de G-CSF endógeno elevado — grânulos azurófilos primários persistem proeminentes por maturação incompleta"],
+    "type": "multi",
+    "justification": "As <strong>granulações tóxicas</strong> são grânulos azurófilos (primários) proeminentes nos neutrófilos circulantes, normalmente menos visíveis após maturação completa.<br><br><strong>Mecanismo:</strong> IL-1β, TNF-α, LPS → produção maciça de G-CSF/GM-CSF endógenos → aceleração da granulopoiese → neutrófilos liberados prematuramente da medula → grânulos azurófilos primários ainda proeminentes (maturação incompleta)<br><br><strong>Conjunto de achados de ativação neutrofílica:</strong><ul><li>Granulações tóxicas: grânulos azurófilos proeminentes</li><li>Vacuolização citoplasmática: fagolisossomos ativos</li><li>Corpúsculos de Döhle: fragmentos de retículo endoplasmático (RNA ribossomal)</li><li>Bastões (bands) >10%: desvio à esquerda</li></ul><em>Valor diagnóstico:</em> granulações tóxicas têm alta especificidade para infecção bacteriana vs viral. Na COVID-19 grave podem ocorrer granulações tóxicas com linfopenia."
+  },
+  {
+    "question": "Em medicina intensiva, qual é a interpretação correta de um paciente com PaO₂ = 98 mmHg, SatO₂ = 99%, mas com lactato sérico de 8,2 mmol/L e disfunção de múltiplos órgãos?",
+    "options": [
+      "Anemia grave com Hb baixíssima reduzindo o conteúdo de O₂ apesar da saturação normal",
+      "Hipóxia citopática — defeito na utilização mitocondrial do O₂ (inibição do Complexo IV da cadeia respiratória) com oferta de O₂ normal mas sem consumo eficiente",
+      "Intoxicação por CO com carboxiHb elevada não detectada pela oximetria convencional",
+      "Tromboembolismo pulmonar com hipertensão pulmonar e baixo débito direito comprometendo a oxigenação"
+    ],
+    "answer": ["Hipóxia citopática — defeito na utilização mitocondrial do O₂ (inibição do Complexo IV da cadeia respiratória) com oferta de O₂ normal mas sem consumo eficiente"],
+    "type": "multi",
+    "justification": "Este caso descreve <strong>hipóxia citopática</strong> da sepse grave: PaO₂ e SatO₂ normais indicam troca gasosa adequada e Hb bem oxigenada — o problema não é na oferta, mas na <em>utilização</em>.<br><br><strong>Fisiopatologia:</strong> endotoxinas + mediadores inflamatórios (TNF-α, IL-1β, NO em excesso via iNOS) → inibição da <strong>cadeia transportadora de elétrons mitocondrial</strong> (especialmente Complexo IV — citocromo c oxidase) → células não conseguem usar O₂ para gerar ATP → metabolismo anaeróbio → <em>lactato elevado</em> apesar de O₂ disponível<br><br><em>Implicação terapêutica crítica:</em> em sepse, otimizar Hb >10 g/dL não melhora outcomes (estudos TRICC/TRISS) pois o problema é mitocondrial, não de oferta. Meta: antibióticos precoces + controle do foco + vasopressores (noradrenalina) + suporte orgânico.<br><br><em>Diferencial clínico:</em> intoxicação por cianeto (HCN) também causa hipóxia citopática por inibição do Complexo IV — tratamento específico com hidroxocobalamina ou nitrito de amila."
+  },
+  {
+    "question": "A síndrome de Chédiak-Higashi é causada por mutação no gene LYST (Lysosomal Trafficking Regulator), resultando em grânulos citotóxicos gigantes e disfuncionais em neutrófilos, NK e CTLs. O albinismo parcial nestes pacientes resulta do mesmo defeito nos melanossomas dos melanócitos.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>síndrome de Chédiak-Higashi</strong> exemplifica o conceito de uma proteína com funções em múltiplos tipos celulares:<br><br><strong>Defeito molecular:</strong> mutação no gene <strong>LYST</strong> (cromossomo 1q42) → proteína LYST disfuncional → defeito na fusão e tráfego de organelas lisossomais → <em>grânulos gigantes anormais</em> em todas as células granuladas<br><br><strong>Consequências:</strong><ul><li>Neutrófilos: não conseguem fundir grânulos com o fagossomo → fagocitose deficiente → infecções piogênicas</li><li>NK e CTLs: grânulos citotóxicos gigantes e imóveis → deficiência de citotoxicidade → susceptibilidade a vírus (especialmente EBV)</li><li>Melanócitos: melanossomas gigantes → distribuição anormal para queratinócitos → <em>albinismo oculocutâneo parcial</em> (cabelos prateados, nistagmo)</li><li>Plaquetas: grânulos densos disfuncionais → tendência hemorrágica</li></ul><em>Fase acelerada:</em> EBV desencadeia HLH por incapacidade das NK de controlar células infectadas → fatal sem transplante de medula óssea."
+  },
+  {
+    "question": "O efeito GvL (Graft-versus-Leukemia — Enxerto-versus-Leucemia) observado após transplante alogênico de células-tronco é mediado exclusivamente por linfócitos T CD8+ do doador que reconhecem antígenos de histocompatibilidade menores nas células leucêmicas do receptor, sem participação das células NK.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O efeito GvL é mediado por <em>ambos</em> — CTLs (CD8+) e células NK — por mecanismos distintos:<br><br><strong>CTLs do doador:</strong> reconhecem antígenos de histocompatibilidade menores (mHAs) expressos nas células leucêmicas do receptor via MHC-I → citotoxicidade antígeno-específica<br><br><strong>Células NK do doador:</strong> possuem KIRs incompatíveis com o HLA-I do receptor → sem sinal inibitório → reconhecem células leucêmicas como 'missing self alogênico' → citotoxicidade NK-mediated<br><br>O modelo KIR-ligando é explorado clinicamente: transplantes KIR-incompatíveis (doador cujos KIRs não reconhecem o HLA do receptor) têm maior efeito GvL → menor recaída leucêmica, especialmente em LMA<br><br><em>O desafio:</em> o mesmo mecanismo que causa GvL (reconhecimento do HLA do receptor) causa GvHD (doença do enxerto vs hospedeiro). Separar GvL de GvHD é um dos grandes desafios da transplantologia hematológica."
+  },
+  {
+    "question": "Na sepse grave, após a fase hiperinflamatória inicial com tempestade de citocinas, ocorre uma fase de imunossupressão caracterizada por polarização macrofágica para M1, hiperativação de linfócitos T e aumento de citocinas pró-inflamatórias, responsável pela mortalidade tardia.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Na fase de imunossupressão da sepse, ocorre o oposto:<br><br><strong>Fase hiperinflamatória (horas iniciais):</strong> macrófagos M1 + tempestade de citocinas (TNF-α, IL-1β, IL-6, IL-12) → disfunção orgânica precoce<br><br><strong>Fase de imunossupressão (dias–semanas):</strong><ul><li>Desvio macrofágico para <strong>M2</strong> → IL-10, TGF-β</li><li><strong>Exaustão de linfócitos T</strong> → superexpressão de PD-1, LAG-3, TIM-3 → anergia funcional</li><li><strong>Apoptose massiva de linfócitos</strong> (CD4+, CD8+, células B)</li><li><strong>Aumento de MDSCs</strong> (Myeloid-Derived Suppressor Cells) → supressão adicional</li><li><strong>Aumento de Tregs</strong> → supressão imune</li></ul><em>Consequência:</em> pacientes que sobrevivem ao choque séptico inicial morrem por infecções secundárias oportunistas (Candida, Aspergillus, CMV reativado, P. jirovecii) semanas depois — a sepse 'apaga' o sistema imune."
+  },
+  {
+    "question": "Quais das seguintes imunodeficiências primárias estão associadas CORRETAMENTE ao seu defeito molecular e manifestação predominante? (pode haver mais de uma correta)",
+    "options": [
+      "LAD-1 (Leukocyte Adhesion Deficiency type 1) — defeito em CD18 → neutrófilos não aderem ao endotélio → leucocitose paradoxal + infecções sem formação de pus",
+      "XLA (X-Linked Agammaglobulinemia) — defeito em BTK → ausência de células B → infecções por bactérias encapsuladas desde os 6–9 meses",
+      "CGD (Chronic Granulomatous Disease) — defeito em CD3ζ → células T sem sinalização → infecções virais graves",
+      "IPEX — defeito em FOXP3 → ausência de Tregs → autoimunidade multissistêmica",
+      "Síndrome de Di George — deleção 22q11 → hipoplasia/aplasia tímica → deficiência de células T"
+    ],
+    "answer": [
+      "LAD-1 (Leukocyte Adhesion Deficiency type 1) — defeito em CD18 → neutrófilos não aderem ao endotélio → leucocitose paradoxal + infecções sem formação de pus",
+      "XLA (X-Linked Agammaglobulinemia) — defeito em BTK → ausência de células B → infecções por bactérias encapsuladas desde os 6–9 meses",
+      "IPEX — defeito em FOXP3 → ausência de Tregs → autoimunidade multissistêmica",
+      "Síndrome de Di George — deleção 22q11 → hipoplasia/aplasia tímica → deficiência de células T"
+    ],
+    "type": "multi",
+    "justification": "Análise das associações:<ul><li><strong>LAD-1 ✓:</strong> defeito em CD18 (subunidade β das integrinas β2 = LFA-1 e MAC-1) → sem adesão firme → neutrófilos acumulam no sangue (leucocitose 40.000–100.000/µL) sem atingir tecidos → infecções sem pus (ausência de neutrófilos no sítio)</li><li><strong>XLA ✓:</strong> defeito em BTK → bloqueio pré-B → sem células B → sem anticorpos. Infecções por encapsulados após 6 meses (catabolismo de anticorpos maternos)</li><li><strong>CGD ✗:</strong> defeito em subunidades do NOX2 (principalmente gp91phox), não em CD3ζ. Causa infecções bacterianas e fúngicas, não virais predominantemente</li><li><strong>IPEX ✓:</strong> FOXP3 → ausência de Tregs → diabetes neonatal, enteropatia, eczema</li><li><strong>Di George ✓:</strong> deleção 22q11.2 → desenvolvimento anormal das bolsas faríngeas 3ª e 4ª → hipoplasia tímica → déficit de células T. Também cursa com hipocalcemia (hipoparatiroidismo) e cardiopatia congênita</li></ul>"
+  },
+  {
+    "question": "O filgrastim (G-CSF recombinante) é usado profilaticamente em pacientes oncológicos para prevenir neutropenia febril. Além de estimular a produção medular de neutrófilos, ele também mobiliza células-tronco hematopoiéticas (HSCs) para o sangue periférico. Qual é o mecanismo desta mobilização?",
+    "options": [
+      "G-CSF ativa diretamente o CXCR4 nas HSCs, forçando sua liberação do nicho por hipersinalização",
+      "G-CSF induz produção de proteases (elastase, catepsina G, MMP-9) pelos neutrófilos ativados, que clivam CXCL12 e moléculas de adesão do nicho medular, liberando as HSCs indiretamente",
+      "G-CSF bloqueia diretamente o receptor CXCR4 nas HSCs, mimetizando o mecanismo do plerixafor",
+      "G-CSF estimula osteoclastos a produzirem RANKL que dissolve a matriz óssea do nicho, liberando as HSCs"
+    ],
+    "answer": ["G-CSF induz produção de proteases (elastase, catepsina G, MMP-9) pelos neutrófilos ativados, que clivam CXCL12 e moléculas de adesão do nicho medular, liberando as HSCs indiretamente"],
+    "type": "multi",
+    "justification": "O mecanismo de mobilização pelo G-CSF é <em>indireto</em> e envolve:<br><br><strong>G-CSF</strong> estimula neutrófilos a produzirem e liberarem proteases:<ul><li><strong>Elastase neutrofílica:</strong> cliva CXCL12, VCAM-1 e c-Kit ligand (SCF) na superfície das células estromais → rompe interações retentivas</li><li><strong>Catepsina G:</strong> inativa CXCL12</li><li><strong>MMP-9 (Gelatinase B):</strong> degrada componentes da membrana basal e libera SCF solúvel (mobilizador)</li></ul>Resultado: eixo CXCL12/CXCR4 enfraquecido → HSCs liberam-se do nicho → mobilização para sangue periférico em 4–5 dias.<br><br><em>Comparação com plerixafor:</em> G-CSF: mecanismo indireto via proteases, lento (4–5 dias); plerixafor: bloqueio direto de CXCR4, rápido (6–9h). A combinação dos dois é sinérgica para mobilização de HSCs CD34+ em pacientes com mobilização prévia insatisfatória."
+  },
+  {
+    "question": "Quais fatores deslocam a curva de dissociação da hemoglobina para a DIREITA, aumentando o P50 e facilitando a liberação de O₂ nos tecidos?",
+    "options": [
+      "Aumento de H+ (acidose), aumento de CO₂, aumento de 2,3-DPG e aumento de temperatura",
+      "Aumento de H+ (acidose), diminuição de CO₂, diminuição de 2,3-DPG e aumento de temperatura",
+      "Diminuição de H+ (alcalose), aumento de CO₂, aumento de 2,3-DPG e diminuição de temperatura",
+      "Aumento de CO (monóxido de carbono), aumento de MetHb, aumento de HbF e diminuição de temperatura"
+    ],
+    "answer": ["Aumento de H+ (acidose), aumento de CO₂, aumento de 2,3-DPG e aumento de temperatura"],
+    "type": "multi",
+    "justification": "Desvio à <strong>direita</strong> (P50 aumentado, menor afinidade, maior liberação periférica de O₂) — mnemônico <strong>CADET</strong>:<ul><li><strong>CO₂↑:</strong> forma carbamatos N-terminais + acidifica via H₂CO₃ → dupla ação estabilizadora do estado T</li><li><strong>Acidose (H+↑):</strong> efeito Bohr — protona histidinas → novas pontes salinas → estado T estabilizado</li><li><strong>DPG (2,3-DPG↑):</strong> liga-se na cavidade central do estado T, estabilizando-o</li><li><strong>Exercício/Temperatura↑:</strong> calor enfraquece interações hidrofóbicas do estado R</li></ul><strong>Desvio à esquerda</strong> (P50 diminuído, maior afinidade — <em>prejudica</em> entrega tecidual): alcalose, hipotermia, ↓CO₂, ↓2,3-DPG (sangue armazenado), HbF, HbCO, MetHb.<br><br><em>Relevância clínica:</em> hipotermia terapêutica (pós-PCR) desloca curva à esquerda → hemácias 'seguram' O₂ → necessidade de manter Hb mais alta para garantir oferta tecidual adequada."
+  },
+  {
+    "question": "A leucemia mieloide crônica (LMC) em fase crônica pode ser tratada indefinidamente com imatinibe sem risco de resistência, pois a proteína BCR-ABL1 não sofre mutações adicionais sob pressão seletiva do fármaco.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A resistência ao imatinibe é um problema clínico real e bem estudado:<br><br><strong>Mecanismos de resistência ao imatinibe:</strong><ul><li><strong>Mutação T315I</strong> ('mutação gatekeeper') no domínio quinase do BCR-ABL1 → bloqueia o sítio de ligação do imatinibe → resistência a imatinibe, dasatinibe e nilotinibe. Somente o <strong>ponatinibe</strong> (3ª geração) mantém atividade</li><li>Amplificação do gene BCR-ABL1 → maior quantidade de proteína supera a inibição</li><li>Upregulation de MDR1 (glicoproteína-P) → exportação ativa do imatinibe da célula</li><li>Ativação de vias de bypass (Src quinases, PI3K/Akt)</li></ul><em>Monitorização:</em> PCR quantitativa para BCR-ABL1 a cada 3 meses (meta: resposta molecular profunda BCR-ABL1 ≤0,01% IS). Aumento na transcrição BCR-ABL1 → suspeita de resistência → sequenciamento do domínio quinase para identificar mutações → troca para TKI de 2ª/3ª geração."
+  },
+  {
+    "question": "Um homem de 68 anos com linfadenopatia cervical assintomática, linfocitose de 32.000/µL estável há 2 anos, sem esplenomegalia ou anemia. A citometria mostra CD19+, CD5+, CD23+, IgM fraca, restrição lambda. Pelo critério de Rai, este paciente é estadio 0. Qual é a conduta inicial CORRETA?",
+    "options": [
+      "Iniciar imediatamente R-CHOP (rituximabe + quimioterapia) para prevenir progressão para linfoma de alto grau",
+      "Iniciar ibrutinibe (inibidor de BTK) isolado para controlar a linfocitose antes que cause complicações",
+      "'Watch and wait' (observação sem tratamento) — LLC estádio 0 de Rai assintomática é tratada apenas quando há critérios de progressão (iwCLL)",
+      "Iniciar bendamustina + rituximabe imediatamente por ser o padrão de cuidado independente do estádio"
+    ],
+    "answer": ["'Watch and wait' (observação sem tratamento) — LLC estádio 0 de Rai assintomática é tratada apenas quando há critérios de progressão (iwCLL)"],
+    "type": "multi",
+    "justification": "A <strong>LLC estádio 0 de Rai</strong> (apenas linfocitose, sem adenomegalia, esplenomegalia, anemia ou plaquetopenia) tem curso indolente em muitos pacientes — alguns nunca precisam de tratamento.<br><br><strong>Estadiamento de Rai simplificado:</strong><ul><li>Estádio 0: linfocitose isolada — risco baixo</li><li>Estádio I-II: + adenomegalia ± esplenomegalia — risco intermediário</li><li>Estádio III-IV: + anemia (<11 g/dL) ou plaquetopenia (<100.000/µL) — risco alto</li></ul><strong>Critérios iwCLL para início de tratamento:</strong><ul><li>Citopenias por infiltração medular (Hb <10 g/dL ou Plt <100.000/µL)</li><li>Esplenomegalia sintomática >6cm abaixo do rebordo costal</li><li>Linfocitose dobrando em <6 meses ou >300.000/µL</li><li>Adenomegalia sintomática >10cm</li><li>Sintomas constitucionais (febre, sudorese noturna, perda de peso >10%)</li></ul>Tratar LLC assintomática precocemente não prolonga a sobrevida — múltiplos estudos confirmam 'watch and wait' como padrão."
+  },
+  {
+    "question": "A monocitose persistente (>1.000/µL por >3 meses) em adulto acima de 50 anos, sem causa infecciosa ou inflamatória identificada, deve levantar suspeita de qual neoplasia mieloide específica e qual marcador molecular auxilia no diagnóstico?",
+    "options": [
+      "Leucemia linfocítica crônica (LLC) com transformação para linfoma de Richter — marcador: CD38 elevado",
+      "Leucemia mielomonocítica crônica (LMMC — CMML) — marcador: mutações em TET2, SRSF2, ASXL1 em NGS + monocitose >1×10⁹/L com monócitos clássicos >94% dos monócitos totais",
+      "Leucemia mieloide aguda (LMA) em fase inicial — marcador: blastos >20% na medula óssea",
+      "Síndrome hipereosinofílica com variante monocítica — marcador: FIP1L1-PDGFRα"
+    ],
+    "answer": ["Leucemia mielomonocítica crônica (LMMC — CMML) — marcador: mutações em TET2, SRSF2, ASXL1 em NGS + monocitose >1×10⁹/L com monócitos clássicos >94% dos monócitos totais"],
+    "type": "multi",
+    "justification": "A <strong>LMMC (Leucemia Mielomonocítica Crônica — Chronic Myelomonocytic Leukemia)</strong> é uma neoplasia mieloide que combina características mielodisplásicas e mieloproliferativas:<br><br><strong>Critério diagnóstico:</strong> monocitose persistente ≥1×10⁹/L por ≥3 meses + <em>monócitos clássicos (CD14+/CD16-) ≥94% dos monócitos totais</em> — este último critério (citometria de fluxo) distingue LMMC de monocitose reativa<br><br><strong>Mutações mais frequentes (NGS):</strong><ul><li>TET2 (~60%): metilação aberrante do DNA</li><li>SRSF2 (~50%): splicing de RNA</li><li>ASXL1 (~40%): modificação de cromatina (marcador de mau prognóstico)</li><li>RAS (~30%): sinalização proliferativa</li></ul><em>Clínica:</em> esplenomegalia, citopenias, risco de transformação em LMA (~15–20%). Tratamento: 5-azacitidina (agente hipometilante) para doença de alto risco; transplante alogênico como única cura."
+  },
+  {
+    "question": "Os inibidores de checkpoint imunológico (anti-PD-1, anti-PD-L1, anti-CTLA-4) revolucionaram o tratamento oncológico ao reativar células T antitumorais. O principal efeito adverso imune destas terapias é denominado irAE (immune-related Adverse Event). Quais órgãos são mais frequentemente afetados? (pode haver mais de uma correta)",
+    "options": [
+      "Cólon (colite imune — diarreia, dor abdominal) — especialmente com anti-CTLA-4",
+      "Pulmão (pneumonite imune — dispneia, infiltrados) — especialmente com anti-PD-1/PD-L1",
+      "Glândulas endócrinas (tireoidite, hipofisice, diabetes mellitus tipo 1) — especialmente com anti-CTLA-4 e combinações",
+      "Rins (nefrite intersticial com insuficiência renal) — especialmente com anti-PD-1",
+      "Coração (miocardite imune — rara mas potencialmente fatal)"
+    ],
+    "answer": [
+      "Cólon (colite imune — diarreia, dor abdominal) — especialmente com anti-CTLA-4",
+      "Pulmão (pneumonite imune — dispneia, infiltrados) — especialmente com anti-PD-1/PD-L1",
+      "Glândulas endócrinas (tireoidite, hipofisice, diabetes mellitus tipo 1) — especialmente com anti-CTLA-4 e combinações",
+      "Rins (nefrite intersticial com insuficiência renal) — especialmente com anti-PD-1",
+      "Coração (miocardite imune — rara mas potencialmente fatal)"
+    ],
+    "type": "multi",
+    "justification": "Os <strong>irAEs (immune-related Adverse Events — Eventos Adversos Imuno-relacionados)</strong> ocorrem porque o desbloqueio de checkpoints imunológicos permite que células T ataquem não apenas o tumor, mas também tecidos normais — autoimunidade iatrogênica:<br><br><strong>Mais frequentes (por classe):</strong><ul><li><strong>Anti-CTLA-4 (ipilimumab):</strong> colite grave (até grau 4), hipofisice, hepatite — incidência irAE mais alta (~60%)</li><li><strong>Anti-PD-1/PD-L1 (pembrolizumab, nivolumab, atezolizumab):</strong> pneumonite, nefrite, tireoidite — incidência menor (~20–30%)</li><li><strong>Combinação CTLA-4+PD-1:</strong> maior incidência e gravidade de irAEs (~60% grau ≥3)</li></ul><strong>Casos especiais:</strong><ul><li>Miocardite imune: rara (<1%) mas mortalidade alta (~50%) — taquicardia, bloqueio AV, elevação de troponina → glicocorticoide de alta dose urgente</li><li>DM tipo 1 fulminante: células β destruídas → cetoacidose inaugural</li></ul><em>Tratamento dos irAEs:</em> glicocorticoides sistêmicos (prednisona 1–2 mg/kg); casos refratários: infliximabe (anti-TNF) para colite, micofenolato para hepatite."
+  },
+  {
+    "question": "O imatinibe foi a primeira terapia-alvo molecular bem-sucedida na oncologia (2001). Um paciente com LMC em fase crônica em uso de imatinibe desenvolve resistência. A principal causa de resistência adquirida é:",
+    "options": [
+      "Amplificação do gene BCR-ABL1 com múltiplas cópias cromossômicas, saturando a capacidade do imatinibe",
+      "Mutação pontual T315I no domínio quinase do BCR-ABL1 ('mutação gatekeeper') — impede a ligação do imatinibe ao sítio ativo por substituição de treonina por isoleucina na posição 315",
+      "Hipometilação do promotor do gene ABL1 por inibição de DNMT3A induzida pelo imatinibe cronicamente",
+      "Ativação compensatória do eixo CXCL12/CXCR4 que bypass a inibição do BCR-ABL1 via PI3K/Akt"
+    ],
+    "answer": ["Mutação pontual T315I no domínio quinase do BCR-ABL1 ('mutação gatekeeper') — impede a ligação do imatinibe ao sítio ativo por substituição de treonina por isoleucina na posição 315"],
+    "type": "multi",
+    "justification": "A mutação <strong>T315I</strong> é chamada de 'gatekeeper mutation' porque a treonina 315 forma uma ligação de hidrogênio crucial com o anel piridina do imatinibe. A substituição por isoleucina:<ul><li>Elimina essa ligação de hidrogênio</li><li>Cria impedimento estérico (isoleucina é maior que treonina)</li><li>Torna o sítio ativo inacessível ao imatinibe</li></ul>A T315I é resistente a <em>todos</em> os TKIs de 1ª e 2ª geração (imatinibe, dasatinibe, nilotinibe, bosutinibe). Somente o <strong>ponatinibe</strong> (3ª geração), desenhado especificamente para esta mutação, mantém atividade.<br><br><strong>Monitorização molecular:</strong> PCR quantitativa para BCR-ABL1 a cada 3 meses. Falha de resposta → sequenciamento do domínio quinase para identificar a mutação → guia a troca de TKI.<br><br><em>Asciminib:</em> TKI de 4ª geração que atua no sítio de ligação da miristila do ABL1 (mecanismo completamente diferente — alostérico) — ativo mesmo contra T315I."
+  },
+  {
+    "question": "Quais células do sistema imune realizam efferocitose (fagocitose de células apoptóticas) e qual é a relevância fisiológica deste processo na resolução da inflamação?",
+    "options": [
+      "Neutrófilos — fagocitam células apoptóticas para prolongar sua própria sobrevida usando os componentes celulares como nutrientes",
+      "Macrófagos — reconhecem e fagocitam neutrófilos apoptóticos via receptores que detectam sinais 'eat-me' (fosfatidilserina, calreticulina), produzindo IL-10 e TGF-β que ativamente suprimem a inflamação e promovem reparo",
+      "Células NK — destroem células apoptóticas que expressam NKG2D ligands antes de serem fagocitadas",
+      "Células dendríticas — fagocitam células apoptóticas para apresentar antígenos self e ativar células T autorreativas"
+    ],
+    "answer": ["Macrófagos — reconhecem e fagocitam neutrófilos apoptóticos via receptores que detectam sinais 'eat-me' (fosfatidilserina, calreticulina), produzindo IL-10 e TGF-β que ativamente suprimem a inflamação e promovem reparo"],
+    "type": "multi",
+    "justification": "A <strong>efferocitose</strong> (do latim <em>efferre</em> = levar para fora/enterrar) é um processo ativo de resolução inflamatória:<br><br><strong>Mecanismo molecular:</strong><ul><li>Neutrófilos apoptóticos expõem <strong>fosfatidilserina</strong> na folha externa da membrana (sinal 'eat-me')</li><li>Expõem também calreticulina e liberam 'find-me' signals (ATP, lisofosforilcolina)</li><li>Macrófagos reconhecem via receptores: Tim-4, MER tyrosine kinase (MerTK), receptor de fosfatidilserina, integrinas αvβ3/αvβ5 (via proteínas pontes: Gas6, Proteína S)</li></ul><strong>Consequências imunológicas da efferocitose:</strong><ul><li>Fagossomo contendo neutrófilo apoptótico → ativação do receptor nuclear LXR → produção de <strong>IL-10 e TGF-β</strong> → supressão ativa da inflamação</li><li>Inibição de NF-κB → menos TNF-α e IL-6</li><li>Promove polarização M2 do macrófago efferocítico</li></ul><em>Falha na efferocitose:</em> neutrófilos apoptóticos não removidos sofrem necrose secundária → liberação de conteúdo tóxico → inflamação crônica. Relevante na aterosclerose e LES."
+  },
+  {
+    "question": "O linfoma de Hodgkin clássico é caracterizado pela presença de células de Reed-Sternberg (CD15+, CD30+, CD45-, EBV+ em alguns casos) em meio a um infiltrado de linfócitos reativos. O subtipo histológico mais comum é:",
+    "options": [
+      "Predomínio linfocitário nodular — mais comum, expressa CD20 e tem melhor prognóstico",
+      "Esclerose nodular — mais comum (~70% dos casos), caracterizado por bandas de fibrose colagenosa e variante lacunar das células RS",
+      "Celularidade mista — mais comum em países em desenvolvimento e associado ao EBV em >70% dos casos",
+      "Depleção linfocitária — subtipo mais comum em pacientes HIV+ com pior prognóstico geral"
+    ],
+    "answer": ["Esclerose nodular — mais comum (~70% dos casos), caracterizado por bandas de fibrose colagenosa e variante lacunar das células RS"],
+    "type": "multi",
+    "justification": "<strong>Subtipos do linfoma de Hodgkin clássico (LHC):</strong><ul><li><strong>Esclerose nodular (70%):</strong> mais comum em adolescentes/adultos jovens, mediastino anterior, associado à massa mediastinal volumosa (bulky disease), células lacunares (variante das RS em fixação em formol)</li><li><strong>Celularidade mista (20–25%):</strong> idosos e HIV+, associado ao EBV em >70%, células RS clássicas abundantes</li><li><strong>Rico em linfócitos (5%):</strong> bom prognóstico</li><li><strong>Depleção linfocitária (<1%):</strong> mais agressivo, idosos, HIV+, pior prognóstico</li></ul><strong>Predomínio linfocitário nodular (LHPLN)</strong> é considerado entidade separada do LHC: células 'popcorn' (LP cells) CD20+/CD45+/CD15-/CD30- → tratamento diferente (rituximabe)<br><br><em>Tratamento do LH clássico:</em> ABVD (doxorrubicina, bleomicina, vinblastina, dacarbazina) ± radioterapia. BEACOPPescalado para doença avançada de alto risco. Brentuximab vedotin (anti-CD30) para recidiva."
+  },
+  {
+    "question": "O ácido ascórbico (vitamina C) pode ser utilizado como alternativa ao azul de metileno no tratamento da metahemoglobinemia em pacientes com deficiência de G6PD (Glucose-6-Phosphate Dehydrogenase — Glicose-6-Fosfato Desidrogenase). Por que o azul de metileno é contraindicado nestes pacientes?",
+    "options": [
+      "O azul de metileno é metabolizado pelo fígado em metabólitos tóxicos em pacientes com deficiência de G6PD",
+      "O azul de metileno requer NADPH (gerado pela via das pentoses fosfato via G6PD) para reduzir a MetHb através da MetHb redutase NADPH-dependente — sem G6PD, não há NADPH e o azul de metileno é ineficaz e pode causar hemólise",
+      "O azul de metileno compete com o substrato da G6PD, inibindo ainda mais a enzima deficiente",
+      "O azul de metileno oxida diretamente os eritrócitos de pacientes com deficiência de G6PD, causando hemólise aguda grave independentemente da MetHb"
+    ],
+    "answer": ["O azul de metileno requer NADPH (gerado pela via das pentoses fosfato via G6PD) para reduzir a MetHb através da MetHb redutase NADPH-dependente — sem G6PD, não há NADPH e o azul de metileno é ineficaz e pode causar hemólise"],
+    "type": "multi",
+    "justification": "A <strong>metahemoglobina (MetHb)</strong> — Fe³⁺ — é reduzida de volta a Fe²⁺ por dois sistemas enzimáticos:<br><br><strong>1. Via fisiológica (NADH-dependente — 95% da redução):</strong> Citocromo b5 redutase (MetHb redutase NADH-dependente) → NADH gerado pela glicolise → redução espontânea de 1–3% MetHb/dia<br><br><strong>2. Via farmacológica (NADPH-dependente — ativada pelo azul de metileno):</strong> Azul de metileno (MB) → reduzido pela <strong>NADPH-MetHb redutase</strong> → forma leucoazul de metileno → reduz MetHb → Fe²⁺ restaurado<br><br><em>O NADPH</em> é gerado exclusivamente pela via das pentoses fosfato (G6P → 6-fosfogluconato via <strong>G6PD</strong>).<br><br>Na deficiência de G6PD → NADPH reduzido → azul de metileno não pode ser ativado → ineficaz MAIS pode oxidar glóbulos vermelhos (o mesmo mecanismo que causa hemólise com primaquina) → hemólise aguda.<br><br><em>Alternativa:</em> ácido ascórbico (vitamina C) reduz MetHb diretamente por doação de elétrons sem necessidade de NADPH — menos potente, mas seguro em deficiência de G6PD."
+  },
+  {
+    "question": "O teste do esfregaço de sangue periférico é fundamental no diagnóstico hematológico. Qual corante é usado classicamente para visualização de RNA residual nos reticulócitos, diferente do corante de Wright-Giemsa usado no esfregaço convencional?",
+    "options": [
+      "Azul de toluidina — cora proteoglicanos dos grânulos metacromáticos de basófilos e mastócitos",
+      "Azul de cresil brilhante (ou azul de metileno de nova metilação) — corante supravital que precipita o RNA residual dos reticulócitos como grânulos/rede azul intracelular",
+      "Sudan negro B — cora lipídios e grânulos de neutrófilos para detectar atividade mieloperoxidase",
+      "Perls (azul da Prússia) — detecta depósitos de ferro (hemossiderina) em sideroblastos e siderócitos"
+    ],
+    "answer": ["Azul de cresil brilhante (ou azul de metileno de nova metilação) — corante supravital que precipita o RNA residual dos reticulócitos como grânulos/rede azul intracelular"],
+    "type": "multi",
+    "justification": "A coloração de <strong>reticulócitos</strong> requer corante supravital (aplicado em células vivas, antes da fixação) porque precipita RNA e organelas residuais sem destruir a célula:<br><br><strong>Azul de cresil brilhante:</strong> cora RNA ribossomal residual dos reticulócitos → aparência de rede/grânulos azuis intracelulares (daí 'reticulo') → contagem microscópica manual<br><br><strong>Método moderno:</strong> contagem automatizada por citometria de fluxo usando fluorocromos que se ligam ao RNA (tiazol laranja) → muito mais precisa e permite calcular IRF (Immature Reticulocyte Fraction — Fração de Reticulócitos Imaturos)<br><br><strong>Outros corantes especiais relevantes em leucócitos:</strong><ul><li>MPO histoquímica: blastos mieloides LMA+; linfoblastos LLA-</li><li>Sudan Negro B: lipídios mieloides → similar à MPO</li><li>Esterase não-específica (alfa-naftil acetato): monócitos+ (difusa); megacariócitos+</li><li>PAS (Ácido Periódico de Schiff): glicogênio — linfoblastos LLA (blocos PAS+); eritroblastos (eritroleucemia)</li></ul>"
+  },
+  {
+    "question": "A imunidade adaptativa humoral (mediada por anticorpos) é particularmente eficaz contra quais tipos de patógenos, e por quais mecanismos efetores os anticorpos exercem sua função?",
+    "options": [
+      "Patógenos intracelulares (vírus, Mycobacterium) — anticorpos entram nas células e neutralizam diretamente os patógenos intracelulares",
+      "Bactérias extracelulares encapsuladas, vírus extracelulares e toxinas — por neutralização, opsonização para fagocitose (IgG+FcγR), ativação do complemento (IgG/IgM+C1q) e ADCC",
+      "Fungos intracelulares (Histoplasma, Cryptococcus) — anticorpos ativam a via alternativa do complemento exclusivamente",
+      "Parasitas intracelulares (Plasmodium, Toxoplasma) — anticorpos ativam macrófagos M1 para destruição intracelular"
+    ],
+    "answer": ["Bactérias extracelulares encapsuladas, vírus extracelulares e toxinas — por neutralização, opsonização para fagocitose (IgG+FcγR), ativação do complemento (IgG/IgM+C1q) e ADCC"],
+    "type": "multi",
+    "justification": "A <strong>imunidade humoral</strong> é especializada em patógenos e antígenos <em>extracelulares</em> (no plasma, espaços teciduais, superfícies mucosas):<br><br><strong>Patógenos-alvo principais:</strong><ul><li>Bactérias encapsuladas (S. pneumoniae, H. influenzae tipo b, N. meningitidis) — a cápsula polissacarídica resiste à fagocitose sem opsonização</li><li>Vírus antes da entrada celular (neutralização)</li><li>Toxinas bacterianas (difteria, tétano, botulismo)</li></ul><strong>Mecanismos efetores dos anticorpos:</strong><ul><li><strong>Neutralização:</strong> IgG/IgA bloqueiam sítios de ligação de vírus a receptores e neutralizam toxinas</li><li><strong>Opsonização:</strong> IgG (Fc) liga ao FcγR em fagócitos → fagocitose</li><li><strong>Ativação do complemento:</strong> IgG/IgM → via clássica (C1q) → C3b (opsonização) + MAC (lise)</li><li><strong>ADCC:</strong> IgG → células NK (via CD16) → citotoxicidade</li></ul><em>Para patógenos intracelulares</em> (Mycobacterium, Leishmania, vírus já dentro das células): a imunidade celular (CTLs + macrófagos ativados por IFN-γ de Th1) é o mecanismo efetivo dominante."
+  },
+  {
+    "question": "Qual das seguintes doenças é caracterizada por eosinofilia persistente (>1.500/µL por >6 meses) com dano orgânico demonstrado (cardíaco, neurológico, pulmonar), na ausência de causa secundária identificável, e quais são os critérios mínimos para diagnóstico?",
+    "options": [
+      "Síndrome de Churg-Strauss (EGPA) — caracterizada por vasculite granulomatosa eosinofílica, asma e ANCA positivo",
+      "Síndrome hipereosinofílica (HES — Hypereosinophilic Syndrome) — eosinofilia ≥1.500/µL persistente + dano orgânico mediado por eosinófilos + exclusão de causas secundárias",
+      "Linfoma de Hodgkin com eosinofilia paraneoplásica — eosinofilia reativa mediada por IL-5 produzida pelas células de Reed-Sternberg",
+      "Poliangiite microscópica com eosinofilia — caracterizada por ANCA-MPO positivo e glomerulonefrite rapidamente progressiva"
+    ],
+    "answer": ["Síndrome hipereosinofílica (HES — Hypereosinophilic Syndrome) — eosinofilia ≥1.500/µL persistente + dano orgânico mediado por eosinófilos + exclusão de causas secundárias"],
+    "type": "multi",
+    "justification": "A <strong>HES (Síndrome Hipereosinofílica)</strong> é definida pela tríade:<br><br><strong>1. Eosinofilia ≥1.500/µL por ≥6 meses</strong> (ou <6 meses se tratamento necessário pela gravidade)<br><strong>2. Dano orgânico mediado por eosinófilos:</strong> deposição de grânulos eosinofílicos (MBP, ECP) em tecidos → fibrose endomiocárdica (doença de Löffler), neuropatia, tromboembolismo, pneumonia eosinofílica<br><strong>3. Exclusão de causas secundárias:</strong> parasitoses, asma, alergias, neoplasias, fármacos<br><br><strong>Variantes da HES:</strong><ul><li><strong>Mieloide:</strong> mutação FIP1L1-PDGFRα (fusão oncogênica sensível ao imatinibe) → HES mieloide/eosinofilia clonal</li><li><strong>Linfoide:</strong> células T produzindo IL-5 (imunofenótipo aberrante CD3-/CD4+)</li><li><strong>Idiopática:</strong> sem causa identificada</li></ul><em>Tratamento:</em> HES com FIP1L1-PDGFRα: imatinibe (primeira linha, remissão em >90%); HES idiopática: glicocorticoides, mepolizumab (anti-IL-5) para casos dependentes de corticoide."
+  },
+  {
+    "question": "A citometria de fluxo é o método padrão-ouro para imunofenotipagem leucocitária. Qual é o princípio físico fundamental desta técnica?",
+    "options": [
+      "Separação de células por gradiente de densidade (Ficoll-Hypaque) — células mais densas sedimentam mais rapidamente, permitindo separação por tipo",
+      "Células em fluxo laminar passam por um feixe de laser; fluorocromos conjugados a anticorpos específicos são excitados e emitem luz em comprimentos de onda distintos, detectada por fotodetectores — permite identificação simultânea de múltiplos marcadores de superfície em cada célula",
+      "Eletroforese de proteínas de membrana em gel de poliacrilamida — diferentes proteínas de superfície migram a velocidades distintas, identificando o fenótipo celular",
+      "Cromatografia de alta eficiência (HPLC) dos glicolipídios de membrana — cada tipo celular tem perfil lipídico único detectável por espectrofotometria"
+    ],
+    "answer": ["Células em fluxo laminar passam por um feixe de laser; fluorocromos conjugados a anticorpos específicos são excitados e emitem luz em comprimentos de onda distintos, detectada por fotodetectores — permite identificação simultânea de múltiplos marcadores de superfície em cada célula"],
+    "type": "multi",
+    "justification": "A <strong>citometria de fluxo</strong> baseia-se em dois princípios físicos fundamentais:<br><br><strong>1. Hidrodinâmica (fluxo laminar):</strong> células em suspensão são forçadas em fila única através de um tubo capilar — cada célula passa individualmente pelo ponto de interrogação do laser<br><br><strong>2. Fluorescência:</strong> anticorpos monoclonais conjugados a fluorocromos (PE, FITC, APC, PerCP) ligam-se a antígenos de superfície específicos (CDs) → laser excita o fluorocromo → emite fóton em comprimento de onda específico → detectado por fotodetectores (PMT — fotomultiplicadoras)<br><br><strong>Dados coletados por célula:</strong><ul><li>FSC (Forward Scatter — dispersão frontal): tamanho celular</li><li>SSC (Side Scatter — dispersão lateral): granulosidade/complexidade interna</li><li>Múltiplos canais de fluorescência (FL1, FL2...): expressão de cada marcador</li></ul><em>Capacidade moderna:</em> citômetros atuais podem medir 30–40 parâmetros simultâneos por célula (CyTOF usa metais pesados em vez de fluorocromos, permitindo >100 parâmetros)."
+  },
+  {
+    "question": "Na fase aguda da sepse com choque séptico, a indicação de transfusão de concentrado de hemácias deve seguir qual estratégia baseada em evidências, e por que estratégias liberais (Hb >10 g/dL) não são superiores às restritivas (Hb >7–8 g/dL)?",
+    "options": [
+      "Estratégia liberal (manter Hb >10 g/dL) é superior por garantir maior oferta de O₂ e reduzir o trabalho cardíaco compensatório na sepse",
+      "Estratégia restritiva (Hb limiar de 7–8 g/dL) é igualmente segura ou superior na maioria dos pacientes com sepse e sem cardiopatia isquêmica ativa, pois o problema na sepse é de utilização mitocondrial, não de oferta — além de que hemácias armazenadas têm menor P50 (mais 2,3-DPG depletado)",
+      "Não há evidência para orientar a transfusão em sepse — deve ser empiricamente determinada pelo médico intensivista caso a caso",
+      "A transfusão é contraindicada em sepse pois hemácias exógenas ativam macrófagos e pioram a tempestade de citocinas"
+    ],
+    "answer": ["Estratégia restritiva (Hb limiar de 7–8 g/dL) é igualmente segura ou superior na maioria dos pacientes com sepse e sem cardiopatia isquêmica ativa, pois o problema na sepse é de utilização mitocondrial, não de oferta — além de que hemácias armazenadas têm menor P50 (mais 2,3-DPG depletado)"],
+    "type": "multi",
+    "justification": "Os estudos <strong>TRICC</strong> (1999) e <strong>TRISS</strong> (2014 — específico para sepse) demonstraram que estratégia restritiva (7–8 g/dL) não é inferior à liberal (9–10 g/dL) em pacientes sépticos sem cardiopatia isquêmica ativa.<br><br><strong>Razões fisiopatológicas:</strong><ul><li><strong>Hipóxia citopática:</strong> em sepse, o déficit é na utilização mitocondrial de O₂ (inibição da cadeia respiratória por endotoxinas/RNS), não na oferta → aumentar Hb não 'conserta' a mitocôndria</li><li><strong>2,3-DPG depletado:</strong> hemácias armazenadas (>1 semana) têm P50 reduzido → curva à esquerda → entregam menos O₂ nos tecidos inicialmente (normaliza em 12–24h)</li><li><strong>Leucócitos no concentrado:</strong> hemácias alogênicas podem causar imunossupressão transfusional (TRIM — Transfusion-Related Immunomodulation)</li></ul><em>Exceção:</em> cardiopatia isquêmica ativa ou síndrome coronariana aguda → limiar de 8–10 g/dL (miocárdio isquêmico é mais sensível à anemia)."
+  },
+  {
+    "question": "O processo de maturação dos linfócitos B nos centros germinativos dos linfonodos envolve hipermutação somática e seleção por afinidade. Células B com BCR de baixa afinidade após hipermutação somática têm qual destino molecular?",
+    "options": [
+      "Diferenciam-se em plasmócitos de baixa afinidade que produzem apenas IgM como 'anticorpos de emergência'",
+      "Entram em apoptose (por ausência de sinalização de sobrevivência via BCR de alta afinidade + falta de sinal de sobrevivência CD40-CD40L da célula Tfh) — este processo é chamado seleção de afinidade",
+      "Retornam à circulação como células B naive para reiniciar o processo de ativação primária com novo antígeno",
+      "São eliminadas por CTLs que patrulham os centros germinativos em busca de células com BCR não funcional"
+    ],
+    "answer": ["Entram em apoptose (por ausência de sinalização de sobrevivência via BCR de alta afinidade + falta de sinal de sobrevivência CD40-CD40L da célula Tfh) — este processo é chamado seleção de afinidade"],
+    "type": "multi",
+    "justification": "A <strong>seleção por afinidade</strong> no centro germinativo é um processo Darwiniano de seleção positiva:<br><br><strong>1. Hipermutação somática (zona escura):</strong> centroblastos proliferam e sofrem mutações aleatórias nas CDRs do BCR via AID → BCRs de maior OU menor afinidade gerados aleatoriamente<br><br><strong>2. Seleção (zona clara):</strong> centrócitos (células B pós-hipermutação) migram para a zona clara onde o antígeno está retido em células dendríticas foliculares (FDCs):<ul><li>BCR de <strong>alta afinidade:</strong> capta antígeno eficientemente → processa e apresenta via MHC-II à célula Tfh (follicular helper T) → Tfh fornece sinal de sobrevivência via CD40L-CD40 + IL-21 → sobrevive e pode diferenciar-se</li><li>BCR de <strong>baixa afinidade</strong> ou sem ligação: não ativa a Tfh → sem sinal CD40L → sem IL-21 → <strong>apoptose via Fas/FasL + privação de fatores de sobrevivência</strong></li></ul><em>Resultado:</em> apenas clones com BCR de afinidade crescente sobrevivem → 'maturação de afinidade' progressiva ao longo da resposta imune adaptativa."
+  },
+  {
+    "question": "Em qual situação clínica a biópsia de medula óssea está PRIMARIAMENTE INDICADA, e qual o seu sítio preferencial de realização no adulto?",
+    "options": [
+      "Leucocitose de 14.000/µL com neutrofilia em contexto de pneumonia bacteriana tratada — sítio: esterno",
+      "Pancitopenia inexplicada (anemia + leucopenia + plaquetopenia) sem causa óbvia — sítio: crista ilíaca póstero-superior (CIPS)",
+      "Linfocitose relativa de 45% em contexto de infecção viral aguda por EBV documentada — sítio: tíbia proximal no adulto",
+      "Eosinofilia de 800/µL em paciente com asma grave em uso de corticoide inalatório — sítio: esterno por acesso mais rápido"
+    ],
+    "answer": ["Pancitopenia inexplicada (anemia + leucopenia + plaquetopenia) sem causa óbvia — sítio: crista ilíaca póstero-superior (CIPS)"],
+    "type": "multi",
+    "justification": "<strong>Indicações de biópsia de medula óssea:</strong><ul><li>Pancitopenia inexplicada (anemia aplástica, infiltração medular, síndrome mielodisplásica)</li><li>Suspeita de leucemia, linfoma com acometimento medular ou mieloma</li><li>Estadiamento de linfomas (Hodgkin e não-Hodgkin)</li><li>Febre de origem indeterminada com suspeita de doença granulomatosa ou histioplasmose disseminada</li><li>Avaliação de citopenias em pacientes HIV+</li></ul><strong>Sítio de eleição:</strong> <em>Crista ilíaca póstero-superior (CIPS)</em> em adultos e crianças maiores — evita estruturas vitais, boa celularidade medular, acesso fácil em posição de decúbito lateral ou prono.<br><br>O esterno é evitado em adultos por risco de perfuração cardíaca fatal. Tíbia proximal é usada apenas em neonatos/lactentes (<18 meses).<br><br><em>Leucocitose em pneumonia, linfocitose viral e eosinofilia em contexto clínico óbvio</em> não necessitam de biópsia medular — são diagnósticos clínico-laboratoriais."
+  },
+  {
+    "question": "A OMS (Organização Mundial da Saúde) classifica as leucemias agudas com base em critérios morfológicos, imunofenotípicos, citogenéticos e moleculares. Qual porcentagem de blastos na medula óssea ou sangue periférico define o diagnóstico de leucemia aguda?",
+    "options": [
+      ">5% de blastos — definição usada na classificação FAB (French-American-British)",
+      ">10% de blastos — limiar usado nas síndromes mielodisplásicas de alto risco",
+      "≥20% de blastos — critério da classificação OMS 2016/2022, com exceção de casos com alterações genéticas específicas (t(15;17), t(8;21), inv(16)) que são leucemia independente da contagem de blastos",
+      ">30% de blastos — critério clássico da classificação FAB para leucemia aguda"
+    ],
+    "answer": ["≥20% de blastos — critério da classificação OMS 2016/2022, com exceção de casos com alterações genéticas específicas (t(15;17), t(8;21), inv(16)) que são leucemia independente da contagem de blastos"],
+    "type": "multi",
+    "justification": "<strong>Evolução dos critérios de blastos para leucemia aguda:</strong><ul><li><strong>Classificação FAB (1976):</strong> ≥30% de blastos na medula óssea para LMA; usada historicamente</li><li><strong>Classificação OMS (2001, revisada 2008, 2016, 2022):</strong> ≥<strong>20%</strong> de blastos na medula ou sangue periférico — baseada em estudos mostrando que 20–29% de blastos tem o mesmo prognóstico que ≥30%</li></ul><strong>Exceções OMS — leucemia aguda independente da contagem de blastos:</strong><ul><li><strong>APL (t(15;17)/PML-RARα):</strong> qualquer percentual de promielócitos é leucemia → emergência por CIVD</li><li><strong>t(8;21)(q22;q22.1)/RUNX1-RUNX1T1:</strong> LMA mesmo com <20% de blastos</li><li><strong>inv(16)(p13.1q22)/CBFB-MYH11:</strong> LMA mesmo com <20% de blastos</li></ul><em>Relevância clínica:</em> o reconhecimento dessas exceções genéticas previne atrasos diagnósticos perigosos (especialmente na APL, onde cada hora conta para prevenir CIVD fatal)."
+  },
+  {
+    "question": "Uma questão integrativa: paciente de 35 anos, 2 semanas pós-transplante alogênico de células-tronco hematopoiéticas por LMA, desenvolve febre de 39°C, diarreia aquosa volumosa e eritrodermia. ANC = 850/µL. Qual é o diagnóstico mais provável e qual mecanismo imunológico está envolvido?",
+    "options": [
+      "Neutropenia febril por Clostridium difficile — tratamento com vancomicina oral + metronidazol",
+      "GvHD aguda (Graft-versus-Host Disease — Doença Enxerto-versus-Hospedeiro) — células T do doador reconhecem antígenos de histocompatibilidade do receptor como 'estranhos' e atacam pele, intestino e fígado",
+      "Rejeição hiperaguda do enxerto — anticorpos anti-HLA pré-formados do receptor destroem células do doador via complemento",
+      "Síndrome de engraftment — resposta inflamatória à pega medular com neutrófilos do doador ativados atacando tecidos do receptor"
+    ],
+    "answer": ["GvHD aguda (Graft-versus-Host Disease — Doença Enxerto-versus-Hospedeiro) — células T do doador reconhecem antígenos de histocompatibilidade do receptor como 'estranhos' e atacam pele, intestino e fígado"],
+    "type": "multi",
+    "justification": "A <strong>GvHD aguda</strong> é uma das principais complicações do transplante alogênico, ocorrendo tipicamente nos primeiros 100 dias:<br><br><strong>Fisiopatologia em 3 fases:</strong><br>1. <em>Condicionamento (quimio/radioterapia):</em> danifica tecidos do receptor → libera DAMPs + LPS → ativa APCs do receptor → inflamação sistêmica<br>2. <em>Ativação de células T do doador:</em> células T naives do doador reconhecem MHC alogênico do receptor (via reconhecimento direto) OU peptídeos alogenicos no próprio MHC (via reconhecimento indireto) → expansão clonal + diferenciação em Th1/Th17 + CTLs<br>3. <em>Fase efetora:</em> CTLs e citocinas (IFN-γ, TNF-α, IL-17) → destruição de células do receptor nos órgãos-alvo<br><br><strong>Órgãos-alvo clássicos:</strong><ul><li>Pele: eritrodermia, rash maculopapular → bolhas/descamação</li><li>Intestino: diarreia aquosa volumosa → cólica, íleo, sangramento</li><li>Fígado: hiperbilirrubinemia, elevação de enzimas hepáticas</li></ul><em>Estadiamento de Glucksberg/Seattle:</em> graus I–IV baseados na extensão da pele, volume de diarreia e bilirrubina.<br><em>Tratamento:</em> metilprednisolona 2 mg/kg/dia; refratário: ruxolitinibe (JAK1/2 inibidor), ibrutinibe, MTX."
+  }
+]
+
+
+/* ══════════════ ESTADO DO QUIZ ══════════════ */
+let currentQ = 0;
+let userAnswers  = new Array(quizData.length).fill(null).map(()=>[]);
+let attempted    = new Array(quizData.length).fill(false);
+
+/* ══════════════ ELEMENTOS DOM ══════════════ */
+const content     = document.getElementById('quiz-content');
+const progressFill= document.getElementById('quiz-progress');
+const progressLbl = document.getElementById('progress-label');
+const prevBtn     = document.getElementById('prev-btn');
+const answerBtn   = document.getElementById('answer-btn');
+const nextBtn     = document.getElementById('next-btn');
+const submitBtn   = document.getElementById('submit-btn');
+const resultsDiv  = document.getElementById('results-container');
+const reportDiv   = document.getElementById('report-container');
+const navDiv      = document.getElementById('navigation-buttons');
+const progressWrap= document.querySelector('.progress-wrapper');
+
+/* ══════════════ RENDER ══════════════ */
+function init(){
+  shuffleArray(quizData);
+  renderAll();
+  goTo(0);
+  bindEvents();
+}
+
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+
+function renderAll(){
+  content.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className='question-card';
+    card.id=`q-${i}`;
+
+    const badgeClass = q.type==='tf' ? 'badge-tf' : 'badge-multi';
+    const badgeText  = q.type==='tf' ? '✦ V/F' : '◈ Múltipla escolha';
+
+    let optsHTML='';
+    if(q.type==='tf'){
+      optsHTML=`<div class="tf-options-container">
+        <button class="tf-option tf-v" data-q="${i}" data-o="V"><i class="fas fa-check"></i> Verdadeiro</button>
+        <button class="tf-option tf-f" data-q="${i}" data-o="F"><i class="fas fa-times"></i> Falso</button>
+      </div>`;
+    } else {
+      const letters=['A','B','C','D','E','F'];
+      optsHTML=`<div class="options-container">${q.options.map((opt,oi)=>`
+        <button class="mc-option" data-q="${i}" data-o="${opt.replace(/"/g,'&quot;')}">
+          <span class="option-indicator">${letters[oi]}</span>
+          <span>${opt}</span>
+        </button>`).join('')}</div>`;
+    }
+
+    card.innerHTML=`
+      <div class="q-meta">
+        <span class="q-num">Questão ${i+1} / ${quizData.length}</span>
+        <span class="q-type-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <p class="question-text">${q.question}</p>
+      ${optsHTML}
+      <div class="feedback" id="fb-${i}"></div>`;
+    content.appendChild(card);
+  });
+}
+
+/* ══════════════ NAVIGATION ══════════════ */
+function goTo(idx){
+  if(idx<0||idx>=quizData.length) return;
+  document.querySelector(`#q-${currentQ}`)?.classList.remove('active');
+  currentQ=idx;
+  document.querySelector(`#q-${currentQ}`)?.classList.add('active');
+  updateUI();
+}
+
+function updateUI(){
+  const done = attempted.filter(Boolean).length;
+  progressFill.style.width=`${(done/quizData.length)*100}%`;
+  progressLbl.textContent=`${done} / ${quizData.length}`;
+
+  const isAttempted = attempted[currentQ];
+  const hasSelection= userAnswers[currentQ].length>0;
+  const isLast = currentQ===quizData.length-1;
+
+  setBtn(prevBtn,   currentQ>0);
+  setBtn(answerBtn, !isAttempted);
+  setBtn(nextBtn,   isAttempted && !isLast);
+  setBtn(submitBtn, isAttempted && isLast);
+  if(!isAttempted) answerBtn.disabled=!hasSelection;
+}
+
+function setBtn(btn,show){ btn.classList.toggle('show',show); }
+
+/* ══════════════ SELECTION ══════════════ */
+function bindEvents(){
+  content.addEventListener('click',e=>{
+    const mc=e.target.closest('.mc-option');
+    const tf=e.target.closest('.tf-option');
+    if(mc) handleMC(mc);
+    if(tf) handleTF(tf);
+  });
+  answerBtn.addEventListener('click', validate);
+  nextBtn.addEventListener('click',()=>goTo(currentQ+1));
+  prevBtn.addEventListener('click',()=>goTo(currentQ-1));
+  submitBtn.addEventListener('click', finishQuiz);
+  document.getElementById('show-report-btn').addEventListener('click',()=>{resultsDiv.style.display='none';reportDiv.style.display='flex';});
+  document.getElementById('back-btn').addEventListener('click',()=>{reportDiv.style.display='none';resultsDiv.style.display='flex';});
+  document.getElementById('retry-btn').addEventListener('click',()=>location.reload());
+}
+
+function handleMC(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  const idx=userAnswers[qi].indexOf(opt);
+  if(idx>-1){ userAnswers[qi].splice(idx,1); btn.classList.remove('selected'); }
+  else{ userAnswers[qi].push(opt); btn.classList.add('selected'); }
+  updateUI();
+}
+
+function handleTF(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  userAnswers[qi]=[opt];
+  document.querySelectorAll(`.tf-option[data-q='${qi}']`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateUI();
+}
+
+/* ══════════════ VALIDATE ══════════════ */
+function validate(){
+  if(attempted[currentQ]) return;
+  const q=quizData[currentQ];
+  const fb=document.getElementById(`fb-${currentQ}`);
+  const userAns=userAnswers[currentQ]||[];
+  const correctAns=Array.isArray(q.answer)?q.answer:[q.answer];
+  const isCorrect=JSON.stringify([...userAns].sort())===JSON.stringify([...correctAns].sort());
+
+  // mark options
+  const sel = q.type==='tf' ? `.tf-option[data-q='${currentQ}']` : `.mc-option[data-q='${currentQ}']`;
+  document.querySelectorAll(sel).forEach(opt=>{
+    opt.classList.add('disabled');
+    const ov=opt.dataset.o;
+    if(correctAns.includes(ov)) opt.classList.add('correct');
+    else if(userAns.includes(ov)) opt.classList.add('incorrect');
+  });
+
+  // build feedback
+  const icon = isCorrect ? 'fa-check-circle' : 'fa-times-circle';
+  const title= isCorrect ? 'Correto!' : 'Incorreto';
+  const verdictClass = isCorrect ? 'correct' : 'incorrect';
+
+  let correctListHTML='';
+  if(!isCorrect){
+    correctListHTML=`<div style="margin-top:.5rem;font-size:.82rem;color:var(--muted2);">${correctAns.length>1?'Respostas corretas':'Resposta correta'}:</div>
+    <ul class="correct-list">${correctAns.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+  }
+
+  fb.className=`feedback ${verdictClass}`;
+  fb.innerHTML=`
+    <div class="feedback-verdict"><i class="fas ${icon}"></i>${title}${correctListHTML}</div>
+    <div class="justification">
+      <div class="just-label"><i class="fas fa-flask"></i> Justificativa Clínico-Molecular</div>
+      <div class="just-text">${q.justification}</div>
+    </div>`;
+  fb.style.display='block';
+
+  toast(isCorrect);
+  attempted[currentQ]=true;
+  [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=true);
+
+  setTimeout(()=>{
+    [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=false);
+    const isLast=currentQ===quizData.length-1;
+    if(isLast) finishQuiz(); else goTo(currentQ+1);
+  },2400);
+}
+
+/* ══════════════ RESULTS ══════════════ */
+function finishQuiz(){
+  let score=0;
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    if(JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort())) score++;
+  });
+  const pct=Math.round(score/quizData.length*100);
+
+  document.getElementById('pct-display').textContent=`${pct}%`;
+  document.getElementById('score-display').innerHTML=`Acertos: <strong>${score} de ${quizData.length}</strong>`;
+
+  // Animate ring
+  const circumference=408.4;
+  const ring=document.getElementById('score-ring');
+  setTimeout(()=>{ ring.style.strokeDashoffset=circumference*(1-pct/100); },100);
+
+  const msg=document.getElementById('feedback-message');
+  if(pct>=90) msg.textContent='🎉 Excelente domínio! Você está pronto para a prova.';
+  else if(pct>=70) msg.textContent='👏 Muito bem! Revise os pontos que errou e você chegará lá.';
+  else if(pct>=50) msg.textContent='👍 Bom esforço! Revise as justificativas com atenção.';
+  else msg.textContent='💪 Continue estudando! As justificativas abaixo são seu mapa.';
+
+  buildReport();
+
+  content.style.display='none';
+  navDiv.style.display='none';
+  progressWrap.style.display='none';
+  resultsDiv.style.display='flex';
+}
+
+function buildReport(){
+  const list=document.getElementById('report-list');
+  list.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    const ok=JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort());
+    const item=document.createElement('div');
+    item.className=`report-item ${ok?'correct':'incorrect'}`;
+    item.innerHTML=`<p class="ri-q"><strong>Questão ${i+1}:</strong> ${q.question}</p>
+      <p><strong>Sua resposta:</strong> ${ua.length?ua.join(', '):'<em>Não respondida</em>'}</p>
+      <p><strong>Correta:</strong> ${ca.join(', ')}</p>`;
+    list.appendChild(item);
+  });
+}
+
+/* ══════════════ TOAST ══════════════ */
+function toast(ok){
+  Swal.mixin({
+    toast:true,position:'top-end',
+    showConfirmButton:false,
+    timer:1400,timerProgressBar:true,
+    background: ok ? '#0a2e1f' : '#2e0a14',
+    color: ok ? '#34d399' : '#fb7185',
+  }).fire({icon:ok?'success':'error',title:ok?'✓ Correto!':'✗ Incorreto!'});
+}
+
+init();
+});
+</script>
+</body>
+</html>

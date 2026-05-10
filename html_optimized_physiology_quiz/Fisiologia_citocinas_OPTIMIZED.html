@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz · Citocinas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --surface:   #111827;
+  --card:      #151e2e;
+  --border:    #1e2d42;
+  --border2:   #253044;
+  --primary:   #4f9cf9;
+  --primary2:  #2563eb;
+  --accent:    #f87171;
+  --gold:      #f59e0b;
+  --emerald:   #34d399;
+  --rose:      #fb7185;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --muted2:    #94a3b8;
+  --correct-bg:#0a2e1f;
+  --correct-b: #34d399;
+  --wrong-bg:  #2e0a14;
+  --wrong-b:   #fb7185;
+  --just-bg:   #0d1b2e;
+  --just-b:    #4f9cf9;
+  --radius:    14px;
+  --trans:     all .28s cubic-bezier(.4,0,.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.5rem 1rem 3rem;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND MESH ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(79,156,249,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 90%, rgba(248,113,113,.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 40%, rgba(52,211,153,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  width:100%;max-width:820px;
+  text-align:center;
+  margin-bottom:2rem;
+  position:relative;z-index:1;
+}
+.header-badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  border-radius:50px;
+  padding:.3rem .9rem;
+  font-size:.75rem;font-weight:500;
+  color:var(--primary);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.header h1{
+  font-family:'Crimson Pro',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;
+  line-height:1.2;
+  color:#f1f5f9;
+  letter-spacing:-.02em;
+}
+.header h1 span{color:var(--primary);}
+.header p{
+  color:var(--muted2);
+  font-size:.92rem;
+  margin-top:.5rem;
+}
+
+/* ── QUIZ CONTAINER ── */
+#quiz-container{
+  width:100%;max-width:820px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:2.2rem 2rem;
+  position:relative;z-index:1;
+  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+}
+
+/* top accent line */
+#quiz-container::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary2),var(--primary),var(--accent));
+  border-radius:22px 22px 0 0;
+}
+
+/* ── PROGRESS ── */
+.progress-wrapper{
+  display:flex;align-items:center;gap:.9rem;
+  margin-bottom:1.8rem;
+}
+.progress-track{
+  flex:1;height:6px;
+  background:var(--border2);
+  border-radius:50px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary2),var(--primary));
+  border-radius:50px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 10px rgba(79,156,249,.5);
+}
+.progress-label{
+  font-size:.78rem;font-weight:500;
+  color:var(--muted2);
+  white-space:nowrap;min-width:60px;text-align:right;
+  font-family:'DM Mono',monospace;
+}
+
+/* ── QUESTION CARD ── */
+.question-card{
+  display:none;flex-direction:column;align-items:stretch;
+  animation:slideIn .38s cubic-bezier(.4,0,.2,1);
+}
+.question-card.active{display:flex;}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.q-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.4rem;
+}
+.q-num{
+  font-family:'DM Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  color:var(--muted);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.q-type-badge{
+  font-size:.68rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:50px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-multi{background:rgba(79,156,249,.15);color:var(--primary);border:1px solid rgba(79,156,249,.3);}
+.badge-tf{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+
+.question-text{
+  font-family:'Crimson Pro',serif;
+  font-size:1.28rem;font-weight:400;
+  line-height:1.6;
+  color:#f1f5f9;
+  margin-bottom:1.6rem;
+  padding-bottom:1.4rem;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── OPTIONS ── */
+.options-container{display:flex;flex-direction:column;gap:.65rem;}
+.tf-options-container{display:flex;gap:.75rem;justify-content:center;}
+
+.mc-option{
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  cursor:pointer;
+  transition:var(--trans);
+  color:var(--text);
+  font-size:.95rem;
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.mc-option::after{
+  content:'';position:absolute;inset:0;
+  background:var(--primary);
+  opacity:0;transition:opacity .2s;
+}
+.mc-option:hover:not(.disabled){
+  border-color:var(--primary);
+  transform:translateX(4px);
+  box-shadow:0 4px 16px rgba(79,156,249,.15);
+}
+.mc-option.selected{
+  border-color:var(--primary);
+  background:rgba(79,156,249,.08);
+}
+
+.tf-option{
+  flex:1;max-width:200px;
+  padding:1rem 1.5rem;
+  border-radius:var(--radius);
+  font-size:1rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.tf-option.tf-v{
+  background:rgba(52,211,153,.08);
+  border:1.5px solid rgba(52,211,153,.25);
+  color:var(--emerald);
+}
+.tf-option.tf-f{
+  background:rgba(251,113,133,.08);
+  border:1.5px solid rgba(251,113,133,.25);
+  color:var(--rose);
+}
+.tf-option:hover:not(.disabled){transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+.tf-option.selected{box-shadow:0 0 0 3px rgba(79,156,249,.4);}
+.tf-option.tf-v.selected{background:rgba(52,211,153,.18);border-color:var(--emerald);}
+.tf-option.tf-f.selected{background:rgba(251,113,133,.18);border-color:var(--rose);}
+
+/* correct / incorrect highlights */
+.mc-option.correct,.tf-option.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.mc-option.incorrect,.tf-option.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.mc-option.disabled,.tf-option.disabled{cursor:not-allowed;}
+
+.option-indicator{
+  min-width:28px;height:28px;
+  border-radius:8px;
+  background:var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:.78rem;font-weight:600;
+  color:var(--muted2);
+  flex-shrink:0;
+  transition:var(--trans);
+}
+.mc-option.selected .option-indicator{background:var(--primary);color:#fff;}
+.mc-option.correct  .option-indicator{background:var(--emerald);color:#0a2e1f;}
+.mc-option.incorrect .option-indicator{background:var(--rose);color:#2e0a14;}
+
+/* ── FEEDBACK BOX ── */
+.feedback{
+  margin-top:1.4rem;
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:none;
+  animation:slideIn .35s ease;
+}
+.feedback.correct{display:block;}
+.feedback.incorrect{display:block;}
+
+.feedback-verdict{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.75rem 1.1rem;
+  font-weight:600;font-size:.95rem;
+}
+.feedback.correct .feedback-verdict{
+  background:rgba(52,211,153,.15);
+  color:var(--emerald);
+  border-left:4px solid var(--emerald);
+}
+.feedback.incorrect .feedback-verdict{
+  background:rgba(251,113,133,.15);
+  color:var(--rose);
+  border-left:4px solid var(--rose);
+}
+
+/* ── JUSTIFICATION PANEL ── */
+.justification{
+  background:var(--just-bg);
+  border:1px solid rgba(79,156,249,.18);
+  border-top:none;
+  padding:1.1rem 1.3rem;
+}
+.just-label{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--primary);
+  margin-bottom:.65rem;
+  opacity:.8;
+}
+.just-label i{font-size:.8rem;}
+.just-text{
+  font-size:.9rem;
+  line-height:1.75;
+  color:#b8cce4;
+}
+.just-text strong{color:var(--primary);font-weight:600;}
+.just-text em{color:var(--gold);font-style:normal;}
+.just-text .correct-list{
+  margin-top:.6rem;padding-left:1rem;
+  list-style:none;
+}
+.just-text .correct-list li{
+  padding:.25rem 0;
+  padding-left:1.1rem;
+  position:relative;
+  color:#c7ddf4;
+}
+.just-text .correct-list li::before{
+  content:'✦';
+  position:absolute;left:0;
+  color:var(--emerald);font-size:.7rem;
+  top:.35rem;
+}
+.just-text .tag{
+  display:inline-block;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  color:var(--primary);
+  border-radius:4px;
+  padding:.05rem .35rem;
+  font-family:'DM Mono',monospace;
+  font-size:.8em;
+}
+
+/* ── NAVIGATION BUTTONS ── */
+#navigation-buttons{
+  display:flex;justify-content:center;
+  gap:.75rem;flex-wrap:wrap;
+  margin-top:1.8rem;
+}
+.nav-btn{
+  display:none;align-items:center;gap:.5rem;
+  padding:.7rem 1.5rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+  border:none;
+}
+.nav-btn.show{display:flex;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.nav-btn:hover:not(:disabled){transform:translateY(-2px);}
+
+#prev-btn{
+  background:transparent;
+  color:var(--primary);
+  border:1.5px solid rgba(79,156,249,.4);
+}
+#prev-btn:hover:not(:disabled){background:rgba(79,156,249,.08);}
+#answer-btn{
+  background:linear-gradient(135deg,var(--primary2),var(--primary));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(79,156,249,.35);
+}
+#answer-btn:hover:not(:disabled){box-shadow:0 6px 24px rgba(79,156,249,.5);}
+#next-btn{
+  background:var(--surface);
+  color:var(--text);
+  border:1.5px solid var(--border);
+}
+#next-btn:hover:not(:disabled){border-color:var(--primary);}
+#submit-btn{
+  background:linear-gradient(135deg,#7c3aed,var(--primary2));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(124,58,237,.35);
+}
+
+/* ── RESULTS ── */
+#results-container,#report-container{
+  display:none;flex-direction:column;align-items:center;
+}
+.score-ring-wrap{position:relative;margin:1rem auto 1.5rem;}
+.score-ring-wrap svg{display:block;}
+.score-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.score-pct{
+  font-family:'Crimson Pro',serif;
+  font-size:2.8rem;font-weight:700;
+  color:var(--primary);line-height:1;
+}
+.score-label{font-size:.75rem;color:var(--muted2);margin-top:.15rem;}
+.score-stat{
+  font-size:1.1rem;color:var(--muted2);margin-bottom:.5rem;
+}
+.score-stat strong{color:var(--text);}
+.feedback-msg{
+  font-family:'Crimson Pro',serif;
+  font-size:1.4rem;font-weight:400;
+  color:#e2e8f0;
+  margin-bottom:1.5rem;text-align:center;
+}
+.action-buttons{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;}
+.action-btn{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;border:none;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.action-btn:hover{transform:translateY(-2px);}
+.btn-report{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+.btn-retry{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;box-shadow:0 4px 16px rgba(79,156,249,.3);}
+
+/* ── REPORT ── */
+.report-item{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.1rem 1.3rem;
+  margin-bottom:.8rem;
+  text-align:left;
+  border-left:4px solid;
+}
+.report-item.correct{border-left-color:var(--emerald);}
+.report-item.incorrect{border-left-color:var(--rose);}
+.report-item p{font-size:.88rem;line-height:1.6;color:var(--muted2);}
+.report-item p strong{color:var(--text);}
+.report-item .ri-q{font-size:.95rem;color:var(--text);margin-bottom:.4rem;font-weight:500;}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:2rem;
+  font-size:.75rem;
+  color:var(--muted);
+  text-align:center;
+  position:relative;z-index:1;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #quiz-container{padding:1.4rem 1rem;}
+  .question-text{font-size:1.1rem;}
+  .tf-options-container{flex-direction:column;align-items:stretch;}
+  .tf-option{max-width:none;}
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><i class="fas fa-atom"></i> Medicina · Hematologia</div>
+  <h1>Citocinas</h1>
+  <p>Quiz de alta performance com justificativas clínico-moleculares</p>
+</div>
+
+<div id="quiz-container">
+  <div class="progress-wrapper">
+    <div class="progress-track"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
+  </div>
+
+  <div id="quiz-content"></div>
+
+  <div id="navigation-buttons">
+    <button id="prev-btn"   class="nav-btn"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <button id="answer-btn" class="nav-btn show">Responder <i class="fas fa-check"></i></button>
+    <button id="next-btn"   class="nav-btn">Próximo <i class="fas fa-arrow-right"></i></button>
+    <button id="submit-btn" class="nav-btn"><i class="fas fa-flag-checkered"></i> Ver Resultados</button>
+  </div>
+
+  <div id="results-container">
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="65" fill="none" stroke="#1e2d42" stroke-width="12"/>
+        <circle id="score-ring" cx="80" cy="80" r="65" fill="none"
+                stroke="url(#ringGrad)" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="408.4"
+                stroke-dashoffset="408.4"
+                transform="rotate(-90 80 80)"
+                style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#4f9cf9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-center">
+        <div class="score-pct" id="pct-display">0%</div>
+        <div class="score-label">acertos</div>
+      </div>
+    </div>
+    <div class="score-stat" id="score-display"></div>
+    <div class="feedback-msg" id="feedback-message"></div>
+    <div class="action-buttons">
+      <button id="show-report-btn" class="action-btn btn-report"><i class="fas fa-list-alt"></i> Ver Correção</button>
+      <button id="retry-btn"       class="action-btn btn-retry"><i class="fas fa-redo"></i> Tentar Novamente</button>
+    </div>
+  </div>
+
+  <div id="report-container">
+    <h3 style="color:var(--primary);margin-bottom:1.2rem;font-family:'Crimson Pro',serif;font-size:1.4rem;">
+      <i class="fas fa-clipboard-list"></i> Correção Detalhada
+    </h3>
+    <div id="report-list" style="width:100%"></div>
+    <div class="action-buttons" style="margin-top:1rem;">
+      <button id="back-btn" class="action-btn btn-report"><i class="fas fa-arrow-left"></i> Voltar ao Resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Fisiologia Médica · Quiz gerado para estudo intensivo</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+/* ══════════════════════════════════════════════
+   BANCO DE QUESTÕES COM JUSTIFICATIVAS
+══════════════════════════════════════════════ */
+const quizData = [
+  {
+    "question": "O IFN-alfa impede a replicacao viral por meio de genes estimulados por interferon (ISGs). Qual das seguintes afirmativas descreve corretamente o mecanismo molecular pelo qual a PKR (Protein Kinase R / Proteina Quinase R) executa esse efeito?",
+    "options": [
+      "Degrada diretamente o RNA viral de dupla fita por atividade ribonuclease intrinseca, sem necessitar de cofatores celulares",
+      "Inibe a transcricao do gene da RNA polimerase viral via ligacao direta ao promotor do nucleo",
+      "Ativa a via Ras-MAPK para induzir apoptose seletiva apenas das celulas infectadas por virus",
+      "Fosforila eIF2alfa suprimindo globalmente a traducao proteica, impedindo sintese tanto de proteinas virais quanto celulares"
+    ],
+    "answer": [
+      "Fosforila eIF2alfa suprimindo globalmente a traducao proteica, impedindo sintese tanto de proteinas virais quanto celulares"
+    ],
+    "type": "multi",
+    "justification": "A <strong>PKR (Protein Kinase R / Proteina Quinase R)</strong> e ativada ao detectar <em>dsRNA viral (RNA de dupla fita)</em>. Uma vez ativa, fosforila o <strong>eIF2alfa (Eukaryotic Initiation Factor 2 alpha / Fator de Iniciacao Eucariótico 2 alfa)</strong> no residuo Ser51, bloqueando globalmente a sintese proteica. A celula nao produz mais proteinas virais nem proprias, autossacrificando-se para impedir replicacao.<br><br>A RNase L (nao a PKR) degrada RNA via via OAS. A via Ras-MAPK nao e o mecanismo central da PKR. A PKR nao tem atividade de ligacao ao DNA/promotores virais. A acao e no ribossomo, nao na transcricao.<br><br><em>Clinicamente:</em> variantes de PKR com menor atividade associam-se a maior susceptibilidade a infeccoes virais graves e alguns canceres, pois a vigilancia antiviral e antiproliferativa ficam comprometidas. Interacoes entre PKR e o virus HIV sao objeto ativo de pesquisa."
+  },
+  {
+    "question": "A via JAK-STAT ativada pelo IFN-alfa gera o complexo ISGF3. Qual afirmacao sobre essa via esta correta?",
+    "options": [
+      "O ISGF3 e formado por STAT1 homodimérico que age diretamente no ISRE sem necessidade de IRF9",
+      "O complexo ISGF3 e identico ao GAF ativado pelo IFN-gama, pois ambos compartilham STAT1 como componente central",
+      "TYK2 fosforila STAT3 como etapa obrigatoria na via do IFNAR, gerando o complexo ISGF3 que se liga ao GAS",
+      "O complexo ISGF3 e constituido por STAT1 + STAT2 + IRF9 e se liga ao ISRE no DNA para ativar ISGs antivirais"
+    ],
+    "answer": [
+      "O complexo ISGF3 e constituido por STAT1 + STAT2 + IRF9 e se liga ao ISRE no DNA para ativar ISGs antivirais"
+    ],
+    "type": "multi",
+    "justification": "<strong>ISGF3 (IFN-Stimulated Gene Factor 3)</strong> e um complexo heterotrímerico: <strong>STAT1 + STAT2 + IRF9 (IFN Regulatory Factor 9)</strong>. Liga-se ao <strong>ISRE (IFN-Stimulated Response Element)</strong>, ativando ~300 ISGs antivirais.<br><br>O <strong>GAF (Gamma Activation Factor)</strong> e o homodimero de STAT1 ativado pelo <em>IFN-gama</em> (nao pelo IFN-alfa) e liga-se ao GAS, nao ao ISRE. TYK2 fosforila STAT1 e STAT2 no contexto do IFNAR, nao STAT3. STAT3 e mais caracteristico das vias de IL-6 e IL-10.<br><br><em>Importancia clinica:</em> mutacoes de ganho de funcao em STAT1 causam susceptibilidade a infeccoes fungicas (candidíase mucocutanea cronica) paradoxalmente, pois o excesso de sinalizacao de STAT1 suprime vias Th17 necessarias para defesa fungica."
+  },
+  {
+    "question": "O IFN-gama e descrito na tabela como sendo composto por cerca de 20 proteinas diferentes. Qual afirmacao descreve melhor esse dado e sua relevancia funcional?",
+    "options": [
+      "O IFN-gama atua como familia de ~20 proteinas que convergem no mesmo receptor (IFNGR1/2) e ativam macrófagos e celulas NK por meio do eixo JAK1/JAK2-STAT1, aumentando MHC I e II e estimulando a imunidade adaptativa",
+      "O IFN-gama e sintetizado como um unico peptideo que sofre clivagem proteolitica gerando 20 fragmentos funcionalmente distintos com atividades complementares",
+      "A familia do IFN-gama inclui 20 isoformas com estrutura de feixe de 5 alfa-helices, sendo que cada isoforma tem especificidade restrita por um subtipo de receptor IFNGR diferente",
+      "O IFN-gama nao forma familia; a referencia a 20 proteinas e um erro didatico que confunde IFN-gama com a familia dos IFN-alfa, que tem 13 subtipos geneticamente distintos"
+    ],
+    "answer": [
+      "O IFN-gama atua como familia de ~20 proteinas que convergem no mesmo receptor (IFNGR1/2) e ativam macrófagos e celulas NK por meio do eixo JAK1/JAK2-STAT1, aumentando MHC I e II e estimulando a imunidade adaptativa"
+    ],
+    "type": "multi",
+    "justification": "Conforme a tabela, o IFN-gama representa <strong>cerca de 20 proteinas diferentes</strong> — referindo-se as suas multiplas isoformas/variantes estruturais — que convergem na ativacao do mesmo receptor <strong>IFNGR1 + IFNGR2</strong>.<br><br>Via de sinalizacao: JAK1 (associado ao IFNGR1) + JAK2 (associado ao IFNGR2) → fosforilacao de <strong>STAT1</strong> exclusivamente → STAT1 homodimeriza formando <strong>GAF (Gamma Activation Factor)</strong> → liga-se ao <strong>GAS (Gamma Activation Site)</strong> no DNA → ativa genes de ativacao macrofagica, aumento de MHC I e II.<br><br>A tabela destaca: ativa macrofagos e celulas NK, estimula imunidade adaptativa pelo aumento de MHC I e II, impede replicacao viral. Produzido por celulas T auxiliares (Th1), CTL e celulas NK. O IFN-alfa e que tem 13 subtipos codificados por genes distintos — o IFN-gama tem gene unico (cromossomo 12)."
+  },
+  {
+    "question": "O IFN-beta, ao contrario do IFN-alfa, diminui a expressao de moleculas MHC de classes I e II.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Esse e um ponto critico e contraintuitivo. Embora compartilhem o receptor IFNAR1/IFNAR2, o IFN-beta tem efeito <em>paradoxalmente anti-inflamatorio</em> sobre o MHC:<br><ul><li>IFN-alfa: aumenta MHC I e II → maior apresentacao de antigenos</li><li><strong>IFN-beta: diminui MHC I e II</strong> → reduz ativacao de celulas T autorreativas</li></ul>Esse mecanismo explica seu uso terapeutico na <strong>Esclerose Multipla (EM)</strong>: ao reduzir MHC II nas APCs do SNC, diminui a ativacao de linfocitos T CD4+ autorreativos contra a mielina. Tambem reduz moleculas de adesao no endotelio da BHE, impedindo migracao de linfocitos para o SNC.<br><br><em>Distincao clinica essencial:</em> IFN-beta1a (Avonex, Rebif) e glicosilado e produzido em celulas CHO de mamifero; IFN-beta1b (Betaseron) e produzido em E. coli, nao glicosilado — diferencas que afetam imunogenicidade e formacao de anticorpos neutralizantes."
+  },
+  {
+    "question": "O IFN-gama utiliza a mesma via de sinalizacao do IFN-alfa, ativando o complexo ISGF3 para exercer seu efeito imunomodulador.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> IFN-gama e IFN-alfa usam receptores <em>completamente diferentes</em> e ativam complexos transcripcionais distintos:<br><ul><li><strong>IFN-alfa/beta:</strong> IFNAR1 + IFNAR2 → JAK1 + TYK2 → STAT1 + STAT2 + IRF9 = <strong>ISGF3</strong> → liga ao ISRE</li><li><strong>IFN-gama:</strong> IFNGR1 + IFNGR2 → JAK1 + <strong>JAK2</strong> → apenas <strong>STAT1 homodimerico = GAF</strong> → liga ao <strong>GAS</strong></li></ul>Adicionalmente, IFN-gama e classificado como <strong>Tipo II</strong> (interferon imune), enquanto IFN-alfa e IFN-beta sao <strong>Tipo I</strong> (interferons virais). As consequencias funcionais sao profundamente distintas: IFN-gama ativa macrófagos M1, aumenta MHC, induz iNOS; IFN-alfa/beta ativam mecanismos antivirais celulares autonomos como PKR, OAS/RNase L e proteinas Mx."
+  },
+  {
+    "question": "A deficiencia completa do receptor de IFN-gama (IFNGR1) predispoe principalmente a qual conjunto de infeccoes?",
+    "options": [
+      "Infeccoes recorrentes por Streptococcus e Haemophilus por defeito em opsonizacao",
+      "Pneumocistose e toxoplasmose por deficit de celulas T CD4+",
+      "Infeccoes por micobacterias nao tuberculosas e BCG disseminado por falha na ativacao macrofagica",
+      "Candidíase mucocutanea cronica e aspergilose invasiva por defeito em Th17"
+    ],
+    "answer": [
+      "Infeccoes por micobacterias nao tuberculosas e BCG disseminado por falha na ativacao macrofagica"
+    ],
+    "type": "multi",
+    "justification": "Defeitos no eixo <strong>IL-12 → IFN-gama → ativacao macrofagica</strong> causam a <strong>MSMD (Mendelian Susceptibility to Mycobacterial Disease / Susceptibilidade Mendeliana a Doencas Micobacterianas)</strong>. Sem IFNGR1 funcional, macrófagos nao conseguem ser ativados → M. tuberculosis, micobacterias nao-tuberculosas (MAC, M. kansasii) e o proprio BCG da vacina causam doenca disseminada fatal.<br><br>Candidíase recorrente e associada a defeitos em IL-17/IL-22 (Th17) ou CARD9/STAT3. Infeccoes por bacterias encapsuladas indicam deficit de anticorpos ou complemento. Pneumocistose e toxoplasmose sao classicos de linfopenia CD4+ (HIV, SCID).<br><br><em>Diagnostico:</em> sequenciamento de IFNG, IFNGR1, IFNGR2, STAT1, IL12B, IL12RB1 em criancas com BCGite ou infeccoes micobacterianas atipicas. IGRA (Interferon Gamma Release Assay) e o exame diagnostico de TB latente baseado exatamente na medicao de IFN-gama produzido pelos linfocitos T de memoria contra antigenos ESAT-6 e CFP-10."
+  },
+  {
+    "question": "A IL-1 promove a febre (pirogênio) atuando no hipotálamo. O mecanismo molecular correto dessa acao e:",
+    "options": [
+      "IL-1 cruza a barreira hematoencefalica e ativa diretamente os neuronios termorregulatórios do hipotalamo via receptor IL-1R1 neuronal",
+      "IL-1 induz COX-2 nas celulas endoteliais do hipotalamo → producao de PGE2 → ativa receptores EP3 nos neuronios → aumento do set point termico via cAMP",
+      "IL-1 estimula a neurohipofise a liberar ADH que atua nos termorreceptores perifericos aumentando a temperatura basal",
+      "IL-1 inibe diretamente os canais de Ca2+ hipotalamicos, despolarizando os neuronios termicos que disparam o reflexo febril"
+    ],
+    "answer": [
+      "IL-1 induz COX-2 nas celulas endoteliais do hipotalamo → producao de PGE2 → ativa receptores EP3 nos neuronios → aumento do set point termico via cAMP"
+    ],
+    "type": "multi",
+    "justification": "A sequencia molecular da febre e um dos mecanismos mais importantes da imunologia clinica:<br><br>IL-1beta → age em orgaos circumventriculares do hipotalamo (area pre-optica anterior) onde a BHE e mais permeavel → ativa <strong>COX-2 (Cyclooxygenase-2 / Ciclooxigenase-2)</strong> nas celulas endoteliais hipotalamicas → converte acido araquidonico em <strong>PGE2 (Prostaglandina E2)</strong> → PGE2 ativa receptores <strong>EP3</strong> nos neuronios do hipotalamo → ↑ <strong>cAMP (Adenosina Monofosfato Ciclico)</strong> → aumento do <em>set point</em> termico → vasoconstricao periferica + calafrios para gerar calor → <strong>FEBRE</strong>.<br><br>Por isso os <strong>AINEs (Anti-Inflamatorios Nao Esteroidais)</strong> — ibuprofeno, paracetamol, aspirina — inibem COX → menos PGE2 → menos febre. A IL-1 raramente cruza a BHE diretamente em concentracoes fisiolgiicas — age principalmente nos orgaos circumventriculares e via sinais paracrinos."
+  },
+  {
+    "question": "O inflamassoma NLRP3 e diretamente responsavel por clivar pro-IL-1beta em IL-1beta ativa.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso — erro molecular classico e sutil.</strong> O inflamassoma NLRP3 nao cliva a IL-1beta diretamente. A sequencia correta e:<br><ul><li>NLRP3 e ativado por DAMPs/PAMPs → monta o complexo inflamassoma</li><li>O inflamassoma recruta e ativa a <strong>pro-caspase-1</strong> → <strong>caspase-1 ativa</strong></li><li>A caspase-1 cliva pro-IL-1beta (34 kDa) → <strong>IL-1beta ativa (17 kDa)</strong></li><li>A caspase-1 tambem cliva <strong>Gasdermin D (GSDMD)</strong> → piroptose</li></ul>O inflamassoma e a <em>plataforma de ativacao</em> da caspase-1, nao a protease que cliva IL-1beta. Confundir o complexo com a enzima efetora e um erro frequente em provas de alta complexidade.<br><br><em>Relevancia clinica:</em> inibidores especificos de NLRP3 (ex: MCC950, tranilast) estao em ensaios clinicos para gota, CAPS (Cryopyrin-Associated Periodic Syndrome), aterosclerose e insuficiencia cardiaca — o inflamassoma e um alvo terapeutico emergente de amplo impacto."
+  },
+  {
+    "question": "A IL-1 coestimula celulas B e celulas T. Qual molecula e diretamente induzida pela IL-1 nas celulas T para amplificar a resposta?",
+    "options": [
+      "CD28, que passa a reconhecer CD80/CD86 com maior afinidade apos fosforilacao induzida por IL-1",
+      "PD-1 (Programmed Death-1), que ao ser induzido pela IL-1 protege as celulas T da apoptose por exaustao",
+      "CD25 (IL-2Ralfa), aumentando a sensibilidade ao sinal de IL-2 e amplificando a proliferacao T",
+      "FoxP3, redirecionando celulas T efetoras para o fenótipo regulatorio supressor"
+    ],
+    "answer": [
+      "CD25 (IL-2Ralfa), aumentando a sensibilidade ao sinal de IL-2 e amplificando a proliferacao T"
+    ],
+    "type": "multi",
+    "justification": "A <strong>IL-1</strong> como cosinal de ativacao de celulas T atua sinergicamente com o sinal do TCR (T Cell Receptor). Um dos principais efeitos e aumentar a expressao de <strong>CD25 (IL-2Ralfa / IL-2 Receptor alpha)</strong> nas celulas T ativadas. Isso cria o receptor de IL-2 de <strong>alta afinidade</strong> (IL-2Ralfa + IL-2Rbeta + cadeia gammac) → celulas T tornam-se altamente responsivas a IL-2 → proliferacao clonal amplificada.<br><br>Sem IL-1 como cosinal, a expressao de CD25 e menor → receptor de IL-2 de afinidade intermediaria apenas → resposta proliferativa reduzida → potencial anergia.<br><br>CD28 ja e expresso constitutivamente; FoxP3 seria supressao, nao amplificacao; PD-1 e um checkpoint inibitorio, nao de amplificacao. A IL-1 tambem favorece diferenciacao para Th17 (com TGF-beta e IL-6) — relevante em doencas autoimunes como AR e DII."
+  },
+  {
+    "question": "O canakinumab (Ilaris) e o anakinra (Kineret) bloqueiam IL-1beta pelo mesmo mecanismo molecular.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Os mecanismos sao fundamentalmente distintos:<br><ul><li><strong>Anakinra:</strong> e a forma recombinante do <em>IL-1Ra (IL-1 Receptor Antagonist / Antagonista do Receptor de IL-1)</em> — liga-se competitivamente ao IL-1R1 sem gerar sinalizacao intracelular. Bloqueia o acesso tanto de IL-1alfa quanto de IL-1beta ao receptor. Meia-vida ~4-6h, injecao subcutanea diaria.</li><li><strong>Canakinumab:</strong> anticorpo monoclonal IgG1 que se liga diretamente a <em>IL-1beta</em> no espaco extracelular, neutralizando-a antes de chegar ao receptor. Nao bloqueia IL-1alfa. Meia-vida ~26 dias, injecao a cada 4-8 semanas.</li></ul>A diferenca clinica e relevante: anakinra bloqueia ambas as isoformas; canakinumab e especifico para IL-1beta. O ensaio CANTOS com canakinumab demonstrou reducao de eventos cardiovasculares independente do LDL — validando a inflamacao mediada por IL-1beta como alvo cardiovascular."
+  },
+  {
+    "question": "A IL-2 e essencial para a sobrevivencia das celulas T regulatorias (Tregs) porque estas expressam constitutivamente qual componente do receptor de IL-2?",
+    "options": [
+      "A cadeia IL-2Rbeta (CD122), que confere ao receptor de afinidade intermediaria sensibilidade suficiente para captar IL-2 em concentracoes plasmaticas normais",
+      "Uma isoforma truncada do receptor de IL-2 exclusiva de Tregs que sinaliza via STAT3 em vez de STAT5",
+      "Apenas a cadeia gammac (CD132), que e suficiente para sinalizar em baixas concentracoes de IL-2",
+      "IL-2Ralfa (CD25), conferindo ao receptor de alta afinidade mesmo na ausencia de ativacao previa por antigeno"
+    ],
+    "answer": [
+      "IL-2Ralfa (CD25), conferindo ao receptor de alta afinidade mesmo na ausencia de ativacao previa por antigeno"
+    ],
+    "type": "multi",
+    "justification": "As <strong>Tregs (CD4+CD25+FoxP3+)</strong> expressam constitutivamente <strong>IL-2Ralfa (CD25)</strong> em altos niveis, independentemente de ativacao por antigeno. Isso cria um receptor de <strong>alta afinidade (Kd ~10 pM)</strong> = IL-2Ralfa + IL-2Rbeta + cadeia gammac, mesmo em repouso imunologico.<br><br>Celulas T naive nao expressam CD25 em repouso — precisam de ativacao via TCR + CD28 para induzir CD25. Resultado: Tregs competem eficientemente por IL-2 mesmo em baixas concentracoes.<br><br>Em ambientes com pouco IL-2, <em>Tregs sobrevivem enquanto celulas efetoras nao</em> — mecanismo homeostático central. Isso e a base da estrategia de baixas doses de IL-2 (1-3 MI UI/dia) para expandir seletivamente Tregs em doencas autoimunes (LES, DECH, vasculite crioglobulinemica)."
+  },
+  {
+    "question": "Mutacoes na cadeia gammac (CD132) causam SCID ligada ao X porque impedem a sinalizacao de multiplas interleucinas simultaneamente.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>cadeia gammac (common gamma chain / cadeia gama comum, CD132)</strong> e componente essencial dos receptores de <strong>IL-2, IL-4, IL-7, IL-9, IL-15 e IL-21</strong>. Uma unica mutacao no gene <em>IL2RG</em> (cromossomo X) anula a sinalizacao de todas essas citocinas simultaneamente.<br><br>Consequencias do defeito: sem IL-7 → sem desenvolvimento de celulas T (IL-7 e o fator de sobrevivencia dos timocitos); sem IL-15 → sem celulas NK; sem IL-4/IL-21 → comprometimento de celulas B indiretamente. O resultado e a <strong>SCID ligada ao X (X-SCID / SCID-X1)</strong>, a forma mais comum de SCID em meninos — fenótipo T-B+NK-.<br><br><em>Historicamente importante:</em> os primeiros ensaios de terapia genica usaram SCID-X1 como modelo — resultaram em linfocitos T funcionais mas alguns pacientes desenvolveram leucemia por insercao retroviral proxima a proto-oncogenes (LMO2). Vetores lentivirais modernos reduziram esse risco dramaticamente."
+  },
+  {
+    "question": "A ciclosporina A bloqueia a proliferacao de celulas T ao inibir diretamente a transcricao do gene da IL-2.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O mecanismo molecular e elegante e clinicamente central:<br><ul><li>Ciclosporina A liga-se a <strong>ciclofilina</strong> intracelular → o complexo ciclosporina-ciclofilina inibe a <strong>calcineurina</strong> (fosfatase dependente de calcio/calmodulina)</li><li>Calcineurina bloqueada → nao consegue desfosforilar <strong>NFAT (Nuclear Factor of Activated T cells / Fator Nuclear de Celulas T Ativadas)</strong></li><li>NFAT fosforilado permanece no citoplasma → nao transloca ao nucleo → <strong>transcricao do gene IL-2 bloqueada</strong></li><li>Sem IL-2 → sem proliferacao de celulas T → sem rejeicao de enxerto</li></ul>O tacrolimus (FK506) age pelo mesmo mecanismo mas se liga a <strong>FKBP12</strong> (nao a ciclofilina) — ambos convergem na inibicao da calcineurina. Essa e a base de toda imunossupressao em transplantes de orgaos solidos ha mais de 40 anos."
+  },
+  {
+    "question": "Qual das seguintes situacoes melhor explica por que baixas doses de IL-2 recombinante sao usadas para tratar doencas autoimunes, enquanto altas doses sao usadas em oncologia?",
+    "options": [
+      "Baixas doses bloqueiam o receptor de IL-2 por saturacao competitiva impedindo proliferacao de celulas efetoras; altas doses saturariam apenas as Tregs que expressam CD25",
+      "A diferenca de efeito e determinada exclusivamente pela meia-vida da molecula e nao pela concentracao serica nem pelo tipo de receptor ativado",
+      "Baixas doses expandem seletivamente Tregs via receptor de alta afinidade (CD25 constitutivo, Kd ~10 pM); altas doses tambem ativam celulas T efetoras e NK via receptor de afinidade intermediaria (IL-2Rbeta+gammac, Kd ~1 nM)",
+      "Baixas doses suprimem a producao de IL-1 e TNF-alfa pelos macrofagos; altas doses ativam apoptose das celulas tumorais diretamente via receptor de morte TNFR1"
+    ],
+    "answer": [
+      "Baixas doses expandem seletivamente Tregs via receptor de alta afinidade (CD25 constitutivo, Kd ~10 pM); altas doses tambem ativam celulas T efetoras e NK via receptor de afinidade intermediaria (IL-2Rbeta+gammac, Kd ~1 nM)"
+    ],
+    "type": "multi",
+    "justification": "O principio e farmacodinamico baseado em <strong>afinidade diferencial do receptor</strong>:<br><ul><li><strong>Receptor de alta afinidade</strong> (IL-2Ralfa + beta + gammac, Kd ~10 pM): presente em Tregs constitutivamente → ativado com concentracoes baixissimas → <em>expansao seletiva de Tregs → supressao autoimune</em></li><li><strong>Receptor de afinidade intermediaria</strong> (IL-2Rbeta + gammac, Kd ~1 nM = 100× maior): presente em celulas NK e celulas T de memoria → requer concentracoes 100× maiores → <em>expansao de celulas efetoras antitumorais (LAK cells)</em></li></ul>A toxicidade grave das altas doses (Sindrome de Vazamento Capilar / CLS) ocorre por ativacao de celulas endoteliais e NK. A oncologia usava aldesleukin (Proleukin) em melanoma e carcinoma renal antes das imunoterapias anti-PD1/PDL1."
+  },
+  {
+    "question": "A IL-4 promove o switch de classe de imunoglobulina de IgM para IgE nas celulas B. Qual fator de transcricao e o mediador central desse processo?",
+    "options": [
+      "Bcl-6, que ao ser induzido pela IL-4 nas celulas B as diferencia em celulas foliculares helper que por sua vez facilitam o switching para IgE",
+      "RORgama-t, que ao ser ativado pela IL-4 nas celulas B induz switching para IgA em mucosas, protegendo contra parasitas intestinais",
+      "STAT6, que ativa a expressao de AID (Activation-Induced Cytidine Deaminase) e a recombinacao para o locus Cepsilon, produzindo IgE",
+      "T-bet, que ao ser induzido pela IL-4 nas celulas B redireciona o switching para IgG2a em vez de IgE, sendo por isso considerado o master de Th1"
+    ],
+    "answer": [
+      "STAT6, que ativa a expressao de AID (Activation-Induced Cytidine Deaminase) e a recombinacao para o locus Cepsilon, produzindo IgE"
+    ],
+    "type": "multi",
+    "justification": "IL-4 liga-se ao IL-4Ralfa (+ gammac em celulas hematopoieticas) → ativa JAK1/JAK3 → fosforila <strong>STAT6</strong> → STAT6 homodimeriza e transloca ao nucleo → ativa o promotor do gene da <strong>AID (Activation-Induced Cytidine Deaminase)</strong> + regiao de troca epsilon (switch Sepsilon) → recombinacao do DNA da celula B do locus Cmu para o <strong>locus Cepsilon</strong> → producao de <strong>IgE</strong>. O processo tambem requer cosinal via <strong>CD40-CD40L</strong>.<br><br><strong>T-bet</strong> induz switch para IgG2a (via IFN-gama/Th1). <strong>RORgama-t</strong> e o master de Th17 em celulas T. <strong>Bcl-6</strong> e o master de celulas Tfh (T folicular helper), nao e induzido pela IL-4 nas celulas B para switching. O master de switching de IgE e STAT6 — alvo direto do dupilumabe (anti-IL-4Ralfa)."
+  },
+  {
+    "question": "A IL-4 tem efeito exclusivamente pro-alergico, nao possuindo acoes anti-inflamatorias.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> IL-4 tem importantes <em>efeitos anti-inflamatorios</em> frequentemente negligenciados em provas:<br><ul><li>Inibe a ativacao de macrofagos M1: suprime producao de TNF-alfa, IL-1, IL-6, IL-12, NO e especies reativas de oxigenio</li><li>Promove diferenciacao de macrofagos para fenótipo <strong>M2</strong> (alternativamente ativados) → reparo tecidual, producao de IL-10 e TGF-beta</li><li>Inibe Th1 e Th17 indiretamente ao favorecer GATA-3 e o fenótipo Th2</li><li>Suprime expressao de receptores TLR em macrofagos, reduzindo respostas a PAMPs</li></ul>O paradoxo: IL-4 e pro-alergica (IgE via STAT6, eosinofilia via IL-5) mas simultaneamente anti-inflamatoria classica (supressao de M1). Isso explica por que condicoes Th2-dominantes como atopia cursam com menos autoimunidade orgao-especifica (Th1/Th17), mas com inflamacao alergica cronica — o balanco Th1/Th2 e um principio central da imunorregulacao."
+  },
+  {
+    "question": "A IL-5 participa da resposta contra parasitas estimulando a producao de eosinofilos. Qual e a posicao anatomica especifica onde essa acao ocorre primariamente?",
+    "options": [
+      "No timo, onde IL-5 reprograma celulas T CD8+ imaduras para se diferenciarem em eosinofilos funcionais durante estados de hipereosinfolia reactiva",
+      "Na medula ossea, onde IL-5 age nos progenitores eosinofilicos (CFU-Eo) estimulando eosinopoiese, maturacao e liberacao precoce de eosinofilos para o sangue",
+      "Nos linfonodos mesentericos, onde IL-5 induz a diferenciacao de celulas NK em eosinofilos funcionais via um proceso de transdiferenciacao dependente de GATA-3",
+      "No baco vermelho, onde os eosinofilos maduros ficam sequestrados ate serem liberados em resposta a IL-5 produzida pelos Th2 ativados pela infeccao parasitaria"
+    ],
+    "answer": [
+      "Na medula ossea, onde IL-5 age nos progenitores eosinofilicos (CFU-Eo) estimulando eosinopoiese, maturacao e liberacao precoce de eosinofilos para o sangue"
+    ],
+    "type": "multi",
+    "justification": "A <strong>IL-5</strong> age em <strong>tres niveis no ciclo de vida dos eosinofilos</strong>, todos primariamente na medula ossea e no sangue:<br><ol><li><strong>Medula ossea — Eosinopoiese:</strong> IL-5 age nos progenitores <strong>CFU-Eo (Colony-Forming Unit-Eosinophil)</strong>, estimulando proliferacao e maturacao. Via: IL-5Ralfa + cadeia betac (CD131) → JAK2 → STAT5 → genes anti-apoptoticos e de diferenciacao eosinofilica</li><li><strong>Liberacao acelerada:</strong> IL-5 acelera a saida de eosinofilos maturos da medula para o sangue (mobilizacao)</li><li><strong>Sobrevivencia e ativacao nos tecidos:</strong> prolonga a vida dos eosinofilos nos tecidos e os ativa para degranulacao (MBP, ECP, EPO)</li></ol>O baco nao e um site primario de eosinopoiese. Celulas NK nao se transdiferenciam em eosinofilos. O timo produz celulas T, nao eosinofilos."
+  },
+  {
+    "question": "O benralizumab difere do mepolizumab por bloquear diretamente a IL-5 circulante em vez de atuar em seu receptor.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso — o mecanismo e o oposto.</strong><br><ul><li><strong>Mepolizumab</strong> e <strong>reslizumab:</strong> anticorpos monoclonais que se ligam diretamente a <em>IL-5 circulante</em>, neutralizando-a antes que alcance seus receptores nos eosinofilos</li><li><strong>Benralizumab:</strong> anticorpo monoclonal anti-<em>IL-5Ralfa</em> — bloqueia o receptor, nao a citocina</li></ul>Vantagem adicional do benralizumab: por se ligar ao receptor e ter porcao Fc funcional, induz <strong>ADCC (Antibody-Dependent Cellular Cytotoxicity / Citotoxicidade Celular Dependente de Anticorpo)</strong> → deplecao direta de eosinofilos e basofilos que expressam IL-5Ralfa → deplecao mais rapida e profunda. Mepolizumab reduz eosinofilos mas nao os depleta com a mesma velocidade.<br><br>Essa distincao e testada em provas de Alergologia e Pneumologia e e clinicamente relevante para a escolha do biologico em asma eosinofilica grave."
+  },
+  {
+    "question": "A IL-8 (CXCL8), conforme descrito na tabela, atrai neutrofilos e basofilos. Qual evento intracelular explica diretamente a migracao celular direcional mediada por IL-8?",
+    "options": [
+      "Ativacao de JAK2 → STAT5 → expressao de novas integrinas de superficie que aumentam a adesao ao endotelio e facilitam a diapedese",
+      "Ativacao de PI3Kgama → Rac/Cdc42 → polimerizacao de actina no polo frontal (leading edge) da celula seguindo o gradiente de CXCL8",
+      "Ativacao de PKA (Protein Kinase A) via cAMP → fosforilacao de miosina → contracao do citoesqueleto que empurra a celula em direcao ao estimulo",
+      "Ativacao de NF-kB → transcricao de CXCR1 adicionais para amplificar o sinal quimiotático nas celulas recrutadas"
+    ],
+    "answer": [
+      "Ativacao de PI3Kgama → Rac/Cdc42 → polimerizacao de actina no polo frontal (leading edge) da celula seguindo o gradiente de CXCL8"
+    ],
+    "type": "multi",
+    "justification": "CXCL8 → CXCR1/CXCR2 (GPCRs — G Protein-Coupled Receptors / Receptores Acoplados a Proteina G) → dissociacao da proteina G heterotrimérica → subunidade betagama ativa <strong>PI3Kgama</strong> → producao de PIP3 no polo frontal → ativacao de <strong>Rac1 e Cdc42</strong> (GTPases Rho) → <strong>polimerizacao de actina</strong> e formacao de pseudopodos no leading edge → migracao direcional seguindo o gradiente crescente de CXCL8 (quimiotaxia).<br><br>A tabela indica que IL-8 e um <em>fator quimiotático que promove a inflamacao, atraindo neutrofilos e basofilos</em>, sendo secretada por macrofagos. JAK-STAT e a via de sinalizacao de receptores de citocinas tipo I (IFN, IL-2, IL-4) — nao de GPCRs. PKA/cAMP tipicamente <em>inibe</em> neutrofilos (PGE2 eleva cAMP → inibe degranulacao). NF-kB gera expressao genica que demora horas; a quimiotaxia ocorre em minutos."
+  },
+  {
+    "question": "A IL-8 e produzida exclusivamente por macrofagos, conforme indicado na tabela.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A tabela indica que IL-8 <em>e secretada por macrofagos</em>, mas isso descreve o principal produtor no contexto imunologico, nao o unico. Na realidade, a IL-8 (CXCL8) e produzida por uma ampla variedade de celulas em resposta a estimulos inflamatorios:<br><ul><li>Macrofagos e monocitos (principal fonte imune)</li><li>Celulas endoteliais (em resposta a IL-1 e TNF-alfa)</li><li>Fibroblastos</li><li>Celulas epiteliais (intestinais, pulmonares, renais)</li><li>Neutrofilos ativados (autoamplificacao)</li><li>Celulas tumorais (IL-8 tumoral promove angiogenese via CXCR2 nas celulas endoteliais)</li></ul>Estimulos indutores: IL-1, TNF-alfa, LPS, hipoxia, cristais de acido urico, ROS. O fato de a tabela mencionar macrofagos como produtores reflete o contexto didatico do quadro, nao a exclusividade biologica."
+  },
+  {
+    "question": "A IL-10 inibe a secrecao de IFN-gama e interleucinas. Qual e o mecanismo molecular preciso dessa inibicao nos macrofagos?",
+    "options": [
+      "IL-10 ativa STAT3 nos macrofagos → induz SOCS3 que inibe JAK2 → bloqueia sinalizacao downstream de IFN-gama + reduz MHC II e moleculas co-estimulatorias, suprimindo a ativacao de Th1",
+      "IL-10 se liga ao receptor de IL-12 nas celulas T, bloqueando a producao de IFN-gama que dependeria do sinal de IL-12 para ser sintetizado",
+      "IL-10 induz a degradacao do mRNA de IFN-gama por ativacao de ribonucleases especificas do macrofago via via de sinalizacao STAT1 alternativa",
+      "IL-10 bloqueia a ligacao do IFN-gama ao IFNGR1 por competicao estérica no espaco extracelular, impedindo fisicamente a sinalizacao JAK-STAT nos macrofagos"
+    ],
+    "answer": [
+      "IL-10 ativa STAT3 nos macrofagos → induz SOCS3 que inibe JAK2 → bloqueia sinalizacao downstream de IFN-gama + reduz MHC II e moleculas co-estimulatorias, suprimindo a ativacao de Th1"
+    ],
+    "type": "multi",
+    "justification": "IL-10 age via <strong>IL-10R1 + IL-10R2</strong> → ativa <strong>JAK1/TYK2 → STAT3</strong>. O STAT3 ativado:<br><ul><li>Induz <strong>SOCS3 (Suppressor of Cytokine Signaling 3 / Supressor de Sinalizacao de Citocinas 3)</strong> nos macrofagos → SOCS3 inibe JAK2 → bloqueia sinalizacao downstream de IFN-gama (retrocontrole)</li><li>Suprime diretamente a transcricao de TNF-alfa, IL-1, IL-6, IL-12 nos macrofagos → menos ativacao de Th1 → menos IFN-gama produzido</li><li>Reduz MHC II e CD80/86 → menos apresentacao de antigenos → menos ativacao de celulas T</li></ul>IL-10 nao compete com IFN-gama pelo receptor (sao receptores totalmente distintos). IL-10 nao tem receptor de IL-12 para bloquear. A inducao de SOCS3 e o mecanismo central de retrocontrole. Conforme a tabela: IL-10 inibe a secrecao de IFN-gama e interleucinas, sendo secretada por celulas T reguladoras."
+  },
+  {
+    "question": "Pacientes com mutacoes de perda de funcao bialélicas no gene IL10 ou nos genes IL10RA/IL10RB desenvolvem doenca inflamatoria intestinal de inicio muito precoce (VEOIBD), confirmando o papel essencial de IL-10 na homeostase intestinal.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Este e um dos exemplos mais elegantes de experimento natural que valida mecanismo animal em humanos: camundongos IL-10 knockout desenvolvem colite grave espontanea → humanos com mutacoes de perda de funcao em <em>IL10, IL10RA ou IL10RB</em> desenvolvem colite ulcerativa grave em lactentes (<strong>VEOIBD — Very Early Onset Inflammatory Bowel Disease</strong>), refrataria a todos os tratamentos convencionais.<br><br>Mecanismo: sem IL-10 → macrofagos e celulas dendriticas intestinais ficam hiperativados pela microbiota normal → producao excessiva de TNF-alfa e IL-12 → ativacao de Th1 e Th17 → destruicao epitelial grave desde os primeiros meses de vida.<br><br><em>Terapêutica:</em> esses pacientes sao candidatos a <strong>TCTH alogênico</strong> (transplante de celulas-tronco hematopoieticas) — unica cura conhecida para esse subgrupo especifico de DII genetica."
+  },
+  {
+    "question": "A IL-15 promove a inflamacao e ativa celulas T de memoria e celulas NK, conforme descrito na tabela. Por que ela difere fundamentalmente da IL-2 no contexto da imunidade inata?",
+    "options": [
+      "IL-15 usa um receptor exclusivo (IL-15Ralfa/beta/gammac) que nao compartilha nenhuma subunidade com o receptor de IL-2, tornando as duas citocinas completamente independentes em sua sinalizacao",
+      "IL-15 e produzida principalmente por linfocitos T CD4+ Th1, enquanto IL-2 e produzida por macrofagos e celulas dendriticas em resposta a LPS",
+      "A diferenca e apenas farmacocinetica: IL-15 tem meia-vida mais longa que IL-2, por isso pode ativar celulas de memoria que residem em tecidos perifericos distantes do foco de infeccao",
+      "IL-15 e produzida por celulas da imunidade inata (macrofagos, celulas dendriticas) e apresentada por transpresentacao; IL-2 e produzida por celulas T ativadas (imunidade adaptativa) e secretada livrement"
+    ],
+    "answer": [
+      "IL-15 e produzida por celulas da imunidade inata (macrofagos, celulas dendriticas) e apresentada por transpresentacao; IL-2 e produzida por celulas T ativadas (imunidade adaptativa) e secretada livrement"
+    ],
+    "type": "multi",
+    "justification": "A distincao fundamental entre IL-2 e IL-15 e sua <em>origem celular e modo de apresentacao</em>:<br><ul><li><strong>IL-2:</strong> produzida por celulas T CD4+ Th1 e CD8+ ativadas (imunidade adaptativa). Secrecao livre (paracrina/autocrina). Producao dependente de ativacao TCR + CD28 + calcineurina → NFAT.</li><li><strong>IL-15:</strong> produzida por macrofagos, celulas dendriticas, celulas epiteliais, fibroblastos (imunidade inata e estromal). Apresentada por <strong>transpresentacao</strong> (ligada a IL-15Ralfa na membrana da celula produtora). Celulas T <em>nao produzem</em> IL-15.</li></ul>Conforme a tabela, IL-15 <em>promove a inflamacao e ativa celulas T de memoria e celulas NK</em> — essencial para a vigilancia imune continua mesmo na ausencia de infeccao ativa. Ambas usam IL-2Rbeta + gammac → JAK1/3 → STAT5, mas o mecanismo de apresentacao e a fonte celular sao radicalmente distintos."
+  },
+  {
+    "question": "A IL-15 difere da IL-2 por ser produzida principalmente por linfocitos T, enquanto IL-2 e produzida por celulas da imunidade inata.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso — a afirmacao esta invertida.</strong> A distincao correta e:<br><ul><li><strong>IL-2:</strong> produzida principalmente por <em>celulas T CD4+ Th1 e CD8+ ativadas</em> (imunidade adaptativa). Producao dependente de ativacao via TCR + CD28 + calcineurina → NFAT → transcricao do gene IL2.</li><li><strong>IL-15:</strong> produzida por <em>macrofagos, celulas dendriticas, celulas epiteliais, fibroblastos, celulas musculares esqueléticas</em> (imunidade inata e estromal). Notavelmente, <strong>celulas T nao produzem IL-15</strong>.</li></ul>Essa distincao tem consequencia funcional critica: IL-15 e a principal citocina que mantem as celulas NK e celulas T CD8+ de memoria <em>vivas durante o estado de repouso</em> (homeostatic proliferation), sem necessidade de ativacao antigenica. IL-2 e produzida em resposta a infeccao/ativacao para expandir clones especificos. Inverter essa relacao e um erro classico em provas de alto nivel."
+  },
+  {
+    "question": "A linfotoxina, descrita na tabela como aquela que mata celulas-alvo e secretada por celulas T citotoxicas, age por qual mecanismo molecular especifico?",
+    "options": [
+      "Ativa a via intrinseca da apoptose por ligacao direta a BAX na membrana mitocondrial, dispensando receptores de membrana na celula-alvo",
+      "Forma poros na membrana da celula-alvo identicos aos da perforina, com oligomerizacao de 20 subunidades formando canais de 22 nm, permitindo entrada de granzzimas",
+      "Liga-se ao TNFR1 (que possui Death Domain intracelular) → recruta TRADD → recruta FADD → ativa caspase-8 → cascata de caspases → apoptose por via extrinse",
+      "Inativa a topoisomerase II nuclear da celula-alvo por ligacao direta ao DNA, causando quebra irreparavel de fita dupla e morte por catastrofe mitotica"
+    ],
+    "answer": [
+      "Liga-se ao TNFR1 (que possui Death Domain intracelular) → recruta TRADD → recruta FADD → ativa caspase-8 → cascata de caspases → apoptose por via extrinse"
+    ],
+    "type": "multi",
+    "justification": "A <strong>Linfotoxina (LTalfa / TNF-beta)</strong> pertence a familia do TNF e mata celulas-alvo por <em>apoptose receptor-mediada (via extrinse)</em>:<br><br>LTalfa → se liga ao <strong>TNFR1</strong> (Death Domain intracelular) → recruta <strong>TRADD (TNFR-Associated Death Domain protein)</strong> → recruta <strong>FADD (Fas-Associated Death Domain protein)</strong> → ativa <strong>Caspase-8</strong> → cascata de caspases (3, 6, 7) → apoptose. A membrana da celula-alvo permanece inicialmente intacta — morte limpa, sem DAMP externo.<br><br>Isso contrasta fundamentalmente com a <strong>perforina</strong>, que perfura fisicamente a membrana. A linfotoxina nao forma poros, nao interage com o DNA diretamente, e nao se liga a BAX mitocondrial diretamente. LTalfa tambem pode ativar NF-kB via TRAF2 → sobrevivencia celular (efeito paradoxal dependente do contexto celular e da concentracao)."
+  },
+  {
+    "question": "A linfotoxina (LTalfa) mata celulas-alvo por mecanismo identico ao da perforina — formacao de poros na membrana celular.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Os mecanismos sao completamente distintos em nivel molecular e morfologico:<br><ul><li><strong>Linfotoxina (LTalfa/TNF-beta):</strong> citocina solúvel → liga ao <strong>TNFR1</strong> (Death Domain) → via extrinse de apoptose via caspase-8 → a membrana permanece intacta inicialmente → morte receptor-mediada, ativa, nao-litica</li><li><strong>Perforina:</strong> proteina exocitada dos granulos lIticos → se insere diretamente na membrana da celula-alvo em presenca de Ca2+ → oligomerizacao → <em>poros fisicos de ~22 nm</em> → entrada de granzimas → apoptose intrinse E independente de receptor de membrana-alvo</li></ul>Adicionalmente, a linfotoxina e uma <em>citocina solúvel que age a distancia</em>; a perforina e exocitada <em>diretamente na sinapse imunologica</em> por degranulacao polarizada. A confusao entre essas vias e classica e testada frequentemente em provas de imunologia avancada."
+  },
+  {
+    "question": "A perforina requer Ca2+ extrace para se inserir na membrana da celula-alvo. Por que o proprio CTL nao e lisado pela perforina que ele mesmo libera?",
+    "options": [
+      "O CTL expressa CD59 (protectina) que bloqueia especificamente os poros de perforina na propria membrana, mecanismo identico ao que protege as hemaclas da lise pelo complemento",
+      "A perforina e secretada como pro-perforina inativa e e ativada apenas pelo pH alcalino na superficie da celula-alvo tumoral, que e diferente do pH neutro da superficie do CTL",
+      "Tres mecanismos simultaneos protegem o CTL: granulos tem pH acido que inativa perforina armazenada; degranulacao e polarizada para a sinapse; catepsina B de superficie do CTL degrada perforina antes de atingir a membrana propria",
+      "O CTL possui reservas citoplasmáticas de inibidores de serina-protease (serpinas) que neutralizam a perforina antes que chegue a sua propria membrana via difusao passiva"
+    ],
+    "answer": [
+      "Tres mecanismos simultaneos protegem o CTL: granulos tem pH acido que inativa perforina armazenada; degranulacao e polarizada para a sinapse; catepsina B de superficie do CTL degrada perforina antes de atingir a membrana propria"
+    ],
+    "type": "multi",
+    "justification": "A protecao do CTL (Cytotoxic T Lymphocyte / Linfocito T Citotoxico) e multimecânica:<br><ol><li><strong>pH acido nos granulos (~5-6):</strong> perforina em pH acido e inativa (o dominio MACPF requer pH neutro-alcalino + Ca2+ para polimerizar) — protege o CTL enquanto os granulos estao intracelulares</li><li><strong>Degranulacao polarizada:</strong> o MTOC (Microtubule Organizing Center / Centro Organizador de Microtubulos) e os granulos reorientam-se exclusivamente em direcao a sinapse imunologica (celula-alvo) — exocitose geometricamente direcionada</li><li><strong>Catepsina B de superficie:</strong> o CTL expressa catepsina B na propria membrana plasmatica que degrada rapidamente qualquer perforina que escape para o lado do CTL antes de inserir na membrana</li></ol>CD59 (protectina) protege contra o complexo de ataque a membrana do complemento — mecanismo diferente, nao contra perforina. Pro-perforina e ativada pelo Ca2+ extracelular e pH neutro, nao por pH alcalino especifico de tumores."
+  },
+  {
+    "question": "Em pacientes com Linfo-Histiocitose Hemofagocitica (HLH) primaria por mutacao em PRF1, a patogenese central e a falha dos CTLs em matar celulas apresentadoras de antigenos, resultando em hipercitoquinemia sustentada.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O mecanismo patogenico da HLH por mutacao em <em>PRF1</em> (perforina) e elegante:<br><ol><li>CTLs ativados encontram APCs hiperativadas mas, sem perforina funcional, nao conseguem elimina-las</li><li>APCs continuam produzindo IL-12, IL-18 → estimulam mais <strong>IFN-gama</strong> das celulas NK e T</li><li>IFN-gama → ativa macrofagos M1 → macrofagos produzem TNF-alfa, IL-1, IL-6, CXCL9 → recrutam mais celulas imunes → alca de amplificacao sem freio</li><li>Macrofagos hiperativados fazem <strong>hemofagocitose</strong> (fagocitam eritrocitos, leucocitos, plaquetas → citopenias)</li></ol>Ferritina >10.000 ng/mL e quase patognomonica — produzida pelos macrofagos M1 hiperativados. sCD25 > 2.400 U/mL reflete ativacao massica de celulas T. Tratamento: emapalumab (anti-IFN-gama) + etoposideo + dexametasona → ponte para TCTH (unica cura em HLH familiar)."
+  },
+  {
+    "question": "O emapalumab (Gamifant), aprovado para HLH refrataria, exerce seu efeito bloqueando qual citocina central no patomecanismo da doenca?",
+    "options": [
+      "IL-1beta, que ativa o inflamassoma NLRP3 desencadeando a hemofagocitose e as citopenias via piroptose dos precursores medulares",
+      "IFN-gama, que e o mediador central da ativacao macrofagica excessiva na HLH, com CXCL9 servindo como biomarcador de sua atividade sistemica",
+      "TNF-alfa, que causa as citopenias por supressao medular direta e ativa macrofagos para hemofagocitose de forma autonoma e independente de IFN-gama",
+      "IL-18, que e o indutor primario de IFN-gama pelas celulas NK na fase inicial, sendo portanto superior ao emapalumab no controle da doenca"
+    ],
+    "answer": [
+      "IFN-gama, que e o mediador central da ativacao macrofagica excessiva na HLH, com CXCL9 servindo como biomarcador de sua atividade sistemica"
+    ],
+    "type": "multi",
+    "justification": "<strong>Emapalumab</strong> e um anticorpo monoclonal anti-<strong>IFN-gama</strong> — bloqueia o IFN-gama circulante antes que se ligue ao IFNGR nos macrofagos.<br><br>Racional: IFN-gama e a citocina mais elevada no plasma de pacientes com HLH ativa. <strong>CXCL9</strong> (quimiocina induzida por IFN-gama) e o biomarcador mais especifico de atividade de IFN-gama e correlaciona com gravidade da HLH. Sem IFN-gama sinalizando nos macrofagos, eles voltam ao estado de repouso progressivamente → cessa a hemofagocitose.<br><br>IL-18 de fato induz IFN-gama (e IL-18 esta elevada na HLH), mas o alvo terapeutico aprovado e o IFN-gama (mais downstream e com maior impacto direto na ativacao macrofagica). IL-1 e TNF contribuem para a inflamacao mas nao sao os drivers centrais da hemofagocitose."
+  },
+  {
+    "question": "O TNF-alfa ativa macrofagos e promove a febre, sendo secretado por macrofagos. Qual e o mecanismo molecular especifico pelo qual o TNF-alfa induz febre?",
+    "options": [
+      "TNF-alfa induz COX-2 no endotelio hipotalamico → PGE2 → receptor EP3 → cAMP hipotalamico aumentado → elevacao do set point termico, mecanismo identico ao da IL-1",
+      "TNF-alfa ativa as celulas de Kupffer hepaticas que liberam proteinas de fase aguda febrigenas que cruzam a barreira hematoencefalica e estimulam o hipotalamo diretamente",
+      "TNF-alfa liga-se diretamente ao TNFR1 nos neuronios hipotalamicos termorregulatórios, ativando PKA que aumenta o set point termico sem necessidade de mediadores intermediarios como PGE2",
+      "TNF-alfa ativa a degranulacao de mastocitos hipotalamicos que liberam histamina, que por sua vez estimula os termorreceptores centrais e eleva o set point"
+    ],
+    "answer": [
+      "TNF-alfa induz COX-2 no endotelio hipotalamico → PGE2 → receptor EP3 → cAMP hipotalamico aumentado → elevacao do set point termico, mecanismo identico ao da IL-1"
+    ],
+    "type": "multi",
+    "justification": "Conforme a tabela, o <strong>TNF-alfa ativa macrofagos e promove a febre (pirogênio)</strong>. O mecanismo pelo qual TNF-alfa induz febre e <em>identico ao da IL-1</em>:<br><br>TNF-alfa → age nos orgaos circumventriculares do hipotalamo e no endotelio hipotalamico → induz <strong>COX-2 (Ciclooxigenase-2)</strong> → converte acido araquidonico em <strong>PGE2</strong> → PGE2 ativa receptores <strong>EP3</strong> nos neuronios → ↑ <strong>cAMP</strong> → elevacao do set point termico → febre.<br><br>Diferente da IL-1 (que atua mais em areas circumventriculares), o TNF-alfa tambem pode induzir a producao de IL-1 e IL-6 como efeitos secundarios — gerando uma cascata pirogênica amplificada. O TNFR1 nos neuronios hipotalamicos existe, mas a via principal e mediada por PGE2, nao por PKA diretamente via TNFR1 neuronal."
+  },
+  {
+    "question": "A administracao de adalimumabe a um paciente com tuberculose latente nao tratada pode resultar em TB ativa disseminada porque o TNF-alfa e essencial para manter a integridade estrutural do granuloma.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O granuloma tuberculoso depende fundamentalmente do TNF-alfa:<br><ul><li>TNF-alfa recruta macrofagos adicionais via ICAM-1/VCAM-1 endoteliais → forma e mantem a estrutura granulomatosa</li><li>Ativa macrofagos em sinergia com IFN-gama → iNOS → NO → killing de bacilos fagocitados</li><li>Induz apoptose de macrofagos infectados → elimina o nicho intracelular do bacilo</li><li>Mantem a integridade das bordas do granuloma via fibrose (ativacao de fibroblastos)</li></ul>Com adalimumabe (anti-TNF-alfa): granulomas se dissolvem → M. tuberculosis latente se dispersa → TB ativa pulmonar ou extrapulmonar (miliar, meningitica, espondilite).<br><br><em>Protocolo obrigatorio antes de qualquer biologico anti-TNF:</em> IGRA (QuantiFERON ou T-SPOT) + RX de torax → se TB latente: isoniazida 9 meses ou rifampicina 4 meses ANTES de iniciar o biologico (aguardar pelo menos 4 semanas de quimioprofilaxia)."
+  },
+  {
+    "question": "O etanercepte (TNFR2-Fc fusion) e igualmente eficaz ao infliximabe no tratamento da Doenca de Crohn.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O etanercepte e <em>ineficaz</em> na Doenca de Crohn — e esse fracasso terapeutico e altamente informativo sobre a biologia do TNF-alfa na DII:<br><ul><li>Etanercepte neutraliza principalmente <em>sTNF (TNF soluvel)</em> — possui baixa capacidade de neutralizar tmTNF (TNF transmembrana)</li><li>Na DII, o <em>tmTNF</em> parece ser o mediador critico da inflamacao mucosa (sinalizacao em contato direto celula-celula na lamina propria intestinal)</li><li>Infliximabe e adalimumabe sao anticorpos monoclonais que neutralizam AMBAS as formas (sTNF e tmTNF) e tambem induzem ADCC e apoptose de celulas que expressam tmTNF</li></ul>Adicionalmente, anticorpos anti-TNF (infliximabe) induzem apoptose de celulas T da lamina propria ativadas por via Fas — efeito imunomodulador adicional que o etanercepte nao tem. Por isso, apenas infliximabe, adalimumabe, certolizumabe e golimumabe (nao etanercepte) sao aprovados para DII."
+  },
+  {
+    "question": "Na sepse por bacterias gram-negativas, qual das seguintes sequencias de eventos melhor descreve a cascata de citocinas que leva ao choque distributivo?",
+    "options": [
+      "LPS → NLRP3 em neutrofilos → piroptose generalizada → IL-18 → IFN-gama massivo → choque por hipercitoquinemia exclusiva de IFN-gama",
+      "LPS → receptores de lectina em linfocitos B → IL-4 e IL-5 → ativacao eosinofilica → degranulacao → choque anafilatide",
+      "LPS → TLR2 em celulas epiteliais → STAT3 → IL-10 excessiva → imunossupressao paradoxal → sepse tardia sem resposta inflamatoria inicial",
+      "LPS → TLR4/MD-2 em macrofagos → NF-kB → TNF-alfa (pico 1-2h) → IL-1 e IL-6 (2-4h) → vasodilatacao sistemica via iNOS/NO + disfuncao endotelial + CID → choque distributivo"
+    ],
+    "answer": [
+      "LPS → TLR4/MD-2 em macrofagos → NF-kB → TNF-alfa (pico 1-2h) → IL-1 e IL-6 (2-4h) → vasodilatacao sistemica via iNOS/NO + disfuncao endotelial + CID → choque distributivo"
+    ],
+    "type": "multi",
+    "justification": "Na sepse por gram-negativos: <strong>LPS</strong> → LBP (LPS-Binding Protein) → <strong>CD14</strong> → <strong>TLR4 + MD-2</strong> → <strong>MyD88</strong> → NF-kB + IRF3 → onda temporal de citocinas:<br><ol><li><strong>TNF-alfa</strong> (pico 1-2h): vasodilatacao via NO, ↑ permeabilidade vascular, ↑ Fator Tecidual (TF) → CID (Coagulacao Intravascular Disseminada)</li><li><strong>IL-1beta</strong> (2-4h): amplifica inflamacao, ativa endotelio, induz febre</li><li><strong>IL-6</strong> (2-6h): proteinas de fase aguda, ativa eixo HPA</li><li><strong>IL-8/CXCL8</strong> (2-6h): recrutamento de neutrofilos → NETs → dano tecidual</li></ol>Vasodilatacao: TNF-alfa + IL-1 → iNOS no musculo liso vascular → NO excessivo → vasoplegia → ↓ RVP → choque distributivo. LPS age via TLR4 (nao TLR2 — que reconhece peptidoglicano e acido lipoteicóico de gram-positivos)."
+  },
+  {
+    "question": "O tocilizumabe bloqueia qual citocina e por qual mecanismo, diferenciando-se do siltuximabe?",
+    "options": [
+      "Bloqueia JAK1 e JAK2 simultaneamente como os inibidores de JAK, mas com seletividade exclusiva para a via de IL-6, sem afetar a sinalizacao de outras citocinas que usam essas quinases",
+      "Bloqueia o receptor de IL-6 (IL-6Ralfa) impedindo tanto a sinalizacao classica (IL-6Ralfa de membrana) quanto a transsignalizacao via sIL-6R soluvel; o siltuximabe neutraliza a IL-6 diretamente",
+      "Bloqueia a IL-6 diretamente como anticorpo anti-IL-6, sendo identico ao siltuximabe; a diferenca e apenas farmacocinetica (meia-vida mais longa do tocilizumabe)",
+      "Bloqueia TNF-alfa via ligacao ao TNFR2 soluvel fusionado a IgG1, sendo portanto identico ao etanercepte em mecanismo mas com especificidade para TNF-alfa em vez de IL-6"
+    ],
+    "answer": [
+      "Bloqueia o receptor de IL-6 (IL-6Ralfa) impedindo tanto a sinalizacao classica (IL-6Ralfa de membrana) quanto a transsignalizacao via sIL-6R soluvel; o siltuximabe neutraliza a IL-6 diretamente"
+    ],
+    "type": "multi",
+    "justification": "<strong>Tocilizumabe (Actemra)</strong> e um anticorpo monoclonal anti-<strong>IL-6Ralfa</strong> (bloqueia o receptor, nao a IL-6 em si). Isso bloqueia dois modos de sinalizacao de IL-6:<br><ul><li><strong>Sinalizacao classica:</strong> IL-6 + IL-6Ralfa de membrana + gp130 → JAK1/2 + TYK2 → STAT3</li><li><strong>Transsignalizacao:</strong> IL-6 + <em>sIL-6R soluvel</em> (derramado de celulas ativadas) → complexo ativa gp130 em celulas que nao expressam IL-6Ralfa na membrana</li></ul>Tocilizumabe bloqueia ambas. <strong>Sarilumab</strong> tem mecanismo identico (anti-IL-6Ralfa). <strong>Siltuximab</strong>, por sua vez, neutraliza a IL-6 diretamente (anticorpo anti-IL-6, nao anti-receptor).<br><br>O estudo RECOVERY demonstrou reducao de mortalidade em COVID-19 grave (29% → 24%) validando IL-6 como alvo na tempestade de citocinas. Inibidores de JAK (baricitinibe) bloqueiam sinalizacao de multiplas citocinas (IL-6, IFN-gama, IL-2, IL-15) — mais amplo que tocilizumabe."
+  },
+  {
+    "question": "O baricitinibe, um inibidor de JAK1/JAK2, e mais racional que o tocilizumabe para bloquear a tempestade de citocinas porque inibe a sinalizacao de multiplas citocinas simultaneamente.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro</strong> — do ponto de vista mecanistico. O racional e:<br><ul><li><strong>Tocilizumabe:</strong> bloqueia apenas a via de IL-6 (anti-IL-6R) — uma citocina de cada vez</li><li><strong>Baricitinibe (inibidor JAK1/JAK2):</strong> bloqueia a sinalizacao de: IL-6, IL-2, IL-10, IL-12, IL-15, IFN-alfa, IFN-beta, IFN-gama, GM-CSF — todas as citocinas que usam JAK1 ou JAK2 → inibicao mais ampla da tempestade de citocinas</li></ul>Na pratica, o estudo COV-BARRIER e a inclusao no protocolo RECOVERY mostraram beneficio do baricitinibe em COVID-19 grave. A FDA aprovou baricitinibe + remdesivir.<br><br><em>Ressalva clinica:</em> maior amplitude de inibicao significa tambem mais imunossupressao → maior risco de infeccoes secundarias, reativacao de TB e herpes zoster. A escolha entre eles depende do balanco risco-beneficio individual."
+  },
+  {
+    "question": "Na diferenciacao de celulas T CD4+ naive, qual combinacao citocina-fator de transcricao master e responsavel pela geracao de Tregs periféricas?",
+    "options": [
+      "IL-10 + IL-2 → Bcl-6 → Treg folicular que suprime celulas B autorreativas no centro germinativo",
+      "TGF-beta sem IL-6 → inducao de FoxP3 → iTreg/pTreg com capacidade supressora via IL-10, TGF-beta e CTLA-4",
+      "IL-6 + TGF-beta → RORgama-t → Treg periferica com capacidade supressora via IL-17 e IL-10 simultâneas",
+      "IL-4 → GATA-3 → Treg tipo-2 com producao de IL-10 e TGF-beta em vez do perfil Th2 classico"
+    ],
+    "answer": [
+      "TGF-beta sem IL-6 → inducao de FoxP3 → iTreg/pTreg com capacidade supressora via IL-10, TGF-beta e CTLA-4"
+    ],
+    "type": "multi",
+    "justification": "O ponto molecular critico e o papel oposto do TGF-beta dependendo da presenca ou ausencia de IL-6:<br><ul><li><strong>TGF-beta + IL-6 (+ IL-21):</strong> → ativa RORgama-t + STAT3 → diferenciacao <strong>Th17</strong> (IL-17A, IL-17F, IL-22) — pro-inflamatorio</li><li><strong>TGF-beta SEM IL-6:</strong> → induz <strong>FoxP3</strong> sem interferencia de RORgama-t → <em>iTreg/pTreg (induced/peripheral Treg)</em> — supressor via IL-10, TGF-beta e CTLA-4 (CTL Antigen 4)</li></ul>FoxP3 (Forkhead box P3) e o master transcription factor das Tregs. Mutacoes em FoxP3 causam <strong>IPEX (Immune dysregulation, Polyendocrinopathy, Enteropathy, X-linked)</strong>: diabetes neonatal, enteropatia grave, tireoidite autoimune → fatal sem TCTH.<br><br>GATA-3 e master de Th2. Bcl-6 e master de Tfh. IL-6+TGF-beta gera Th17, nao Tregs — confundir isso e um erro classico que esta embutido nas alternativas erradas."
+  },
+  {
+    "question": "Um paciente em uso de mepolizumabe para asma eosinofilica grave deve interromper o tratamento antes de uma colonoscopia de rotina pelo risco de infeccao parasitaria intestinal latente ser desmascarada.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Embora a IL-5 seja relevante para a defesa contra helmintos intestinais, a interrupcao do mepolizumabe antes de procedimentos diagnosticos rotineiros de curto prazo nao e indicada por esse motivo. As orientacoes corretas sao:<br><ul><li>Antes de <em>iniciar</em> mepolizumabe: rastrear e tratar infeccoes parasitarias pre-existentes (especialmente <em>Strongyloides stercoralis</em> em pacientes de regioes endêmicas — risco de hiperinfeccao)</li><li>Durante o tratamento: monitorar sinais de infeccao parasitaria, mas nao interromper rotineiramente para procedimentos</li></ul>A afirmacao confunde rastreamento pre-tratamento com interrupcao procedural. O risco real de <em>Strongyloides</em> e gerenciado com ivermectina profilatica antes do inicio do biologico — nao com interrupcoes periodicas. Colonoscopia e um procedimento diagnostico sem impacto imune sistemico que justifique interrupcao do biologico."
+  },
+  {
+    "question": "Qual das seguintes afirmacoes descreve corretamente a rede de retroalimentacao entre IFN-gama e IL-10 na resposta imune a Leishmania donovani?",
+    "options": [
+      "IFN-gama ativa macrofagos M1 para matar Leishmania via NO; a IL-10 produzida por macrofagos infectados e Tregs desativa progressivamente os macrofagos, permitindo sobrevivencia do parasita na cronicidade",
+      "IFN-gama e IL-10 sao produzidos pelas mesmas celulas T regulatorias em resposta ao mesmo sinal de TCR, criando uma alca de autorregulaçao equilibrada na leishmaniose",
+      "Leishmania donovani escapa a imunidade ao aumentar a producao de IFN-gama nos macrofagos, suprimindo a IL-10 protetora do hospedeiro e causando dano tecidual excessivo",
+      "IL-10 inibe diretamente a transcricao do gene IFNG nas celulas NK por bloqueio de STAT1, impedindo amplificacao de IFN-gama nas primeiras 24h de infeccao"
+    ],
+    "answer": [
+      "IFN-gama ativa macrofagos M1 para matar Leishmania via NO; a IL-10 produzida por macrofagos infectados e Tregs desativa progressivamente os macrofagos, permitindo sobrevivencia do parasita na cronicidade"
+    ],
+    "type": "multi",
+    "justification": "A <em>Leishmania donovani</em> (causadora do calazar) explora o balanco IFN-gama/IL-10:<br><ul><li><strong>Fase aguda:</strong> IFN-gama de Th1 e NK → ativa macrofagos M1 → iNOS → NO → killing do parasita intracelular</li><li><strong>Cronicidade:</strong> parasita induz producao de <strong>IL-10</strong> pelos proprios macrofagos infectados e expande Tregs → IL-10 via STAT3 suprime ativacao macrofagica (↓ MHC II, ↓ NO, ↓ ROS) → macrofagos ficam <em>permissivos</em> → infeccao cronica persistente (calazar)</li></ul>IL-10 nao inibe diretamente o gene IFNG nas NK via STAT1 — ela age suprimindo as APCs que estimulam a producao de IFN-gama. Leishmania <em>aumenta</em> IL-10 como estrategia de evasao, nao IFN-gama. A alca IFN-gama/IL-10 e produzida por diferentes celulas (Th1/NK vs Tregs/macrofagos M2), nao pelas mesmas."
+  },
+  {
+    "question": "A hepcidina, produzida pelo figado em resposta a IL-6, e o principal mediador da anemia de doenca cronica ao reduzir a biodisponibilidade de ferro.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro</strong> — com um importante nuance. IL-6 e o indutor mais potente e relevante clinicamente da hepcidina, agindo via JAK1/STAT3 nos hepatocitos → transcricao do gene HAMP (hepcidina).<br><br>A <strong>hepcidina</strong> inibe a <strong>ferroportina (FPN1)</strong> nos:<br><ul><li>Enterocitos duodenais: ↓ absorcao intestinal de ferro</li><li>Macrofagos: ↓ liberacao do ferro reciclado de hemaclas senescentes</li><li>Hepatocitos: ↓ mobilizacao dos estoques hepaticos</li></ul>Resultado: ferro sequestrado intracelularmente → ferro serico baixo → ferritina elevada (proteina de fase aguda) → eritropoiese deficiente → <strong>anemia normocitica normocrômica hiporregenerativa</strong> (anemia de doenca cronica / AIC).<br><br>Nota adicional: IL-1beta tambem estimula hepcidina por via NF-kB, mas de forma menos potente que IL-6. A afirmativa ao dizer IL-6 como mediador central esta correta — e a via predominante clinicamente validada."
+  },
+  {
+    "question": "O dupilumabe (Dupixent) e eficaz tanto em dermatite atópica quanto em asma eosinofilica porque bloqueia a subunidade IL-4Ralfa, compartilhada pelos receptores de IL-4 e IL-13.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O <strong>dupilumabe</strong> e um anticorpo monoclonal que se liga especificamente a <strong>subunidade IL-4Ralfa</strong>, componente compartilhado de dois tipos de receptores:<br><ul><li><strong>Receptor Tipo I:</strong> IL-4Ralfa + gammac → presente em celulas hematopoieticas → mediado por IL-4 → ativa JAK1/JAK3 → STAT6</li><li><strong>Receptor Tipo II:</strong> IL-4Ralfa + IL-13Ralfa1 → presente em celulas nao-hematopoieticas (epitelio, musculo liso brônquico, queratinócitos) → mediado por IL-4 E IL-13</li></ul>Ao bloquear IL-4Ralfa, dupilumabe neutraliza simultaneamente a sinalizacao de IL-4 e IL-13 em todas as celulas → bloqueia o fenótipo Th2/tipo 2: ↓ IgE, ↓ eosinofilos, ↓ TSLP, ↓ inflamacao epitelial, ↓ producao de muco e remodelamento brônquico.<br><br>Aprovacoes atuais: dermatite atópica, asma eosinofilica, rinossinusite crônica com polipos, esofagite eosinofilica, prurigo nodular — todas doencas Th2/tipo 2 mediadas por IL-4 e/ou IL-13."
+  },
+  {
+    "question": "Qual das seguintes afirmacoes sobre a cadeia gama comum (gammac / CD132) e correta?",
+    "options": [
+      "E componente dos receptores de IL-2, IL-4, IL-7, IL-9, IL-15 e IL-21, e mutacoes causam SCID ligada ao X com fenótipo T-B+NK-",
+      "E componente exclusivo do receptor de IL-2 de alta afinidade; sua perda causa apenas linfopenia T CD4+ preservando celulas T CD8+ e NK",
+      "Sinaliza exclusivamente via JAK3 que por sua vez ativa apenas STAT5 em linfocitos T maduros, sem afetar a sinalizacao em celulas NK ou celulas B",
+      "Esta presente nos receptores de IL-5 e IL-3 junto a cadeia betac (beta comum, CD131); mutacoes causam eosinopenia congenita grave mas preservam celulas T e NK"
+    ],
+    "answer": [
+      "E componente dos receptores de IL-2, IL-4, IL-7, IL-9, IL-15 e IL-21, e mutacoes causam SCID ligada ao X com fenótipo T-B+NK-"
+    ],
+    "type": "multi",
+    "justification": "A <strong>cadeia gammac (common gamma chain / CD132)</strong>, codificada pelo gene <em>IL2RG</em> no cromossomo X, e componente essencial de seis receptores: <strong>IL-2, IL-4, IL-7, IL-9, IL-15, IL-21</strong>.<br><br>Consequencias de sua ausencia (SCID-X1 — fenótipo <strong>T-B+NK-</strong>):<br><ul><li>Sem IL-7 → sem desenvolvimento de celulas T (timocitos morrem por apoptose)</li><li>Sem IL-15 → sem desenvolvimento de celulas NK</li><li>Celulas B presentes em numero normal mas disfuncionais (sem IL-4/IL-21)</li></ul>A cadeia <strong>betac (CD131)</strong> e componente de IL-3, IL-5 e GM-CSF — distinta da gammac. JAK3 associa-se a gammac mas ativa STAT5, STAT3 e STAT1 dependendo do contexto celular. Mutacoes em JAK3 (autossomicas recessivas) causam fenótipo similar ao SCID-X1 — diferencial importante pois afeta ambos os sexos."
+  },
+  {
+    "question": "Quais das seguintes situacoes clinicas cursam com sCD25 (IL-2Ralfa soluvel) serico elevado?",
+    "options": [
+      "Leucemia Linfocitica Crônica (LLC) com doenca ativa",
+      "Sindrome de Ativacao Macrofagica (HLH)",
+      "Linfoma de Hodgkin ativo",
+      "Lupus Eritematoso Sistemico em atividade",
+      "Anemia ferropriva nao tratada"
+    ],
+    "answer": [
+      "Linfoma de Hodgkin ativo",
+      "Sindrome de Ativacao Macrofagica (HLH)",
+      "Lupus Eritematoso Sistemico em atividade",
+      "Leucemia Linfocitica Crônica (LLC) com doenca ativa"
+    ],
+    "type": "multi",
+    "justification": "O <strong>sCD25 (IL-2Ralfa soluvel)</strong> e liberado (shedding) por celulas T ativadas e por celulas tumorais que expressam CD25. E marcador de ativacao linfocitaria e/ou proliferacao clonal:<br><ul><li><strong>Linfoma de Hodgkin:</strong> celulas de Reed-Sternberg e celulas T adjacentes ativadas expressam CD25 abundantemente</li><li><strong>HLH:</strong> criterio diagnostico — sCD25 >2.400 U/mL reflete ativacao massica de celulas T que nao conseguem ser eliminadas pelos CTLs defeituosos</li><li><strong>LES em atividade:</strong> celulas T e B autorreativas cronicamente ativadas → elevacao de sCD25 proporcional a atividade de doenca (SLEDAI)</li><li><strong>LLC:</strong> celulas leucemicas expressam CD25 em subsets especificos; sCD25 correlaciona com carga tumoral</li></ul><strong>Anemia ferropriva</strong> nao cursa com ativacao linfocitaria — nao eleva sCD25. O sCD25 e um biomarcador de estado imune ativado, nao de deficiencia nutricional."
+  },
+  {
+    "question": "A producao de IL-1beta pelo macrofago requer dois sinais distintos: um sinal 1 (priming) que ativa a transcricao de pro-IL-1beta, e um sinal 2 (ativacao do inflamassoma) que cliva e libera IL-1beta ativa.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A producao de IL-1beta e regulada em duas etapas moleculares distintas — analogia elegante ao modelo dos dois sinais da ativacao de celulas T:<br><ol><li><strong>Sinal 1 (Priming):</strong> LPS → TLR4 → NF-kB → transcricao de <em>pro-IL-1beta</em> e componentes do inflamassoma (NLRP3, pro-caspase-1). A pro-IL-1beta se acumula no citoplasma mas nao e secretada. Macrofago fica nesse estado armado por horas.</li><li><strong>Sinal 2 (Ativacao do Inflamassoma):</strong> DAMP/PAMP secundario (cristais de urato, ATP extracelular, nigericina, cristais de colesterol) → ativa NLRP3 → monta inflamassoma → ativa caspase-1 → cliva pro-IL-1beta → IL-1beta ativa liberada + piroptose via GSDMD</li></ol>Farmacologicamente: corticoides inibem Sinal 1 (NF-kB); inibidores de NLRP3 inibem Sinal 2; anakinra e canakinumab bloqueiam IL-1beta depois de liberada — tres niveis de intervencao distintos."
+  },
+  {
+    "question": "O IGRA (Interferon Gamma Release Assay / Ensaio de Liberacao de Interferon Gama) detecta TB latente ao medir a producao de IFN-gama por linfocitos do paciente apos estimulacao com antigenos especificos de Mycobacterium tuberculosis.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O principio do IGRA (QuantiFERON-TB Gold e T-SPOT.TB) baseia-se no racional imunologico da tabela — a propriedade do IFN-gama de ser secretado por celulas T auxiliares, celulas T citotoxicas e celulas NK em resposta a estimulacao antigenica:<br><ul><li>Pessoas com TB latente tem celulas T de memoria especificas circulantes</li><li>Estimulacao ex vivo com <strong>ESAT-6 e CFP-10</strong> (antigenos especificos de M. tuberculosis, ausentes do BCG) → celulas T de memoria produzem <strong>IFN-gama</strong> detectavel por ELISA ou ELISPOT</li></ul>Vantagens sobre PPD: nao requer retorno em 48-72h; nao e afetado pela vacinacao com BCG; especificidade >95% versus ~70% do PPD.<br><br>Limitacao importante: nao distingue TB ativa de latente (ambas positivam). Deve ser associado a clinica, RX e bacteriologia para diagnostico de TB ativa. E o exame obrigatorio antes de iniciar biologicos anti-TNF, anti-IL-6 e inibidores de JAK."
+  },
+  {
+    "question": "A IL-2 ativa macrofagos e celulas NK, sendo o principal fator de crescimento para celulas NK durante a resposta imune inata.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Embora a IL-2 ative e expanda celulas NK (via receptor de afinidade intermediaria IL-2Rbeta + gammac), o <strong>principal fator de crescimento e sobrevivencia das celulas NK</strong> e a <strong>IL-15</strong>, nao a IL-2.<br><br>Diferencas criticas:<br><ul><li><strong>IL-15:</strong> essencial para o <em>desenvolvimento e sobrevivencia homeostática</em> de celulas NK na medula ossea e na periferia. Camundongos IL-15 knockout carecem de celulas NK funcionais. IL-15 e apresentada por transpresentacao, nao secretada livremente.</li><li><strong>IL-2:</strong> ativa celulas NK em resposta a estimulacao imune, gerando LAK cells (Lymphokine-Activated Killer cells) — relevante em oncologia (aldesleukin). Mas nao e o driver homeostático das NK.</li></ul>A tabela corretamente atribui a IL-2 a coestimulacao de celulas B e T e ativacao de macrofagos e NK, mas a IL-15 e que mantem as NK vivas entre as respostas imunes — distincao fundamental para a fisiologia do sistema imune inato."
+  },
+  {
+    "question": "O IFN-alfa e secretado exclusivamente por celulas infectadas por virus, nao sendo produzido em outras condicoes patologicas.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Embora a tabela descreva o IFN-alfa como <em>secretado por celulas infectadas por virus</em> no contexto da coestimulacao por citocinas, essa e uma simplificacao didatica. Na realidade, o IFN-alfa e produzido em diversas condicoes alem de infeccoes virais:<br><ul><li><strong>Doencas autoimunes:</strong> no Lupus Eritematoso Sistemico (LES), os <em>plasmacytoid dendritic cells (pDCs)</em> produzem grandes quantidades de IFN-alfa em resposta ao DNA/RNA proprios circulantes (complexos imunes DNA-anticorpos) via TLR7 e TLR9 — o chamado <em>interferon signature</em> do LES</li><li><strong>Tumores:</strong> pDCs infiltrantes de tumores produzem IFN-alfa</li><li><strong>DAMPs:</strong> acidos nucleicos proprios liberados em necroses extensas ativam TLR7/9 → IFN-alfa</li><li><strong>Uso terapeutico:</strong> IFN-alfa recombinante (PEG-IFN) e administrado em hepatites B e C cronicas, melanoma, LMC — situacoes nao-virais agudas</li></ul>A medicao da <em>assinatura de IFN de tipo I</em> e usada como biomarcador de atividade no LES."
+  },
+  {
+    "question": "A IL-5 participa apenas da resposta contra parasitas, nao tendo papel relevante em doencas nao-infecciosas.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Embora a tabela destaque a participacao da IL-5 na <em>resposta contra parasitas estimulando a producao de eosinofilos</em>, ela e central em multiplas doencas nao-infecciosas de alto impacto clinico:<br><ul><li><strong>Asma eosinofilica grave:</strong> IL-5 excessiva → eosinofilia brônquica → inflamacao, remodelamento das vias aereas, exacerbacoes frequentes → alvo dos biologicos mepolizumabe, reslizumabe, benralizumabe</li><li><strong>Esofagite eosinofilica (EoE):</strong> eosinofilos no esofago → disfagia, impactacao alimentar</li><li><strong>Granulomatose Eosinofilica com Poliangiite (GEPA / ex-Churg-Strauss):</strong> eosinofilia grave + vasculite sistémica + asma + neuropatia periferica</li><li><strong>Sindrome Hipereosinofilica (HES):</strong> eosinofilia > 1500/microL por > 6 meses com dano organico (cardiaco, neurologico)</li><li><strong>Dermatite atópica grave</strong></li></ul>O mepolizumabe foi aprovado para todas essas indicacoes alem das infeccoes parasitarias."
+  }
+]
+
+
+
+/* ══════════════ ESTADO DO QUIZ ══════════════ */
+let currentQ = 0;
+let userAnswers  = new Array(quizData.length).fill(null).map(()=>[]);
+let attempted    = new Array(quizData.length).fill(false);
+
+/* ══════════════ ELEMENTOS DOM ══════════════ */
+const content     = document.getElementById('quiz-content');
+const progressFill= document.getElementById('quiz-progress');
+const progressLbl = document.getElementById('progress-label');
+const prevBtn     = document.getElementById('prev-btn');
+const answerBtn   = document.getElementById('answer-btn');
+const nextBtn     = document.getElementById('next-btn');
+const submitBtn   = document.getElementById('submit-btn');
+const resultsDiv  = document.getElementById('results-container');
+const reportDiv   = document.getElementById('report-container');
+const navDiv      = document.getElementById('navigation-buttons');
+const progressWrap= document.querySelector('.progress-wrapper');
+
+/* ══════════════ RENDER ══════════════ */
+function init(){
+  shuffleArray(quizData);
+  renderAll();
+  goTo(0);
+  bindEvents();
+}
+
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+
+function renderAll(){
+  content.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className='question-card';
+    card.id=`q-${i}`;
+
+    const badgeClass = q.type==='tf' ? 'badge-tf' : 'badge-multi';
+    const badgeText  = q.type==='tf' ? '✦ V/F' : '◈ Múltipla escolha';
+
+    let optsHTML='';
+    if(q.type==='tf'){
+      optsHTML=`<div class="tf-options-container">
+        <button class="tf-option tf-v" data-q="${i}" data-o="V"><i class="fas fa-check"></i> Verdadeiro</button>
+        <button class="tf-option tf-f" data-q="${i}" data-o="F"><i class="fas fa-times"></i> Falso</button>
+      </div>`;
+    } else {
+      const letters=['A','B','C','D','E','F'];
+      optsHTML=`<div class="options-container">${q.options.map((opt,oi)=>`
+        <button class="mc-option" data-q="${i}" data-o="${opt.replace(/"/g,'&quot;')}">
+          <span class="option-indicator">${letters[oi]}</span>
+          <span>${opt}</span>
+        </button>`).join('')}</div>`;
+    }
+
+    card.innerHTML=`
+      <div class="q-meta">
+        <span class="q-num">Questão ${i+1} / ${quizData.length}</span>
+        <span class="q-type-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <p class="question-text">${q.question}</p>
+      ${optsHTML}
+      <div class="feedback" id="fb-${i}"></div>`;
+    content.appendChild(card);
+  });
+}
+
+/* ══════════════ NAVIGATION ══════════════ */
+function goTo(idx){
+  if(idx<0||idx>=quizData.length) return;
+  document.querySelector(`#q-${currentQ}`)?.classList.remove('active');
+  currentQ=idx;
+  document.querySelector(`#q-${currentQ}`)?.classList.add('active');
+  updateUI();
+}
+
+function updateUI(){
+  const done = attempted.filter(Boolean).length;
+  progressFill.style.width=`${(done/quizData.length)*100}%`;
+  progressLbl.textContent=`${done} / ${quizData.length}`;
+
+  const isAttempted = attempted[currentQ];
+  const hasSelection= userAnswers[currentQ].length>0;
+  const isLast = currentQ===quizData.length-1;
+
+  setBtn(prevBtn,   currentQ>0);
+  setBtn(answerBtn, !isAttempted);
+  setBtn(nextBtn,   isAttempted && !isLast);
+  setBtn(submitBtn, isAttempted && isLast);
+  if(!isAttempted) answerBtn.disabled=!hasSelection;
+}
+
+function setBtn(btn,show){ btn.classList.toggle('show',show); }
+
+/* ══════════════ SELECTION ══════════════ */
+function bindEvents(){
+  content.addEventListener('click',e=>{
+    const mc=e.target.closest('.mc-option');
+    const tf=e.target.closest('.tf-option');
+    if(mc) handleMC(mc);
+    if(tf) handleTF(tf);
+  });
+  answerBtn.addEventListener('click', validate);
+  nextBtn.addEventListener('click',()=>goTo(currentQ+1));
+  prevBtn.addEventListener('click',()=>goTo(currentQ-1));
+  submitBtn.addEventListener('click', finishQuiz);
+  document.getElementById('show-report-btn').addEventListener('click',()=>{resultsDiv.style.display='none';reportDiv.style.display='flex';});
+  document.getElementById('back-btn').addEventListener('click',()=>{reportDiv.style.display='none';resultsDiv.style.display='flex';});
+  document.getElementById('retry-btn').addEventListener('click',()=>location.reload());
+}
+
+function handleMC(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  const idx=userAnswers[qi].indexOf(opt);
+  if(idx>-1){ userAnswers[qi].splice(idx,1); btn.classList.remove('selected'); }
+  else{ userAnswers[qi].push(opt); btn.classList.add('selected'); }
+  updateUI();
+}
+
+function handleTF(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  userAnswers[qi]=[opt];
+  document.querySelectorAll(`.tf-option[data-q='${qi}']`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateUI();
+}
+
+/* ══════════════ VALIDATE ══════════════ */
+function validate(){
+  if(attempted[currentQ]) return;
+  const q=quizData[currentQ];
+  const fb=document.getElementById(`fb-${currentQ}`);
+  const userAns=userAnswers[currentQ]||[];
+  const correctAns=Array.isArray(q.answer)?q.answer:[q.answer];
+  const isCorrect=JSON.stringify([...userAns].sort())===JSON.stringify([...correctAns].sort());
+
+  // mark options
+  const sel = q.type==='tf' ? `.tf-option[data-q='${currentQ}']` : `.mc-option[data-q='${currentQ}']`;
+  document.querySelectorAll(sel).forEach(opt=>{
+    opt.classList.add('disabled');
+    const ov=opt.dataset.o;
+    if(correctAns.includes(ov)) opt.classList.add('correct');
+    else if(userAns.includes(ov)) opt.classList.add('incorrect');
+  });
+
+  // build feedback
+  const icon = isCorrect ? 'fa-check-circle' : 'fa-times-circle';
+  const title= isCorrect ? 'Correto!' : 'Incorreto';
+  const verdictClass = isCorrect ? 'correct' : 'incorrect';
+
+  let correctListHTML='';
+  if(!isCorrect){
+    correctListHTML=`<div style="margin-top:.5rem;font-size:.82rem;color:var(--muted2);">${correctAns.length>1?'Respostas corretas':'Resposta correta'}:</div>
+    <ul class="correct-list">${correctAns.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+  }
+
+  fb.className=`feedback ${verdictClass}`;
+  fb.innerHTML=`
+    <div class="feedback-verdict"><i class="fas ${icon}"></i>${title}${correctListHTML}</div>
+    <div class="justification">
+      <div class="just-label"><i class="fas fa-flask"></i> Justificativa Clínico-Molecular</div>
+      <div class="just-text">${q.justification}</div>
+    </div>`;
+  fb.style.display='block';
+
+  toast(isCorrect);
+  attempted[currentQ]=true;
+  [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=true);
+
+  setTimeout(()=>{
+    [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=false);
+    const isLast=currentQ===quizData.length-1;
+    if(isLast) finishQuiz(); else goTo(currentQ+1);
+  },2400);
+}
+
+/* ══════════════ RESULTS ══════════════ */
+function finishQuiz(){
+  let score=0;
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    if(JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort())) score++;
+  });
+  const pct=Math.round(score/quizData.length*100);
+
+  document.getElementById('pct-display').textContent=`${pct}%`;
+  document.getElementById('score-display').innerHTML=`Acertos: <strong>${score} de ${quizData.length}</strong>`;
+
+  // Animate ring
+  const circumference=408.4;
+  const ring=document.getElementById('score-ring');
+  setTimeout(()=>{ ring.style.strokeDashoffset=circumference*(1-pct/100); },100);
+
+  const msg=document.getElementById('feedback-message');
+  if(pct>=90) msg.textContent='🎉 Excelente domínio! Você está pronto para a prova.';
+  else if(pct>=70) msg.textContent='👏 Muito bem! Revise os pontos que errou e você chegará lá.';
+  else if(pct>=50) msg.textContent='👍 Bom esforço! Revise as justificativas com atenção.';
+  else msg.textContent='💪 Continue estudando! As justificativas abaixo são seu mapa.';
+
+  buildReport();
+
+  content.style.display='none';
+  navDiv.style.display='none';
+  progressWrap.style.display='none';
+  resultsDiv.style.display='flex';
+}
+
+function buildReport(){
+  const list=document.getElementById('report-list');
+  list.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    const ok=JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort());
+    const item=document.createElement('div');
+    item.className=`report-item ${ok?'correct':'incorrect'}`;
+    item.innerHTML=`<p class="ri-q"><strong>Questão ${i+1}:</strong> ${q.question}</p>
+      <p><strong>Sua resposta:</strong> ${ua.length?ua.join(', '):'<em>Não respondida</em>'}</p>
+      <p><strong>Correta:</strong> ${ca.join(', ')}</p>`;
+    list.appendChild(item);
+  });
+}
+
+/* ══════════════ TOAST ══════════════ */
+function toast(ok){
+  Swal.mixin({
+    toast:true,position:'top-end',
+    showConfirmButton:false,
+    timer:1400,timerProgressBar:true,
+    background: ok ? '#0a2e1f' : '#2e0a14',
+    color: ok ? '#34d399' : '#fb7185',
+  }).fire({icon:ok?'success':'error',title:ok?'✓ Correto!':'✗ Incorreto!'});
+}
+
+init();
+});
+</script>
+</body>
+</html>

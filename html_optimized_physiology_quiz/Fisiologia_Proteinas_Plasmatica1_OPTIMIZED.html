@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz · Proteínas plasmáticas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --surface:   #111827;
+  --card:      #151e2e;
+  --border:    #1e2d42;
+  --border2:   #253044;
+  --primary:   #4f9cf9;
+  --primary2:  #2563eb;
+  --accent:    #f87171;
+  --gold:      #f59e0b;
+  --emerald:   #34d399;
+  --rose:      #fb7185;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --muted2:    #94a3b8;
+  --correct-bg:#0a2e1f;
+  --correct-b: #34d399;
+  --wrong-bg:  #2e0a14;
+  --wrong-b:   #fb7185;
+  --just-bg:   #0d1b2e;
+  --just-b:    #4f9cf9;
+  --radius:    14px;
+  --trans:     all .28s cubic-bezier(.4,0,.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.5rem 1rem 3rem;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND MESH ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(79,156,249,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 90%, rgba(248,113,113,.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 40%, rgba(52,211,153,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  width:100%;max-width:820px;
+  text-align:center;
+  margin-bottom:2rem;
+  position:relative;z-index:1;
+}
+.header-badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  border-radius:50px;
+  padding:.3rem .9rem;
+  font-size:.75rem;font-weight:500;
+  color:var(--primary);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.header h1{
+  font-family:'Crimson Pro',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;
+  line-height:1.2;
+  color:#f1f5f9;
+  letter-spacing:-.02em;
+}
+.header h1 span{color:var(--primary);}
+.header p{
+  color:var(--muted2);
+  font-size:.92rem;
+  margin-top:.5rem;
+}
+
+/* ── QUIZ CONTAINER ── */
+#quiz-container{
+  width:100%;max-width:820px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:2.2rem 2rem;
+  position:relative;z-index:1;
+  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+}
+
+/* top accent line */
+#quiz-container::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary2),var(--primary),var(--accent));
+  border-radius:22px 22px 0 0;
+}
+
+/* ── PROGRESS ── */
+.progress-wrapper{
+  display:flex;align-items:center;gap:.9rem;
+  margin-bottom:1.8rem;
+}
+.progress-track{
+  flex:1;height:6px;
+  background:var(--border2);
+  border-radius:50px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary2),var(--primary));
+  border-radius:50px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 10px rgba(79,156,249,.5);
+}
+.progress-label{
+  font-size:.78rem;font-weight:500;
+  color:var(--muted2);
+  white-space:nowrap;min-width:60px;text-align:right;
+  font-family:'DM Mono',monospace;
+}
+
+/* ── QUESTION CARD ── */
+.question-card{
+  display:none;flex-direction:column;align-items:stretch;
+  animation:slideIn .38s cubic-bezier(.4,0,.2,1);
+}
+.question-card.active{display:flex;}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.q-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.4rem;
+}
+.q-num{
+  font-family:'DM Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  color:var(--muted);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.q-type-badge{
+  font-size:.68rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:50px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-multi{background:rgba(79,156,249,.15);color:var(--primary);border:1px solid rgba(79,156,249,.3);}
+.badge-tf{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+
+.question-text{
+  font-family:'Crimson Pro',serif;
+  font-size:1.28rem;font-weight:400;
+  line-height:1.6;
+  color:#f1f5f9;
+  margin-bottom:1.6rem;
+  padding-bottom:1.4rem;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── OPTIONS ── */
+.options-container{display:flex;flex-direction:column;gap:.65rem;}
+.tf-options-container{display:flex;gap:.75rem;justify-content:center;}
+
+.mc-option{
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  cursor:pointer;
+  transition:var(--trans);
+  color:var(--text);
+  font-size:.95rem;
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.mc-option::after{
+  content:'';position:absolute;inset:0;
+  background:var(--primary);
+  opacity:0;transition:opacity .2s;
+}
+.mc-option:hover:not(.disabled){
+  border-color:var(--primary);
+  transform:translateX(4px);
+  box-shadow:0 4px 16px rgba(79,156,249,.15);
+}
+.mc-option.selected{
+  border-color:var(--primary);
+  background:rgba(79,156,249,.08);
+}
+
+.tf-option{
+  flex:1;max-width:200px;
+  padding:1rem 1.5rem;
+  border-radius:var(--radius);
+  font-size:1rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.tf-option.tf-v{
+  background:rgba(52,211,153,.08);
+  border:1.5px solid rgba(52,211,153,.25);
+  color:var(--emerald);
+}
+.tf-option.tf-f{
+  background:rgba(251,113,133,.08);
+  border:1.5px solid rgba(251,113,133,.25);
+  color:var(--rose);
+}
+.tf-option:hover:not(.disabled){transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+.tf-option.selected{box-shadow:0 0 0 3px rgba(79,156,249,.4);}
+.tf-option.tf-v.selected{background:rgba(52,211,153,.18);border-color:var(--emerald);}
+.tf-option.tf-f.selected{background:rgba(251,113,133,.18);border-color:var(--rose);}
+
+/* correct / incorrect highlights */
+.mc-option.correct,.tf-option.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.mc-option.incorrect,.tf-option.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.mc-option.disabled,.tf-option.disabled{cursor:not-allowed;}
+
+.option-indicator{
+  min-width:28px;height:28px;
+  border-radius:8px;
+  background:var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:.78rem;font-weight:600;
+  color:var(--muted2);
+  flex-shrink:0;
+  transition:var(--trans);
+}
+.mc-option.selected .option-indicator{background:var(--primary);color:#fff;}
+.mc-option.correct  .option-indicator{background:var(--emerald);color:#0a2e1f;}
+.mc-option.incorrect .option-indicator{background:var(--rose);color:#2e0a14;}
+
+/* ── FEEDBACK BOX ── */
+.feedback{
+  margin-top:1.4rem;
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:none;
+  animation:slideIn .35s ease;
+}
+.feedback.correct{display:block;}
+.feedback.incorrect{display:block;}
+
+.feedback-verdict{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.75rem 1.1rem;
+  font-weight:600;font-size:.95rem;
+}
+.feedback.correct .feedback-verdict{
+  background:rgba(52,211,153,.15);
+  color:var(--emerald);
+  border-left:4px solid var(--emerald);
+}
+.feedback.incorrect .feedback-verdict{
+  background:rgba(251,113,133,.15);
+  color:var(--rose);
+  border-left:4px solid var(--rose);
+}
+
+/* ── JUSTIFICATION PANEL ── */
+.justification{
+  background:var(--just-bg);
+  border:1px solid rgba(79,156,249,.18);
+  border-top:none;
+  padding:1.1rem 1.3rem;
+}
+.just-label{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--primary);
+  margin-bottom:.65rem;
+  opacity:.8;
+}
+.just-label i{font-size:.8rem;}
+.just-text{
+  font-size:.9rem;
+  line-height:1.75;
+  color:#b8cce4;
+}
+.just-text strong{color:var(--primary);font-weight:600;}
+.just-text em{color:var(--gold);font-style:normal;}
+.just-text .correct-list{
+  margin-top:.6rem;padding-left:1rem;
+  list-style:none;
+}
+.just-text .correct-list li{
+  padding:.25rem 0;
+  padding-left:1.1rem;
+  position:relative;
+  color:#c7ddf4;
+}
+.just-text .correct-list li::before{
+  content:'✦';
+  position:absolute;left:0;
+  color:var(--emerald);font-size:.7rem;
+  top:.35rem;
+}
+.just-text .tag{
+  display:inline-block;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  color:var(--primary);
+  border-radius:4px;
+  padding:.05rem .35rem;
+  font-family:'DM Mono',monospace;
+  font-size:.8em;
+}
+
+/* ── NAVIGATION BUTTONS ── */
+#navigation-buttons{
+  display:flex;justify-content:center;
+  gap:.75rem;flex-wrap:wrap;
+  margin-top:1.8rem;
+}
+.nav-btn{
+  display:none;align-items:center;gap:.5rem;
+  padding:.7rem 1.5rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+  border:none;
+}
+.nav-btn.show{display:flex;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.nav-btn:hover:not(:disabled){transform:translateY(-2px);}
+
+#prev-btn{
+  background:transparent;
+  color:var(--primary);
+  border:1.5px solid rgba(79,156,249,.4);
+}
+#prev-btn:hover:not(:disabled){background:rgba(79,156,249,.08);}
+#answer-btn{
+  background:linear-gradient(135deg,var(--primary2),var(--primary));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(79,156,249,.35);
+}
+#answer-btn:hover:not(:disabled){box-shadow:0 6px 24px rgba(79,156,249,.5);}
+#next-btn{
+  background:var(--surface);
+  color:var(--text);
+  border:1.5px solid var(--border);
+}
+#next-btn:hover:not(:disabled){border-color:var(--primary);}
+#submit-btn{
+  background:linear-gradient(135deg,#7c3aed,var(--primary2));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(124,58,237,.35);
+}
+
+/* ── RESULTS ── */
+#results-container,#report-container{
+  display:none;flex-direction:column;align-items:center;
+}
+.score-ring-wrap{position:relative;margin:1rem auto 1.5rem;}
+.score-ring-wrap svg{display:block;}
+.score-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.score-pct{
+  font-family:'Crimson Pro',serif;
+  font-size:2.8rem;font-weight:700;
+  color:var(--primary);line-height:1;
+}
+.score-label{font-size:.75rem;color:var(--muted2);margin-top:.15rem;}
+.score-stat{
+  font-size:1.1rem;color:var(--muted2);margin-bottom:.5rem;
+}
+.score-stat strong{color:var(--text);}
+.feedback-msg{
+  font-family:'Crimson Pro',serif;
+  font-size:1.4rem;font-weight:400;
+  color:#e2e8f0;
+  margin-bottom:1.5rem;text-align:center;
+}
+.action-buttons{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;}
+.action-btn{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;border:none;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.action-btn:hover{transform:translateY(-2px);}
+.btn-report{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+.btn-retry{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;box-shadow:0 4px 16px rgba(79,156,249,.3);}
+
+/* ── REPORT ── */
+.report-item{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.1rem 1.3rem;
+  margin-bottom:.8rem;
+  text-align:left;
+  border-left:4px solid;
+}
+.report-item.correct{border-left-color:var(--emerald);}
+.report-item.incorrect{border-left-color:var(--rose);}
+.report-item p{font-size:.88rem;line-height:1.6;color:var(--muted2);}
+.report-item p strong{color:var(--text);}
+.report-item .ri-q{font-size:.95rem;color:var(--text);margin-bottom:.4rem;font-weight:500;}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:2rem;
+  font-size:.75rem;
+  color:var(--muted);
+  text-align:center;
+  position:relative;z-index:1;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #quiz-container{padding:1.4rem 1rem;}
+  .question-text{font-size:1.1rem;}
+  .tf-options-container{flex-direction:column;align-items:stretch;}
+  .tf-option{max-width:none;}
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><i class="fas fa-atom"></i> Medicina · Hematologia</div>
+  <h1>Proteínas plasmáticas</h1>
+  <p>Quiz de alta performance com justificativas clínico-moleculares</p>
+</div>
+
+<div id="quiz-container">
+  <div class="progress-wrapper">
+    <div class="progress-track"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
+  </div>
+
+  <div id="quiz-content"></div>
+
+  <div id="navigation-buttons">
+    <button id="prev-btn"   class="nav-btn"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <button id="answer-btn" class="nav-btn show">Responder <i class="fas fa-check"></i></button>
+    <button id="next-btn"   class="nav-btn">Próximo <i class="fas fa-arrow-right"></i></button>
+    <button id="submit-btn" class="nav-btn"><i class="fas fa-flag-checkered"></i> Ver Resultados</button>
+  </div>
+
+  <div id="results-container">
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="65" fill="none" stroke="#1e2d42" stroke-width="12"/>
+        <circle id="score-ring" cx="80" cy="80" r="65" fill="none"
+                stroke="url(#ringGrad)" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="408.4"
+                stroke-dashoffset="408.4"
+                transform="rotate(-90 80 80)"
+                style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#4f9cf9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-center">
+        <div class="score-pct" id="pct-display">0%</div>
+        <div class="score-label">acertos</div>
+      </div>
+    </div>
+    <div class="score-stat" id="score-display"></div>
+    <div class="feedback-msg" id="feedback-message"></div>
+    <div class="action-buttons">
+      <button id="show-report-btn" class="action-btn btn-report"><i class="fas fa-list-alt"></i> Ver Correção</button>
+      <button id="retry-btn"       class="action-btn btn-retry"><i class="fas fa-redo"></i> Tentar Novamente</button>
+    </div>
+  </div>
+
+  <div id="report-container">
+    <h3 style="color:var(--primary);margin-bottom:1.2rem;font-family:'Crimson Pro',serif;font-size:1.4rem;">
+      <i class="fas fa-clipboard-list"></i> Correção Detalhada
+    </h3>
+    <div id="report-list" style="width:100%"></div>
+    <div class="action-buttons" style="margin-top:1rem;">
+      <button id="back-btn" class="action-btn btn-report"><i class="fas fa-arrow-left"></i> Voltar ao Resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Fisiologia Médica · Quiz gerado para estudo intensivo</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+/* ══════════════════════════════════════════════
+   BANCO DE QUESTÕES COM JUSTIFICATIVAS
+══════════════════════════════════════════════ */
+const quizData = [
+  {
+    "question": "A albumina humana madura circula no plasma como cadeia polipeptídica única de 585 aminoácidos, estabilizada por 17 pontes dissulfeto intracadeia, sintetizada exclusivamente pelos hepatócitos a partir de uma pré-pró-proteína de 609 aminoácidos que sofre duas clivagens proteolíticas sequenciais — a primeira no retículo endoplasmático rugoso e a segunda no aparelho de Golgi",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A pré-pró-albumina (609 aa) é processada em duas etapas: o <strong>peptídeo sinal</strong> (24 aa) é clivado pela peptidase sinal no <strong>RER (Retículo Endoplasmático Rugoso)</strong> gerando a pró-albumina; depois o <strong>propeptídeo</strong> (6 aa) é clivado por uma furina no <strong>aparelho de Golgi</strong>, gerando a albumina madura de 585 aa secretada para o espaço de Disse. A albumina não possui estrutura quaternária (cadeia única) e não é glicosilada — exceção notável entre as proteínas plasmáticas hepáticas. <br><br><em>Relevância clínica:</em> sendo a única proteína plasmática exclusivamente hepática e não glicosilada, a albumina é um marcador puro de síntese hepatocitária — sua queda reflete perda de massa funcional hepática ou resposta inflamatória sistêmica, nunca consumo periférico isolado."
+  },
+  {
+    "question": "A albumina é a única proteína plasmática de síntese hepática que não sofre N-glicosilação; essa ausência de carboidratos implica que sua depuração plasmática ocorre principalmente pelo receptor de asialoglicoproteínas (ASGR) hepático, resultando em meia-vida mais curta que a maioria das glicoproteínas",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A primeira parte é <strong>verdadeira</strong>: a albumina de fato não é N-glicosilada. A segunda parte é <strong>falsa e é o erro sutil</strong>: por não ser glicosilada, a albumina <em>não é depurada pelo receptor ASGR</em> (que reconhece resíduos de galactose expostos após remoção do ácido siálico). Justamente por isso, sua meia-vida é de <strong>~20 dias</strong> — uma das mais longas entre as proteínas plasmáticas. A ausência de glicosilação <em>protege</em> a albumina da depuração hepática mediada por ASGR, não a acelera. <br><br><em>Erro clássico de raciocínio:</em> confundir ausência de glicosilação com vulnerabilidade ao ASGR. O ASGR só atua quando o ácido siálico é <em>removido</em> de glicoproteínas que normalmente o possuem — a albumina simplesmente nunca entra nessa via."
+  },
+  {
+    "question": "O efeito de Gibbs-Donnan amplifica a pressão oncótica efetiva da albumina em aproximadamente 50% acima do esperado pelo simples número de moléculas, pois a albumina carregada negativamente em pH fisiológico atrai cátions (especialmente Na⁺) para o compartimento vascular, retendo água osmoticamente em adição ao efeito osmótico direto das moléculas de albumina",
+    "answer": "V",
+    "type": "tf",
+    "justification": "O <strong>efeito de Gibbs-Donnan</strong> ocorre porque a albumina (pI ~4,7, portanto carregada negativamente em pH 7,4) não atravessa o endotélio capilar mas atrai cátions (principalmente <strong>Na⁺</strong>) para o compartimento vascular, que por sua vez retêm água osmoticamente. Este efeito soma-se ao efeito osmótico direto das moléculas de albumina, resultando em pressão oncótica efetiva ~50% maior que a esperada pela simples contagem molar. <br><br><em>Erro frequente:</em> muitos afirmam que o efeito de Donnan funciona por repulsão de ânions — isso também ocorre (repulsão de Cl⁻ para fora), mas o mecanismo principal relevante para a oncose é a <strong>atração e retenção de cátions</strong>. <br><br><em>Implicação clínica:</em> em pacientes com hipoalbuminemia e inflamação sistêmica (σ → 0), mesmo repondo albumina a pressão oncótica efetiva não se mantém — o coeficiente de reflexão zero elimina o gradiente oncótico independentemente da concentração de albumina."
+  },
+  {
+    "question": "A Cisteína-34 da albumina, único grupo tiol (-SH) livre da molécula, é responsável por aproximadamente 70% da capacidade antioxidante plasmática total; sua oxidação irreversível ao estado HNA2 (Human Non-Mercaptalbumin 2), aumentada em cirrose descompensada e sepse, compromete a função antioxidante independentemente da concentração sérica total de albumina",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A <strong>Cys-34</strong> da albumina é o grupo tiol mais abundante do plasma (~500 µmol/L) e atua como captador primário de radicais livres (<strong>ROS — Reactive Oxygen Species</strong>). Sua oxidação ocorre em etapas: <br>• <strong>HMA (Human Mercaptalbumin)</strong>: Cys-34 reduzida (-SH) → ~70–80% da albumina em pessoas saudáveis — forma funcionalmente ativa <br>• <strong>HNA1</strong>: Cys-34 parcialmente oxidada (sulfinil) → ~20% <br>• <strong>HNA2</strong>: Cys-34 irreversivelmente oxidada (sulfônico) → <5% em sadios, mas aumenta drasticamente em cirrose e sepse <br><br><em>Relevância clínica emergente:</em> dosagem de albumina total não distingue HMA de HNA2. Um paciente cirrótico com albumina de 3,5 g/dL mas com 40% de HNA2 tem capacidade antioxidante equivalente a uma albumina de 2,1 g/dL funcionalmente. Isso explica parcialmente por que a reposição de albumina em cirróticos tem efeitos além da simples oncose — a albumina funcional reduzida (HMA) é o que protege de oxidação e disfunção endotelial."
+  },
+  {
+    "question": "Na equação de Starling, quando o coeficiente de reflexão de Staverman (σ) se aproxima de zero — como ocorre em capilares inflamados — a pressão oncótica perde eficácia em reter fluido intravascular; isso explica por que a reposição de albumina exógena é frequentemente ineficaz em manter a pressão oncótica em pacientes sépticos com síndrome de permeabilidade capilar aumentada",
+    "answer": "V",
+    "type": "tf",
+    "justification": "O <strong>coeficiente de reflexão σ de Staverman</strong> quantifica o quanto a membrana é impermeável às proteínas: <br>• σ = 1 → membrana totalmente impermeável às proteínas → pressão oncótica exerce máxima eficácia <br>• σ = 0 → membrana totalmente permeável às proteínas → pressão oncótica = zero, independente da concentração de albumina <br><br>Na sepse, a inflamação sistêmica destrói as junções endoteliais → σ cai para 0,3–0,5 em leitos microvasculares inflamados → a albumina transfundida equilibra-se rapidamente entre intra e extravascular, não criando gradiente oncótico sustentado. <br><br><em>Implicação terapêutica (estudo SAFE, NEJM 2004):</em> na sepse geral sem cirrose, albumina não reduziu mortalidade em relação a solução salina, justificado em parte por este mecanismo físico. O benefício em cirróticos existe porque ali σ está preservado nos capilares hepáticos e sistêmicos — a hipoalbuminemia é causa direta da perda de gradiente oncótico, não consequência de σ reduzido."
+  },
+  {
+    "question": "A albumina transporta bilirrubina não conjugada (indireta) exclusivamente pelo Sítio de Sudlow II (domínio IIIA); em neonatos com hiperbilirrubinemia, sulfonamidas competem por este mesmo sítio, deslocando a bilirrubina para o plasma livre e aumentando o risco de kernicterus",
+    "answer": "F",
+    "type": "tf",
+    "justification": "O erro está na localização do sítio: a bilirrubina liga-se preferencialmente ao <strong>Sítio de Sudlow I (domínio IIA)</strong>, não ao Sítio II. As sulfonamidas de fato competem pela bilirrubina na albumina, mas no <strong>Sítio I</strong>. <br><br><strong>Resumo dos sítios de Sudlow:</strong> <br>• <strong>Sítio I (domínio IIA):</strong> bilirrubina, varfarina, fenitoína, furosemida, ácidos graxos de cadeia longa <br>• <strong>Sítio II (domínio IIIA):</strong> benzodiazepínicos, ibuprofeno, naproxeno, ácido valproico, diazepam <br><br><em>Relevância neonatal:</em> sulfonamidas, aspirina e outros fármacos que competem pelo Sítio I podem deslocar bilirrubina → bilirrubina livre atravessa barreira hematoencefálica imatura → kernicterus. Por isso sulfonamidas são contraindicadas em neonatos e lactentes jovens. O mecanismo correto envolve o Sítio I, e esta distinção é testada em provas de residência."
+  },
+  {
+    "question": "A fórmula de correção do cálcio para hipoalbuminemia [Ca corrigido = Ca medido + 0,8 × (4 – albumina)] subestima sistematicamente o cálcio ionizado em pacientes com acidose metabólica, pois a acidose compete com o Ca²⁺ pelos sítios de ligação na albumina, aumentando a fração iônica livre independentemente da albumina total",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A fórmula de correção do cálcio foi desenvolvida em pacientes com albumina baixa mas sem distúrbio ácido-base. Em <strong>acidose metabólica</strong>, o H⁺ elevado compete com o Ca²⁺ pelos sítios de ligação carregados negativamente da albumina (principalmente resíduos de carboxilato) → <strong>mais Ca²⁺ é deslocado para a fração livre</strong>. <br><br>Resultado: o cálcio ionizado real é maior do que o predito pela fórmula de correção → a fórmula <em>subestima</em> o Ca²⁺ livre em pacientes acidóticos. <br><br><em>Conduta correta:</em> em pacientes com acidose metabólica + hipoalbuminemia, sempre medir <strong>cálcio iônico diretamente</strong> na gasometria arterial, pois a fórmula de correção pode induzir a tratar hipocalcemia inexistente com gluconato de cálcio IV. <br><br><em>O inverso também é verdadeiro:</em> na alcalose, o Ca²⁺ se liga mais à albumina → cálcio iônico cai → tetania em paciente hiperventilatório mesmo com cálcio total normal."
+  },
+  {
+    "question": "A haptoglobina capta hemoglobina livre com afinidade extremamente alta (Kd ~10⁻¹⁵ M), ligando-se especificamente à cadeia beta da hemoglobina; após endocitose do complexo Hp-Hb pelo receptor CD163, a haptoglobina é reciclada intacta ao plasma, enquanto a hemoglobina é catabolizada — mecanismo que explica a ausência de queda persistente da haptoglobina mesmo em hemólises moderadas",
+    "answer": "F",
+    "type": "tf",
+    "justification": "Dois erros sutis nesta questão: <br>1. A haptoglobina liga-se à <strong>cadeia alfa (α)</strong> da hemoglobina, não à cadeia beta — este é o sítio de interação estruturalmente descrito na cristalografia do complexo. <br>2. A haptoglobina <strong>não é reciclada</strong> após a endocitose — é degradada junto com a hemoglobina no lisossomo. Por isso, na hemólise intravascular significativa, a haptoglobina é consumida irreversivelmente e fica indetectável no plasma. <br><br><em>Comparação com a hemopexina:</em> a hemopexina, que capta <strong>heme livre</strong> (não Hb intacta), SIM é reciclada após liberação do heme no endossomo acidificado. Esta distinção — haptoglobina consumida vs hemopexina reciclada — é frequentemente trocada nas provas. <br><br><em>Implicação:</em> haptoglobina indetectável é marcador sensível e específico de hemólise intravascular; seu retorno ao normal indica cessação da hemólise (nova síntese leva 3–4 dias)."
+  },
+  {
+    "question": "A haptoglobina, por ser proteína de fase aguda positiva, pode permanecer dentro da faixa de referência durante hemólise intravascular concomitante a processo inflamatório intenso, tornando obrigatória a interpretação conjunta com LDH e bilirrubina indireta para o diagnóstico correto",
+    "answer": "V",
+    "type": "tf",
+    "justification": "Este é um ponto de <strong>armadilha diagnóstica real</strong>: a haptoglobina é proteína de fase aguda positiva (pode elevar-se 2–4× em inflamação). Em hemólise leve a moderada, o consumo de haptoglobina pode ser parcialmente compensado pela síntese aumentada induzida por IL-6 → nível sérico permanece dentro da faixa normal. <br><br><em>Exemplo:</em> paciente com anemia hemolítica autoimune + pneumonia bacteriana. A hemólise consome haptoglobina, mas a inflamação estimula síntese → haptoglobina 'normal' de 80 mg/dL, mascarando a hemólise. <br><br><strong>Tríade diagnóstica para hemólise intravascular:</strong> <br>• ↓ Haptoglobina (específica, mas pode ser mascarada) <br>• ↑↑ LDH (liberado de eritrócitos rompidos — sensível) <br>• ↑ Bilirrubina indireta (catabolismo do heme) <br><br>A presença de dois ou três desses achados aumenta significativamente a acurácia diagnóstica, especialmente em contextos inflamatórios concomitantes."
+  },
+  {
+    "question": "A transferrina é uma glicoproteína de cadeia única que transporta ferro exclusivamente na forma Fe³⁺, com dois sítios de ligação por molécula; na eletroforese de proteínas séricas, migra na fração alfa-2, junto com haptoglobina e ceruloplasmina",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A afirmativa sobre a transferrina transportar Fe³⁺ com dois sítios é <strong>correta</strong>. O erro está na localização eletroforética: a transferrina migra na <strong>fração beta</strong> da eletroforese de proteínas séricas, <strong>não na fração alfa-2</strong>. <br><br><strong>Composição das frações eletroforéticas:</strong> <br>• <strong>Alfa-1:</strong> alfa-1-antitripsina (principal), alfa-1-glicoproteína ácida <br>• <strong>Alfa-2:</strong> haptoglobina, alfa-2-macroglobulina, ceruloplasmina <br>• <strong>Beta:</strong> transferrina (principal), complemento C3, beta-lipoproteínas, fibrinogênio (no plasma) <br>• <strong>Gama:</strong> imunoglobulinas <br><br><em>Relevância clínica:</em> conhecer qual proteína pertence a cada fração é essencial para interpretar padrões eletroforéticos. A redução da banda beta em estados inflamatórios (transferrina como reactante negativa) é o que estreita a banda beta no padrão inflamatório agudo."
+  },
+  {
+    "question": "Na anemia de doença crônica, a hepcidina induzida pela IL-6 degrada a ferroportina dos macrófagos e enterócitos, aprisionando o ferro intracelularmente; o perfil laboratorial resultante mostra ferro sérico baixo, TIBC elevada e ferritina baixa — padrão que distingue da anemia ferropriva pelo nível de ferritina",
+    "answer": "F",
+    "type": "tf",
+    "justification": "O mecanismo descrito (hepcidina → degradação da ferroportina → aprisionamento de ferro) está correto. O erro está no perfil laboratorial: na anemia de doença crônica, a <strong>TIBC está baixa ou normal</strong> (não elevada) e a <strong>ferritina está elevada ou normal</strong> (não baixa). <br><br><strong>Comparação dos perfis:</strong> <br>• <strong>Anemia ferropriva:</strong> Fe↓, TIBC↑, Saturação↓, Ferritina↓↓ <br>• <strong>Anemia de doença crônica:</strong> Fe↓, TIBC↓ ou normal, Saturação↓, Ferritina↑ ou normal <br><br><em>Lógica:</em> na AIC, a hepcidina sequestra ferro dentro dos macrófagos (ferritina intracelular elevada, que vaza para o plasma → ferritina sérica elevada). A transferrina cai porque é reactante negativa de fase aguda. Na ferropriva, não há ferro nos estoques (ferritina baixa) e o fígado aumenta a síntese de transferrina para captar mais ferro disponível (TIBC elevada). <br><br><em>Armadilha::</em> ferritina baixa em contexto inflamatório confirma deficiência de ferro (pois a inflamação deveria elevá-la); ferritina elevada em inflamação não confirma sobrecarga de ferro."
+  },
+  {
+    "question": "A ceruloplasmina deve seu nome e cor azul à presença de 6–8 átomos de cobre por molécula; sua principal função biológica é a atividade ferroxidase (Fe²⁺ → Fe³⁺); transporta aproximadamente 60–70% do cobre plasmático total e pode estar falsamente elevada na doença de Wilson em contexto inflamatório concomitante, mascarando a deficiência",
+    "answer": "V",
+    "type": "tf",
+    "justification": "Todos os elementos desta afirmativa são corretos: <br>• A cor azul da ceruloplasmina é conferida pelos <strong>6–8 átomos de Cu²⁺</strong> incorporados estruturalmente (não apenas ligados) — do latim <em>caeruleus</em> = azul-celeste <br>• A atividade <strong>ferroxidase I</strong> é sua principal função biológica: oxida Fe²⁺ → Fe³⁺, permitindo que o ferro se ligue à transferrina (que só transporta Fe³⁺) <br>• Transporta ~60–70% do cobre plasmático total (o restante ligado à albumina e aminoácidos) <br>• Por ser proteína de fase aguda <strong>positiva</strong>, pode estar falsamente elevada em inflamação mesmo na doença de Wilson — isso ocorre em ~15% dos casos de Wilson, explicando por que ceruloplasmina 'normal' não exclui o diagnóstico. <br><br><em>Diagnóstico de Wilson:</em> deve-se sempre complementar com cuprúria de 24h (>100 µg/dia), biópsia hepática (Cu >250 µg/g seco) e pesquisa do anel de Kayser-Fleischer na lâmpada de fenda."
+  },
+  {
+    "question": "Na doença de Wilson, a ceruloplasmina sérica está reduzida em ~85% dos casos; valores normais de ceruloplasmina confirmam a ausência de doença de Wilson pois a cuprúria de 24h acima de 40 µg seria suficiente para o diagnóstico em contexto clínico sugestivo",
+    "answer": "F",
+    "type": "tf",
+    "justification": "Dois erros combinados: <br>1. Ceruloplasmina normal <strong>não exclui Wilson</strong> (~15% dos casos de Wilson têm ceruloplasmina normal por ser proteína de fase aguda que pode estar elevada em hepatite ativa concomitante) <br>2. O limiar diagnóstico de cuprúria é <strong>>100 µg/24h</strong> (não >40 µg). O valor de 40 µg/dia é o limite superior da normalidade — acima de 40 µg é suspeito, mas apenas acima de 100 µg confirma. <br><br><em>Critérios de Leipzig para diagnóstico de Wilson:</em> score ≥4 pontos confirma o diagnóstico, baseado em: anel de Kayser-Fleischer, sintomas neuropsiquiátricos, Coombs-negativo com hemólise, cuprúria >100 µg/dia, Cu hepático >250 µg/g seco, ceruloplasmina <20 mg/dL. Nenhum critério isolado é patognomônico. <br><br><em>Tratamento:</em> D-penicilamina ou trientina (quelantes) + zinco (bloqueia absorção intestinal de Cu por induzir metalotioneína); transplante hepático na falência fulminante."
+  },
+  {
+    "question": "A alfa-1-antitripsina (AAT) é uma serpina que inibe a elastase neutrofílica pelo mecanismo de inibidor suicida: a alça reativa (RCL) mimetiza o substrato da elastase; após clivagem, a AAT sofre rearranjo conformacional inserindo a RCL na folha β central e aprisionando a elastase em estado irreversivelmente inativo; o complexo AAT-elastase é depurado pelo receptor LRP1 hepático",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A <strong>alfa-1-antitripsina</strong> é o protótipo da família <strong>SERPIN (SERine Protease INhibitor)</strong>. O mecanismo de inibidor suicida é um dos mais elegantes da biologia estrutural: <br><br>1. A RCL (<em>Reactive Center Loop</em>) exposta na superfície da AAT mimetiza um substrato de protease <br>2. A elastase neutrofílica cliva a ligação Met358-Ser359 da RCL <br>3. A clivagem desencadeia rearranjo conformacional massivo: a RCL é inserida como novo filamento na folha β central da AAT <br>4. Este rearranjo 'puxa' a elastase para uma posição distorcida, inativando-a irreversivelmente <br>5. O complexo de 95 kDa é depurado pelo receptor <strong>LRP1</strong> nos hepatócitos <br><br><em>Nome histórico equivocado:</em> a AAT foi assim chamada por inibir tripsina <em>in vitro</em>, mas seu substrato fisiológico principal é a elastase neutrofílica. Termos mais precisos seriam alfa-1-antiprotease ou alfa-1-antielastase, progressivamente adotados."
+  },
+  {
+    "question": "O enfisema associado à deficiência grave de AAT (fenótipo PiZZ) apresenta distribuição panacinar com predomínio nos lobos inferiores (bases), diferentemente do enfisema centracinar do tabagismo que predomina nos lobos superiores (ápices); esta distribuição inversa tem valor diagnóstico e deve motivar investigação em jovens não fumantes com hiperinsuflação basal",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A distinção topográfica entre os dois tipos de enfisema reflete mecanismos patogênicos diferentes: <br><br><strong>Deficiência de AAT (PiZZ):</strong> <br>• Distribuição <strong>panacinar</strong> (acomete todo o ácino uniformemente) <br>• Predomínio nas <strong>bases pulmonares</strong> — por maior perfusão e maior atividade neutrofílica nas bases (dependência gravitacional) <br>• Início precoce: 3ª–4ª décadas em não fumantes; 2ª–3ª décadas em fumantes <br><br><strong>Enfisema do tabagismo:</strong> <br>• Distribuição <strong>centracinar</strong> (acomete preferencialmente o bronquíolo respiratório central do ácino) <br>• Predomínio nos <strong>ápices</strong> — maior ventilação relativa, maior exposição à fumaça que é menos diluída <br><br><em>Alerta diagnóstico:</em> jovem com DPOC e hiperinsuflação predominantemente basal → dosar AAT sérica e fenotipar. A terapia de aumento (AAT IV semanal) deve ser iniciada antes de dano pulmonar irreversível."
+  },
+  {
+    "question": "Na deficiência de AAT fenótipo PiZZ, o mecanismo de hepatotoxicidade é a ausência circulante de AAT que deixa os hepatócitos expostos à elastase neutrofílica; as inclusões PAS-positivas e diastase-resistentes observadas histologicamente representam depósitos de elastase não neutralizada nos lisossomos hepatocitários",
+    "answer": "F",
+    "type": "tf",
+    "justification": "O mecanismo de hepatotoxicidade é <strong>oposto ao descrito</strong>: é o <em>ganho de função tóxico</em> por acúmulo intracelular, não a perda de proteção extracelular. <br><br><strong>Mecanismo correto:</strong> a proteína AAT-Z (com mutação Glu342Lys) tem dobramento incorreto no RER → não é secretada para o plasma → <strong>acumula-se no RER dos hepatócitos</strong> como polímeros insolúveis → ativa a resposta UPR (<em>Unfolded Protein Response</em>) → apoptose hepatocítica → cirrose. <br><br>As inclusões PAS-positivas e diastase-resistentes representam <strong>proteína AAT-Z polimerizada retida no RER</strong>, não elastase. Esta distinção é fundamental: <br>• A <strong>doença pulmonar</strong> é por <em>deficiência</em> de AAT (falta proteção contra elastase) <br>• A <strong>doença hepática</strong> é por <em>tóxico intracelular</em> (acúmulo de AAT-Z mal dobrada) <br><br><em>Implicação terapêutica:</em> a terapia de aumento (AAT IV) trata o pulmão mas não trata o fígado — para a doença hepática, é necessário reduzir a síntese de AAT-Z (terapia gênica em estudo)."
+  },
+  {
+    "question": "A alfa-2-macroglobulina (720 kDa) inibe proteases pelo mecanismo de gaiola molecular: após clivagem da região isca (bait region), a mudança conformacional aprisiona a protease que mantém atividade catalítica residual sobre substratos pequenos; o complexo é depurado pelo LRP1 e, assim como a hemopexina, a alfa-2-macroglobulina é reciclada após a endocitose",
+    "answer": "F",
+    "type": "tf",
+    "justification": "Dois elementos estão corretos (gaiola molecular, atividade catalítica residual sobre substratos pequenos, depuração por LRP1), mas a afirmação sobre reciclagem está <strong>errada</strong>: a alfa-2-macroglobulina <strong>não é reciclada</strong> — é degradada junto com a protease aprisionada no lisossomo. <br><br><strong>Reciclagem pós-endocitose — resumo:</strong> <br>• <strong>Hemopexina:</strong> SIM é reciclada (dissocia do heme no endossomo ácido → retorna ao plasma) <br>• <strong>Transferrina:</strong> SIM é reciclada (libera Fe³⁺ no endossomo → apotransferrina retorna ao plasma) <br>• <strong>Haptoglobina:</strong> NÃO é reciclada (degradada com Hb) <br>• <strong>Alfa-2-macroglobulina:</strong> NÃO é reciclada (degradada com a protease) <br><br><em>Relevância clínica:</em> o mecanismo de gaiola explica por que a alfa-2-macroglobulina inibe praticamente qualquer protease de qualquer classe (serina, cisteína, metalo, aspártico) — ela não reconhece o sítio ativo, apenas captura mecanicamente qualquer enzima que cleave sua região isca."
+  },
+  {
+    "question": "Na síndrome nefrótica, a perda urinária seletiva de proteínas de baixo peso molecular causa queda de albumina, transferrina, antitrombina III e proteínas C e S; a alfa-2-macroglobulina (720 kDa) permanece elevada por não ser filtrada pelo glomérulo lesado; sua elevação amplifica paradoxalmente o estado pró-trombótico ao inibir a plasmina, comprometendo a fibrinólise",
+    "answer": "V",
+    "type": "tf",
+    "justification": "Na síndrome nefrótica, a barreira glomerular perde seletividade para proteínas com base no tamanho e carga. Proteínas com PM <68 kDa são preferencialmente perdidas: <br>• Albumina (66,5 kDa) → ↓↓↓ <br>• Antitrombina III (65 kDa) → ↓ → hipercoagulabilidade <br>• Proteína C (~62 kDa) e Proteína S (~70 kDa) → ↓ → hipercoagulabilidade <br>• Transferrina (79 kDa) → ↓ <br>• IgG (150 kDa) → ↓ <br><br>A <strong>alfa-2-macroglobulina (720 kDa)</strong> é grande demais para ser filtrada → mantém-se elevada. Por inibir a plasmina (serina-protease fibrinolítica), contribui para estado pró-trombótico. <br><br><em>Estado pró-trombótico multifatorial na nefrótica:</em> perda de AT-III + perda de proteínas C e S + ↑ fibrinogênio (síntese hepática compensatória) + ↑ FvW (endotélio ativado) + inibição da fibrinólise por alfa-2-macroglobulina. A nefropatia membranosa tem risco de trombose de veia renal de até 25–30%."
+  },
+  {
+    "question": "O fibrinogênio é um hexâmero (AαBβγ)₂; a trombina cliva os fibrinopeptídeos A (das cadeias Aα) com velocidade 10 vezes menor que os fibrinopeptídeos B (das cadeias Bβ); o fator XIIIa estabiliza a fibrina formando ligações isopeptídicas covalentes entre resíduos de glutamina e lisina de monômeros adjacentes",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A velocidade de clivagem está <strong>invertida</strong>: a trombina cliva os <strong>fibrinopeptídeos A (FpA) muito mais rapidamente</strong> (em segundos) que os fibrinopeptídeos B (FpB, em minutos). O FpA é clivado primeiro porque expõe o motivo 'knob A' que se liga ao sítio 'hole a' das moléculas adjacentes, iniciando a polimerização longitudinal. O FpB é clivado mais lentamente e estabiliza a polimerização lateral. <br><br><em>Sequência correta:</em> Trombina → FpA clivado (rápido) → polimerização longitudinal da fibrina → FpB clivado (lento) → polimerização lateral → FXIIIa cria ligações isopeptídicas γ-glutamil-ε-lisina → fibrina cross-linked estável. <br><br><em>Relevância:</em> o tempo de clivagem diferencial explica por que o TP (via extrínseca/FpA) reflete a coagulação inicial e o TTPa (via intrínseca/ambos) reflete a coagulação mais completa. O d-dímero detecta produtos de degradação da fibrina cross-linked — só se eleva quando houve polimerização E clivagem pelo FXIIIa."
+  },
+  {
+    "question": "O fibrinogênio é proteína de fase aguda positiva que eleva-se na inflamação, aumenta a viscosidade plasmática e favorece a formação de rouleaux eritrocitários, sendo o principal determinante da velocidade de hemossedimentação (VHS); sua meia-vida de 3–5 dias torna o VHS um marcador mais dinâmico que a PCR para monitorização de resposta ao tratamento",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A primeira parte é correta (fibrinogênio é reactante positivo, eleva a viscosidade e o VHS). O erro está na comparação de dinamismo: a <strong>PCR é muito mais dinâmica</strong> que o VHS para monitorização de resposta ao tratamento. <br><br><strong>Cinética comparativa:</strong> <br>• <strong>PCR:</strong> começa a subir em 4–6h, pico em 24–72h, normaliza em 3–7 dias após resolução da inflamação <br>• <strong>VHS:</strong> começa a subir em 24–48h, pico em vários dias, pode permanecer elevado por <strong>semanas</strong> após resolução <br><br>Essa lentidão do VHS ocorre justamente porque depende do fibrinogênio (meia-vida 3–5 dias) e outras proteínas de fase aguda que se normalizam mais lentamente. O VHS é mais útil para rastreamento de doenças inflamatórias crônicas (ex.: arterite temporal) do que para monitorização dinâmica de resposta a antibióticos em UTI, onde a PCR (e idealmente a procalcitonina) são preferíveis."
+  },
+  {
+    "question": "Na CIVD, o fibrinogênio é consumido precocemente; nível sérico abaixo de 150 mg/dL em contexto clínico compatível é critério de CIVD grave; o crioprecipitado é preferido ao plasma fresco congelado para reposição de fibrinogênio porque concentra também fator VIII, fator XIII e fator de von Willebrand em menor volume, minimizando sobrecarga hídrica",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Todos os pontos estão corretos.</strong> O <strong>crioprecipitado</strong> é obtido pelo descongelamento lento do plasma fresco congelado a 4°C seguido de centrifugação — a fração insolúvel que precipita (crioprecipitado) contém: <br>• Fibrinogênio (~150–250 mg/unidade) — principal indicação <br>• Fator VIII (~80–100 UI/unidade) <br>• Fator XIII <br>• Fator de von Willebrand <br>• Fibronectina <br><br>Cada unidade de crioprecipitado tem volume de apenas ~15–20 mL, comparado com 250 mL por unidade de PFC. Para atingir fibrinogênio ≥150–200 mg/dL em adulto de 70 kg, são necessárias ~10 unidades de crioprecipitado (~150 mL total) vs 4–6 unidades de PFC (~1000–1500 mL) — enorme diferença na sobrecarga hídrica. <br><br><em>Protocolo de hemorragia maciça:</em> em contextos como hemorragia pós-parto e trauma com coagulopatia, a meta de fibrinogênio ≥150–200 mg/dL guiada por ROTEM (FIBTEM) orienta a reposição com crioprecipitado ou concentrado de fibrinogênio."
+  },
+  {
+    "question": "A IgG é a única imunoglobulina que atravessa a placenta via FcRn; todas as quatro subclasses (IgG1–4) atravessam com eficiência idêntica, conferindo proteção neonatal equitativa contra todos os patógenos para os quais a mãe tem anticorpos IgG",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A parte sobre passagem placentária via FcRn é correta, mas a eficiência <strong>não é idêntica</strong> entre as subclasses: <br>• <strong>IgG1 e IgG3:</strong> atravessam mais eficientemente (maior afinidade pelo FcRn placentário) <br>• <strong>IgG2:</strong> transferência moderada <br>• <strong>IgG4:</strong> transferência boa <br><br>Mas o ponto mais importante: a <strong>IgG2 transfere-se menos eficientemente</strong>, o que tem implicações clínicas reais — anticorpos contra polissacarídeos capsulares bacterianos (principal isotipo IgG2) são menos transferidos para o neonato, explicando a maior suscetibilidade de prematuros a bactérias encapsuladas mesmo com mães vacinadas. <br><br><em>Além disso</em>, a transferência placentária de IgG tem implicações patológicas: anticorpos maternos IgG contra antígenos fetais (anti-D, anti-Kell, anti-Ro/SSA) também atravessam a placenta, causando eritroblastose fetal e bloqueio cardíaco neonatal."
+  },
+  {
+    "question": "A deficiência seletiva de IgA tem prevalência de ~1:500, sendo a imunodeficiência primária mais comum; a maioria dos afetados é assintomática; uma minoria desenvolve infecções mucosas recorrentes e risco de reações transfusionais anafiláticas mediadas por anticorpos IgE anti-IgA presentes no receptor",
+    "answer": "V",
+    "type": "tf",
+    "justification": "Todos os elementos são corretos: <br>• Prevalência de ~1:500 na população europeia — de fato a IDP mais comum <br>• A maioria (~70%) é assintomática (compensada por IgM secretora e imunidade inata) <br>• Uma minoria desenvolve infecções respiratórias e gastrointestinais recorrentes (Giardia, Rotavirus) <br><br><strong>As reações transfusionais anafiláticas:</strong> pacientes com deficiência de IgA podem desenvolver anticorpos anti-IgA (principalmente <strong>IgE anti-IgA</strong>, não IgG). Quando recebem hemoderivados contendo IgA (plasma, plaquetas em pool), estes anticorpos desencadeiam anafilaxia grave. <br><br><em>Conduta em transfusões:</em> pacientes com deficiência de IgA confirmada devem receber: <br>• Hemácias lavadas (remoção do plasma/IgA) <br>• Plasma de doadores com deficiência de IgA <br>• Plaquetas lavadas <br><br><em>Triagem pré-transfusional:</em> dosagem de IgA sérica deve ser considerada em pacientes com história de reações anafiláticas transfusionais sem causa identificada."
+  },
+  {
+    "question": "A IgE, presente em concentrações séricas na ordem de nanogramas, liga-se ao FcεRI em mastócitos e basófilos; para desencadear degranulação na segunda exposição ao alérgeno, basta a ligação de uma única molécula de IgE ao alérgeno (ligação monovalente), que ativa diretamente a cascata intracelular de sinalização",
+    "answer": "F",
+    "type": "tf",
+    "justification": "O erro sutil está no mecanismo de ativação: a degranulação de mastócitos requer <strong>ligação cruzada (crosslinking) de pelo menos duas moléculas de IgE adjacentes</strong> por um alérgeno multivalente, não ligação monovalente. <br><br><strong>Mecanismo correto:</strong> <br>1. Primeira exposição: alérgeno → plasmócitos produzem IgE específica → IgE se liga via Fc ao FcεRI em mastócitos (sensibilização) <br>2. Segunda exposição: alérgeno multivalente liga-se simultaneamente a ≥2 moléculas de IgE de superfície → <strong>agregação (crosslinking) dos FcεRI</strong> → ativação de tirosina quinases (Syk, Lyn) → sinalização intracelular → degranulação <br><br><em>Implicação clínica:</em> alérgenos haptênicos (moléculas pequenas, monovalentes) por si sós não conseguem fazer crosslinking direto → não causam anafilaxia diretamente (precisam se ligar a proteínas carreadoras para se tornarem multivalentes). Esta é a base do uso de alérgenos haptenizados em imunoterapia."
+  },
+  {
+    "question": "A PCR é uma pentraxina pentamérica cuja síntese é induzida predominantemente por IL-6; liga-se ao fosfocolina de bactérias e células apoptóticas e ativa o complemento pela via alternativa; pode elevar-se de <1 mg/L a >500 mg/L em 24–72 horas após estímulo inflamatório intenso",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A PCR ativa o complemento pela <strong>via clássica</strong>, não pela via alternativa. O mecanismo é: PCR ligada ao fosfocolina → <strong>recruta e ativa C1q</strong> → ativação de C1r e C1s → C4 e C2 → C3 convertase da via clássica. <br><br><strong>Resumo das vias de ativação do complemento:</strong> <br>• <strong>Via clássica:</strong> IgG/IgM + antígeno, PCR, proteína amiloide P sérica → C1q <br>• <strong>Via lectina:</strong> MBL/ficolinas + padrões moleculares de patógenos → MASP-1/MASP-2 <br>• <strong>Via alternativa:</strong> C3 tick-over espontâneo, amplificado por fatores B, D e properdina <br><br><em>Resto da afirmativa está correto:</em> a PCR de fato atinge pico de elevação entre as proteínas de fase aguda (pode elevar-se 1000×), tem síntese hepática induzida por IL-6 (com amplificação por IL-1β e TNF-α), e é pentamérica. <br><br><em>Nota:</em> a PCR também pode ativar a via alternativa indiretamente (via C3b gerado pela via clássica), mas sua ativação direta e primária é via C1q da via clássica."
+  },
+  {
+    "question": "A PCR de alta sensibilidade (hs-CRP) detecta concentrações na faixa de 0,1–10 mg/L; valores persistentemente acima de 3 mg/L (excluindo inflamação aguda) classificam o indivíduo como de alto risco cardiovascular; o estudo JUPITER demonstrou que rosuvastatina reduziu eventos cardiovasculares em pacientes com LDL normal e hs-CRP >2 mg/L, efeito atribuído parcialmente ao efeito anti-inflamatório pleotrópico das estatinas",
+    "answer": "V",
+    "type": "tf",
+    "justification": "Todos os elementos são corretos: <br>• hs-CRP detecta na faixa de 0,1–10 mg/L (vs PCR convencional que detecta 3–500 mg/L) <br>• Estratificação de risco cardiovascular pela hs-CRP: <3 mg/L: risco baixo; 1–3 mg/L: moderado; >3 mg/L: alto <br>• <strong>Estudo JUPITER (Ridker, NEJM 2008):</strong> rosuvastatina 20mg/dia vs placebo em 17.802 pacientes com LDL <130 mg/dL mas hs-CRP ≥2 mg/L → redução de 44% em eventos cardiovasculares maiores, 54% em infarto, 48% em AVC e 20% em mortalidade total <br><br><em>Efeito pleiotrópico das estatinas:</em> inibição da HMG-CoA redutase → redução de isoprenóides intermediários → menor prenilação de proteínas Rho/Rac → redução da ativação de NF-κB → menor produção de IL-6 e PCR. Este efeito anti-inflamatório é independente da redução de LDL e ocorre em paralelo. <br><br><em>Limitação:</em> a hs-CRP como alvo terapêutico ainda é debatida — a mendelian randomization não demonstrou causalidade direta entre PCR elevada e risco cardiovascular."
+  },
+  {
+    "question": "A antitrombina inibe a trombina e o fator Xa como principais alvos; a HBPM (heparina de baixo peso molecular) acelera a inibição da trombina e do fator Xa com igual potência ao ligar-se à antitrombina, diferindo da HNF apenas pela farmacocinética mais previsível e menor risco de trombocitopenia induzida por heparina",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A diferença fundamental entre HNF e HBPM não é apenas farmacocinética — é qualitativa no mecanismo: <br><br><strong>HNF (Heparina Não Fracionada):</strong> cadeia longa (média 15 kDa, 45 sacarídeos) → forma ponte entre AT e trombina (requer contato ternário) → <strong>inibe tanto trombina quanto Fator Xa com igual eficiência</strong> <br><br><strong>HBPM (fragmentos ~5 kDa, 15–18 sacarídeos):</strong> cadeia curta demais para fazer ponte entre AT e trombina → <strong>inibe principalmente o Fator Xa</strong> (não requer ponte para inibir Xa, apenas ligação à AT é suficiente) → razão anti-Xa:anti-IIa de 2:1 a 4:1 <br><br><em>Implicação clínica:</em> esta diferença explica: <br>• Por que a HBPM não pode ser monitorizada por TTPa (que reflete inibição da trombina) → usa-se atividade anti-Xa <br>• Por que o sulfato de protamina reverte completamente a HNF mas apenas parcialmente a HBPM <br>• Por que pentassacarídeos (fondaparinux) têm atividade anti-Xa pura (sem atividade anti-IIa)"
+  },
+  {
+    "question": "A deficiência hereditária de antitrombina (tipo I ou II) é a trombofilia hereditária com maior risco relativo de tromboembolismo venoso (5–10× acima da população geral), superando em penetrância trombótica a mutação do Fator V de Leiden, deficiências de proteínas C e S, e a mutação da protrombina G20210A",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Risco relativo de TEV por trombofilia hereditária:</strong> <br>• Deficiência de antitrombina: <strong>5–10×</strong> — maior de todas <br>• Deficiência de proteína C: 3–5× <br>• Deficiência de proteína S: 3–5× <br>• FV Leiden homozigoto: 50–80× (mas raro — 0,02% da população) <br>• FV Leiden heterozigoto: 3–7× (frequente — 5% da população europeia) <br>• Protrombina G20210A: 2–3× <br><br>A deficiência de AT tem o maior risco relativo por trombofilia isolada heterozigótica porque a AT é o principal inibidor fisiológico da trombina — sem ela, a coagulação não é adequadamente contida. <br><br><em>Relevância clínica:</em> pacientes com deficiência de AT e episódio de TEV geralmente requerem anticoagulação indefinida. Durante eventos agudos ou cirurgias, podem necessitar de concentrado de antitrombina humana além da heparina (que tem eficácia reduzida sem seu cofator AT)."
+  },
+  {
+    "question": "A necrose cutânea por varfarina ocorre nos primeiros dias de anticoagulação porque a varfarina reduz preferencialmente a proteína C (meia-vida ~8h) antes dos fatores pró-coagulantes de meia-vida mais longa (II: ~60h; IX: ~24h; X: ~36h), gerando hipercoagulabilidade transitória com trombose da microvasculatura dérmica, especialmente em pacientes com deficiência prévia de proteína C ou S",
+    "answer": "V",
+    "type": "tf",
+    "justification": "O mecanismo descrito está correto e representa um paradoxo farmacológico clássico: o anticoagulante causa trombose. <br><br><strong>Mecanismo detalhado:</strong> <br>1. Varfarina inibe VKOR (Vitamina K Epóxido Redutase), bloqueando a carboxilação γ de todos os fatores vitamina K-dependentes <br>2. Proteína C (t½ ~8h) cai antes dos fatores pró-coagulantes de meia-vida mais longa <br>3. Nos primeiros 2–3 dias: proteína C já muito reduzida, fatores II/IX/X ainda funcionais → estado pró-trombótico transitório <br>4. Trombose de pequenos vasos dérmicos → necrose cutânea hemorrágica, tipicamente nas nádegas, mamas, coxas <br><br><strong>Prevenção:</strong> sempre iniciar heparina concomitantemente à varfarina e manter por ≥5 dias até INR terapêutico por 2 dias consecutivos. Pacientes com deficiência prévia de proteína C têm risco muito aumentado → anticoagulação parenteral obrigatória na fase de ataque. <br><br><em>Análogo:</em> síndrome VEXAS (mutação UBA1) pode causar quadro similar por mecanismo diferente."
+  },
+  {
+    "question": "O fator de von Willebrand é produzido por células endoteliais (corpos de Weibel-Palade) e megacariócitos (grânulos alfa); os pequenos multímeros de FvW são os hemostasticamente mais ativos por terem maior número de sítios de ligação por massa molecular; a ADAMTS13 cliva os grandes multímeros para gerar as formas menores mais ativas",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A relação está <strong>invertida</strong>: são os <strong>grandes multímeros de FvW</strong> os hemostasticamente mais ativos, não os pequenos. Os grandes multímeros têm mais sítios de ligação ao colágeno e ao receptor GPIb-IX das plaquetas, sendo portanto mais eficientes na formação do tampão plaquetário inicial. <br><br><strong>Mecanismo correto da ADAMTS13:</strong> a ADAMTS13 <em>limita</em> a atividade hemostática ao clivar os grandes multímeros de FvW expostos ao shear stress em fragmentos menores — é um mecanismo regulatório que <em>reduz</em> a atividade pró-trombótica do FvW, não um mecanismo que a aumenta. <br><br><em>Consequência da deficiência de ADAMTS13 (PTT):</em> acúmulo de ultramultímeros de FvW → microtrombose sistêmica → trombocitopenia microangiopática, hemólise e isquemia de órgãos. <br><br><em>Na síndrome de Heyde (estenose aórtica):</em> shear stress excessivo degrada os grandes multímeros → perda da atividade hemostática → sangramento gastrointestinal por angiodisplasia."
+  },
+  {
+    "question": "A transtiretina (pré-albumina) é sintetizada pelo fígado (90%) e plexo coroide (10%); transporta T4 e em menor grau T3, sendo responsável por mais de 50% do transporte de T4 plasmática; sua meia-vida de 48 horas a torna marcador nutricional de curto prazo mais sensível que a albumina",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A transtiretina transporta aproximadamente <strong>20% da T4 plasmática</strong>, não mais de 50%. A distribuição do transporte de T4 é: <br>• <strong>TBG (Thyroid-Binding Globulin):</strong> ~75% da T4 total — principal carreadora <br>• <strong>Transtiretina (pré-albumina):</strong> ~20% <br>• <strong>Albumina:</strong> ~5% <br><br>A afirmação sobre meia-vida (48h) e utilidade como marcador nutricional de curto prazo está correta. Também está correto que transporta T4 e em menor grau T3. <br><br><em>Armadilha frequente:</em> o nome 'transtiretina' vem de 'trans-thyretin-retinol' — transporta tiroxina E retinol (via complexo com RBP). Não significa que é a principal carreadora de tiroxina. <br><br><em>Implicação:</em> em hipertireoidismo, a TBG sobe (estrógeno elevado na gravidez também eleva TBG) → T4 total sobe, mas T4 livre pode ser normal. Por isso sempre dosar T4 livre + TSH, nunca T4 total isoladamente."
+  },
+  {
+    "question": "Na amiloidose sistêmica por transtiretina selvagem (ATTRwt), não há mutação patogênica no gene TTR; o tafamidis estabiliza o tetrâmero de transtiretina ao ocupar os sítios de ligação da tiroxina, reduzindo a taxa de dissociação em monômeros e fibrilogênese; o estudo ATTR-ACT demonstrou redução de mortalidade cardiovascular com tafamidis",
+    "answer": "V",
+    "type": "tf",
+    "justification": "Todos os elementos são corretos: <br>• ATTRwt: nenhuma mutação no gene TTR — a proteína wild-type se deposita como amiloide com a idade (≥65 anos), principalmente no miocárdio ventricular → cardiomiopatia infiltrativa → ICFEp (insuficiência cardíaca com fração de ejeção preservada) <br>• Tafamidis: se liga nos dois sítios de ligação à tiroxina na cavidade central do tetrâmero de TTR → estabiliza a estrutura quaternária → reduz dissociação em monômeros → menos fibrilas amiloides <br>• <strong>ATTR-ACT (Maurer et al., NEJM 2018):</strong> tafamidis 80mg/dia vs placebo em 441 pacientes com cardiomiopatia por ATTR → redução de 30% na mortalidade por todas as causas (HR 0,70) e 32% nas hospitalizações cardiovasculares ao longo de 30 meses <br><br><em>Diagnóstico não-invasivo:</em> cintilografia com 99mTc-PYP (grau 2/3) + ausência de gamopatia monoclonal no soro e urina = especificidade >95% para ATTR, eliminando necessidade de biópsia em muitos casos."
+  },
+  {
+    "question": "A SHBG tem maior afinidade pela testosterona do que pela di-hidrotestosterona; a hiperinsulinemia crônica (obesidade, SOP) reduz a expressão hepática de SHBG, aumentando a fração livre de testosterona; em mulheres com SOP, FAI (Índice de Androgênios Livres) abaixo de 5 confirma hiperandrogenismo bioquímico",
+    "answer": "F",
+    "type": "tf",
+    "justification": "Dois erros: <br>1. A afinidade da SHBG é: <strong>DHT > testosterona > estradiol</strong> — a di-hidrotestosterona tem maior afinidade, não a testosterona <br>2. O FAI aumentado (>5) confirma hiperandrogenismo, não FAI <em>abaixo</em> de 5. FAI = (testosterona total × 100) / SHBG. Um FAI >5 em mulheres indica excesso de andrógeno livre biológicamente ativo. <br><br><em>Fórmula do FAI:</em> FAI = (T total em nmol/L × 100) / SHBG em nmol/L <br>Normal feminino: <5; >5 indica hiperandrogenismo bioquímico <br><br><em>Moduladores da SHBG hepática:</em> <br>• ↓ SHBG: insulina (obesidade, SOP, DM2), testosterona, corticosteroides, hipotireoidismo, acromegalia <br>• ↑ SHBG: estrógeno (gravidez, AOC), tiroxina (hipertireoidismo), cirrose, envelhecimento, SIDA <br><br><em>Relevância clínica da SOP:</em> a hiperinsulinemia reduz SHBG → mais T livre → acne, hirsutismo, irregularidade menstrual. Metformina (↓ insulina) e anticoncepcionais orais combinados (↑ SHBG) melhoram o hiperandrogenismo."
+  },
+  {
+    "question": "O SAAG (Gradiente de Albumina Soro-Ascite) ≥1,1 g/dL indica ascite por hipertensão portal porque reflete que a pressão hidrostática portal elevada força saída de fluido com baixa concentração proteica para o peritônio, mantendo alto o gradiente oncótico albumina-plasma vs albumina-ascite; SAAG <1,1 g/dL indica exsudato por processo inflamatório, neoplásico ou tuberculoso peritoneal",
+    "answer": "V",
+    "type": "tf",
+    "justification": "O SAAG reflete diretamente o <strong>gradiente de pressão hidrostática portal</strong> (pela relação com o gradiente oncótico de acordo com o equilíbrio de Starling no peritônio): <br>• <strong>SAAG ≥1,1 g/dL:</strong> alta pressão portal → fluido transudado com baixa proteína → albumina ascítica baixa → gradiente alto. Causas: cirrose (mais comum), insuficiência cardíaca, síndrome de Budd-Chiari, trombose de veia porta, pericardite constritiva <br>• <strong>SAAG <1,1 g/dL:</strong> ascite exsudativa — processo inflamatório ou neoplásico peritoneal aumenta permeabilidade → albumina ascítica alta → gradiente baixo. Causas: carcinomatose peritoneal, TB peritoneal, síndrome nefrótica, pancreatite <br><br><em>Interpretação combinada:</em> SAAG ≥1,1 + proteínas totais no líquido >2,5 g/dL = insuficiência cardíaca (transudato cardíaco, que tem mais proteínas que o hepático); SAAG ≥1,1 + proteínas totais <2,5 g/dL = cirrose ou hipertensão portal pré-sinusoidal. <br><br><em>Equação:</em> SAAG = albumina sérica − albumina do líquido ascítico (amostras coletadas simultaneamente)."
+  },
+  {
+    "question": "Na eletroforese de proteínas séricas a pH 8,6, todas as proteínas plasmáticas possuem carga líquida negativa e migram em direção ao ânodo; a albumina migra mais rapidamente que as gamaglobulinas não apenas por ter pI mais baixo (maior carga negativa), mas também por seu menor tamanho que reduz a resistência eletroforética",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A afirmativa contém um erro: <strong>nem todas as proteínas plasmáticas têm carga líquida negativa em pH 8,6</strong>. As gamaglobulinas (principalmente IgG, com pI próximo de 7–8) têm carga líquida próxima de zero ou levemente negativa em pH 8,6 — algumas IgG básicas têm pI >8 e podem migrar em direção ao cátodo (catodo-migração). É por isso que a banda gama na eletroforese fica mais próxima do ponto de aplicação e que, em certas técnicas, algumas IgG ficam no origem ou migram ligeiramente para o cátodo. <br><br><em>A albumina de fato migra mais rápido</em> devido ao pI ~4,7 (maior carga negativa em pH 8,6) e tamanho menor (66,5 kDa vs IgG ~150 kDa). <br><br><em>Ordem de migração anódica:</em> albumina > alfa-1 > alfa-2 > beta > gama (mais lenta, pode atingir origem ou migrar catodicamente)."
+  },
+  {
+    "question": "O padrão de bridging beta-gama na eletroforese sérica de pacientes com cirrose hepática resulta do aumento policlonal predominante de IgA, que migra na interface das regiões beta e gama, fundindo-se com a banda beta e criando aspecto de continuidade — padrão que diferencia cirrose de hepatite aguda viral",
+    "answer": "V",
+    "type": "tf",
+    "justification": "O bridging beta-gama na cirrose resulta principalmente do <strong>aumento policlonal de IgA</strong>. A IgA, ao contrário da IgG (que migra na região gama típica) e da IgM (que migra na gama mais lenta), migra entre as regiões beta e gama, criando essa fusão visual característica. <br><br><em>Mecanismo:</em> a cirrose compromete a função de filtro do fígado sobre antígenos bacterianos intestinais (translocação bacteriana → estimulação imune crônica → policlonal de plasmócitos intestinais produtores de IgA → elevação de IgA sérica). <br><br><em>Diagnóstico diferencial eletroforético nas hepatopatias:</em> <br>• <strong>Cirrose:</strong> bridging beta-gama (IgA policlonal) + albumina reduzida <br>• <strong>Hepatite aguda viral:</strong> gama discreta ou normal, sem bridging <br>• <strong>Cirrose biliar primária:</strong> IgM muito elevada (gama alta com pico lento) <br>• <strong>Hepatite autoimune:</strong> IgG muito elevada (pico gama nítido e alto)"
+  },
+  {
+    "question": "O sistema complemento é ativado por três vias que convergem para a formação de C5 convertases; a via alternativa é a única com ativação espontânea contínua (ticking-over) na ausência de patógenos; a via clássica e a via lectina requerem obrigatoriamente anticorpos para se iniciar",
+    "answer": "F",
+    "type": "tf",
+    "justification": "Dois erros: <br>1. As três vias convergem para <strong>C3 convertases</strong> (não C5 convertases) que geram C3b e C3a; depois as C3 convertases com C3b adicionado formam C5 convertases <br>2. A <strong>via lectina não requer anticorpos</strong> — a MBL (Mannan-Binding Lectin) e as ficolinas reconhecem diretamente padrões moleculares de patógenos (manose, N-acetilglucosamina) sem necessidade de anticorpos, ativando MASP-1 e MASP-2. Apenas a via clássica requer anticorpos (IgG ou IgM ligados ao antígeno para recrutar C1q). <br><br><em>Resumo correto das vias:</em> <br>• <strong>Clássica:</strong> IgG/IgM + Ag → C1q → C1r, C1s → C4, C2 → C3 convertase (C4b2a) <br>• <strong>Lectina:</strong> MBL/ficolinas + padrões de patógenos → MASP → C4, C2 → C3 convertase <br>• <strong>Alternativa:</strong> tick-over de C3 → C3b + fator B, D, properdina → C3 convertase (C3bBb) <br><br><em>A via alternativa É a única com tick-over contínuo</em> — este ponto da afirmativa está correto."
+  },
+  {
+    "question": "Deficiências dos componentes terminais do complemento (C5 a C9) predispõem especificamente a infecções recorrentes por Neisseria meningitidis e Neisseria gonorrhoeae; estes pacientes devem ser vacinados contra meningococo e acompanhados com maior vigilância para infecções por bactérias gram-negativas que dependem do MAC para serem lisadas",
+    "answer": "V",
+    "type": "tf",
+    "justification": "O MAC (Complexo de Ataque à Membrana, C5b-6-7-8-9) é essencial para a lise de <strong>bactérias gram-negativas</strong>, especialmente Neisseria spp., que não são adequadamente opsonizadas e fagocitadas por outros mecanismos. <br><br><em>Bases moleculares:</em> bactérias gram-negativas têm membrana externa de lipopolissacarídeo que, quando inserida pelo MAC (canal de ~10 nm), causa lise osmótica. Bactérias gram-positivas são resistentes ao MAC porque sua espessa parede de peptideoglicano impede a inserção do poro. <br><br><strong>Deficiências dos componentes terminais (C5-C9):</strong> <br>• Risco aumentado de meningococcemia e meningite meningocócica: 1500–10000× maior que a população geral <br>• Predisposição a infecções gonócicas disseminadas recorrentes <br>• Recomendação: vacinação com vacinas meningocócicas (ACWY e B), profilaxia antibiótica em situações de risco <br><br><em>Contraste com deficiências de C1q/C2/C4:</em> predispõem a doenças autoimunes lúpicas (clearance de corpos apoptóticos prejudicado), não a infecções."
+  },
+  {
+    "question": "A CDT (Carboidrato-Deficiente Transferrina) resulta de N-glicosilação anormal em alcoólatras crônicos; especificamente, as isoformas tri-sialo e tetrassialo-transferrina estão aumentadas com consumo >50 g/dia; sua especificidade de 90–95% para alcoolismo pesado supera a da gama-GT",
+    "answer": "F",
+    "type": "tf",
+    "justification": "O erro está nas isoformas: são as <strong>di-sialo e asialo-transferrina</strong> que estão aumentadas, não as tri-sialo e tetrassialo. <br><br><em>Bioquímica correta:</em> a transferrina normalmente possui cadeias de ácido siálico ligadas às cadeias de carboidratos N-ligadas. O álcool crônico inibe as sialiltransferases no retículo endoplasmático hepático → transferrina com menos resíduos de ácido siálico → surgem formas deficientes: <br>• <strong>Asialo-transferrina:</strong> sem ácido siálico — forma mais marcante <br>• <strong>Di-sialo-transferrina:</strong> 2 resíduos de ácido siálico (vs 4–6 na normal) — mais sensível <br><br>A especificidade de 90–95% está correta — a CDT é de fato mais específica que a gama-GT para alcoolismo crônico pesado (>50–80 g/dia), sendo menos afetada por hepatopatias não alcoólicas. <br><br><em>Uso clínico:</em> CDT + gama-GT combinadas têm melhor desempenho do que cada uma isoladamente. CDT normaliza em 2–4 semanas de abstinência."
+  },
+  {
+    "question": "A procalcitonina é produzida em resposta a infecções bacterianas sistêmicas por praticamente todos os tecidos parenquimatosos (fígado, pulmão, músculo, rim), sendo a produção pelas células C da tireoide insignificante durante a sepse; valores >0,5 ng/mL indicam infecção bacteriana sistêmica provável; valores >10 ng/mL são consistentes com sepse grave ou choque séptico",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A <strong>procalcitonina (PCT)</strong> é o precursor da calcitonina. Em condições normais é produzida exclusivamente pelas células C da tireoide e clivada a calcitonina (níveis séricos <0,1 ng/mL). <br><br>Na sepse bacteriana, endotoxinas e citocinas (IL-1β, IL-6, TNF-α) induzem a expressão generalizada do gene CALC-I em praticamente todos os tecidos parenquimatosos → PCT sérica pode elevar-se até 1000× (<1 ng/mL a >1000 ng/mL). <br><br><strong>Interpretação clínica:</strong> <br>• <0,1 ng/mL: infecção bacteriana sistêmica improvável <br>• 0,1–0,5 ng/mL: zona cinza — possível infecção localizada ou fase inicial <br>• >0,5 ng/mL: infecção bacteriana sistêmica provável <br>• >2 ng/mL: sepse <br>• >10 ng/mL: sepse grave/choque séptico <br><br><em>Vantagem sobre PCR:</em> PCT é mais específica para infecção bacteriana — infecções virais não elevam significativamente a PCT (exceto COVID-19 grave com sobreinfecção bacteriana). Útil para decisão de descontinuação de antibióticos (guiada por queda ≥80% do pico ou <0,5 ng/mL)."
+  },
+  {
+    "question": "Na macroglobulinemia de Waldenström, a IgM monoclonal é um pentâmero de alto peso molecular (~970 kDa) preferencialmente confinado ao espaço intravascular; a plasmaférese é o tratamento de emergência para síndrome de hiperviscosidade sintomática por remover rapidamente a IgM circulante antes que a quimioterapia possa atuar",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A síndrome de hiperviscosidade é a principal emergência hematológica da macroglobulinemia de Waldenström. <br><br><em>Fisiopatologia:</em> IgM pentamérica (~970 kDa) é confinada ao espaço intravascular (~80% intravascular vs ~50% para IgG) pela grande dimensão → pequenas elevações de concentração causam grande aumento de viscosidade → comprometimento da microcirculação → sintomas: <br>• Neurológicos: cefaleia, tontura, ataxia, confusão, coma ('síndrome de Bing-Neel') <br>• Visuais: dilatação de veias retinianas, hemorragias, visão borrada <br>• Hemorrágicos: epistaxe, gengivorragia (IgM interfere com função plaquetária) <br><br><em>Tratamento emergência:</em> <strong>plasmaférese</strong> — remove 1–2 volumes plasmáticos → reduz IgM sérica em 40–60% rapidamente → alívio dos sintomas em horas. Não é curativa — apenas medida de ponte até que a quimioterapia (bendamustina-rituximabe, ibrutinibe) reduza a produção de IgM."
+  },
+  {
+    "question": "O índice de Child-Pugh avalia a gravidade da cirrose com 5 parâmetros; albumina <2,8 g/dL e INR >2,3 contribuem com 3 pontos cada; Child C (10–15 pontos) indica disfunção hepática grave com mortalidade operatória de 80% em cirurgias eletivas não hepáticas",
+    "answer": "V",
+    "type": "tf",
+    "justification": "O escore de Child-Pugh inclui albumina, bilirrubina, TP/INR, ascite e encefalopatia hepática, com pontuação de 1–3 para cada parâmetro. <br><br><strong>Parâmetros de Child-Pugh com pontuação:</strong> <br>• <strong>Albumina:</strong> >3,5 g/dL (1 pt), 2,8–3,5 g/dL (2 pts), <2,8 g/dL (3 pts) <br>• <strong>Bilirrubina:</strong> <2 mg/dL (1 pt), 2–3 mg/dL (2 pts), >3 mg/dL (3 pts) <br>• <strong>INR:</strong> <1,7 (1 pt), 1,7–2,3 (2 pts), >2,3 (3 pts) <br>• Ascite: ausente (1), controlada (2), refratária (3) <br>• Encefalopatia: ausente (1), grau I–II (2), grau III–IV (3) <br><br><strong>Classes e mortalidade operatória:</strong> Child A (5–6): ~5–10%; Child B (7–9): ~25–30%; Child C (10–15): ~70–80%. <br><br><em>Limitação do Child-Pugh:</em> subjetividade na avaliação de ascite e encefalopatia; foi criado para cirurgia de varizes esofágicas, não para cirurgia abdominal geral. O MELD é mais objetivo e melhor preditor de mortalidade em 90 dias para priorização em transplante."
+  },
+  {
+    "question": "No kwashiorkor, o déficit é predominantemente proteico com aporte calórico parcialmente preservado por carboidratos; a hipoalbuminemia grave causa edema que pode mascarar o emagrecimento; a hepatomegalia esteatótica resulta da incapacidade hepática de exportar triglicerídeos por déficit de apoproteínas; no marasmo, a albumina é relativamente preservada pelo catabolismo muscular que fornece aminoácidos ao hepatócito",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A distinção entre kwashiorkor e marasmo é fundamental na nutrição clínica: <br><br><strong>Kwashiorkor:</strong> <br>• Déficit proteico com calorias relativamente preservadas (carboidratos) <br>• ↓↓ Albumina → edema mascarando emagrecimento <br>• Hepatomegalia esteatótica: excesso de carboidratos → síntese de ácidos graxos aumentada + déficit de apoproteínas (especialmente ApoB100 para VLDL) → acúmulo de triglicerídeos no hepatócito <br>• Despigmentação dos cabelos, dermatose pelagróide <br><br><strong>Marasmo:</strong> <br>• Déficit simultâneo de proteínas E calorias <br>• Albumina relativamente preservada: catabolismo de músculo e gordura fornece aminoácidos para síntese hepática preferencial de albumina <br>• Aspecto caquético nítido, sem edema <br><br><em>Na prática clínica em UTI:</em> a distinção é relevante pois pacientes com kwashiorkor têm risco maior de síndrome de realimentação ao receber nutrição hipercalórica, enquanto pacientes com marasmo puro toleram melhor a reintrodução gradual."
+  },
+  {
+    "question": "Na síndrome de realimentação, o evento central é a hipofosfatemia grave gerada pela hiperinsulinemia que direciona fósforo para o intracelular; a prevenção requer suspensão completa da nutrição por 48h e reposição IV de fósforo antes de reiniciar",
+    "answer": "F",
+    "type": "tf",
+    "justification": "O mecanismo da hipofosfatemia está correto, mas a conduta preventiva está <strong>errada</strong>: a prevenção da síndrome de realimentação não envolve suspender a nutrição — envolve <strong>introdução gradual</strong> com monitorização e reposição profilática de eletrólitos. <br><br><strong>Prevenção correta:</strong> <br>1. Identificar pacientes de risco (desnutrição grave, jejum prolongado >5 dias, IMC <16, perda de peso >15%) <br>2. Iniciar nutrição com 50–75% da meta calórica no dia 1 (não 100%), aumentando 25% a cada 2 dias <br>3. Monitorizar fósforo, potássio, magnésio e tiamina 2× ao dia nos primeiros 3–5 dias <br>4. Repor eletrólitos proativamente antes e durante a nutrição <br>5. Suplementar tiamina 200–300 mg IV antes de iniciar carboidratos (para prevenir encefalopatia de Wernicke) <br><br><em>Suspender a nutrição seria contraproducente</em> — o paciente já está desnutrido. O objetivo é alimentar de forma progressiva, não interromper. <br><br><em>Complicações da hipofosfatemia grave (<1,0 mg/dL):</em> falência respiratória (fraqueza do diafragma), arritmias, rabdomiólise, hemólise, convulsões."
+  },
+  {
+    "question": "No mieloma múltiplo, o critério B do CRAB (bone lesions) refere-se exclusivamente a fraturas patológicas radiologicamente documentadas; lesões líticas sem fratura não satisfazem este critério",
+    "answer": "F",
+    "type": "tf",
+    "justification": "O critério <strong>B (Bone lesions)</strong> do CRAB inclui <strong>qualquer lesão óssea lítica ≥5 mm</strong> detectada por radiografia, TC ou PET-TC, <strong>independentemente de fratura</strong>. A exigência de fratura é incorreta e retardaria o diagnóstico. <br><br><strong>Critérios CRAB completos:</strong> <br>• <strong>C</strong> = Cálcio >11,5 mg/dL (ou >1 mg/dL acima do normal superior) <br>• <strong>R</strong> = Renal (creatinina >2 mg/dL ou ClCr <40 mL/min atribuível ao mieloma) <br>• <strong>A</strong> = Anemia (Hb <10 g/dL ou >2 g/dL abaixo do normal inferior) <br>• <strong>B</strong> = Bone: ≥1 lesão lítica ≥5 mm na radiografia, TC ou PET-TC, OU osteoporose grave com fratura de compressão <br><br><em>Critérios SLiM-CRAB (IMWG 2014) adicionais para mieloma ativo:</em> <br>• ≥60% plasmócitos na medula <br>• Razão FLC ≥100 <br>• >1 lesão focal na RM ≥5 mm <br><br><em>Implicação:</em> pacientes com MGUS ou mieloma latente que desenvolvem lesão lítica sem fratura já atendem critério CRAB e devem iniciar tratamento."
+  },
+  {
+    "question": "A hemopexina liga-se ao heme livre com afinidade femtomolar (~1 fM); após endocitose do complexo hemopexina-heme pelo receptor LRP1 nos hepatócitos, o heme é catabolizado pela heme-oxigenase e a hemopexina é reciclada de volta à circulação após dissociação no endossomo acidificado — diferentemente da haptoglobina, que é degradada junto com a hemoglobina",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A distinção hemopexina × haptoglobina é clinicamente importante e frequentemente confundida: <br><br><strong>Haptoglobina:</strong> <br>• Liga Hb intacta via cadeia α (Kd ~10⁻¹⁵ M) <br>• Receptor: CD163 em macrófagos/monócitos/células de Kupffer <br>• Destino: <strong>degradada</strong> junto com a Hb no lisossomo → não reciclada <br>• Consumo irreversível na hemólise <br><br><strong>Hemopexina:</strong> <br>• Liga heme livre (Kd ~1 fM — femtomolar = 10⁻¹⁵ M) — maior afinidade de ligação ao heme descrita na natureza <br>• Receptor: LRP1 (CD91) em hepatócitos e macrófagos <br>• Destino: o heme é liberado da hemopexina no endossomo acidificado (pH ~5) → heme é catabolizado pela heme-oxigenase → hemopexina é <strong>reciclada</strong> ao plasma <br><br><em>Hierarquia de captação na hemólise intravascular:</em> <br>1. Haptoglobina capta Hb intacta → esgotada primeiro <br>2. Hemopexina capta heme livre de Hb oxidada/desnaturada → esgotada depois <br>3. Albumina capta heme residual → forma metemalbumina (plasma pardo)"
+  },
+  {
+    "question": "A Proteína C Reativa recebeu este nome por sua capacidade de precipitar o polissacarídeo C da parede celular do Streptococcus pneumoniae; a letra 'C' na denominação refere-se ao componente C3 do complemento, que a PCR ativa diretamente após ligação ao fosfocolina bacteriano",
+    "answer": "F",
+    "type": "tf",
+    "justification": "O nome 'PCR' foi dado por Tillett e Francis (1930) porque a proteína precipitava o <strong>polissacarídeo C</strong> da parede celular do pneumococo (o polissacarídeo sorotípico de Quellung) — não o C3 do complemento. A letra 'C' refere-se ao <strong>polissacarídeo C (componente C) do pneumococo</strong>. <br><br><em>Coincidência de nomenclatura:</em> o 'C' na PCR = polissacarídeo C pneumocócico; o 'C' em C3/C4 = nomenclatura sequencial do sistema complemento. São completamente independentes. <br><br>A PCR de fato ativa o complemento, mas pela <strong>via clássica</strong> ao recrutar C1q (não C3 diretamente). O mecanismo é: PCR + fosfocolina → recruta C1q → ativa C1r/C1s → C4/C2 → C3 convertase (C4b2a) → C3a e C3b → amplificação. <br><br><em>Aplicação clínica histórica:</em> a reação de precipitação com polissacarídeo C foi usada clinicamente para detectar infecção pneumocócica antes do desenvolvimento dos métodos imunológicos modernos — a positividade indicava infecção ativa, pois PCR só está elevada no plasma de indivíduos com inflamação aguda."
+  },
+  {
+    "question": "No mieloma de cadeia leve, a eletroforese sérica pode ser falsamente normal pois as cadeias leves livres têm meia-vida sérica muito curta e são rapidamente depuradas pelo rim; a dosagem de cadeias leves livres séricas com razão κ/λ alterada e a eletroforese de proteínas urinárias (proteinúria de Bence-Jones) são imprescindíveis para o diagnóstico",
+    "answer": "V",
+    "type": "tf",
+    "justification": "O mieloma de cadeia leve ('light chain myeloma') representa ~16% de todos os mielomas e apresenta desafios diagnósticos únicos: <br><br><em>Por que a SPEP pode ser normal:</em> as cadeias leves livres (κ ou λ) têm peso molecular de ~25 kDa (monômero κ) ou ~50 kDa (dímero λ) e meia-vida sérica de apenas 2–6 horas — são filtradas e catabolizadas pelos túbulos renais proximal muito rapidamente, não acumulando no soro a ponto de gerar pico M visível na eletroforese. <br><br><strong>Diagnóstico correto:</strong> <br>• <strong>Dosagem de FLC séricas (Freelite™):</strong> detecta κ e λ livres em ng/mL; razão κ/λ >100 ou <0,01 é altamente sugestiva de mieloma <br>• <strong>Eletroforese de proteínas urinárias:</strong> detecta Bence-Jones (cadeias leves urinárias) <br>• <strong>Imunofixação urinária:</strong> melhor que SPEP para confirmar isótipo <br><br><em>Relevância:</em> mieloma de cadeia leve tem maior risco de nefropatia de cilindros ('rim de mieloma') por precipitação de cadeias leves nos túbulos, levando à insuficiência renal rápida se não diagnosticado."
+  },
+  {
+    "question": "Na fórmula de Starling, a pressão hidrostática capilar no extremo arterial (~35 mmHg) supera a pressão oncótica (~28 mmHg), favorecendo filtração; no extremo venoso, Pc cai para ~15 mmHg tornando a pressão oncótica dominante, promovendo reabsorção; o fluido residual não reabsorvido é retornado ao plasma via sistema linfático, cuja falência causa linfedema",
+    "answer": "V",
+    "type": "tf",
+    "justification": "O modelo clássico de Starling descreve: <br>• <strong>Extremo arterial:</strong> Pc (35) – Pi (−3) – [πc (28) – πi (8)] = 35 + 3 − 28 + 8 = +18 mmHg → filtração <br>• <strong>Extremo venoso:</strong> Pc (15) – Pi (−3) – [πc (28) – πi (8)] = 15 + 3 − 28 + 8 = −2 mmHg → reabsorção <br><br><em>Nota:</em> o modelo de Starling clássico foi refinado nos anos 2000 (modelo de Starling revisto): na realidade, há pouca reabsorção líquida no extremo venoso — a maior parte do fluido filtrado é retornado pelo sistema linfático, não por reabsorção. O linfático drena ~2–4 L/dia. <br><br><strong>Etiologias do edema pelo modelo de Starling:</strong> <br>• ↑ Pc: insuficiência cardíaca, hipertensão portal <br>• ↓ πc: hipoalbuminemia (nefrótica, cirrose, desnutrição) <br>• ↑ Permeabilidade capilar (↓ σ): sepse, queimaduras, inflamação <br>• Obstrução linfática: filariose, pós-cirurgia (linfedema pós-mastectomia)"
+  },
+  {
+    "question": "O ânion gap corrigido para albumina é fundamental em pacientes críticos: para cada grama por decilitro de redução na albumina abaixo de 4 g/dL, o AG calculado diminui ~2,5 mEq/L; sem correção, acidoses metabólicas de AG elevado podem ser mascaradas em pacientes hipoalbuminêmicos, induzindo erro diagnóstico — por exemplo, tratamento de 'acidose hiperclorêmica' quando na realidade há acidose lática concomitante não reconhecida",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A correção do ânion gap para albumina é essencial em UTI e é frequentemente negligenciada: <br><br><strong>Fórmula:</strong> AG corrigido = AG calculado + 2,5 × (4,0 − albumina sérica em g/dL) <br><br><em>Exemplo clínico:</em> paciente séptico com Na⁺ 140, Cl⁻ 108, HCO₃⁻ 12, albumina 1,5 g/dL: <br>• AG calculado = 140 − (108 + 12) = 20 mEq/L (parece moderadamente elevado) <br>• AG corrigido = 20 + 2,5 × (4 − 1,5) = 20 + 6,25 = <strong>26,25 mEq/L</strong> (gravemente elevado!) <br><br><em>Fisiopatologia:</em> a albumina carrega carga negativa (~15 mEq/L equivalente) — quando cai, esse 'ânion' some, reduzindo o AG calculado mesmo sem mudança nos ânions patológicos. Sem correção: lactato elevado causa AG aparente de 20 (que parece moderado) quando na realidade o AG corrigido de 26 revela acidose lática grave mascarada. <br><br><em>Delta-delta adicional:</em> para verificar se há distúrbio misto: ΔAG/ΔHCO₃ — se >2 sugere alcalose metabólica concomitante; se <1 sugere acidose hiperclorêmica concomitante."
+  },
+  {
+    "question": "A TBG (Thyroid-Binding Globulin) transporta ~75% da T4 e T3 circulantes e pertence à família das serpinas apesar de não possuir atividade antiprotease; estrógenos exógenos (anticoncepcionais orais) e gravidez elevam a TBG, aumentando T4 e T3 totais sem alterar as frações livres (fT4, fT3) — por isso sempre avaliar TSH e T4 livre, nunca T4 total isoladamente",
+    "answer": "V",
+    "type": "tf",
+    "justification": "Todos os pontos estão corretos: <br>• TBG transporta ~75% da T4 e ~75% da T3 (a transtiretina transporta ~20% da T4 e albumina ~5%) <br>• TBG pertence à família das <strong>serpinas</strong> (SERine Protease INhibitors) mas perdeu a atividade antiprotease durante a evolução — a alça RCL está modificada e não funciona como inibidor de protease. Outros membros das serpinas sem atividade antiprotease: CBG (corticosteroid-binding globulin), SHBG <br>• Estrógenos → ↑ glicosilação da TBG → meia-vida mais longa → ↑ TBG sérica → captura mais T4/T3 → ↓ T4 livre transitoriamente → ↑ TSH → mais síntese de T4/T3 até novo equilíbrio → T4 total ↑ mas fT4 normal <br><br><em>Implicação em gestação:</em> gestantes precisam de ~30% mais T4 a partir de 4–6 semanas → mulheres com hipotireoidismo prévio em levotiroxina devem aumentar dose em 25–30% ao confirmar gravidez, mesmo antes de qualquer sintoma."
+  },
+  {
+    "question": "A imunofixação eletroforética é o método de referência para caracterizar o isótipo de um componente M; utiliza antissoros específicos para cada classe de cadeia pesada (anti-IgG, anti-IgA, anti-IgM) e para os dois tipos de cadeia leve (anti-κ e anti-λ), permitindo definir o isótipo antes de investigações complementares como mielograma",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A <strong>imunofixação eletroforética (IFE)</strong> é o padrão-ouro para caracterização de gamopatias monoclonais: <br><br><strong>Metodologia:</strong> <br>1. Eletroforese do soro em gel <br>2. Sobreposição de antissoros específicos (geralmente 6 pistas): anti-IgG, anti-IgA, anti-IgM, anti-IgD, anti-IgE (menos usados), anti-κ, anti-λ <br>3. Lavagem e coloração <br>4. Interpretação: banda única em uma pista de cadeia pesada + uma pista de cadeia leve = proteína monoclonal (ex.: IgG-κ) <br><br><em>Distinção da SPEP:</em> a eletroforese convencional detecta o pico M e quantifica, mas não identifica o isótipo. A IFE identifica o isótipo sem necessariamente quantificar com precisão. <br><br><em>Sequência diagnóstica padrão:</em> SPEP detecta pico M → IFE caracteriza isótipo → FLC quantifica cadeia leve livre → mielograma quantifica plasmócitos → critérios CRAB/SLiM-CRAB determinam se é MGUS, mieloma latente ou mieloma ativo. <br><br><em>Sensibilidade:</em> IFE detecta componentes M a partir de ~200 mg/dL; para lesões mais sutis usa-se imunoeletroforese capilar ou citometria de fluxo do soro."
+  },
+  {
+    "question": "A procalcitonina eleva-se tanto em infecções bacterianas sistêmicas quanto em infecções virais graves (influenza, COVID-19 sem sobreinfecção bacteriana), o que limita sua utilidade para diferenciar etiologia bacteriana de viral em contexto de UTI",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A PCT apresenta resposta diferencial entre infecções bacterianas e virais, sendo sua diferenciação um ponto forte: <br><br><strong>Infecções bacterianas sistêmicas:</strong> endotoxinas (LPS gram-negativas) e ácido lipoteicóico (gram-positivas) estimulam diretamente a produção de PCT em tecidos parenquimatosos → PCT eleva-se marcadamente (>0,5 ng/mL) <br><br><strong>Infecções virais:</strong> os interferons tipo I (IFN-α e IFN-β) produzidos em resposta a vírus <strong>inibem</strong> a expressão do gene CALC-I (procalcitonina) → PCT permanece baixa ou levemente elevada (<0,1–0,25 ng/mL) mesmo em infecções virais graves sem sobreinfecção bacteriana <br><br><em>Exceções importantes:</em> <br>• COVID-19 com sobreinfecção bacteriana → PCT pode elevar-se <br>• COVID-19 grave com ARDS → PCT pode elevar-se moderadamente mesmo sem bacteria (mediadores inflamatórios intensos) <br>• Parainfluenza e algumas viroses sistêmicas em imunossuprimidos podem elevar levemente a PCT <br><br><em>Utilidade clínica documentada:</em> meta-análises mostram que protocolos guiados por PCT reduzem exposição a antibióticos em 25–35% sem aumento de mortalidade em UTI."
+  },
+  {
+    "question": "A deficiência de C1-inibidor (C1-INH), uma serpina, resulta em angioedema hereditário por ativação descontrolada da via clássica do complemento e do sistema calicreína-bradicinina; o tratamento inclui concentrado de C1-INH, icatibanto (antagonista do receptor B2 de bradicinina) ou ecalantida (inibidor de calicreína); anti-histamínicos e corticosteroides são eficazes para abortar as crises agudas",
+    "answer": "F",
+    "type": "tf",
+    "justification": "O mecanismo e os tratamentos específicos estão corretos, mas a afirmação sobre anti-histamínicos e corticosteroides está <strong>errada</strong>: <br><br><strong>Anti-histamínicos e corticosteroides NÃO são eficazes</strong> para angioedema hereditário (HAE) por deficiência de C1-INH — ao contrário do angioedema alérgico (mediado por histamina/IgE), o HAE é mediado por bradicinina, que age no receptor B2 independentemente de histamina. <br><br>Este é um erro com potencial letal: pacientes com HAE em crise aguda com edema de glote recebendo apenas anti-histamínicos sem o tratamento específico podem falecer por asfixia. <br><br><strong>Tratamento correto do HAE agudo:</strong> <br>• Concentrado de C1-INH (Berinert, Cinryze): repõe o inibidor deficiente <br>• Icatibanto (Firazyr): antagonista do receptor B2 de bradicinina <br>• Ecalantida: inibidor de calicreína plasmática (C1 domínio) <br>• Plasma fresco congelado: fonte de C1-INH em emergência sem tratamento específico <br><br><em>Profilaxia:</em> danazol (andrógeno sintético que aumenta síntese hepática de C1-INH), C1-INH IV profilático pré-procedimento."
+  },
+  {
+    "question": "A PCR eleva-se em 2–4 horas após o estímulo inflamatório, atinge pico em 6–12 horas e normaliza em 24–48h com a resolução da inflamação; esta cinética ultra-rápida a torna superior ao VHS e à procalcitonina para monitorização precoce de resposta a antibióticos nas primeiras 24h de tratamento",
+    "answer": "F",
+    "type": "tf",
+    "justification": "A cinética descrita está errada: <br><br><strong>Cinética correta da PCR:</strong> <br>• Início da elevação: 4–6 horas após o estímulo <br>• Pico: <strong>24–72 horas</strong> (não 6–12h) <br>• Normalização: <strong>3–7 dias</strong> após resolução da inflamação (não 24–48h) <br><br>Comparação com outros marcadores: <br>• <strong>PCR:</strong> pico 24–72h, normaliza em 3–7 dias <br>• <strong>Procalcitonina:</strong> pico mais precoce (6–24h), normaliza mais rápido (1–2 dias após adequado tratamento bacteriano) — portanto <strong>a PCT é mais rápida que a PCR</strong> para monitorização precoce de resposta a antibióticos <br>• <strong>VHS:</strong> pico em vários dias, normaliza em semanas <br><br><em>Conclusão:</em> a PCT (não a PCR) é superior para monitorização precoce de resposta a antibióticos nas primeiras 24–48h. A PCR tem cinética intermediária — útil mas menos dinâmica que a PCT. Para decisão de alta ou descontinuação de antibióticos, ambas são complementares."
+  },
+  {
+    "question": "Paciente com síndrome nefrótica, albumina de 2,0 g/dL e fenitoína total de 8 µg/mL: pela fórmula de Sheiner-Tozer, a fenitoína corrigida estimada é de aproximadamente 16 µg/mL (dentro do alvo de 10–20 µg/mL); portanto, aumentar a dose de fenitoína neste paciente poderia causar toxicidade mesmo com nível total aparentemente subterapêutico",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Cálculo:</strong> Fenitoína corrigida = 8 / [0,2 × 2,0 + 0,1] = 8 / [0,4 + 0,1] = 8 / 0,5 = <strong>16 µg/mL</strong> ✓ <br><br>Este caso ilustra um erro clínico frequente e potencialmente grave: o paciente com hipoalbuminemia tem menos proteína para ligar a fenitoína → fração livre aumentada → nível total aparentemente baixo (8 µg/mL) mas nível livre já dentro da faixa terapêutica (alvo de fenitoína livre: 1–2 µg/mL). <br><br><em>Sintomas de toxicidade por fenitoína (nível livre >2 µg/mL):</em> nistagmo (primeiro sinal), ataxia, disartria, confusão, sedação, overdose causa encefalopatia, bradicardia, hipotensão. <br><br><strong>Fórmulas de Sheiner-Tozer:</strong> <br>• Paciente sem insuficiência renal: Fcorrigida = Fmedida / (0,2 × albumina + 0,1) <br>• Paciente em hemodiálise: Fcorrigida = Fmedida / (0,1 × albumina + 0,1) <br><br><em>Conduta ideal:</em> dosar fenitoína livre sérica diretamente para confirmar antes de qualquer ajuste de dose."
+  },
+  {
+    "question": "A haptoglobina indetectável em paciente com Hb 7,0 g/dL, LDH 2.200 U/L e bilirrubina indireta 5 mg/dL confirma hemólise intravascular significativa mesmo na presença de PCR de 80 mg/L, pois o consumo de haptoglobina pela hemólise superou a produção estimulada pela fase aguda; a dosagem de hemopexina pode complementar o diagnóstico",
+    "answer": "V",
+    "type": "tf",
+    "justification": "A interpretação está correta: quando a haptoglobina está <strong>indetectável</strong> (não apenas baixa), o consumo pela hemólise certamente superou qualquer estímulo de síntese pela fase aguda, confirmando hemólise significativa. <br><br><em>Raciocínio:</em> na inflamação intensa (PCR 80 mg/L), a síntese de haptoglobina pode aumentar 2–4×. Mas se mesmo com esta supersíntese a haptoglobina está indetectável, a destruição hemolítica foi muito superior à produção — hemólise confirmada. <br><br>Em contraste, haptoglobina 'normal' de 80 mg/dL em contexto de PCR 80 mg/L pode ser ambígua (normal verdadeiro ou mascaramento de hemólise leve por síntese aumentada). <br><br><strong>Hemopexina como marcador complementar:</strong> em hemólise intravascular grave e prolongada, após esgotamento da haptoglobina, os eritrócitos continuam se rompendo → hemoglobina livre → oxidação → heme livre → hemopexina é consumida → hemopexina baixa confirma hemólise grave contínua. Além disso, metemalbumina (albumina + heme) aparece no plasma como marcador tardio de hemólise grave."
+  },
+  {
+    "question": "Qual das seguintes afirmativas descreve corretamente o mecanismo pelo qual a albumina contribui para o tampão ácido-base plasmático não bicarbonato?",
+    "options": [
+      "Os resíduos de histidina (pKa ~6,0) e os grupos carboxila e amino livres da albumina atuam como tampão em pH fisiológico; a hipoalbuminemia reduz esta capacidade, causando alcalose metabólica e diminuindo o ânion gap não corrigido",
+      "A albumina tampona por meio de seus resíduos de lisina (pKa ~10,5), que captam prótons em qualquer pH fisiológico, sendo o efeito máximo observado em alcalose grave",
+      "O efeito tampão da albumina é irrelevante em pH 7,4 pois seu pI de 4,7 está muito distante — o tamponamento ocorre efetivamente apenas em acidoses abaixo de pH 5,5",
+      "A albumina contribui ao tampão exclusivamente por meio de grupos fosfato de suas cadeias de carboidratos N-ligadas; por não ser glicosilada, sua capacidade tamponante é mínima comparada às glicoproteínas plasmáticas",
+      "A albumina só atua como tampão ácido-base em estados de hiperalbuminemia; em concentrações normais (3,5–5,0 g/dL), a contribuição é clinicamente insignificante"
+    ],
+    "answer": ["Os resíduos de histidina (pKa ~6,0) e os grupos carboxila e amino livres da albumina atuam como tampão em pH fisiológico; a hipoalbuminemia reduz esta capacidade, causando alcalose metabólica e diminuindo o ânion gap não corrigido"],
+    "type": "multi",
+    "justification": "A albumina é o <strong>principal tampão não bicarbonato do plasma</strong>, contribuindo através de múltiplos grupos ionizáveis: <br><br>• <strong>Resíduos de histidina (pKa ~6,0 na oxiHb, relevante em pH fisiológico):</strong> os 16 resíduos de histidina da albumina são os principais responsáveis pela tamponância em pH próximo ao fisiológico <br>• <strong>Grupos carboxila terminais e cadeias laterais de Asp/Glu:</strong> captam/liberam H⁺ <br>• <strong>Grupos amino terminais e Lys/Arg:</strong> contribuem em pH mais alto <br><br><em>Consequência clínica da hipoalbuminemia:</em> cada 1 g/dL de queda na albumina reduz o AG em ~2,5 mEq/L E pode causar alcalose metabólica leve pela redução do tampão aniônico. Pacientes com albumina de 1,5 g/dL têm AG 'normal esperado' de apenas ~5–7 mEq/L — qualquer AG >12 já representa elevação significativa. <br><br><em>Por que as outras opções estão erradas:</em> lisina (pKa 10,5) está totalmente protonada em pH 7,4 → irrelevante para tampão; a albumina não é glicosilada (sem grupos fosfato de carboidratos); o efeito tampão é clinicamente relevante em concentrações normais."
+  },
+  {
+    "question": "Paciente cirrótico, ascite tensa. Albumina sérica = 2,3 g/dL; albumina no líquido ascítico = 0,6 g/dL; proteínas totais no líquido = 0,9 g/dL. Qual o SAAG e quais etiologias são compatíveis?",
+    "options": [
+      "SAAG = 1,7 g/dL — compatível com hipertensão portal (cirrose ou insuficiência cardíaca congestiva direita)",
+      "SAAG = 1,7 g/dL — compatível com peritonite tuberculosa, pois proteínas totais no líquido de 0,9 g/dL são características de exsudato tuberculoso",
+      "SAAG = 2,9 g/dL — compatível com síndrome nefrótica com hipertensão portal concomitante",
+      "SAAG = 0,9 g/dL — compatível com carcinomatose peritoneal, pois gradiente baixo indica processo neoplásico",
+      "SAAG = 1,7 g/dL — compatível exclusivamente com cirrose hepática alcoólica avançada, sendo insuficiência cardíaca excluída pelas proteínas totais baixas no líquido"
+    ],
+    "answer": ["SAAG = 1,7 g/dL — compatível com hipertensão portal (cirrose ou insuficiência cardíaca congestiva direita)"],
+    "type": "multi",
+    "justification": "<strong>Cálculo:</strong> SAAG = albumina sérica − albumina ascítica = 2,3 − 0,6 = <strong>1,7 g/dL</strong> ≥ 1,1 g/dL → ascite por hipertensão portal. <br><br><em>Por que a opção B está errada:</em> tuberculose peritoneal dá SAAG <1,1 g/dL (exsudato com albumina ascítica alta) — proteínas totais baixas (0,9 g/dL) tornam tuberculose ainda menos provável (TB causa exsudato com proteínas >3 g/dL tipicamente). <br><br><em>Por que a opção E está errada:</em> insuficiência cardíaca também dá SAAG ≥1,1 g/dL, mas geralmente com proteínas totais no líquido >2,5 g/dL (transudato cardíaco tem mais proteínas que o hepático). Proteínas de 0,9 g/dL favorecem cirrose, mas <strong>não excluem</strong> ICC — são achados que somam à probabilidade. <br><br><strong>Distinção cirrose vs ICC pelo SAAG:</strong> <br>• SAAG ≥1,1 + proteínas totais <2,5 g/dL → cirrose/portal pura <br>• SAAG ≥1,1 + proteínas totais >2,5 g/dL → ICC ou Budd-Chiari (capilares sinusoidais hepáticos/centrais mais permeáveis a proteínas)"
+  },
+  {
+    "question": "Paciente séptico em UTI. Na gasometria: pH 7,23; HCO₃⁻ = 13 mEq/L. Eletrólitos: Na⁺ = 141 mEq/L; Cl⁻ = 107 mEq/L. Albumina = 1,5 g/dL. Qual o ânion gap corrigido e a interpretação mais adequada?",
+    "options": [
+      "AG calculado = 21; AG corrigido = 27,5 — acidose metabólica de AG elevado não reconhecida sem correção; dosar lactato urgentemente para descartar acidose lática",
+      "AG calculado = 21; AG corrigido = 21 — a correção para albumina não se aplica quando albumina está acima de 1 g/dL",
+      "AG calculado = 21; AG corrigido = 14,5 — a hipoalbuminemia estava mascarando AG normal, revelando acidose hiperclorêmica pura como distúrbio real",
+      "AG calculado = 28; AG corrigido = 34,5 — acidose metabólica mista com componente hiperclorêmico identificado pela normalização do AG",
+      "AG calculado = 21; AG corrigido = 27,5 — o AG elevado é esperado em qualquer UTI e não necessita de investigação adicional neste contexto"
+    ],
+    "answer": ["AG calculado = 21; AG corrigido = 27,5 — acidose metabólica de AG elevado não reconhecida sem correção; dosar lactato urgentemente para descartar acidose lática"],
+    "type": "multi",
+    "justification": "<strong>Cálculo passo a passo:</strong> <br>AG calculado = Na⁺ − (Cl⁻ + HCO₃⁻) = 141 − (107 + 13) = 141 − 120 = <strong>21 mEq/L</strong> <br>AG corrigido = 21 + 2,5 × (4,0 − 1,5) = 21 + 2,5 × 2,5 = 21 + 6,25 = <strong>27,25 ≈ 27,5 mEq/L</strong> <br><br><em>Interpretação:</em> sem correção, AG de 21 poderia ser minimizado. Com correção, AG de 27,5 indica acidose metabólica de AG elevado <strong>grave</strong> — em contexto séptico, a causa mais provável é acidose lática (lactato >2 mEq/L elevaria o AG). <br><br><em>Por que a opção C está errada:</em> a correção não 'revela' AG de 14,5 — ela <em>aumenta</em> o AG (de 21 para 27,5), pois a hipoalbuminemia estava <em>mascarando</em> um AG real maior. A lógica é: a albumina normalmente contribui com ânions (~2,5 mEq/L por g/dL); com albumina baixa, esses ânions 'somem' do denominador do AG → AG calculado fica artificialmente baixo. <br><br><em>Investigação adicional:</em> lactato sérico, cetonas, osmolalidade (para descartar metanol/etilenoglicol), dosagem de salicilatos em contexto adequado."
+  },
+  {
+    "question": "Sobre a SHBG e avaliação do estado androgênico, assinale a(s) alternativa(s) correta(s):",
+    "options": [
+      "Em mulheres com SOP e hiperinsulinemia crônica, a SHBG reduzida eleva a fração livre de testosterona, explicando manifestações hiperandrogênicas mesmo com testosterona total dentro dos limites normais",
+      "O FAI (Índice de Androgênios Livres = testosterona total × 100 / SHBG, ambos em nmol/L) acima de 5 em mulheres indica hiperandrogenismo bioquímico independentemente da testosterona total",
+      "O uso de anticoncepcionais orais combinados (AOC) eleva a SHBG, reduzindo a testosterona livre e podendo melhorar as manifestações hiperandrogênicas da SOP enquanto o AOC é mantido",
+      "Na cirrose hepática avançada, a SHBG encontra-se tipicamente elevada por síntese hepática aumentada em resposta ao hipogonadismo, contribuindo para redução paradoxal de testosterona livre e ginecomastia em homens",
+      "A testosterona biodisponível inclui apenas a fração livre (1–3%), excluindo a fração ligada à albumina por apresentar afinidade de ligação equivalente à SHBG e não se dissociar em tecidos-alvo"
+    ],
+    "answer": [
+      "Em mulheres com SOP e hiperinsulinemia crônica, a SHBG reduzida eleva a fração livre de testosterona, explicando manifestações hiperandrogênicas mesmo com testosterona total dentro dos limites normais",
+      "O FAI (Índice de Androgênios Livres = testosterona total × 100 / SHBG, ambos em nmol/L) acima de 5 em mulheres indica hiperandrogenismo bioquímico independentemente da testosterona total",
+      "O uso de anticoncepcionais orais combinados (AOC) eleva a SHBG, reduzindo a testosterona livre e podendo melhorar as manifestações hiperandrogênicas da SOP enquanto o AOC é mantido"
+    ],
+    "type": "multi",
+    "justification": "<strong>Alternativas corretas (A, B, C):</strong> <br>• A: insulina suprime SHBG hepática → ↓ SHBG → ↑ T livre → manifestações hiperandrogênicas mesmo com T total normal <br>• B: FAI >5 em mulheres = hiperandrogenismo bioquímico — útil quando T total está equivocamente normal <br>• C: estrógeno nos AOC → ↑ SHBG → ↓ T livre → melhora hirsutismo/acne na SOP <br><br><strong>Por que D está errada:</strong> na cirrose avançada, a <strong>SHBG está elevada</strong> (não por aumento de síntese em resposta ao hipogonadismo, mas por redução do catabolismo hepático da SHBG e pelo hiperestrogenismo da cirrose que estimula síntese de SHBG). Isso resulta em mais T ligada à SHBG → menos T livre → sintomas de hipogonadismo em homens cirróticos. A ginecomastia na cirrose é principalmente pela redução do catabolismo de estradiol (↑ estradiol livre), não apenas pela SHBG. <br><br><strong>Por que E está errada:</strong> testosterona biodisponível inclui <strong>T livre + T ligada à albumina</strong> (não apenas T livre). A ligação à albumina é de baixa afinidade e a T se dissocia facilmente → biodisponível. SHBG liga com muito maior afinidade → T ligada à SHBG não é biodisponível."
+  },
+  {
+    "question": "Sobre as classes de imunoglobulinas e suas propriedades, assinale a(s) alternativa(s) correta(s):",
+    "options": [
+      "A IgM sérica é um pentâmero com 10 sítios de ligação e é o ativador mais potente da via clássica do complemento; anticorpos do sistema ABO são predominantemente IgM, explicando por que reações hemolíticas ABO são geralmente mais graves que as por IgG",
+      "A IgA secretora é um dímero estabilizado pela peça J e pelo componente secretor, que a protege de proteases luminais; ao contrário da IgG, não ativa o complemento pela via clássica — sua proteção é por neutralização e exclusão imune",
+      "A IgG4 não ativa eficientemente o complemento pela via clássica e tem baixa afinidade por receptores Fc ativadores; a doença relacionada à IgG4 é mediada por inflamação fibro-inflamatória e não por citotoxicidade dependente de complemento",
+      "Na agamaglobulinemia de Bruton (XLA), a mutação na BTK impede maturação de pré-linfócito B para linfócito B maduro; os pacientes tornam-se sintomáticos após 6 meses de vida com o esgotamento da IgG materna transferida pela placenta",
+      "A IgD circulante tem papel imunológico sérico bem estabelecido de neutralização de toxinas bacterianas, sendo secretada em concentrações comparáveis às da IgA nas mucosas respiratórias"
+    ],
+    "answer": [
+      "A IgM sérica é um pentâmero com 10 sítios de ligação e é o ativador mais potente da via clássica do complemento; anticorpos do sistema ABO são predominantemente IgM, explicando por que reações hemolíticas ABO são geralmente mais graves que as por IgG",
+      "A IgA secretora é um dímero estabilizado pela peça J e pelo componente secretor, que a protege de proteases luminais; ao contrário da IgG, não ativa o complemento pela via clássica — sua proteção é por neutralização e exclusão imune",
+      "A IgG4 não ativa eficientemente o complemento pela via clássica e tem baixa afinidade por receptores Fc ativadores; a doença relacionada à IgG4 é mediada por inflamação fibro-inflamatória e não por citotoxicidade dependente de complemento",
+      "Na agamaglobulinemia de Bruton (XLA), a mutação na BTK impede maturação de pré-linfócito B para linfócito B maduro; os pacientes tornam-se sintomáticos após 6 meses de vida com o esgotamento da IgG materna transferida pela placenta"
+    ],
+    "type": "multi",
+    "justification": "<strong>Alternativas corretas (A, B, C, D):</strong> <br>• A: IgM pentamérica tem 10 sítios de ligação → excelente para aglutinação; ativa C1q mais eficientemente que IgG por expor múltiplos domínios Fc simultaneamente; anticorpos ABO são IgM naturais <br>• B: sIgA é dímero (2 moléculas de IgA + peça J + componente secretor). A IgG1/IgG3 ativam via clássica; sIgA protege por exclusão imune (formação de agregados mucina-anticorpo que aprisionam patógenos) <br>• C: IgG4 tem características únicas — não fixa complemento, faz troca de metades (half-antibody exchange), e a doença IgG4-relacionada causa inflamação esclerosante fibrótica sem necrose por complemento <br>• D: BTK (Bruton's Tyrosine Kinase) é essencial para sinalização do pré-BCR; XLA = ausência de linfócitos B maduros → todas as classes de Ig ausentes. Proteção até ~6 meses vem da IgG materna (meia-vida 23 dias). <br><br><strong>Por que E está errada:</strong> a IgD sérica tem papel pouco caracterizado — funciona principalmente como receptor de superfície (BCR) em linfócitos B naïve. A função sérica de neutralização de toxinas comparável à IgA nas mucosas é incorreta e não tem embasamento."
+  },
+  {
+    "question": "Mulher de 70 anos com Hb 7,8 g/dL, dor óssea difusa, creatinina 2,9 mg/dL e cálcio 12,8 mg/dL. Eletroforese mostra pico M estreito na região gama. Qual(is) das seguintes condutas é(são) mandatória(s) para confirmar e estadiar a doença?",
+    "options": [
+      "Imunofixação eletroforética sérica para definir o isótipo do componente M",
+      "Dosagem de cadeias leves livres séricas (κ e λ) com cálculo da razão κ/λ",
+      "Mielograma ou biópsia de medula óssea com análise citogenética (FISH para del17p, t(4;14), t(14;16))",
+      "Dosagem de beta-2-microglobulina e albumina sérica para estadiamento pelo ISS/R-ISS",
+      "Ressonância magnética de coluna e pelve ou PET-CT para avaliação de doença óssea focal não detectada na radiografia convencional"
+    ],
+    "answer": [
+      "Imunofixação eletroforética sérica para definir o isótipo do componente M",
+      "Dosagem de cadeias leves livres séricas (κ e λ) com cálculo da razão κ/λ",
+      "Mielograma ou biópsia de medula óssea com análise citogenética (FISH para del17p, t(4;14), t(14;16))",
+      "Dosagem de beta-2-microglobulina e albumina sérica para estadiamento pelo ISS/R-ISS",
+      "Ressonância magnética de coluna e pelve ou PET-CT para avaliação de doença óssea focal não detectada na radiografia convencional"
+    ],
+    "type": "multi",
+    "justification": "<strong>Todas as 5 condutas são mandatórias</strong> para diagnóstico completo e estadiamento do mieloma múltiplo: <br><br>• <strong>A — IFE:</strong> caracteriza o isótipo (ex.: IgG-κ) — imprescindível antes de qualquer tratamento <br>• <strong>B — FLC:</strong> detecta mielomas secretores de cadeia leve e permite monitorização do clone (especialmente nos 16% de mielomas LC-only onde SPEP pode ser normal) <br>• <strong>C — Mielograma + FISH:</strong> quantifica plasmócitos (≥10% = mieloma vs MGUS) e detecta aberrações citogenéticas de alto risco que alteram o regime de tratamento: del(17p), t(4;14), t(14;16) = risco citogenético alto → uso obrigatório de bortezomibe ou carfilzomibe <br>• <strong>D — β2M + albumina → R-ISS:</strong> R-ISS stage III = β2M ≥5,5 mg/L + citogenética de alto risco + LDH elevada → pior prognóstico, tratamento mais agressivo <br>• <strong>E — RM ou PET-CT:</strong> a radiografia convencional detecta apenas lesões ≥1 cm e >30% de destruição óssea; RM detecta doença difusa intramedular e lesões focais precoces; PET-TC avalia lesões extraósseas e resposta ao tratamento <br><br><em>Diagnóstico de mieloma ativo requer:</em> ≥10% plasmócitos clonais + ≥1 critério CRAB ou SLiM-CRAB."
+  },
+  {
+    "question": "Sobre a resposta de fase aguda e as proteínas plasmáticas, qual das seguintes afirmativas está incorreta?",
+    "options": [
+      "A SAA e a PCR são as proteínas de fase aguda de maior magnitude de elevação (até 1000×); a SAA é precursora do amiloide A depositado na amiloidose secundária (AA) em doenças inflamatórias crônicas",
+      "A pré-albumina e a RBP são reactantes negativas com meia-vida curta; devem ser interpretadas junto com a PCR para distinguir queda por desnutrição de queda por inflamação",
+      "A ferritina é proteína de fase aguda positiva; ferritina elevada em paciente séptico não confirma sobrecarga de ferro e não exclui deficiência de ferro coexistente — sempre integrar com saturação de transferrina",
+      "A haptoglobina é proteína de fase aguda negativa que cai na inflamação sistêmica; portanto, em qualquer paciente com sepse e hemólise concomitante, a haptoglobina estará sempre indetectável, facilitando o diagnóstico diferencial",
+      "A transferrina cai na inflamação mediada pela hepcidina induzida por IL-6 (sequestro intracelular de ferro); este mecanismo é distinto da albumina, que cai por downregulation direta do gene ALB via STAT3 nos hepatócitos"
+    ],
+    "answer": ["A haptoglobina é proteína de fase aguda negativa que cai na inflamação sistêmica; portanto, em qualquer paciente com sepse e hemólise concomitante, a haptoglobina estará sempre indetectável, facilitando o diagnóstico diferencial"],
+    "type": "multi",
+    "justification": "<strong>A alternativa D contém dois erros:</strong> <br>1. A haptoglobina é proteína de fase aguda <strong>positiva</strong> (não negativa) — eleva-se na inflamação <br>2. Não estará 'sempre indetectável' em sepse com hemólise — pode estar normal ou até elevada se a síntese estimulada pela inflamação compensar o consumo pela hemólise leve <br><br><em>Por que as outras estão corretas:</em> <br>• A: SAA e PCR elevam-se até 1000×; SAA precursora de amiloide AA na AR, DII, osteomielite crônica <br>• B: pré-albumina (t½ 48h) e RBP são reactantes negativas — caem tanto por desnutrição quanto por inflamação; PCR elevada concomitante indica que a queda é inflamatória <br>• C: ferritina como fase aguda positiva pode estar elevada mesmo na deficiência de ferro em paciente inflamado — saturação de transferrina <16% em contexto inflamatório confirma deficiência funcional de ferro <br>• E: os mecanismos de queda de albumina (downregulation por STAT3) e transferrina (via hepcidina-hepcidina-ferroportina) são de fato distintos, embora ambos sejam induzidos pela IL-6"
+  },
+  {
+    "question": "Sobre os padrões eletroforéticos das proteínas séricas, assinale a(s) alternativa(s) correta(s):",
+    "options": [
+      "O padrão inflamatório agudo mostra redução da albumina, aumento das frações alfa-1 e alfa-2 (alfa-1-AT, orosomucoide, haptoglobina, alfa-2-macroglobulina), aumento da fração beta (fibrinogênio, C3) e fração gama variável",
+      "O padrão nefrótico mostra redução marcada de albumina, aumento relativo da banda alfa-2 (alfa-2-macroglobulina, grande demais para ser filtrada) e redução da banda gama por perda urinária de imunoglobulinas",
+      "A gamopatia monoclonal apresenta pico estreito e pontiagudo em gama (ou beta) — representa proteína estruturalmente idêntica de um único clone; a imunofixação mostra banda única de isótipo definido, ao contrário da gamopatia policlonal que mostra múltiplas bandas difusas",
+      "A deficiência de alfa-1-antitripsina é reconhecível na eletroforese pela ausência ou redução acentuada da banda alfa-1, devendo ser investigada em jovens com enfisema panacinar de predomínio basal sem tabagismo",
+      "O padrão inflamatório agudo mostra aumento de todas as frações séricas incluindo a albumina, pois o estado catabólico agudo aumenta globalmente a síntese proteica hepática para suprir a demanda metabólica"
+    ],
+    "answer": [
+      "O padrão inflamatório agudo mostra redução da albumina, aumento das frações alfa-1 e alfa-2 (alfa-1-AT, orosomucoide, haptoglobina, alfa-2-macroglobulina), aumento da fração beta (fibrinogênio, C3) e fração gama variável",
+      "O padrão nefrótico mostra redução marcada de albumina, aumento relativo da banda alfa-2 (alfa-2-macroglobulina, grande demais para ser filtrada) e redução da banda gama por perda urinária de imunoglobulinas",
+      "A gamopatia monoclonal apresenta pico estreito e pontiagudo em gama (ou beta) — representa proteína estruturalmente idêntica de um único clone; a imunofixação mostra banda única de isótipo definido, ao contrário da gamopatia policlonal que mostra múltiplas bandas difusas",
+      "A deficiência de alfa-1-antitripsina é reconhecível na eletroforese pela ausência ou redução acentuada da banda alfa-1, devendo ser investigada em jovens com enfisema panacinar de predomínio basal sem tabagismo"
+    ],
+    "type": "multi",
+    "justification": "<strong>Alternativas corretas: A, B, C, D</strong> <br><br><strong>A:</strong> o padrão inflamatório agudo é um redirecionamento de síntese hepática: albumina (reactante negativa) ↓, proteínas de fase aguda positiva ↑ — reflete substituição metabólica, não ausência global de síntese <br><br><strong>B:</strong> na nefrótica, o aumento de alfa-2-macroglobulina (720 kDa) é marcante — pode ser 2–3× o normal. A redução da gama reflete perda urinária de IgG (150 kDa) com relativa preservação de IgM (970 kDa, grande demais para ser filtrada) <br><br><strong>C:</strong> o pico M monoclonal é estreito ('spike') por ser proteína idêntica com mobilidade eletroforética uniforme; a policlonal é larga ('broad') por representar múltiplas proteínas com mobilidades ligeiramente diferentes <br><br><strong>D:</strong> a ausência da banda alfa-1 (que consiste >90% de alfa-1-antitripsina) é altamente sugestiva de deficiência — diagnóstico inicial na eletroforese, confirmado por dosagem e fenotipagem <br><br><strong>Por que E está errada:</strong> na inflamação aguda, a albumina cai (não sobe) — este é um dos critérios diagnósticos centrais da resposta inflamatória sistêmica"
+  },
+  {
+    "question": "Homem de 40 anos, não fumante, com enfisema panacinar de predomínio basal e TGO/TGP discretamente elevadas. Qual conjunto de achados confirma o diagnóstico e é indicação de terapia de aumento com AAT IV?",
+    "options": [
+      "AAT sérica <57 mg/dL; fenótipo PiZZ por isoeletrofocalização; biópsia hepática com inclusões PAS-positivas diastase-resistentes nos hepatócitos; enfisema documentado em TC de tórax",
+      "AAT sérica 130 mg/dL; fenótipo PiMZ; DLCO reduzida em 35%; ausência de inclusões na biópsia hepática",
+      "AAT sérica <57 mg/dL; fenótipo PiSZ; ausência de lesão hepática — qualquer nível abaixo do limiar protetor indica terapia de aumento independentemente do fenótipo",
+      "AAT sérica 75 mg/dL; fenótipo PiMM; enfisema basal — nível sérico dentro do limiar protetor sugere variante funcional não detectada pelos métodos convencionais",
+      "AAT sérica <57 mg/dL; fenótipo PiMZ heterozigoto; presença de enfisema documentado — apenas homozigotos PiZZ têm indicação de terapia de aumento"
+    ],
+    "answer": ["AAT sérica <57 mg/dL; fenótipo PiZZ por isoeletrofocalização; biópsia hepática com inclusões PAS-positivas diastase-resistentes nos hepatócitos; enfisema documentado em TC de tórax"],
+    "type": "multi",
+    "justification": "<strong>A alternativa A descreve o quadro clássico completo de deficiência grave de AAT com indicação de terapia de aumento.</strong> <br><br><strong>Critérios para terapia de aumento (AAT IV semanal, ex.: Prolastin 60 mg/kg):</strong> <br>• Fenótipo de deficiência grave (PiZZ, PiZ-null, Pi-null-null) <br>• AAT sérica <57 mg/dL (limiar protetor: 11 µM ≈ 57 mg/dL) <br>• Doença pulmonar obstrutiva documentada (DLCO reduzida, TC com enfisema) <br>• Paciente em abstinência tabágica <br><br><em>Por que B está errada:</em> fenótipo PiMZ heterozigoto geralmente tem AAT de 60–100 mg/dL (acima do limiar protetor) — não indica terapia de aumento na maioria das diretrizes <br><em>Por que C está errada:</em> PiSZ pode ter AAT <57 mg/dL em alguns casos, mas a terapia de aumento é indicada mais para PiZZ/null — para PiSZ, é decisão individualizada <br><em>Por que D está errada:</em> fenótipo PiMM com AAT normal não é deficiência de AAT; o enfisema deve ter outra etiologia <br><em>Por que E está errada:</em> homozigotos PiZZ têm indicação mais clara, mas heterozigotos compostos como PiZ-null com AAT <57 mg/dL e enfisema também podem ter indicação"
+  },
+  {
+    "question": "Sobre o metabolismo do ferro e o papel da transferrina e da hepcidina, identifique a(s) afirmativa(s) correta(s):",
+    "options": [
+      "Saturação de transferrina <16% com ferritina baixa é o perfil mais específico para anemia ferropriva verdadeira; saturação <16% com ferritina elevada sugere anemia de doença crônica com deficiência funcional de ferro",
+      "Na anemia de doença crônica, a hepcidina (induzida por IL-6) degrada a ferroportina, aprisionando ferro nos macrófagos; o resultado é hipoferremia com TIBC baixa ou normal e ferritina elevada — padrão oposto à ferropriva onde TIBC sobe e ferritina cai",
+      "A hemocromatose hereditária (HFE C282Y homozigota) resulta em síntese insuficiente de hepcidina pelo fígado, levando a absorção intestinal excessiva; a saturação de transferrina >45% em jejum é o marcador mais precoce, precedendo a elevação de ferritina",
+      "Em paciente com ferritina elevada e inflamação concomitante, a ferritina elevada não confirma nem exclui sobrecarga de ferro; a saturação de transferrina >45% em jejum é mais específica para hemocromatose neste contexto",
+      "Transferrina sérica elevada com saturação baixa em qualquer paciente anêmico confirma definitivamente anemia ferropriva e justifica início imediato de sulfato ferroso sem investigação adicional"
+    ],
+    "answer": [
+      "Saturação de transferrina <16% com ferritina baixa é o perfil mais específico para anemia ferropriva verdadeira; saturação <16% com ferritina elevada sugere anemia de doença crônica com deficiência funcional de ferro",
+      "Na anemia de doença crônica, a hepcidina (induzida por IL-6) degrada a ferroportina, aprisionando ferro nos macrófagos; o resultado é hipoferremia com TIBC baixa ou normal e ferritina elevada — padrão oposto à ferropriva onde TIBC sobe e ferritina cai",
+      "A hemocromatose hereditária (HFE C282Y homozigota) resulta em síntese insuficiente de hepcidina pelo fígado, levando a absorção intestinal excessiva; a saturação de transferrina >45% em jejum é o marcador mais precoce, precedendo a elevação de ferritina",
+      "Em paciente com ferritina elevada e inflamação concomitante, a ferritina elevada não confirma nem exclui sobrecarga de ferro; a saturação de transferrina >45% em jejum é mais específica para hemocromatose neste contexto"
+    ],
+    "type": "multi",
+    "justification": "<strong>Alternativas corretas: A, B, C, D</strong> <br><br><strong>A:</strong> ferritina baixa (<12 ng/mL) é praticamente diagnóstica de ferropenia (especificidade >99%); com inflamação, ferritina pode estar 'normal-baixa' (12–100 ng/mL) mas ainda indicar ferropenia relativa. Saturação <16% em ambas as situações <br><br><strong>B:</strong> o mecanismo hepcidina-ferroportina é o central da AIC — ferro 'preso' intracelularmente; ferritina intracelular elevada vaza para o plasma → ferritina sérica elevada como marcador indireto dos estoques intracelulares <br><br><strong>C:</strong> em HFE C282Y, a proteína HFE mutante não sinaliza adequadamente para o fígado a abundância de ferro → hepcidina insuficientemente produzida → ferroportina não é degradada → absorção contínua → depósito em fígado, coração, pâncreas, articulações, hipófise <br><br><strong>D:</strong> ferritina é fase aguda positiva — sempre pode estar elevada por inflamação, mesmo com estoques de ferro normais; saturação de transferrina >45% em jejum é mais específica para hemocromatose <br><br><strong>Por que E está errada:</strong> transferrina elevada + saturação baixa favorece ferropenia, mas antes de iniciar tratamento deve-se investigar a <em>causa</em> da ferropenia (hemorragia oculta, especialmente TGI em adultos >50 anos) — não apenas tratar empiricamente"
+  },
+  {
+    "question": "Sobre o sistema de proteína C e S como mecanismo anticoagulante fisiológico, assinale a(s) alternativa(s) correta(s):",
+    "options": [
+      "A proteína C é ativada pelo complexo trombina-trombomodulina; a proteína C ativada (APC) degrada proteoliticamente os fatores Va e VIIIa em presença de proteína S livre e fosfolipídios de membrana — criando feedback negativo à coagulação quando a trombina já se ligou ao endotélio saudável",
+      "Aproximadamente 60% da proteína S circula ligada à C4BP (C4b-binding protein) e está biologicamente inativa; em estados inflamatórios, C4BP aumenta como reactante de fase aguda, reduzindo proteína S livre e criando estado pró-trombótico relativo que explica eventos trombóticos em lúpus eritematoso sistêmico ativo",
+      "Na necrose cutânea por varfarina, a proteína C (t½ ~8h) cai antes dos fatores pró-coagulantes de meia-vida maior, gerando hipercoagulabilidade transitória; heparina deve ser introduzida concomitantemente ao varfarin para cobrir este período de risco",
+      "A deficiência homozigótica de proteína C manifesta-se como púrpura fulminante neonatal, tratada emergencialmente com plasma fresco congelado ou concentrado de proteína C; o transplante hepático é a terapia definitiva",
+      "A proteína S é sintetizada exclusivamente pelo fígado e não requer vitamina K para sua síntese, ao contrário da proteína C que é vitamina K-dependente"
+    ],
+    "answer": [
+      "A proteína C é ativada pelo complexo trombina-trombomodulina; a proteína C ativada (APC) degrada proteoliticamente os fatores Va e VIIIa em presença de proteína S livre e fosfolipídios de membrana — criando feedback negativo à coagulação quando a trombina já se ligou ao endotélio saudável",
+      "Aproximadamente 60% da proteína S circula ligada à C4BP (C4b-binding protein) e está biologicamente inativa; em estados inflamatórios, C4BP aumenta como reactante de fase aguda, reduzindo proteína S livre e criando estado pró-trombótico relativo que explica eventos trombóticos em lúpus eritematoso sistêmico ativo",
+      "Na necrose cutânea por varfarina, a proteína C (t½ ~8h) cai antes dos fatores pró-coagulantes de meia-vida maior, gerando hipercoagulabilidade transitória; heparina deve ser introduzida concomitantemente ao varfarin para cobrir este período de risco",
+      "A deficiência homozigótica de proteína C manifesta-se como púrpura fulminante neonatal, tratada emergencialmente com plasma fresco congelado ou concentrado de proteína C; o transplante hepático é a terapia definitiva"
+    ],
+    "type": "multi",
+    "justification": "<strong>Alternativas corretas: A, B, C, D</strong> <br><br><strong>A:</strong> o sistema proteína C/S é o principal anticoagulante natural dependente de vitamina K. A trombomodulina converte a trombina de pró-coagulante em anticoagulante ao se ligar a ela → complexo trombina-trombomodulina ativa a proteína C. Lógica elegante: quando trombina se liga ao endotélio saudável (trombomodulina), ela ativa seu próprio inibidor <br><br><strong>B:</strong> a relação C4BP-proteína S é clinicamente relevante no LES — o LES induz inflamação crônica → C4BP elevada → proteína S livre reduzida → estado pró-trombótico. Junto com anticorpos antifosfolípides, explica a alta prevalência de TEV no LES <br><br><strong>C:</strong> mecanismo clássico da necrose cutânea por varfarina — a heparina concomitante é obrigatória para 'cobrir' os primeiros 5 dias até INR terapêutico e os fatores pro-coagulantes caírem <br><br><strong>D:</strong> púrpura fulminante neonatal por deficiência homozigótica de proteína C é emergência com mortalidade >90% sem tratamento; PFC repõe proteína C imediatamente; transplante hepático (fonte de proteína C) é cura definitiva <br><br><strong>Por que E está errada:</strong> a proteína S também é vitamina K-dependente — sua síntese requer carboxilação gamma de resíduos de ácido glutâmico pelo sistema vitamina K. Tanto proteína C quanto proteína S são bloqueadas pela varfarina."
+  },
+  {
+    "question": "Sobre as indicações de albumina humana exógena baseadas em evidências, assinale a(s) alternativa(s) correta(s):",
+    "options": [
+      "Na peritonite bacteriana espontânea em cirróticos, albumina 1,5 g/kg no dia 1 e 1 g/kg no dia 3 reduz incidência de síndrome hepatorrenal e mortalidade hospitalar — indicação com maior nível de evidência entre os usos da albumina",
+      "Na paracentese de grande volume (>5 litros), a reposição de 8 g de albumina por litro removido previne a disfunção circulatória pós-paracentese, sendo superior a outros expansores coloidais para este fim",
+      "Na sepse sem hepatopatia subjacente, estudos randomizados demonstraram que albumina reduz mortalidade em 28 dias comparada a cristaloides, consolidando-a como fluido de primeira escolha na ressuscitação séptica",
+      "Na síndrome hepatorrenal tipo 1 (HRS-AKI), a combinação de albumina com vasoconstrictores (terlipressina ou norepinefrina) é o tratamento padrão, com a albumina expandindo o volume circulante efetivo e os vasoconstrictores revertendo a vasodilatação esplâncnica",
+      "A albumina IV é eficaz como suporte nutricional proteico em pacientes desnutridos graves em UTI, pois ao ser catabolizada fornece aminoácidos essenciais que se incorporam à síntese muscular"
+    ],
+    "answer": [
+      "Na peritonite bacteriana espontânea em cirróticos, albumina 1,5 g/kg no dia 1 e 1 g/kg no dia 3 reduz incidência de síndrome hepatorrenal e mortalidade hospitalar — indicação com maior nível de evidência entre os usos da albumina",
+      "Na paracentese de grande volume (>5 litros), a reposição de 8 g de albumina por litro removido previne a disfunção circulatória pós-paracentese, sendo superior a outros expansores coloidais para este fim",
+      "Na síndrome hepatorrenal tipo 1 (HRS-AKI), a combinação de albumina com vasoconstrictores (terlipressina ou norepinefrina) é o tratamento padrão, com a albumina expandindo o volume circulante efetivo e os vasoconstrictores revertendo a vasodilatação esplâncnica"
+    ],
+    "type": "multi",
+    "justification": "<strong>Alternativas corretas: A, B, D</strong> <br><br><strong>A:</strong> Sort et al. (NEJM 1999) — estudo seminal randomizado, PBE + albumina reduziu SHR de 33% para 10% e mortalidade hospitalar de 29% para 10%. É a indicação com mais alto nível de evidência para albumina em cirrose <br><br><strong>B:</strong> paracentese de grande volume sem reposição coloidea → síndrome circulatória pós-paracentese (PCCD) → ativação RAAS → desenvolvimento de SHR, hiponatremia, redução de sobrevida. Albumina (8 g/L) é superior a dextrana-70, gelatinas e salina <br><br><strong>D:</strong> na SHR tipo 1 (agora HRS-AKI), vasoconstrictores revertem vasodilatação esplâncnica e albumina expande volume circulante efetivo — combinação é o padrão atual com taxa de reversão de ~40–50% <br><br><strong>Por que C está errada:</strong> o estudo SAFE (NEJM 2004) e metanálises Cochrane não demonstraram benefício de albumina sobre cristaloides na sepse geral — mortalidade similar. Em subgrupo de TCE, a albumina foi prejudicial. Albumina não é fluido de primeira escolha na sepse sem cirrose <br><br><strong>Por que E está errada:</strong> albumina IV não é nutrição. É depurada com t½ de 20 dias e não funciona como fonte de aminoácidos — vai para o pool plasmático e é catabolizada lentamente. Nutrição deve ser fornecida como aminoácidos/proteínas por via enteral ou parenteral."
+  },
+  {
+    "question": "Sobre o sistema complemento e suas deficiências, assinale a(s) alternativa(s) correta(s):",
+    "options": [
+      "Deficiências dos componentes iniciais da via clássica (C1q, C2, C4) predispõem a doenças autoimunes lúpicas porque o complemento normalmente medeia o clearance de corpos apoptóticos e imunocomplexos; sua ausência leva a acúmulo de material imunogênico e quebra de tolerância",
+      "Deficiências dos componentes terminais (C5–C9) predispõem especificamente a infecções recorrentes por Neisseria spp.; estes pacientes devem receber vacinação meningocócica e acompanhamento para sobreinfecções",
+      "O C5a é o fragmento do complemento mais potente em quimiotaxia de neutrófilos e atua como anafilatoxina ao ativar mastócitos; o C3a tem menor atividade quimiotática para neutrófilos mas também é anafilatoxina",
+      "Na deficiência de MBL (Mannan-Binding Lectin), pacientes apresentam infecções recorrentes na infância por déficit da via lectina; adultos tendem a ter curso mais brando por compensação das demais vias e imunidade adaptativa madura",
+      "A via alternativa nunca é ativada em células do hospedeiro saudável porque o regulador fator H se liga unicamente às superfícies de patógenos, tornando os tecidos próprios completamente resistentes à ativação do complemento"
+    ],
+    "answer": [
+      "Deficiências dos componentes iniciais da via clássica (C1q, C2, C4) predispõem a doenças autoimunes lúpicas porque o complemento normalmente medeia o clearance de corpos apoptóticos e imunocomplexos; sua ausência leva a acúmulo de material imunogênico e quebra de tolerância",
+      "Deficiências dos componentes terminais (C5–C9) predispõem especificamente a infecções recorrentes por Neisseria spp.; estes pacientes devem receber vacinação meningocócica e acompanhamento para sobreinfecções",
+      "O C5a é o fragmento do complemento mais potente em quimiotaxia de neutrófilos e atua como anafilatoxina ao ativar mastócitos; o C3a tem menor atividade quimiotática para neutrófilos mas também é anafilatoxina",
+      "Na deficiência de MBL (Mannan-Binding Lectin), pacientes apresentam infecções recorrentes na infância por déficit da via lectina; adultos tendem a ter curso mais brando por compensação das demais vias e imunidade adaptativa madura"
+    ],
+    "type": "multi",
+    "justification": "<strong>Alternativas corretas: A, B, C, D</strong> <br><br><strong>A:</strong> C1q, C2 e C4 — deficiências predispõem a LES (C1q deficiência → LES em >90% dos casos) porque o complemento normalmente opsoniza debris apoptóticos para clearance pelos macrófagos. Sem complemento → DNA e autoproteínas acumulam → ativam linfócitos autorreativos <br><br><strong>B:</strong> MAC é essencial para lise de gram-negativas sem parede espessa de peptideoglicano; Neisseria são particularmente vulneráveis. Risco de meningococcemia invasiva: 1500–10000× maior que a população geral <br><br><strong>C:</strong> C5a > C3a em potência quimiotática. C5a também ativa mastócitos/basófilos diretamente (anafilatoxina). Ambos ligam-se a receptores GPCR específicos <br><br><strong>D:</strong> a deficiência de MBL é relativamente frequente (5–10% da população tem MBL muito baixo) e clinicamente relevante principalmente em crianças antes da imunidade adaptativa madurar <br><br><strong>Por que E está errada:</strong> o fator H não se liga apenas a patógenos — na realidade, o fator H <em>se liga preferencialmente a superfícies do hospedeiro</em> que apresentam sialil-glicanos e C3b (proteínas de membrana de células próprias) e <em>inibe</em> a via alternativa nessas células. Patógenos carecem dessas superfícies de 'sinalização de self' → via alternativa progride neles. Mutações de perda de função no fator H causam hemólise (HPN-like) por ativação do MAC nas próprias hemácias."
+  },
+  {
+    "question": "Paciente de 74 anos com ICFEp refratária ao tratamento otimizado, espessamento septal simétrico 'ecos brilhantes' ao ecocardiograma e síndrome do túnel do carpo bilateral prévia. Qual(is) dos seguintes achados favorece(m) ATTRwt (amiloidose por transtiretina selvagem) em detrimento de amiloidose AL (cadeia leve)?",
+    "options": [
+      "Ausência de componente M na eletroforese sérica e urinária com razão κ/λ de FLC dentro da normalidade",
+      "Captação miocárdica grau 2/3 na cintilografia com 99mTc-PYP associada à ausência de gamopatia monoclonal — combinação com especificidade >95% para ATTR sem necessidade de biópsia",
+      "Genotipagem do gene TTR sem mutação patogênica, confirmando ATTRwt por exclusão de ATTRv",
+      "Biópsia positiva (Vermelho Congo + birrefringência verde) com imuno-histoquímica identificando proteína TTR como componente amiloide predominante",
+      "Polineuropatia de fibras finas como manifestação predominante sem envolvimento cardíaco — característica mais específica de ATTRwt que de AL"
+    ],
+    "answer": [
+      "Ausência de componente M na eletroforese sérica e urinária com razão κ/λ de FLC dentro da normalidade",
+      "Captação miocárdica grau 2/3 na cintilografia com 99mTc-PYP associada à ausência de gamopatia monoclonal — combinação com especificidade >95% para ATTR sem necessidade de biópsia",
+      "Genotipagem do gene TTR sem mutação patogênica, confirmando ATTRwt por exclusão de ATTRv",
+      "Biópsia positiva (Vermelho Congo + birrefringência verde) com imuno-histoquímica identificando proteína TTR como componente amiloide predominante"
+    ],
+    "type": "multi",
+    "justification": "<strong>Alternativas corretas: A, B, C, D</strong> <br><br><strong>A:</strong> na amiloidose AL, o plasmócito clonal produz cadeias leves livres → gamopatia monoclonal detectável na eletroforese e/ou FLC séricas alteradas. Ausência de gamopatia monoclonal afasta AL (sensibilidade de ~97% para AL) <br><br><strong>B:</strong> a combinação 99mTc-PYP grau 2/3 + sem gamopatia = especificidade >95–98% para ATTR cardíaca. O pirofosfato de tecnécio se deposita nas fibrilas de TTR (não nas de cadeia leve). Esta combinação permite diagnóstico não-invasivo — elimina biópsia em muitos casos (Gillmore et al., NEJM 2016) <br><br><strong>C:</strong> genotipagem negativa = sem mutação → ATTRwt confirmada por exclusão de ATTRv. Importante porque ATTRv tem tratamento diferente (patisiran/inotersen para neuropatia; tafamidis para ambas) <br><br><strong>D:</strong> biópsia com tipagem confirma definitivamente o tipo de amiloide — ainda necessária quando existe gamopatia e 99mTc-PYP é positivo (ambas ATTR e AL podem coexistir em idosos) <br><br><strong>Por que E está errada:</strong> neuropatia periférica de fibras finas é característica mais típica de <strong>ATTRv</strong> (hereditária) e amiloidose AL — não de ATTRwt, que acomete principalmente o coração e canal do carpo. A ATTRwt raramente causa neuropatia periférica significativa."
+  },
+  {
+    "question": "Paciente em UTI pós-operatório, albumina 1,5 g/dL, cálcio total 6,9 mg/dL, fenitoína total 6,5 µg/mL (alvo 10–20 µg/mL), creatinina 1,1 mg/dL. Qual(is) a(s) conduta(s) correta(s)?",
+    "options": [
+      "Não tratar hipocalcemia: cálcio corrigido = 6,9 + 0,8 × (4 – 1,5) = 6,9 + 2,0 = 8,9 mg/dL — dentro da normalidade; confirmar com cálcio iônico na gasometria antes de qualquer intervenção",
+      "Administrar gluconato de cálcio IV imediatamente pois 6,9 mg/dL representa hipocalcemia grave independentemente da albumina",
+      "Não aumentar dose de fenitoína: fenitoína corrigida = 6,5 / (0,2 × 1,5 + 0,1) = 6,5 / 0,4 = 16,25 µg/mL — dentro do alvo terapêutico",
+      "Solicitar dosagem de fenitoína livre sérica para confirmar o nível real antes de qualquer ajuste de dose, especialmente no contexto pós-operatório com possíveis variações de volume de distribuição e ligação proteica",
+      "Dobrar a dose de fenitoína pois nível total de 6,5 µg/mL está claramente subterapêutico — o risco de convulsão pós-operatória supera qualquer risco de toxicidade"
+    ],
+    "answer": [
+      "Não tratar hipocalcemia: cálcio corrigido = 6,9 + 0,8 × (4 – 1,5) = 6,9 + 2,0 = 8,9 mg/dL — dentro da normalidade; confirmar com cálcio iônico na gasometria antes de qualquer intervenção",
+      "Não aumentar dose de fenitoína: fenitoína corrigida = 6,5 / (0,2 × 1,5 + 0,1) = 6,5 / 0,4 = 16,25 µg/mL — dentro do alvo terapêutico",
+      "Solicitar dosagem de fenitoína livre sérica para confirmar o nível real antes de qualquer ajuste de dose, especialmente no contexto pós-operatório com possíveis variações de volume de distribuição e ligação proteica"
+    ],
+    "type": "multi",
+    "justification": "<strong>Cálculos:</strong> <br><br><strong>Cálcio corrigido:</strong> Ca corr = 6,9 + 0,8 × (4,0 − 1,5) = 6,9 + 0,8 × 2,5 = 6,9 + 2,0 = <strong>8,9 mg/dL</strong> → normal (8,5–10,5 mg/dL). Tratar seria erro — poderia causar hipercalcemia, arritmias, nefrolitíase. <br><br><strong>Fenitoína corrigida:</strong> Fcorr = 6,5 / (0,2 × 1,5 + 0,1) = 6,5 / (0,30 + 0,10) = 6,5 / 0,40 = <strong>16,25 µg/mL</strong> → dentro do alvo de 10–20 µg/mL. Dobrar a dose causaria nível livre provavelmente tóxico (nistagmo, ataxia, confusão). <br><br><strong>Por que solicitar fenitoína livre (alternativa D) também está correto:</strong> no contexto pós-operatório, podem existir: variações agudas de albumina, uremia (creatinina 1,1 pode subestimar TFG em idosos), uso de outros fármacos competindo pelo sítio de Sudlow I, variações de volume de distribuição. Medir a fenitoína livre sérica diretamente (alvo: 1,0–2,0 µg/mL) é mais seguro para confirmar. <br><br><em>Resumo das fórmulas:</em> <br>• Cálcio: +0,8 por cada grama de albumina abaixo de 4 g/dL <br>• Fenitoína sem IR: /(0,2 × Alb + 0,1) <br>• Fenitoína em diálise: /(0,1 × Alb + 0,1)"
+  },
+  {
+    "question": "Sobre a estrutura e função das imunoglobulinas, assinale a(s) alternativa(s) correta(s):",
+    "options": [
+      "As cadeias pesadas determinam a classe (isótipo): gamma → IgG, alpha → IgA, mu → IgM, delta → IgD, epsilon → IgE; as subclasses (IgG1–4) diferem na região constante da cadeia pesada, influenciando ativação do complemento e ligação a receptores Fc",
+      "As cadeias leves κ e λ são mutuamente exclusivas em cada molécula; a proporção κ:λ em linfócitos B normais é ~60:40; desvios deste equilíbrio (clonalidade) são detectados por citometria de fluxo e imuno-histoquímica para diagnóstico de linfoma/mieloma",
+      "A digestão por papaína cliva na região de dobradiça (hinge) gerando dois Fab monovalentes e um Fc; a pepsina cliva abaixo da dobradiça gerando um F(ab')₂ bivalente e pequenos peptídeos do Fc — distinção importante no desenvolvimento de anticorpos terapêuticos",
+      "O CDR3 (Complementarity Determining Region 3), gerado pela junção V(D)J nas cadeias pesadas e VJ nas cadeias leves, é o mais diverso dos três CDRs e o principal determinante da especificidade de ligação ao antígeno",
+      "O domínio Fc é estruturalmente idêntico entre as quatro subclasses IgG1–IgG4; as diferenças funcionais (ativação de complemento, citotoxicidade celular dependente de anticorpo) são determinadas exclusivamente pelas regiões variáveis de cada subclasse"
+    ],
+    "answer": [
+      "As cadeias pesadas determinam a classe (isótipo): gamma → IgG, alpha → IgA, mu → IgM, delta → IgD, epsilon → IgE; as subclasses (IgG1–4) diferem na região constante da cadeia pesada, influenciando ativação do complemento e ligação a receptores Fc",
+      "As cadeias leves κ e λ são mutuamente exclusivas em cada molécula; a proporção κ:λ em linfócitos B normais é ~60:40; desvios deste equilíbrio (clonalidade) são detectados por citometria de fluxo e imuno-histoquímica para diagnóstico de linfoma/mieloma",
+      "A digestão por papaína cliva na região de dobradiça (hinge) gerando dois Fab monovalentes e um Fc; a pepsina cliva abaixo da dobradiça gerando um F(ab')₂ bivalente e pequenos peptídeos do Fc — distinção importante no desenvolvimento de anticorpos terapêuticos",
+      "O CDR3 (Complementarity Determining Region 3), gerado pela junção V(D)J nas cadeias pesadas e VJ nas cadeias leves, é o mais diverso dos três CDRs e o principal determinante da especificidade de ligação ao antígeno"
+    ],
+    "type": "multi",
+    "justification": "<strong>Alternativas corretas: A, B, C, D</strong> <br><br><strong>A:</strong> as cadeias pesadas determinam isótipo e subclasse. IgG1/IgG3 ativam complemento eficientemente (Fc liga C1q); IgG2 ativa intermediariamente; IgG4 não ativa <br><br><strong>B:</strong> a restrição de linhagem κ ou λ é fundamental no diagnóstico de proliferações clonais — um plasmócito clonal produz exclusivamente κ ou exclusivamente λ (ratio normal κ:λ ~2:1, mas por linhagem celular é 60:40). Restrição >90% para um tipo = clonalidade <br><br><strong>C:</strong> a distinção papaína vs pepsina tem relevância clínica: F(ab')₂ da pepsina é bivalente (melhor para crosslinking de antígenos) e sem Fc (menor imunogenicidade em uso terapêutico). Fab monovalente da papaína é usado em diagnóstico (ex.: anti-CD20 radiolabelado para PET) <br><br><strong>D:</strong> a diversidade do CDR3 é imensa: nas cadeias pesadas, a junção V-D-J com adição e deleção de nucleotídeos P e N gera >10¹⁸ sequências teóricas possíveis — principal base da diversidade do repertório imune <br><br><strong>Por que E está errada:</strong> o domínio Fc <strong>difere estruturalmente</strong> entre as subclasses IgG1–4 (especialmente na região de dobradiça e na orientação do CH2): estas diferenças estruturais no Fc são responsáveis pela ativação diferencial do complemento e ligação a receptores FcγR — não as regiões variáveis."
+  }
+]
+
+
+
+/* ══════════════ ESTADO DO QUIZ ══════════════ */
+let currentQ = 0;
+let userAnswers  = new Array(quizData.length).fill(null).map(()=>[]);
+let attempted    = new Array(quizData.length).fill(false);
+
+/* ══════════════ ELEMENTOS DOM ══════════════ */
+const content     = document.getElementById('quiz-content');
+const progressFill= document.getElementById('quiz-progress');
+const progressLbl = document.getElementById('progress-label');
+const prevBtn     = document.getElementById('prev-btn');
+const answerBtn   = document.getElementById('answer-btn');
+const nextBtn     = document.getElementById('next-btn');
+const submitBtn   = document.getElementById('submit-btn');
+const resultsDiv  = document.getElementById('results-container');
+const reportDiv   = document.getElementById('report-container');
+const navDiv      = document.getElementById('navigation-buttons');
+const progressWrap= document.querySelector('.progress-wrapper');
+
+/* ══════════════ RENDER ══════════════ */
+function init(){
+  shuffleArray(quizData);
+  renderAll();
+  goTo(0);
+  bindEvents();
+}
+
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+
+function renderAll(){
+  content.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className='question-card';
+    card.id=`q-${i}`;
+
+    const badgeClass = q.type==='tf' ? 'badge-tf' : 'badge-multi';
+    const badgeText  = q.type==='tf' ? '✦ V/F' : '◈ Múltipla escolha';
+
+    let optsHTML='';
+    if(q.type==='tf'){
+      optsHTML=`<div class="tf-options-container">
+        <button class="tf-option tf-v" data-q="${i}" data-o="V"><i class="fas fa-check"></i> Verdadeiro</button>
+        <button class="tf-option tf-f" data-q="${i}" data-o="F"><i class="fas fa-times"></i> Falso</button>
+      </div>`;
+    } else {
+      const letters=['A','B','C','D','E','F'];
+      optsHTML=`<div class="options-container">${q.options.map((opt,oi)=>`
+        <button class="mc-option" data-q="${i}" data-o="${opt.replace(/"/g,'&quot;')}">
+          <span class="option-indicator">${letters[oi]}</span>
+          <span>${opt}</span>
+        </button>`).join('')}</div>`;
+    }
+
+    card.innerHTML=`
+      <div class="q-meta">
+        <span class="q-num">Questão ${i+1} / ${quizData.length}</span>
+        <span class="q-type-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <p class="question-text">${q.question}</p>
+      ${optsHTML}
+      <div class="feedback" id="fb-${i}"></div>`;
+    content.appendChild(card);
+  });
+}
+
+/* ══════════════ NAVIGATION ══════════════ */
+function goTo(idx){
+  if(idx<0||idx>=quizData.length) return;
+  document.querySelector(`#q-${currentQ}`)?.classList.remove('active');
+  currentQ=idx;
+  document.querySelector(`#q-${currentQ}`)?.classList.add('active');
+  updateUI();
+}
+
+function updateUI(){
+  const done = attempted.filter(Boolean).length;
+  progressFill.style.width=`${(done/quizData.length)*100}%`;
+  progressLbl.textContent=`${done} / ${quizData.length}`;
+
+  const isAttempted = attempted[currentQ];
+  const hasSelection= userAnswers[currentQ].length>0;
+  const isLast = currentQ===quizData.length-1;
+
+  setBtn(prevBtn,   currentQ>0);
+  setBtn(answerBtn, !isAttempted);
+  setBtn(nextBtn,   isAttempted && !isLast);
+  setBtn(submitBtn, isAttempted && isLast);
+  if(!isAttempted) answerBtn.disabled=!hasSelection;
+}
+
+function setBtn(btn,show){ btn.classList.toggle('show',show); }
+
+/* ══════════════ SELECTION ══════════════ */
+function bindEvents(){
+  content.addEventListener('click',e=>{
+    const mc=e.target.closest('.mc-option');
+    const tf=e.target.closest('.tf-option');
+    if(mc) handleMC(mc);
+    if(tf) handleTF(tf);
+  });
+  answerBtn.addEventListener('click', validate);
+  nextBtn.addEventListener('click',()=>goTo(currentQ+1));
+  prevBtn.addEventListener('click',()=>goTo(currentQ-1));
+  submitBtn.addEventListener('click', finishQuiz);
+  document.getElementById('show-report-btn').addEventListener('click',()=>{resultsDiv.style.display='none';reportDiv.style.display='flex';});
+  document.getElementById('back-btn').addEventListener('click',()=>{reportDiv.style.display='none';resultsDiv.style.display='flex';});
+  document.getElementById('retry-btn').addEventListener('click',()=>location.reload());
+}
+
+function handleMC(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  const idx=userAnswers[qi].indexOf(opt);
+  if(idx>-1){ userAnswers[qi].splice(idx,1); btn.classList.remove('selected'); }
+  else{ userAnswers[qi].push(opt); btn.classList.add('selected'); }
+  updateUI();
+}
+
+function handleTF(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  userAnswers[qi]=[opt];
+  document.querySelectorAll(`.tf-option[data-q='${qi}']`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateUI();
+}
+
+/* ══════════════ VALIDATE ══════════════ */
+function validate(){
+  if(attempted[currentQ]) return;
+  const q=quizData[currentQ];
+  const fb=document.getElementById(`fb-${currentQ}`);
+  const userAns=userAnswers[currentQ]||[];
+  const correctAns=Array.isArray(q.answer)?q.answer:[q.answer];
+  const isCorrect=JSON.stringify([...userAns].sort())===JSON.stringify([...correctAns].sort());
+
+  // mark options
+  const sel = q.type==='tf' ? `.tf-option[data-q='${currentQ}']` : `.mc-option[data-q='${currentQ}']`;
+  document.querySelectorAll(sel).forEach(opt=>{
+    opt.classList.add('disabled');
+    const ov=opt.dataset.o;
+    if(correctAns.includes(ov)) opt.classList.add('correct');
+    else if(userAns.includes(ov)) opt.classList.add('incorrect');
+  });
+
+  // build feedback
+  const icon = isCorrect ? 'fa-check-circle' : 'fa-times-circle';
+  const title= isCorrect ? 'Correto!' : 'Incorreto';
+  const verdictClass = isCorrect ? 'correct' : 'incorrect';
+
+  let correctListHTML='';
+  if(!isCorrect){
+    correctListHTML=`<div style="margin-top:.5rem;font-size:.82rem;color:var(--muted2);">${correctAns.length>1?'Respostas corretas':'Resposta correta'}:</div>
+    <ul class="correct-list">${correctAns.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+  }
+
+  fb.className=`feedback ${verdictClass}`;
+  fb.innerHTML=`
+    <div class="feedback-verdict"><i class="fas ${icon}"></i>${title}${correctListHTML}</div>
+    <div class="justification">
+      <div class="just-label"><i class="fas fa-flask"></i> Justificativa Clínico-Molecular</div>
+      <div class="just-text">${q.justification}</div>
+    </div>`;
+  fb.style.display='block';
+
+  toast(isCorrect);
+  attempted[currentQ]=true;
+  [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=true);
+
+  setTimeout(()=>{
+    [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=false);
+    const isLast=currentQ===quizData.length-1;
+    if(isLast) finishQuiz(); else goTo(currentQ+1);
+  },2400);
+}
+
+/* ══════════════ RESULTS ══════════════ */
+function finishQuiz(){
+  let score=0;
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    if(JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort())) score++;
+  });
+  const pct=Math.round(score/quizData.length*100);
+
+  document.getElementById('pct-display').textContent=`${pct}%`;
+  document.getElementById('score-display').innerHTML=`Acertos: <strong>${score} de ${quizData.length}</strong>`;
+
+  // Animate ring
+  const circumference=408.4;
+  const ring=document.getElementById('score-ring');
+  setTimeout(()=>{ ring.style.strokeDashoffset=circumference*(1-pct/100); },100);
+
+  const msg=document.getElementById('feedback-message');
+  if(pct>=90) msg.textContent='🎉 Excelente domínio! Você está pronto para a prova.';
+  else if(pct>=70) msg.textContent='👏 Muito bem! Revise os pontos que errou e você chegará lá.';
+  else if(pct>=50) msg.textContent='👍 Bom esforço! Revise as justificativas com atenção.';
+  else msg.textContent='💪 Continue estudando! As justificativas abaixo são seu mapa.';
+
+  buildReport();
+
+  content.style.display='none';
+  navDiv.style.display='none';
+  progressWrap.style.display='none';
+  resultsDiv.style.display='flex';
+}
+
+function buildReport(){
+  const list=document.getElementById('report-list');
+  list.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    const ok=JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort());
+    const item=document.createElement('div');
+    item.className=`report-item ${ok?'correct':'incorrect'}`;
+    item.innerHTML=`<p class="ri-q"><strong>Questão ${i+1}:</strong> ${q.question}</p>
+      <p><strong>Sua resposta:</strong> ${ua.length?ua.join(', '):'<em>Não respondida</em>'}</p>
+      <p><strong>Correta:</strong> ${ca.join(', ')}</p>`;
+    list.appendChild(item);
+  });
+}
+
+/* ══════════════ TOAST ══════════════ */
+function toast(ok){
+  Swal.mixin({
+    toast:true,position:'top-end',
+    showConfirmButton:false,
+    timer:1400,timerProgressBar:true,
+    background: ok ? '#0a2e1f' : '#2e0a14',
+    color: ok ? '#34d399' : '#fb7185',
+  }).fire({icon:ok?'success':'error',title:ok?'✓ Correto!':'✗ Incorreto!'});
+}
+
+init();
+});
+</script>
+</body>
+</html>

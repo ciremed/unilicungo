@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz · Plaquetas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --surface:   #111827;
+  --card:      #151e2e;
+  --border:    #1e2d42;
+  --border2:   #253044;
+  --primary:   #4f9cf9;
+  --primary2:  #2563eb;
+  --accent:    #f87171;
+  --gold:      #f59e0b;
+  --emerald:   #34d399;
+  --rose:      #fb7185;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --muted2:    #94a3b8;
+  --correct-bg:#0a2e1f;
+  --correct-b: #34d399;
+  --wrong-bg:  #2e0a14;
+  --wrong-b:   #fb7185;
+  --just-bg:   #0d1b2e;
+  --just-b:    #4f9cf9;
+  --radius:    14px;
+  --trans:     all .28s cubic-bezier(.4,0,.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.5rem 1rem 3rem;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND MESH ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(79,156,249,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 90%, rgba(248,113,113,.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 40%, rgba(52,211,153,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  width:100%;max-width:820px;
+  text-align:center;
+  margin-bottom:2rem;
+  position:relative;z-index:1;
+}
+.header-badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  border-radius:50px;
+  padding:.3rem .9rem;
+  font-size:.75rem;font-weight:500;
+  color:var(--primary);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.header h1{
+  font-family:'Crimson Pro',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;
+  line-height:1.2;
+  color:#f1f5f9;
+  letter-spacing:-.02em;
+}
+.header h1 span{color:var(--primary);}
+.header p{
+  color:var(--muted2);
+  font-size:.92rem;
+  margin-top:.5rem;
+}
+
+/* ── QUIZ CONTAINER ── */
+#quiz-container{
+  width:100%;max-width:820px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:2.2rem 2rem;
+  position:relative;z-index:1;
+  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+}
+
+/* top accent line */
+#quiz-container::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary2),var(--primary),var(--accent));
+  border-radius:22px 22px 0 0;
+}
+
+/* ── PROGRESS ── */
+.progress-wrapper{
+  display:flex;align-items:center;gap:.9rem;
+  margin-bottom:1.8rem;
+}
+.progress-track{
+  flex:1;height:6px;
+  background:var(--border2);
+  border-radius:50px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary2),var(--primary));
+  border-radius:50px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 10px rgba(79,156,249,.5);
+}
+.progress-label{
+  font-size:.78rem;font-weight:500;
+  color:var(--muted2);
+  white-space:nowrap;min-width:60px;text-align:right;
+  font-family:'DM Mono',monospace;
+}
+
+/* ── QUESTION CARD ── */
+.question-card{
+  display:none;flex-direction:column;align-items:stretch;
+  animation:slideIn .38s cubic-bezier(.4,0,.2,1);
+}
+.question-card.active{display:flex;}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.q-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.4rem;
+}
+.q-num{
+  font-family:'DM Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  color:var(--muted);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.q-type-badge{
+  font-size:.68rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:50px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-multi{background:rgba(79,156,249,.15);color:var(--primary);border:1px solid rgba(79,156,249,.3);}
+.badge-tf{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+
+.question-text{
+  font-family:'Crimson Pro',serif;
+  font-size:1.28rem;font-weight:400;
+  line-height:1.6;
+  color:#f1f5f9;
+  margin-bottom:1.6rem;
+  padding-bottom:1.4rem;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── OPTIONS ── */
+.options-container{display:flex;flex-direction:column;gap:.65rem;}
+.tf-options-container{display:flex;gap:.75rem;justify-content:center;}
+
+.mc-option{
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  cursor:pointer;
+  transition:var(--trans);
+  color:var(--text);
+  font-size:.95rem;
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.mc-option::after{
+  content:'';position:absolute;inset:0;
+  background:var(--primary);
+  opacity:0;transition:opacity .2s;
+}
+.mc-option:hover:not(.disabled){
+  border-color:var(--primary);
+  transform:translateX(4px);
+  box-shadow:0 4px 16px rgba(79,156,249,.15);
+}
+.mc-option.selected{
+  border-color:var(--primary);
+  background:rgba(79,156,249,.08);
+}
+
+.tf-option{
+  flex:1;max-width:200px;
+  padding:1rem 1.5rem;
+  border-radius:var(--radius);
+  font-size:1rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.tf-option.tf-v{
+  background:rgba(52,211,153,.08);
+  border:1.5px solid rgba(52,211,153,.25);
+  color:var(--emerald);
+}
+.tf-option.tf-f{
+  background:rgba(251,113,133,.08);
+  border:1.5px solid rgba(251,113,133,.25);
+  color:var(--rose);
+}
+.tf-option:hover:not(.disabled){transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+.tf-option.selected{box-shadow:0 0 0 3px rgba(79,156,249,.4);}
+.tf-option.tf-v.selected{background:rgba(52,211,153,.18);border-color:var(--emerald);}
+.tf-option.tf-f.selected{background:rgba(251,113,133,.18);border-color:var(--rose);}
+
+/* correct / incorrect highlights */
+.mc-option.correct,.tf-option.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.mc-option.incorrect,.tf-option.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.mc-option.disabled,.tf-option.disabled{cursor:not-allowed;}
+
+.option-indicator{
+  min-width:28px;height:28px;
+  border-radius:8px;
+  background:var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:.78rem;font-weight:600;
+  color:var(--muted2);
+  flex-shrink:0;
+  transition:var(--trans);
+}
+.mc-option.selected .option-indicator{background:var(--primary);color:#fff;}
+.mc-option.correct  .option-indicator{background:var(--emerald);color:#0a2e1f;}
+.mc-option.incorrect .option-indicator{background:var(--rose);color:#2e0a14;}
+
+/* ── FEEDBACK BOX ── */
+.feedback{
+  margin-top:1.4rem;
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:none;
+  animation:slideIn .35s ease;
+}
+.feedback.correct{display:block;}
+.feedback.incorrect{display:block;}
+
+.feedback-verdict{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.75rem 1.1rem;
+  font-weight:600;font-size:.95rem;
+}
+.feedback.correct .feedback-verdict{
+  background:rgba(52,211,153,.15);
+  color:var(--emerald);
+  border-left:4px solid var(--emerald);
+}
+.feedback.incorrect .feedback-verdict{
+  background:rgba(251,113,133,.15);
+  color:var(--rose);
+  border-left:4px solid var(--rose);
+}
+
+/* ── JUSTIFICATION PANEL ── */
+.justification{
+  background:var(--just-bg);
+  border:1px solid rgba(79,156,249,.18);
+  border-top:none;
+  padding:1.1rem 1.3rem;
+}
+.just-label{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--primary);
+  margin-bottom:.65rem;
+  opacity:.8;
+}
+.just-label i{font-size:.8rem;}
+.just-text{
+  font-size:.9rem;
+  line-height:1.75;
+  color:#b8cce4;
+}
+.just-text strong{color:var(--primary);font-weight:600;}
+.just-text em{color:var(--gold);font-style:normal;}
+.just-text .correct-list{
+  margin-top:.6rem;padding-left:1rem;
+  list-style:none;
+}
+.just-text .correct-list li{
+  padding:.25rem 0;
+  padding-left:1.1rem;
+  position:relative;
+  color:#c7ddf4;
+}
+.just-text .correct-list li::before{
+  content:'✦';
+  position:absolute;left:0;
+  color:var(--emerald);font-size:.7rem;
+  top:.35rem;
+}
+.just-text .tag{
+  display:inline-block;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  color:var(--primary);
+  border-radius:4px;
+  padding:.05rem .35rem;
+  font-family:'DM Mono',monospace;
+  font-size:.8em;
+}
+
+/* ── NAVIGATION BUTTONS ── */
+#navigation-buttons{
+  display:flex;justify-content:center;
+  gap:.75rem;flex-wrap:wrap;
+  margin-top:1.8rem;
+}
+.nav-btn{
+  display:none;align-items:center;gap:.5rem;
+  padding:.7rem 1.5rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+  border:none;
+}
+.nav-btn.show{display:flex;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.nav-btn:hover:not(:disabled){transform:translateY(-2px);}
+
+#prev-btn{
+  background:transparent;
+  color:var(--primary);
+  border:1.5px solid rgba(79,156,249,.4);
+}
+#prev-btn:hover:not(:disabled){background:rgba(79,156,249,.08);}
+#answer-btn{
+  background:linear-gradient(135deg,var(--primary2),var(--primary));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(79,156,249,.35);
+}
+#answer-btn:hover:not(:disabled){box-shadow:0 6px 24px rgba(79,156,249,.5);}
+#next-btn{
+  background:var(--surface);
+  color:var(--text);
+  border:1.5px solid var(--border);
+}
+#next-btn:hover:not(:disabled){border-color:var(--primary);}
+#submit-btn{
+  background:linear-gradient(135deg,#7c3aed,var(--primary2));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(124,58,237,.35);
+}
+
+/* ── RESULTS ── */
+#results-container,#report-container{
+  display:none;flex-direction:column;align-items:center;
+}
+.score-ring-wrap{position:relative;margin:1rem auto 1.5rem;}
+.score-ring-wrap svg{display:block;}
+.score-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.score-pct{
+  font-family:'Crimson Pro',serif;
+  font-size:2.8rem;font-weight:700;
+  color:var(--primary);line-height:1;
+}
+.score-label{font-size:.75rem;color:var(--muted2);margin-top:.15rem;}
+.score-stat{
+  font-size:1.1rem;color:var(--muted2);margin-bottom:.5rem;
+}
+.score-stat strong{color:var(--text);}
+.feedback-msg{
+  font-family:'Crimson Pro',serif;
+  font-size:1.4rem;font-weight:400;
+  color:#e2e8f0;
+  margin-bottom:1.5rem;text-align:center;
+}
+.action-buttons{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;}
+.action-btn{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;border:none;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.action-btn:hover{transform:translateY(-2px);}
+.btn-report{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+.btn-retry{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;box-shadow:0 4px 16px rgba(79,156,249,.3);}
+
+/* ── REPORT ── */
+.report-item{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.1rem 1.3rem;
+  margin-bottom:.8rem;
+  text-align:left;
+  border-left:4px solid;
+}
+.report-item.correct{border-left-color:var(--emerald);}
+.report-item.incorrect{border-left-color:var(--rose);}
+.report-item p{font-size:.88rem;line-height:1.6;color:var(--muted2);}
+.report-item p strong{color:var(--text);}
+.report-item .ri-q{font-size:.95rem;color:var(--text);margin-bottom:.4rem;font-weight:500;}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:2rem;
+  font-size:.75rem;
+  color:var(--muted);
+  text-align:center;
+  position:relative;z-index:1;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #quiz-container{padding:1.4rem 1rem;}
+  .question-text{font-size:1.1rem;}
+  .tf-options-container{flex-direction:column;align-items:stretch;}
+  .tf-option{max-width:none;}
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><i class="fas fa-atom"></i> Medicina · Hematologia</div>
+  <h1>Plaquetas</h1>
+  <p>Quiz de alta performance com justificativas clínico-moleculares</p>
+</div>
+
+<div id="quiz-container">
+  <div class="progress-wrapper">
+    <div class="progress-track"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
+  </div>
+
+  <div id="quiz-content"></div>
+
+  <div id="navigation-buttons">
+    <button id="prev-btn"   class="nav-btn"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <button id="answer-btn" class="nav-btn show">Responder <i class="fas fa-check"></i></button>
+    <button id="next-btn"   class="nav-btn">Próximo <i class="fas fa-arrow-right"></i></button>
+    <button id="submit-btn" class="nav-btn"><i class="fas fa-flag-checkered"></i> Ver Resultados</button>
+  </div>
+
+  <div id="results-container">
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="65" fill="none" stroke="#1e2d42" stroke-width="12"/>
+        <circle id="score-ring" cx="80" cy="80" r="65" fill="none"
+                stroke="url(#ringGrad)" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="408.4"
+                stroke-dashoffset="408.4"
+                transform="rotate(-90 80 80)"
+                style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#4f9cf9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-center">
+        <div class="score-pct" id="pct-display">0%</div>
+        <div class="score-label">acertos</div>
+      </div>
+    </div>
+    <div class="score-stat" id="score-display"></div>
+    <div class="feedback-msg" id="feedback-message"></div>
+    <div class="action-buttons">
+      <button id="show-report-btn" class="action-btn btn-report"><i class="fas fa-list-alt"></i> Ver Correção</button>
+      <button id="retry-btn"       class="action-btn btn-retry"><i class="fas fa-redo"></i> Tentar Novamente</button>
+    </div>
+  </div>
+
+  <div id="report-container">
+    <h3 style="color:var(--primary);margin-bottom:1.2rem;font-family:'Crimson Pro',serif;font-size:1.4rem;">
+      <i class="fas fa-clipboard-list"></i> Correção Detalhada
+    </h3>
+    <div id="report-list" style="width:100%"></div>
+    <div class="action-buttons" style="margin-top:1rem;">
+      <button id="back-btn" class="action-btn btn-report"><i class="fas fa-arrow-left"></i> Voltar ao Resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Fisiologia Médica · Quiz gerado para estudo intensivo</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+/* ══════════════════════════════════════════════
+   BANCO DE QUESTÕES COM JUSTIFICATIVAS
+══════════════════════════════════════════════ */
+const quizData = [
+  {
+    "question": "A trombopoietina (TPO) regula a produção de plaquetas por um mecanismo de feedback negativo mediado pelas próprias plaquetas circulantes. Qual é a lógica molecular correta desse sistema?",
+    "options": [
+      "Plaquetas em excesso secretam TGF-β que suprime a expressão do receptor c-Mpl nos megacariócitos",
+      "Plaquetas circulantes absorvem e degradam TPO via receptor c-Mpl, reduzindo o sinal de produção medular",
+      "O excesso de TPO é degradado pelo complemento quando as plaquetas estão em número normal",
+      "Plaquetas circulantes inibem a síntese hepática de TPO por retroalimentação direta via IL-6"
+    ],
+    "answer": [
+      "Plaquetas circulantes absorvem e degradam TPO via receptor c-Mpl, reduzindo o sinal de produção medular"
+    ],
+    "type": "multi",
+    "justification": "A <strong>TPO (Trombopoietina / Thrombopoietin)</strong> é produzida constitutivamente pelo fígado em taxa relativamente constante. O que varia é a sua disponibilidade plasmática: cada plaqueta e megacariócito expressa o receptor <strong>c-Mpl (CD110)</strong> que internaliza e degrada a TPO ligada.<br><br>Quando há <em>trombocitopenia</em> → menos c-Mpl disponível → menos degradação de TPO → TPO plasmática livre aumenta → estimula megacariocitopoiese → mais plaquetas. Quando há <em>trombocitose</em> → mais c-Mpl → mais degradação → TPO cai → estímulo reduz.<br><br>Este modelo explica por que na <strong>trombocitopenia amegacariocítica</strong> a TPO sérica está muito elevada, enquanto na <strong>PTI</strong> (destruição periférica com megacariócitos medulares normais/aumentados), a TPO sérica é normal-baixa (pois os megacariócitos continuam consumindo TPO).<br><br><em>Aplicação clínica:</em> Romiplostim e eltrombopag mimetizam a TPO ativando o c-Mpl e são usados em PTI refratária."
+  },
+  {
+    "question": "Durante a endomitose megacariocítica, o DNA replica mas a célula não se divide. A consequência funcional direta da poliploidia resultante é",
+    "options": [
+      "Proteção contra apoptose durante a maturação prolongada na medula",
+      "Aumento da sensibilidade à TPO por upregulation do receptor c-Mpl",
+      "Produção de mais ARNm por unidade de tempo, permitindo síntese maciça de proteínas estruturais das plaquetas",
+      "Capacidade de fragmentar o citoplasma em múltiplas plaquetas sem necessitar de divisão celular adicional"
+    ],
+    "answer": [
+      "Produção de mais ARNm por unidade de tempo, permitindo síntese maciça de proteínas estruturais das plaquetas",
+      "Capacidade de fragmentar o citoplasma em múltiplas plaquetas sem necessitar de divisão celular adicional"
+    ],
+    "type": "multi",
+    "justification": "A <strong>endomitose</strong> gera megacariócitos com ploidia de até <strong>64N</strong>. Isso serve a dois objetivos simultâneos:<br><br><strong>1. Amplificação transcricional:</strong> Mais cópias de cada gene → mais ARNm → mais proteínas por unidade de tempo. Um megacariócito 64N pode produzir proteínas a uma taxa proporcional à ploidia. Isso é essencial para sintetizar a enorme quantidade de GPIIb/IIIa, GPIb, vWF, fibrinogênio, etc., que irão equipar 1.000–3.000 plaquetas.<br><br><strong>2. Volume citoplasmático:</strong> A poliploidia acompanha o crescimento do citoplasma, fornecendo massa suficiente para gerar milhares de plaquetas por fragmentação das pró-plaquetas.<br><br><em>A proteção contra apoptose e o upregulation de c-Mpl são distractores plausíveis mas incorretos</em> — a endomitose não é primariamente anti-apoptótica nem regula a expressão do receptor de TPO."
+  },
+  {
+    "question": "O complexo GPIb-IX-V plaquetário e o fator de von Willebrand (vWF) interagem de forma diferente em condições de fluxo baixo versus alto. Qual afirmação descreve corretamente esta dependência biomecânica?",
+    "options": [
+      "O GPIb tem maior afinidade pelo vWF solúvel do que pelo vWF ligado à matriz, independentemente do fluxo",
+      "A interação GPIb-vWF é mediada exclusivamente por pontes dissulfeto que se formam apenas em condições de turbulência",
+      "Em alto shear stress, o vWF liga-se diretamente ao colágeno subendotelial sem necessidade de distensão molecular",
+      "Em baixo shear stress, o vWF em solução adota conformação globular que oculta o domínio A1, sendo necessário alto shear para expor o sítio de ligação ao GPIb"
+    ],
+    "answer": [
+      "Em baixo shear stress, o vWF em solução adota conformação globular que oculta o domínio A1, sendo necessário alto shear para expor o sítio de ligação ao GPIb"
+    ],
+    "type": "multi",
+    "justification": "O <strong>vWF</strong> existe em equilíbrio conformacional: em solução, sem forças mecânicas, assume forma <em>globular compacta</em> que oculta o domínio <strong>A1</strong> (sítio de ligação ao GPIb). Isso previne agregação plaquetária espontânea na circulação normal.<br><br>Quando o vWF se adsorve ao colágeno subendotelial exposto após lesão, ou quando forças de cisalhamento (<em>shear forces</em>) elevadas distorcem a molécula, o domínio A1 é <strong>exposto mecanicamente</strong>.<br><br>Nas artérias (alto shear, > 40 dyn/cm²), esse mecanismo é predominante — explica por que a doença de von Willebrand causa mais sangramento arterial/mucoso que venoso.<br><br><em>A ADAMTS-13</em> cliva o vWF distendido nos ultrameros (ULvWF) para regular esse processo. Na PTT, ausência de ADAMTS-13 → ULvWF acumulam → microtrombos plaquetários ubíquos."
+  },
+  {
+    "question": "A ativação plaquetária pelo receptor PAR-1 mediada pela trombina é mais potente que a ativação pelo ADP via P2Y12. A base molecular desta diferença de potência é",
+    "options": [
+      "PAR-1 é um receptor ativado por proteólise que sinaliza autonomamente após clivagem, enquanto P2Y12 requer ligação contínua do agonista",
+      "A trombina tem maior concentração efetiva no sítio de lesão do que o ADP secretado pelos grânulos densos",
+      "PAR-1 não é internalizado após ativação, permitindo sinalização sustentada",
+      "PAR-1 acoplado à Gq eleva Ca²⁺ com cinética mais rápida que o P2Y12 acoplado à Gi"
+    ],
+    "answer": [
+      "PAR-1 é um receptor ativado por proteólise que sinaliza autonomamente após clivagem, enquanto P2Y12 requer ligação contínua do agonista"
+    ],
+    "type": "multi",
+    "justification": "Os <strong>PARs (Protease-Activated Receptors / Receptores Ativados por Protease)</strong> são GPCRs com mecanismo único: a trombina cliva o N-terminal extracelular do PAR-1 → o peptídeo resultante atua como <em>ligante intramolecular tethered</em> que ativa o receptor de forma autócrina e irreversível.<br><br>Isso significa que, mesmo após a trombina se dissopar, o receptor <strong>permanece ativado</strong> porque seu próprio ligante (agora exposto) continua ligado. Isso confere potência e persistência únicas.<br><br>Em contraste, o <strong>P2Y12</strong> é acoplado à Gi e requer ADP solúvel continuamente ligado — quando o ADP é hidrolisado pela CD39 endotelial, o sinal cessa.<br><br><em>Implicação terapêutica:</em> Bloqueio de P2Y12 (clopidogrel, ticagrelor) não inibe a ativação direta pela trombina — por isso em SCA de alto risco pode-se usar inibidores de GPIIb/IIIa que atuam downstream."
+  },
+  {
+    "question": "A aspirina inibe irreversivelmente a COX-1 plaquetária por acetilação de um resíduo específico. A consequência de uma dose única de 100 mg de aspirina sobre a hemostasia durará aproximadamente 7–10 dias porque",
+    "options": [
+      "A meia-vida da aspirina plasmática é de 7–10 dias, mantendo inibição contínua",
+      "A aspirina é retida no citoplasma plaquetário e continua inibindo a COX-1 recém-sintetizada durante esse período",
+      "A acetilação é revertida lentamente pela desacetilase plaquetária, com cinética de primeira ordem de 7–10 dias",
+      "As plaquetas são anucleadas e não conseguem sintetizar nova COX-1 para substituir a inativada"
+    ],
+    "answer": [
+      "As plaquetas são anucleadas e não conseguem sintetizar nova COX-1 para substituir a inativada"
+    ],
+    "type": "multi",
+    "justification": "A <strong>aspirina (ácido acetilsalicílico)</strong> acetila covalentemente o resíduo <strong>Ser530</strong> da <strong>COX-1 (Ciclooxigenase-1)</strong> → bloqueio irreversível do canal hidrofóbico onde o ácido araquidônico se encaixa → sem PGG2 → sem PGH2 → sem <strong>TXA₂</strong>.<br><br>Como a plaqueta <em>não tem núcleo</em>, ela não consegue transcrever novo ARNm nem sintetizar nova COX-1 para substituir a inativada. A inibição dura toda a vida útil da plaqueta (<strong>7–10 dias</strong>).<br><br>A meia-vida plasmática da aspirina é de apenas <strong>15–30 minutos</strong> (hidrolisada a salicilato), mas o efeito plaquetário persiste porque a inativação enzimática é irreversível.<br><br><em>Relevância pré-operatória:</em> Suspender aspirina 5–7 dias antes de cirurgias eletivas com risco hemorrágico significativo, aguardando renovação do pool plaquetário. Na cirurgia de revascularização miocárdica, há debate sobre continuar vs suspender."
+  },
+  {
+    "question": "A fosfatidilserina normalmente está confinada ao folheto interno da membrana plaquetária em repouso. Na ativação plaquetária, ela é translocada para a face externa por uma enzima específica. Qual é a consequência funcional desta translocação?",
+    "options": [
+      "Aumenta a rigidez da membrana plaquetária para resistir ao shear stress arterial durante formação do tampão",
+      "Serve de sinalizador de apoptose para remoção das plaquetas envelhecidas pelo baço",
+      "Ativa diretamente o Fator XII por contato com sua superfície aniônica",
+      "Fornece superfície carregada negativamente que ancora os complexos tenase e protrombinase via pontes de Ca²⁺ com os domínios Gla dos fatores dependentes de vitamina K"
+    ],
+    "answer": [
+      "Fornece superfície carregada negativamente que ancora os complexos tenase e protrombinase via pontes de Ca²⁺ com os domínios Gla dos fatores dependentes de vitamina K"
+    ],
+    "type": "multi",
+    "justification": "A <strong>fosfatidilserina (PS)</strong> é um fosfolipídio com cabeça polar carregada <em>negativamente</em>. Em repouso, é mantida no folheto interno por flipases ATP-dependentes. Na ativação plaquetária, a <strong>scramblase</strong> (ativada pelo Ca²⁺ intracelular) e a inibição das flipases permitem que a PS <em>flip</em> para o folheto externo.<br><br>A PS exposta fornece uma <strong>plataforma aniônica</strong> que liga Ca²⁺, e o Ca²⁺ age como ponte para ancorar os <strong>domínios Gla</strong> (γ-carboxiglutamato) dos fatores dependentes de vitamina K (FII, FVII, FIX, FX, Proteína C, Proteína S).<br><br>Isso concentra os complexos enzimáticos (<strong>tenase intrínseca: FIXa+FVIIIa</strong> e <strong>protrombinase: FXa+FVa</strong>) na superfície plaquetária → acelera a geração de trombina em ~10⁵ vezes comparado à reação em solução.<br><br><em>Síndrome de Scott:</em> deficiência congênita de scramblase → PS não exposta → assemblagem deficiente dos complexos → diátese hemorrágica com testes de coagulação normais."
+  },
+  {
+    "question": "O clopidogrel é um pró-fármaco que requer biotransformação hepática para exercer seu efeito. A variabilidade na resposta ao clopidogrel entre pacientes é explicada principalmente por",
+    "options": [
+      "Variações na expressão de GPIIb/IIIa que alteram a via final de agregação independente do P2Y12",
+      "Diferenças na densidade de receptores P2Y12 na superfície plaquetária entre indivíduos",
+      "Polimorfismos do CYP2C19 que afetam a conversão do pró-fármaco ao metabólito ativo tiol",
+      "Interação farmacodinâmica com o receptor PAR-1 que compete pelo mesmo sítio de ligação intracelular"
+    ],
+    "answer": [
+      "Polimorfismos do CYP2C19 que afetam a conversão do pró-fármaco ao metabólito ativo tiol"
+    ],
+    "type": "multi",
+    "justification": "O <strong>clopidogrel</strong> é absorvido no intestino e convertido ao metabólito ativo (um tiol reativo) por duas etapas de oxidação hepática, principalmente pelo <strong>CYP2C19</strong>.<br><br><strong>Polimorfismos do CYP2C19</strong>:<br>• <em>CYP2C19*2 e *3</em> (perda de função): metabolizadores pobres → menos metabólito ativo → resposta reduzida → maior risco de eventos cardiovasculares recorrentes pós-ICP. Frequência: ~25–30% de caucasianos, ~50% de asiáticos são portadores.<br>• <em>CYP2C19*17</em> (ganho de função): metabolizadores ultra-rápidos → mais metabólito → maior inibição → risco hemorrágico aumentado.<br><br>O <strong>omeprazol</strong> também inibe o CYP2C19 → interação farmacológica clinicamente relevante (embora o benefício clínico da troca por pantoprazol ainda seja debatido).<br><br><em>Por isso o prasugrel e o ticagrelor</em> têm efeito mais previsível: prasugrel é ativado por CYPs menos polimórficos; ticagrelor é um agonista direto e não é pró-fármaco."
+  },
+  {
+    "question": "A trombina é simultaneamente a enzima pró-coagulante central e ativa mecanismos anticoagulantes. Qual condição muda o balanço da trombina de pró-coagulante para anticoagulante?",
+    "options": [
+      "Internalização do complexo trombina-antitrombina III pelas células endoteliais, reduzindo a trombina livre",
+      "Ligação da trombina ao TFPI (Tissue Factor Pathway Inhibitor) na superfície endotelial intacta",
+      "Ligação da trombina à trombomodulina endotelial, que redireciona sua especificidade de substrato do fibrinogênio para a Proteína C",
+      "Elevação da concentração local de trombina acima de um limiar, que induz sua autoinibição por feedback negativo"
+    ],
+    "answer": [
+      "Ligação da trombina à trombomodulina endotelial, que redireciona sua especificidade de substrato do fibrinogênio para a Proteína C"
+    ],
+    "type": "multi",
+    "justification": "A <strong>trombomodulina (TM)</strong> é uma proteína transmembrana expressa no endotélio intacto. Quando a trombina se liga ao domínio EGF-like da trombomodulina, o complexo <strong>TM:Trombina</strong> sofre mudança conformacional profunda:<br><br>• Perda da capacidade de clivar fibrinogênio (sítio exossítio II ocluído)<br>• Perda da capacidade de ativar plaquetas via PAR<br>• Ganho de especificidade <em>1.000× aumentada</em> para <strong>ativação da Proteína C</strong><br><br>A Proteína C ativada (PCa), com cofator Proteína S, inativa FVa e FVIIIa → anticoagulação.<br><br><em>Lógica espacial:</em> No local de lesão, onde há subendotélio exposto e pouca TM, a trombina é pró-coagulante. À distância, no endotélio íntegro, a TM converte a trombina que difundiu em anticoagulante → limita o coágulo anatomicamente.<br><br><em>Trombomodulina recombinante (trombomodulina alfa)</em> é aprovada no Japão para CID — amplifica a via da Proteína C."
+  },
+  {
+    "question": "O Fator de von Willebrand (vWF) circula no plasma ligado ao Fator VIII. A relevância funcional desta ligação é",
+    "options": [
+      "Facilitar a entrega do FVIII diretamente ao local de lesão vascular junto com o vWF que adere ao colágeno",
+      "Proteger o FVIII da degradação proteolítica pela trombina e pelo FXa circulantes, prolongando sua meia-vida de horas para dias",
+      "Aumentar a solubilidade do FVIII no plasma, que de outra forma precipitaria como proteína hidrofóbica",
+      "Inibir a ativação prematura do FVIII na circulação, prevenindo coagulação sistêmica espontânea"
+    ],
+    "answer": [
+      "Proteger o FVIII da degradação proteolítica pela trombina e pelo FXa circulantes, prolongando sua meia-vida de horas para dias"
+    ],
+    "type": "multi",
+    "justification": "O <strong>FVIII</strong> circula ligado ao <strong>vWF</strong> numa proporção de aproximadamente 1 molécula de FVIII por 50–100 subunidades de vWF multiméricas. Esta ligação serve como proteção contra proteólise precoce.<br><br>A meia-vida do FVIII livre seria de apenas <strong>1–2 horas</strong>, mas ligado ao vWF aumenta para <strong>8–12 horas</strong>. O vWF protege o FVIII de proteases plasmáticas, incluindo a Proteína C ativada, FXa e TFPI.<br><br><em>Consequência clínica crucial:</em> Na <strong>Doença de von Willebrand tipo 3</strong> (ausência total de vWF), o FVIII secundariamente cai muito (frequentemente < 10 UI/dL), pois não há vWF para protegê-lo. Isso gera um fenótipo misto: sangramento mucoso (por falta de vWF para adesão plaquetária) E sangramento articular/muscular (por nível baixo de FVIII, semelhante à hemofilia A).<br><br><em>Desmopressina (DDAVP):</em> Libera vWF e FVIII dos corpúsculos de Weibel-Palade e grânulos α plaquetários → eleva ambos 3–5× → eficaz na DvW tipo 1 e hemofilia A leve."
+  },
+  {
+    "question": "O Fator Tecidual (TF) está constitutivamente expresso em fibroblastos subendoteliais, mas inativo no endotélio intacto em condições normais. Em condições de sepse grave, contudo, ocorre expressão patológica de TF. Qual é o mecanismo molecular desta indução?",
+    "options": [
+      "LPS bacteriano ativa TLR4 em monócitos e células endoteliais → NF-κB → transcrição do gene F3 (TF) → TF expresso na superfície celular",
+      "O estresse oxidativo na sepse expõe TF críptico na membrana plasmática por oxidação dos grupos tiol das cisteínas do TF",
+      "IL-6 induz diretamente a síntese de TF nos hepatócitos, que secretam micropartículas TF-positivas na circulação",
+      "A trombina gerada inicialmente na sepse retroalimenta positivamente a expressão de TF via receptor PAR-2 endotelial"
+    ],
+    "answer": [
+      "LPS bacteriano ativa TLR4 em monócitos e células endoteliais → NF-κB → transcrição do gene F3 (TF) → TF expresso na superfície celular"
+    ],
+    "type": "multi",
+    "justification": "Na <strong>sepse gram-negativa</strong>, o <strong>LPS (lipopolissacarídeo)</strong> liga-se ao complexo <strong>TLR4-MD2</strong> em monócitos circulantes e células endoteliais → ativa a cascata de sinalização → <strong>NF-κB</strong> transloca ao núcleo → induz transcrição do <strong>gene F3 (Fator Tecidual)</strong>.<br><br>Os <strong>monócitos</strong> são a principal fonte de TF circulante na sepse, liberando <strong>micropartículas TF-positivas</strong> que potencializam a coagulação sistêmica. Células endoteliais também expressam TF após estímulo por citocinas (TNF-α, IL-1β) e LPS.<br><br>Isso transforma o endotélio de anticoagulante em pró-coagulante → <strong>CID (Coagulação Intravascular Disseminada)</strong>.<br><br><em>O TF críptico</em> existe (proteína desorientada na membrana que pode ser ativada por disulfeto) mas não é o mecanismo principal na sepse. A opção A descreve o mecanismo central mais estabelecido.<br><br><em>Alvos terapêuticos:</em> APC recombinante (drotrecogina) foi tentada mas não mostrou benefício em RCTs."
+  },
+  {
+    "question": "A deficiência homozigótica do Fator XII (doença de Hageman) eleva marcadamente o TTPA mas não causa sangramento clínico. Este paradoxo é explicado porque",
+    "options": [
+      "O FXII só é ativado por vidro e superfícies artificiais in vitro, não tendo atividade fisiológica relevante na coagulação in vivo",
+      "O FXII é redundante porque o Fator VII ativado pode ativar diretamente o FIX sem passar pela via intrínseca",
+      "O plasma dos pacientes com deficiência de FXII contém inibidores compensatórios que mantêm a hemostasia",
+      "O FXII não é necessário para a amplificação da coagulação nas superfícies plaquetárias, onde o FXI é ativado diretamente pela trombina"
+    ],
+    "answer": [
+      "O FXII não é necessário para a amplificação da coagulação nas superfícies plaquetárias, onde o FXI é ativado diretamente pela trombina"
+    ],
+    "type": "multi",
+    "justification": "O <strong>modelo baseado em células</strong> (Hoffman & Monroe, 2001) explica este paradoxo: a via extrínseca (TF:VIIa) inicia a coagulação gerando um pequeno burst de trombina. Esta trombina inicial ativa diretamente <strong>FXI → FXIa</strong>, que por sua vez ativa FIX → amplificação da via intrínseca <em>sem necessitar do FXII</em>.<br><br>O FXII é ativado por contato com vidro, sílica e kaolinite no tubo de colheita (<em>ativação de contato in vitro</em>), prolongando muito o TTPA. Mas in vivo, a via de contato via FXII não é o principal gatilho fisiológico.<br><br><em>Curiosidade fascinante:</em> John Hageman (o índex-case) morreu de <strong>embolia pulmonar</strong> — sugerindo que o FXII pode ter papel anti-trombótico in vivo (ao ativar fibrinólise e sistema quinina-calicreína).<br><br>Por isso, <strong>inibidores de FXII</strong> estão sendo investigados como anticoagulantes com potencial menor risco hemorrágico do que os atuais."
+  },
+  {
+    "question": "O Fator V de Leiden é a trombofilia hereditária mais comum em populações europeias. A mutação cria resistência à Proteína C ativada porque",
+    "options": [
+      "Substitui um resíduo de lisina por arginina na interface α1β2 do Fator Va, impedindo sua poliubiquitinação e degradação pelo proteassoma",
+      "Cria um neossítio de ligação ao vWF que estabiliza o Fator Va contra degradação proteolítica",
+      "Aumenta a afinidade do Fator Va pelo Fator Xa no complexo protrombinase, tornando-o resistente à dissociação pela PCa",
+      "Substitui Arg506 por Gln no Fator Va, eliminando o principal sítio de clivagem pela Proteína C ativada"
+    ],
+    "answer": [
+      "Substitui Arg506 por Gln no Fator Va, eliminando o principal sítio de clivagem pela Proteína C ativada"
+    ],
+    "type": "multi",
+    "justification": "A mutação <strong>G1691A</strong> no gene <em>F5</em> (cromossomo 1q24) substitui <strong>Arg506 → Gln</strong> na cadeia pesada do Fator Va. A Arg506 é o <em>sítio de clivagem inicial e mais eficiente</em> da Proteína C ativada (PCa) no FVa.<br><br>Com Gln no lugar de Arg: a PCa não consegue reconhecer e clivar nessa posição → FVa permanece funcional por muito mais tempo → protrombinase continuamente ativa → <strong>estado pró-trombótico</strong>.<br><br>Existem dois outros sítios de clivagem da PCa no FVa (Arg306 e Arg679), mas são muito menos eficientes sem o Arg506 intacto.<br><br><em>Epidemiologia:</em> Prevalência ~5% em europeus; ~20–25% dos pacientes com TVP. Herança autossômica dominante com penetrância incompleta. Risco de TVP em homozigotos é ~80× maior que na população geral; heterozigotos têm risco ~5–8×.<br><br><em>Rastreamento:</em> teste de resistência à PCa (RPCA) com confirmação por PCR para a mutação G1691A."
+  },
+  {
+    "question": "Na síntese dos fatores de coagulação dependentes de vitamina K, a γ-carboxilação do ácido glutâmico é essencial. Qual é a consequência exata desta modificação pós-translacional?",
+    "options": [
+      "Adiciona um grupo carboxílico extra ao carbono γ do ácido glutâmico, criando um Gla de carga dupla negativa que quelata Ca²⁺ e permite ancoragem às membranas fosfolipídicas",
+      "Cria ligações dissulfeto intramoleculares que estabilizam a conformação proteica necessária para a catálise",
+      "Promove glicosilação N-linked nos resíduos adjacentes, aumentando a solubilidade plasmática dos fatores",
+      "Ativa covalentemente o sítio serina do domínio catalítico dos fatores de coagulação"
+    ],
+    "answer": [
+      "Adiciona um grupo carboxílico extra ao carbono γ do ácido glutâmico, criando um Gla de carga dupla negativa que quelata Ca²⁺ e permite ancoragem às membranas fosfolipídicas"
+    ],
+    "type": "multi",
+    "justification": "A enzima <strong>γ-glutamil carboxilase</strong> adiciona um grupo <strong>-COOH</strong> ao carbono gama (γ) dos resíduos de ácido glutâmico → formação de <strong>Gla (ácido γ-carboxiglutâmico)</strong>. O Gla tem <em>duas</em> cargas negativas (dois grupos carboxílicos) em vez de uma.<br><br>O Gla <strong>quelata Ca²⁺</strong> com alta afinidade. O Ca²⁺ quelado cria uma estrutura ternária: <strong>Gla–Ca²⁺–fosfatidilserina</strong> na superfície plaquetária ativada → ancora os fatores dependentes de vitamina K às membranas → formação dos complexos multiproteicos (tenase intrínseca, protrombinase).<br><br>Sem γ-carboxilação (deficiência de vitamina K, warfarina), os fatores são secretados como proteínas <strong>PIVKA</strong> (Proteins Induced by Vitamin K Absence/Antagonism) — funcionalmente deficientes.<br><br>A vitamina K é reciclada pelo ciclo: <em>vitamina K epóxido → VKORC1 → vitamina K reduzida → carboxilase (reoxida vit K) → epóxido</em>. A warfarina inibe o VKORC1."
+  },
+  {
+    "question": "O Fator VIII circula como moléculas inativas. Dois eventos distintos o ativam no local de coagulação. Quais são esses eventos e qual é a ordem cronológica correta?",
+    "options": [
+      "Primeiro: pequena quantidade de trombina cliva e ativa o FVIII → depois: FXa amplifica a ativação; ambos dissociam o FVIII do vWF",
+      "Primeiro: FXa ativa FVIII no complexo com fosfatidilserina; depois: trombina estabiliza o complexo FVIIIa-FIXa",
+      "Primeiro: FVIIa do complexo TF:VIIa cliva diretamente o FVIII; depois: FIXa estabiliza o FVIIIa",
+      "Primeiro: FVIII se dissocia espontaneamente do vWF quando o pH cai no local de lesão; depois: trombina o ativa"
+    ],
+    "answer": [
+      "Primeiro: pequena quantidade de trombina cliva e ativa o FVIII → depois: FXa amplifica a ativação; ambos dissociam o FVIII do vWF"
+    ],
+    "type": "multi",
+    "justification": "A ativação do FVIII ocorre por proteólise sequencial:<br><br><strong>Fase 1 (Iniciação):</strong> O complexo TF:VIIa da via extrínseca gera pequenas quantidades de trombina (<strong>burst inicial</strong>). Essa trombina inicial cliva o FVIII nas posições Arg740 e Arg1648 → dissocia do vWF → expõe o FVIIIa ativo.<br><br><strong>Fase 2 (Amplificação):</strong> O FXa gerado também pode ativar o FVIII por clivagem em sítios similares, mas com menor eficiência. O FIXa sozinho não ativa FVIII significativamente, mas <em>estabiliza</em> o FVIIIa no complexo tenase.<br><br><em>O FVIIIa é instável</em>: dissocia-se espontaneamente em poucos minutos (mesmo sem PCa), o que é um mecanismo de autorregulação natural.<br><br><em>Inibidor adquirido de FVIII (hemofilia adquirida):</em> anticorpos IgG contra FVIII que surgem em adultos > 60 anos, peripartum ou em autoimunes. Causa sangramentos graves. TTPA muito prolongado, sem correção no teste de mistura."
+  },
+  {
+    "question": "O TFPI (Tissue Factor Pathway Inhibitor / Inibidor da Via do Fator Tecidual) limita a fase de iniciação da coagulação. Seu mecanismo de inibição é um exemplo de",
+    "options": [
+      "Antitrombina-like: o TFPI é uma serpina que se insere irreversivelmente no sítio ativo das serinas-proteases",
+      "Inibição competitiva clássica: o TFPI compete com o FX pelo sítio ativo do complexo TF:FVIIa",
+      "Inibição sequencial bimolecular: primeiro inibe FXa, depois o complexo TFPI:FXa inibe o complexo TF:FVIIa em estrutura quaternária",
+      "Inibição alostérica: o TFPI liga-se ao domínio Gla do FVIIa induzindo mudança conformacional que reduz sua catálise"
+    ],
+    "answer": [
+      "Inibição sequencial bimolecular: primeiro inibe FXa, depois o complexo TFPI:FXa inibe o complexo TF:FVIIa em estrutura quaternária"
+    ],
+    "type": "multi",
+    "justification": "O <strong>TFPI</strong> possui múltiplos domínios Kunitz (inibidores de protease tipo Kunitz):<br><br><strong>Etapa 1:</strong> O domínio Kunitz-2 do TFPI inibe diretamente o <strong>FXa</strong> livre (forma complexo TFPI:FXa).<br><br><strong>Etapa 2:</strong> O complexo TFPI:FXa então inibe o <strong>complexo TF:FVIIa</strong> via domínio Kunitz-1 → formação de um complexo quaternário inativo TF:FVIIa:FXa:TFPI.<br><br>Esta inibição <em>dependente de FXa</em> significa que o TFPI só funciona <em>após</em> algum FXa já ter sido gerado — é um mecanismo de amplificação com freio automático.<br><br>Isso explica por que a via extrínseca sozinha não mantém a coagulação: o TFPI apaga rapidamente o FXa gerado pela via TF:VIIa. A amplificação contínua via FIXa (via intrínseca) é indispensável.<br><br><em>TFPI não é uma serpina</em> — não tem o mecanismo de suicide substrate das serpinas como a antitrombina. É especificamente um inibidor Kunitz."
+  },
+  {
+    "question": "A antitrombina III (ATIII) inibe a trombina e o FXa em condições fisiológicas a uma taxa relativamente lenta. A heparina acelera este processo em 1.000 vezes. Qual é o mecanismo molecular preciso desta aceleração?",
+    "options": [
+      "A heparina bloqueia o exossítio II da trombina, reduzindo sua capacidade de se dissopar após reagir com o fibrinogênio, forçando interação com a ATIII",
+      "A heparina age como ponte molecular que mantém a ATIII e a trombina em proximidade espacial, aumentando a frequência de colisão efetiva",
+      "A heparina liga-se a um sítio específico na ATIII (domínio heparina-binding) → induz mudança conformacional → expõe o loop reativo da ATIII → apresentação mais eficiente ao sítio ativo das proteases",
+      "A heparina desfosforila resíduos no loop reativo da ATIII, aumentando sua reatividade eletrofílica com o sítio Ser195 da trombina"
+    ],
+    "answer": [
+      "A heparina liga-se a um sítio específico na ATIII (domínio heparina-binding) → induz mudança conformacional → expõe o loop reativo da ATIII → apresentação mais eficiente ao sítio ativo das proteases"
+    ],
+    "type": "multi",
+    "justification": "O mecanismo tem <em>dois componentes</em> para inibição da trombina, mas apenas um para FXa:<br><br><strong>Para inibição do FXa:</strong> O pentassacarídeo da heparina liga-se ao domínio heparina-binding da ATIII → mudança conformacional alostérica → loop reativo P1 (Arg393) fica melhor exposto → FXa reage com a ATIII. A heparina não precisa estar ligada ao FXa simultaneamente.<br><br><strong>Para inibição da trombina:</strong> Além da mudança conformacional na ATIII, a <em>cadeia longa da heparina</em> (≥ 18 unidades de sacarídeo) funciona como <strong>ponte molecular</strong> — liga-se tanto à ATIII quanto ao <strong>exossítio II da trombina</strong> → aproxima os dois → reação muito mais rápida. Este efeito de ponte é necessário para inibição eficiente da trombina, mas <em>não</em> para o FXa.<br><br><em>Implicação prática:</em> <strong>HBPM (heparina de baixo peso molecular)</strong> tem cadeias curtas (< 18 sacarídeos) → não pode fazer ponte para a trombina → inibe predominantemente <strong>FXa</strong>. A <strong>HNF</strong> inibe tanto trombina quanto FXa. O <strong>fondaparinux</strong> (pentassacarídeo puro) inibe <em>apenas</em> FXa."
+  },
+  {
+    "question": "Na necrose cutânea induzida pela warfarina, que pode ocorrer nos primeiros dias de tratamento, o mecanismo fisiopatológico central é",
+    "options": [
+      "O metabólito hidroxiwarfarina é diretamente tóxico para os microcapilares cutâneos antes de atingir nível anticoagulante sistêmico",
+      "A warfarina inibe diretamente a trombomodulina endotelial, removendo o freio anticoagulante antes de inibir os fatores de coagulação",
+      "A Proteína C (meia-vida ~8h) decai mais rapidamente que os fatores pró-coagulantes (FII, FX, meia-vida > 40h), criando janela transitória de hipercoagulabilidade microvascular",
+      "A queda abrupta do Fator VII (meia-vida 6h) cria deficiência exclusiva da via extrínseca, desprotegendo a microcirculação periférica"
+    ],
+    "answer": [
+      "A Proteína C (meia-vida ~8h) decai mais rapidamente que os fatores pró-coagulantes (FII, FX, meia-vida > 40h), criando janela transitória de hipercoagulabilidade microvascular"
+    ],
+    "type": "multi",
+    "justification": "A <strong>warfarina</strong> inibe o VKORC1 → depleção de todos os fatores dependentes de vitamina K. Mas a taxa de depleção varia com as meias-vidas:<br><br>• <strong>Proteína C:</strong> meia-vida ~8h → cai rapidamente<br>• <strong>FVII:</strong> meia-vida ~6h → cai rapidamente (prolonga INR precocemente)<br>• <strong>Proteína S:</strong> meia-vida ~30h<br>• <strong>FIX:</strong> meia-vida ~24h<br>• <strong>FX:</strong> meia-vida ~40h<br>• <strong>FII:</strong> meia-vida ~60h<br><br>Nos primeiros dias, a Proteína C (anticoagulante) cai antes dos principais fatores pró-coagulantes (FX, FII) → estado transitório de <em>hipercoagulabilidade</em> → trombose dos microvasos cutâneos → necrose, especialmente em tecidos com alta proporção de circulação terminal (seios, nádegas, pele de extremidades).<br><br><em>Prevenção:</em> Sempre sobrepor heparina quando iniciando warfarina. Só retirar heparina quando INR > 2 por dois dias consecutivos (tempo para FX e FII caírem adequadamente)."
+  },
+  {
+    "question": "Em um paciente com TTPA prolongado, o teste de mistura (plasma do paciente 1:1 com plasma normal) é realizado. O TTPA <em>não corrige</em> após a mistura. A interpretação mais provável e os próximos passos são",
+    "options": [
+      "Presença de heparina residual na amostra; próximos passos: repetir o TTPA após neutralização da heparina com sulfato de protamina ou heparinase",
+      "Presença de um inibidor (anticorpo) no plasma do paciente; próximos passos: incubar a mistura a 37°C por 2h para diferenciar inibidor tempo-dependente (anti-FVIII) de anticoagulante lúpico",
+      "Coagulação intravascular disseminada com consumo de fatores; próximos passos: dosar fibrinogênio e D-dímero imediatamente",
+      "Deficiência grave de múltiplos fatores (FXII, FXI, FIX, FVIII simultâneos); próximos passos: dosagem individual de todos esses fatores"
+    ],
+    "answer": [
+      "Presença de um inibidor (anticorpo) no plasma do paciente; próximos passos: incubar a mistura a 37°C por 2h para diferenciar inibidor tempo-dependente (anti-FVIII) de anticoagulante lúpico",
+      "Presença de heparina residual na amostra; próximos passos: repetir o TTPA após neutralização da heparina com sulfato de protamina ou heparinase"
+    ],
+    "type": "multi",
+    "justification": "O <strong>teste de mistura</strong> distingue deficiência de fator (o plasma normal repõe o fator ausente, corrigindo o TTPA) de inibidor (o inibidor do paciente neutraliza os fatores do plasma normal, sem correção).<br><br>Se <strong>não corrige</strong>, as causas são:<br><br><strong>1. Anticorpos (inibidores):</strong><br>• <em>Anticoagulante lúpico (AL):</em> inibe imediatamente, independente de incubação. Presente em SAF. Paradoxalmente: prolonga TTPA in vitro, mas causa trombose in vivo.<br>• <em>Anti-FVIII:</em> inibe de forma <em>tempo e temperatura-dependente</em> — inicialmente pode haver correção parcial, mas após incubação 37°C/2h, não corrige. Clínico: hemofilia adquirida (sangramento grave).<br><br><strong>2. Heparina residual na amostra:</strong> comum em amostras colhidas de cateter com flush heparinizado. Solução: neutralizar a heparina antes do teste (heparinase ou protamina no tubo).<br><br><em>Na CID,</em> a mistura geralmente <em>corrige</em> (pois o problema é consumo de fatores, não inibidores)."
+  },
+  {
+    "question": "O D-dímero é um fragmento específico da degradação da fibrina cross-linked. Sua especificidade diagnóstica para tromboembolismo venoso (TEV) é limitada porque",
+    "options": [
+      "A plasmina também degrada o fibrinogênio não cross-linked gerando fragmentos semelhantes ao D-dímero que os ensaios não distinguem",
+      "O D-dímero é metabolizado pelo fígado de forma variável entre indivíduos, tornando os níveis séricos inconsistentes",
+      "Eleva-se em qualquer condição que ative simultaneamente a coagulação e a fibrinólise, incluindo inflamação, neoplasia, gravidez, pós-operatório e insuficiência cardíaca",
+      "Em pacientes anticoagulados, a fibrinólise está inibida e o D-dímero não reflete a extensão da trombose"
+    ],
+    "answer": [
+      "Eleva-se em qualquer condição que ative simultaneamente a coagulação e a fibrinólise, incluindo inflamação, neoplasia, gravidez, pós-operatório e insuficiência cardíaca"
+    ],
+    "type": "multi",
+    "justification": "O <strong>D-dímero</strong> reflete a presença de fibrina cross-linked (por FXIIIa) que foi degradada pela plasmina. Ele é <strong>sensível mas não específico</strong> para TEV:<br><br>Qualquer condição que ative tanto coagulação (formação de fibrina) quanto fibrinólise (degradação de fibrina) eleva o D-dímero:<br>• Infecções e sepse<br>• Neoplasias (ativam TF tumoral)<br>• Gravidez (estado pró-coagulante fisiológico, valor de corte deve ser ajustado)<br>• Pós-operatório (trauma tecidual → TF exposto)<br>• ICC, FA<br>• Idade avançada → elevação fisiológica (usar corte ajustado: idade × 10 µg/L para > 50 anos)<br>• Doença renal crônica (clearance reduzido)<br><br><em>Uso clínico correto:</em> D-dímero apenas é útil para <em>excluir</em> TEV em pacientes com <strong>probabilidade pré-teste baixa ou intermediária</strong> (Wells Score ≤ 4). Em alta probabilidade pré-teste, solicitar diretamente angioTC ou ecografia venosa.<br><br><em>A opção B é incorreta:</em> a plasmina degrada tanto fibrinogênio quanto fibrina, mas os FDPs (fibrinogen degradation products) da degradação do fibrinogênio não têm a estrutura D-D específica do D-dímero."
+  },
+  {
+    "question": "Na Trombocitopenia Induzida por Heparina tipo II (HIT-II), a patogênese envolve anticorpos contra o complexo PF4-heparina. O fenômeno paradoxal de trombose ocorrendo durante trombocitopenia deve-se a",
+    "options": [
+      "A heparina, ao ser suspensa abruptamente, causa efeito rebote pró-coagulante com ativação do complemento",
+      "A formação de imunocomplexos PF4-heparina ativa diretamente o Fator XII via superfície carregada",
+      "A trombocitopenia severa (< 20.000/µL) causa lise osmótica das plaquetas remanescentes, liberando seu conteúdo pró-coagulante na circulação",
+      "Os anticorpos IgG anti-PF4/heparina ativam plaquetas via receptor FcγRIIa (CD32a), causando agregação maciça e liberação de micropartículas pró-coagulantes TF-positivas"
+    ],
+    "answer": [
+      "Os anticorpos IgG anti-PF4/heparina ativam plaquetas via receptor FcγRIIa (CD32a), causando agregação maciça e liberação de micropartículas pró-coagulantes TF-positivas"
+    ],
+    "type": "multi",
+    "justification": "Na <strong>HIT tipo II</strong>, o mecanismo é imunomediado:<br><br>1. Heparina liga-se ao <strong>PF4 (Fator Plaquetário 4)</strong> liberado pelos grânulos α plaquetários → forma complexo antigênico.<br>2. Anticorpos <strong>IgG anti-PF4/heparina</strong> são gerados (tipicamente dias 5–10 após exposição).<br>3. Os imunocomplexos PF4/heparina/IgG ligam-se ao receptor <strong>FcγRIIa (CD32a)</strong> nas plaquetas → ativação plaquetária massiva → agregação → consumo de plaquetas (<em>trombocitopenia</em>) + liberação de grânulos e micropartículas TF-positivas (<em>trombose</em>).<br><br>Os anticorpos também ativam monócitos e células endoteliais via FcγRIIa, aumentando a expressão de TF sistêmico.<br><br><em>Tratamento:</em> SUSPENDER toda heparina imediatamente (incluindo flush de cateter) + iniciar anticoagulante alternativo NÃO-heparina (argatrobana, bivalirudina). NÃO transfundir plaquetas (piora a trombose). NÃO dar warfarina aguda (queda da Proteína C)."
+  },
+  {
+    "question": "O ácido tranexâmico (TXA) inibe a fibrinólise e reduz mortalidade em hemorragia traumática quando administrado até 3 horas do trauma. Após 3 horas, pode aumentar a mortalidade. A explicação molecular desta janela terapêutica é",
+    "options": [
+      "O TXA é metabolizado a compostos pró-coagulantes após 3 horas, revertendo seu efeito antifibrinolítico",
+      "A meia-vida plasmática do TXA é de 3 horas; após este período, sua concentração já não é antifibrinolítica mas pode induzir ativação paradoxal do plasminogênio",
+      "O sistema de coagulação está completamente esgotado após 3 horas de trauma grave, e inibir a fibrinólise nesse contexto leva a coagulação intravascular sem substrato hemostático",
+      "Após 3 horas, a fibrinólise no trauma muda de hiperfibrinólise para fibrinólise de consumo; inibir a fibrinólise tardia impede a limpeza de microtrombos patológicos em órgãos vitais"
+    ],
+    "answer": [
+      "Após 3 horas, a fibrinólise no trauma muda de hiperfibrinólise para fibrinólise de consumo; inibir a fibrinólise tardia impede a limpeza de microtrombos patológicos em órgãos vitais"
+    ],
+    "type": "multi",
+    "justification": "No trauma grave, há uma sequência temporal da fibrinólise:<br><br><strong>Fase precoce (< 3h):</strong> <em>Hiperfibrinólise</em> — liberação maciça de t-PA pelo endotélio traumatizado, consumo rápido do PAI-1 → plasmina excessiva → dissolução de coágulos hemostáticos necessários → hemorragia que responde ao TXA.<br><br><strong>Fase tardia (> 3h):</strong> O sistema fibrinolítico adapta-se com elevação do PAI-1 (fase de resposta aguda). O padrão passa para <em>coagulação com fibrinólise deprimida</em>. Inibir a fibrinólise residual nessa fase → <strong>microtrombos</strong> que não são limpos nos capilares → isquemia de órgãos → disfunção orgânica múltipla e mortalidade aumentada.<br><br>Esta hipótese é suportada pelos dados do estudo <strong>CRASH-2</strong> (Lancet 2010): o TXA nas primeiras 3 horas reduziu mortalidade; após 3 horas aumentou.<br><br><em>Monitorização pelo TEG/ROTEM:</em> O parâmetro LY30 (lise às 30 min) > 3% identifica hiperfibrinólise → TXA beneficia. LY30 < 3% → TXA provavelmente não beneficia ou pode prejudicar."
+  },
+  {
+    "question": "O reversor do dabigatrano, idarucizumab, é um fragmento de anticorpo (Fab) que neutraliza o dabigatrano com afinidade extremamente alta. Por qual razão um fragmento Fab foi escolhido em vez do anticorpo completo IgG?",
+    "options": [
+      "O fragmento Fab evita a formação de imunocomplexos Fab-dabigatrano com ativação do complemento e risco de reação imune; IgG completo poderia criar imunocomplexos bivalentes que ativariam FcγR em células imunes",
+      "O Fab atravessa a barreira hematoencefálica e pode reverter efeito anticoagulante em pacientes com AVC hemorrágico intracraniano",
+      "O Fab não ativa plaquetas via FcγRIIa, evitando o risco de trombocitopenia heparina-símile",
+      "O Fab tem meia-vida renal menor, permitindo eliminação mais rápida do complexo idarucizumab-dabigatrano e restauração da anticoagulação caso necessário"
+    ],
+    "answer": [
+      "O fragmento Fab evita a formação de imunocomplexos Fab-dabigatrano com ativação do complemento e risco de reação imune; IgG completo poderia criar imunocomplexos bivalentes que ativariam FcγR em células imunes"
+    ],
+    "type": "multi",
+    "justification": "O <strong>idarucizumab (Praxbind®)</strong> é um fragmento <strong>Fab</strong> humanizado que liga o dabigatrano com afinidade 350× maior que a trombina (Kd ~ 1 pmol/L).<br><br><strong>Razões para usar Fab e não IgG completo:</strong><br>• Um IgG completo (bivalente) poderia criar <em>imunocomplexos solúveis cruzados</em> com dabigatrano → ativação do complemento (via Fc) → reação inflamatória.<br>• O fragmento Fab não tem região Fc → sem ativação de complemento, sem ligação a FcγR em macrófagos/plaquetas → perfil de segurança superior.<br>• O Fab tem menor peso molecular (~48 kDa vs ~150 kDa do IgG) → distribuição mais rápida.<br><br><em>O complexo idarucizumab-dabigatrano é eliminado pelos rins.</em> A anticoagulação com dabigatrano pode ser reiniciada 24 horas após o idarucizumab se necessário.<br><br><em>Andexanet alfa</em> (para FXa inibidores): é um FXa cataliticamente inativo (decoy receptor) que funciona diferente — não é anticorpo mas uma proteína isco."
+  },
+  {
+    "question": "A Coagulação Intravascular Disseminada (CID) em leucemia promielocítica aguda (LPA / M3) tem mecanismo fisiopatológico distinto da CID por sepse. Esta distinção é clinicamente importante porque",
+    "options": [
+      "Na LPA, o tratamento com ATRA (ácido all-trans retinoico) agrava a CID nas primeiras 24 horas por liberação de TF dos promielócitos em diferenciação",
+      "Na LPA, as células leucêmicas expressam TF e anexina II (receptor de plasminogênio) simultaneamente, gerando CID com componente hiperfibrinolítico proeminente que exige ácido tranexâmico além do tratamento da LPA",
+      "Na sepse, a CID é exclusivamente por ativação plaquetária sem envolvimento da cascata de coagulação, enquanto na LPA é apenas enzimática",
+      "Na LPA, a CID é causada exclusivamente por fragmentação nuclear que ativa a via do complemento, não envolvendo TF"
+    ],
+    "answer": [
+      "Na LPA, as células leucêmicas expressam TF e anexina II (receptor de plasminogênio) simultaneamente, gerando CID com componente hiperfibrinolítico proeminente que exige ácido tranexâmico além do tratamento da LPA"
+    ],
+    "type": "multi",
+    "justification": "A CID na <strong>LPA (M3)</strong> tem mecanismo <em>bidirecional</em>:<br><br><strong>1. Via pró-coagulante:</strong> Os promielócitos malignos expressam <strong>TF e fator de câncer pró-coagulante (CPA)</strong> → ativação direta de FX → geração de trombina → microtrombos.<br><br><strong>2. Via hiperfibrinolítica:</strong> Os promielócitos também expressam <strong>anexina II</strong> na superfície → anexina II é co-receptor para t-PA e plasminogênio → geração maciça de <em>plasmina</em> → hiperfibrinólise.<br><br>O resultado é CID com <strong>sangramento predominante</strong> (não trombose) por hiperfibrinólise massiva que supera a coagulação.<br><br><em>Diferença terapêutica crítica:</em> O ácido tranexâmico (antifibrinolítico) é frequentemente necessário na CID da LPA. Na CID por sepse com trombose predominante, o TXA pode ser prejudicial.<br><br>O <strong>ATRA</strong> (diferenciador das células leucêmicas) resolve gradualmente a CID ao diferenciar os promielócitos, mas pode inicialmente piorar por liberação do conteúdo das células em diferenciação — monitorização intensiva é necessária."
+  },
+  {
+    "question": "Na Síndrome Antifosfolipídica (SAF), o anticoagulante lúpico (AL) paradoxalmente prolonga o TTPA in vitro mas causa trombose in vivo. Este paradoxo é explicado pelo fato de que",
+    "options": [
+      "In vitro, os anticorpos competem com os fatores de coagulação pelos fosfolipídios no tubo de reação, prolongando o TTPA; in vivo, os mesmos anticorpos ativam células endoteliais, plaquetas e o sistema do complemento promovendo trombose",
+      "In vitro, o AL neutraliza a trombina; in vivo, a trombina produzida supera a capacidade de neutralização do AL que está em baixa concentração tecidual",
+      "O anticoagulante lúpico inibe seletivamente a fibrinólise in vivo mas não tem esse efeito in vitro devido à diferença de temperatura de processamento",
+      "O AL só prolonga o TTPA em pacientes que também tomam anticoagulantes, sendo um artefato da combinação farmacológica"
+    ],
+    "answer": [
+      "In vitro, os anticorpos competem com os fatores de coagulação pelos fosfolipídios no tubo de reação, prolongando o TTPA; in vivo, os mesmos anticorpos ativam células endoteliais, plaquetas e o sistema do complemento promovendo trombose"
+    ],
+    "type": "multi",
+    "justification": "O <strong>Anticoagulante Lúpico (AL)</strong> são anticorpos (IgG, IgM ou ambos) contra complexos de proteínas ligadas a fosfolipídios de membrana, especialmente β₂-glicoproteína I (β₂GPI) ligada a fosfatidilserina.<br><br><strong>In vitro (TTPA):</strong> Os anticorpos competem com os fatores de coagulação pelos fosfolipídios adicionados na reação (cefalina) → menos fosfolipídio disponível para montar os complexos enzimáticos → TTPA prolongado. Este é um <em>artefato da concentração suprafisiológica de fosfolipídio</em> usada no teste.<br><br><strong>In vivo:</strong> Os anticorpos anti-β₂GPI:<br>• Ativam células endoteliais → expressão de TF, moléculas de adesão<br>• Ativam plaquetas via β₂GPI na membrana<br>• Inibem a anticoagulação mediada pela Proteína C/S (β₂GPI é cofator dessa via)<br>• Ativam complemento → trombose<br><br><em>Confirmação diagnóstica:</em> O AL é confirmado quando o TTPA não corrige com plasma normal (1:1) e <em>corrige</em> com excesso de fosfolipídio (teste com plaquetas hexagonais ou fosfolipídio em excesso)."
+  },
+  {
+    "question": "A Púrpura Trombocitopénica Trombótica (PTT) e a Síndrome Hemolítico-Urêmica típica (SHU) são microangiopatias trombóticas com fenótipos semelhantes, mas mecanismos distintos. A diferença fundamental é",
+    "options": [
+      "PTT e SHU têm o mesmo mecanismo (deficiência de ADAMTS-13), mas diferem apenas na localização do endotélio afetado",
+      "PTT: ativação direta das plaquetas pela trombina circulante; SHU: ativação do complemento via via alternativa levando à trombose renal exclusiva",
+      "PTT: deficiência congênita de FXIII causando fibrina instável que forma microtrombos; SHU: deficiência adquirida de Proteína C renal",
+      "PTT: deficiência de ADAMTS-13 → acúmulo de ULvWF → microtrombos plaquetários ricos em vWF em todo o organismo; SHU típica: toxina Shiga (STEC) danifica diretamente o endotélio renal → microtrombos predominantemente no rim"
+    ],
+    "answer": [
+      "PTT: deficiência de ADAMTS-13 → acúmulo de ULvWF → microtrombos plaquetários ricos em vWF em todo o organismo; SHU típica: toxina Shiga (STEC) danifica diretamente o endotélio renal → microtrombos predominantemente no rim"
+    ],
+    "type": "multi",
+    "justification": "<strong>PTT (Púrpura Trombocitopénica Trombótica):</strong><br>• Deficiência de <strong>ADAMTS-13</strong> (autoimune adquirida >> congênita)<br>• ADAMTS-13 normalmente cliva os <em>ultra-large vWF multimers (ULvWF)</em><br>• Sem clivagem → ULvWF acumulam → ativação espontânea de plaquetas em todo o organismo → <em>microtrombos plaquetários ubíquos</em><br>• Manifestações: anemia hemolítica microangiopática + trombocitopenia + febre + distúrbios neurológicos + comprometimento renal (geralmente moderado)<br>• Tratamento: <strong>plasmaférese</strong> (remove anticorpos anti-ADAMTS-13 + repõe ADAMTS-13)<br><br><strong>SHU típica (STEC-SHU):</strong><br>• <em>E. coli</em> O157:H7 produz toxina Shiga → liga-se a receptor Gb3 nas células endoteliais <em>renais</em> (alta expressão de Gb3 no rim) → apoptose endotelial → ativação local do complemento e coagulação → microtrombos predominantemente <em>renais</em><br>• ADAMTS-13 está normal<br>• Tratamento: suporte, diálise; evitar antibióticos (liberam mais toxina)"
+  },
+  {
+    "question": "O TEG (Tromboelastografia) e o ROTEM (Tromboelastometria Rotacional) avaliam a viscoelasticidade do sangue total in vitro. No contexto de hemorragia maciça, qual padrão no ROTEM indica especificamente hipofibrinogenemia funcional que exige reposição com concentrado de fibrinogênio?",
+    "options": [
+      "EXTEM-LI30 > 15%, indicando fibrinólise excessiva que consume o fibrinogênio mais rapidamente do que é sintetizado",
+      "INTEM-MCF < 30 mm com contagem de plaquetas > 100.000/µL, excluindo trombocitopenia como causa e apontando para hipofibrinogenemia",
+      "FIBTEM-MCF (Amplitude Máxima do Coágulo no FIBTEM) < 10 mm, pois o FIBTEM usa citocalasina D para inibir as plaquetas e mede exclusivamente a contribuição do fibrinogênio à firmeza do coágulo",
+      "EXTEM-CT prolongado com INTEM-CT normal, indicando seletivamente falha da polimerização da fibrina sem comprometimento plaquetário"
+    ],
+    "answer": [
+      "FIBTEM-MCF (Amplitude Máxima do Coágulo no FIBTEM) < 10 mm, pois o FIBTEM usa citocalasina D para inibir as plaquetas e mede exclusivamente a contribuição do fibrinogênio à firmeza do coágulo"
+    ],
+    "type": "multi",
+    "justification": "O <strong>ROTEM</strong> usa diferentes ativadores e inibidores em paralelo para isolar componentes da coagulação:<br><br><strong>FIBTEM:</strong> Usa o ativador do EXTEM (fator tecidual) + <em>citocalasina D</em>, um inibidor da polimerização de actina que bloqueia a contração plaquetária. Assim, a firmeza do coágulo no FIBTEM reflete <em>exclusivamente</em> o fibrinogênio e a fibrina cross-linked (sem contribuição plaquetária).<br><br>• <strong>FIBTEM-MCF < 10 mm</strong> → hipofibrinogenemia funcional → cortar com concentrado de fibrinogênio (alvo FIBTEM-MCF > 12 mm)<br>• <strong>FIBTEM-MCF 10–22 mm</strong> → normal<br>• <strong>FIBTEM-MCF > 22 mm</strong> → hiperfibrinogenemia (pouco relevante clinicamente)<br><br><em>O EXTEM-MCF</em> reflete a soma de plaquetas + fibrinogênio. Se EXTEM-MCF baixo mas FIBTEM-MCF normal → o problema é trombocitopenia → transfundir plaquetas.<br><br>Esta abordagem <em>ponto-de-cuidado dirigida por TEG/ROTEM</em> reduz uso desnecessário de plasma fresco congelado e plaquetas em cirurgias cardíacas e trauma."
+  },
+  {
+    "question": "O concentrado de complexo protrombínico (CCP / PCC — Prothrombin Complex Concentrate) contém fatores II, VII, IX e X (+ Proteínas C e S). Em qual situação clínica o CCP de 4 fatores deve ser preferido ao Plasma Fresco Congelado (PFC) para reverter anticoagulação por warfarina urgente?",
+    "options": [
+      "Em CID aguda com INR elevado, onde o CCP repõe os fatores consumidos sem o risco de volemia excessiva do PFC",
+      "Em hemorragia intracraniana com INR > 2 em paciente em uso de warfarina, onde é necessária reversão rápida e completa; o CCP normaliza o INR em minutos e não requer compatibilidade ABO nem grandes volumes",
+      "Em deficiência isolada de Fator IX (Hemofilia B) em situação de emergência, onde o CCP 4 fatores serve como alternativa ao concentrado específico de FIX",
+      "Em qualquer sangramento com INR > 1,5 independente da causa, pois o CCP é sempre superior ao PFC em eficácia e segurança"
+    ],
+    "answer": [
+      "Em hemorragia intracraniana com INR > 2 em paciente em uso de warfarina, onde é necessária reversão rápida e completa; o CCP normaliza o INR em minutos e não requer compatibilidade ABO nem grandes volumes"
+    ],
+    "type": "multi",
+    "justification": "O <strong>CCP 4 fatores</strong> é a escolha preferencial sobre o PFC para reversão urgente de warfarina porque:<br><br>1. <strong>Velocidade:</strong> Normaliza o INR em 15–30 minutos vs. 12–24 horas para vitamina K IV ou várias horas para PFC.<br>2. <strong>Volume:</strong> Dose eficaz é de 25–50 UI/kg (~1–2 frascos) vs. 15–30 mL/kg de PFC → evita sobrecarga de volume em pacientes cardiopatas, idosos ou com insuficiência cardíaca.<br>3. <strong>Sem necessidade de compatibilidade ABO</strong> e sem risco de TRALI (lesão pulmonar associada à transfusão).<br>4. <strong>Concentração:</strong> Contém concentrações de fatores 25× maiores que o PFC.<br><br><em>Em CID,</em> o CCP é <strong>contraindicado</strong> como monoterapia porque pode alimentar a coagulação descontrolada — na CID, a abordagem é tratar a causa + PFC + plaquetas + crioprecipitado guiados por ROTEM.<br><br><em>Para hemofilia B,</em> o CCP de 4 fatores pode ser usado como alternativa em emergência quando o concentrado específico de FIX não está disponível, mas não é a primeira escolha."
+  },
+  {
+    "question": "O modelo da Tríade Letal do Trauma (acidose + hipotermia + coagulopatia) é fisiopatologicamente integrado. Como a hipotermia contribui especificamente para a coagulopatia em nível molecular?",
+    "options": [
+      "Induz fibrinólise paradoxal por aumentar a atividade do t-PA em baixas temperaturas, dissolando os coágulos formados",
+      "Reduz a velocidade de todas as reações enzimáticas da cascata de coagulação (serinas proteases são temperatura-dependentes) e despolimeriza os microtúbulos marginais plaquetários, comprometendo a função das plaquetas",
+      "Causa hemólise intravascular com liberação de ADP e histona nuclear que inibem competitivamente os fatores de coagulação",
+      "Precipita os fatores de coagulação séricos por desnaturação proteica acima de 34°C, tornando-os funcionalmente inativos"
+    ],
+    "answer": [
+      "Reduz a velocidade de todas as reações enzimáticas da cascata de coagulação (serinas proteases são temperatura-dependentes) e despolimeriza os microtúbulos marginais plaquetários, comprometendo a função das plaquetas"
+    ],
+    "type": "multi",
+    "justification": "A <strong>hipotermia</strong> (temperatura central < 35°C) compromete a coagulação por múltiplos mecanismos:<br><br><strong>1. Enzimas de coagulação:</strong> As serinas-proteases (FXa, trombina, etc.) têm atividade ótima a 37°C. A Q₁₀ enzimática (fator de redução de velocidade por queda de 10°C) é ~2 → a 32°C, a atividade cai ~50%; a 28°C, ~75%.<br><br><strong>2. Plaquetas:</strong> Os <em>microtúbulos marginais</em> das plaquetas se despolimerizarizam abaixo de 37°C → a plaqueta perde a forma discóide → função prejudicada. Além disso, a exocitose dos grânulos é reduzida pelo frio.<br><br><strong>3. Paradoxo laboratorial:</strong> Os testes de coagulação (TP, TTPA) são realizados a <strong>37°C</strong> no laboratório → podem ser normais mesmo com coagulopatia clínica hipotérmica! Por isso o TEG/ROTEM a 37°C pode subestimar a coagulopatia real. O <strong>ROTEM a temperatura corporal do paciente</strong> seria ideal mas não é prático.<br><br><em>Manejo:</em> Ressuscitação hemostática inclui aquecimento ativo agressivo (fluidos aquecidos, cobertores térmicos, circuito de aquecimento extracorpóreo em casos graves)."
+  },
+  {
+    "question": "O Fator XIII (estabilizador da fibrina) é uma transglutaminase que forma ligações isopeptídicas covalentes entre resíduos de glutamina e lisina de monômeros de fibrina adjacentes. A inativação do FXIII por si só, sem outros defeitos, resultaria em",
+    "options": [
+      "Trombocitose compensatória reativa que parcialmente substitui a função do fibrinogênio cross-linked",
+      "Sangramento exclusivamente mucoso por falta de ancoragem do coágulo ao colágeno subendotelial",
+      "Coágulo que se forma normalmente (TP e TTPA normais) mas é friável e dissolve prematuramente, causando sangramento tardio horas após hemostasia aparente inicial",
+      "Falha total na polimerização da fibrina com TP e TTPA muito prolongados, causando sangramento idêntico à hemofilia grave"
+    ],
+    "answer": [
+      "Coágulo que se forma normalmente (TP e TTPA normais) mas é friável e dissolve prematuramente, causando sangramento tardio horas após hemostasia aparente inicial"
+    ],
+    "type": "multi",
+    "justification": "O <strong>Fator XIIIa</strong> não é necessário para a polimerização inicial da fibrina — esta ocorre espontaneamente pela interação knob-hole entre monômeros. O FXIIIa cria <em>ligações covalentes cruzadas</em> (cross-links) entre as cadeias γ e α da fibrina → fibrina insolúvel, resistente à fibrinólise.<br><br>Sem FXIIIa:<br>• TP e TTPA são <strong>normais</strong> (a cascata funciona até a fibrina solúvel)<br>• O coágulo se forma mas é frágil, não cross-linked<br>• A plasmina dissolve facilmente a fibrina não cross-linked → <em>sangramento tardio</em> (horas após aparente hemostasia)<br><br><strong>Manifestação clínica característica:</strong> Sangramento do coto umbilical no RN (primeira manifestação típica de deficiência congênita de FXIII). Hemorragia intracraniana espontânea recorrente. Abortos de repetição (o coágulo fibrino não cross-linked não mantém a implantação placentária).<br><br><strong>Diagnóstico:</strong> Teste de solubilidade em ureia 5M ou ácido monocloroacético — coágulo sem cross-links dissolve; coágulo normal resiste.<br><br><strong>Tratamento:</strong> Concentrado de FXIII (Corifact®, Fibrogammin®)."
+  },
+  {
+    "question": "O inibidor da via do fator tecidual (TFPI) está presente em baixas concentrações no plasma, mas é encontrado em altas concentrações nos endotélios vasculares. Na administração de heparina intravenosa, os níveis plasmáticos de TFPI aumentam subitamente. Qual é o mecanismo deste fenômeno?",
+    "options": [
+      "A heparina cliva proteoliticamente o TFPI que estava ligado ao endotélio, gerando fragmentos solúveis de TFPI na circulação",
+      "A heparina desloca o TFPI dos glicosaminoglicanos da superfície endotelial (heparan sulfato) por competição por sítios aniônicos, liberando TFPI na circulação",
+      "A heparina reduz a expressão do receptor de clearance do TFPI nos macrófagos hepáticos, prolongando sua meia-vida plasmática",
+      "A heparina estimula a síntese de novo de TFPI pelos hepatócitos via sinalização NF-κB"
+    ],
+    "answer": [
+      "A heparina desloca o TFPI dos glicosaminoglicanos da superfície endotelial (heparan sulfato) por competição por sítios aniônicos, liberando TFPI na circulação"
+    ],
+    "type": "multi",
+    "justification": "O <strong>TFPI</strong> é produzido principalmente por células endoteliais e está ancorado à sua superfície luminal por interação eletrostática com os <strong>proteoglicanos de heparan sulfato</strong> (GAGs) da membrana endotelial — ambos são altamente carregados negativamente.<br><br>A <strong>heparina</strong> (altamente aniônica) compete com o heparan sulfato pelos sítios de ancoragem do TFPI no endotélio → <em>desloca o TFPI</em> para a fase fluida → aumento de 2–9× nos níveis plasmáticos de TFPI em minutos após infusão de HNF ou HBPM.<br><br>Este efeito é considerado um dos mecanismos anticoagulantes adicionais da heparina, além da potenciação da antitrombina.<br><br><em>Implicação clínica:</em> Pacientes com baixa expressão endotelial de TFPI (por disfunção endotelial aterosclerótica) podem ter menor benefício desta via adicional da heparina. Também explica por que fondaparinux (pequena molécula sem domínio de ligação a heparan sulfato do endotélio) não eleva TFPI plasmático."
+  },
+  {
+    "question": "No contexto de fibrinólise terapêutica com alteplase (rt-PA) em AVC isquêmico agudo, o risco de transformação hemorrágica é maior em pacientes com hiperglicemia. A base fisiopatológica desta associação é",
+    "options": [
+      "A hiperglicemia eleva a concentração de HbA1c que interfere com a ligação do plasminogênio à fibrina, dispersando a fibrinólise para áreas não-isquêmicas",
+      "A hiperglicemia aguda compromete a integridade da barreira hematoencefálica por glicação de proteínas da lâmina basal e aumento do estresse oxidativo endotelial, tornando os capilares cerebrais mais frágeis à reperfusão",
+      "A hiperglicemia suprime a produção de PAI-1 hepático, resultando em fibrinólise excessiva e não localizada",
+      "A glicose em altas concentrações inibe competitivamente o receptor do t-PA nas células endoteliais, prolongando a ação fibrinolítica"
+    ],
+    "answer": [
+      "A hiperglicemia aguda compromete a integridade da barreira hematoencefálica por glicação de proteínas da lâmina basal e aumento do estresse oxidativo endotelial, tornando os capilares cerebrais mais frágeis à reperfusão"
+    ],
+    "type": "multi",
+    "justification": "A hiperglicemia no AVC isquêmico (frequentemente por resposta ao estresse, mesmo em não diabéticos) está associada a maior risco de transformação hemorrágica pós-alteplase por vários mecanismos convergentes:<br><br><strong>1. Barreira hematoencefálica (BHE):</strong> Glicose elevada → glicação de colágeno IV, laminina e outras proteínas da lâmina basal → fragilidade estrutural dos capilares cerebrais.<br><br><strong>2. Estresse oxidativo:</strong> Glicose → via dos polióis → depleção de NADPH → menos glutationa → radicais livres → dano endotelial → maior permeabilidade capilar.<br><br><strong>3. Reperfusão:</strong> Quando o coágulo é dissolvido pelo rt-PA, o fluxo sangue retorna a capilares já fragilizados → força de shear sobre paredes débeis → extravasamento sanguíneo (transformação hemorrágica).<br><br><em>Implicação prática:</em> Glicemia > 180 mg/dL é fator de risco independente para sangramento intracraniano após trombólise. Alvo glicêmico: 140–180 mg/dL durante trombólise. Hiperglicemia não é contraindicação absoluta, mas aumenta a discussão risco-benefício."
+  },
+  {
+    "question": "O score 4T para diagnóstico de HIT (Trombocitopenia Induzida por Heparina) inclui quatro critérios. Um paciente recebendo heparina após cirurgia ortopédica apresenta queda de plaquetas de 240.000 para 95.000/µL no 6º dia, sem trombose identificada e sem outra causa óbvia de trombocitopenia. Qual é a probabilidade pré-teste e a conduta inicial?",
+    "options": [
+      "Score 4T intermediário (5–5 pontos); suspender heparina imediatamente, solicitar ELISA anti-PF4 e iniciar anticoagulante alternativo não-heparina sem aguardar confirmação laboratorial",
+      "Score 4T alto (6–8 pontos); suspender heparina, realizar ELISA e teste funcional de ativação plaquetária para confirmação, iniciar bivalirudina",
+      "Score 4T baixo (< 4 pontos); manter heparina e repetir contagem de plaquetas em 48h antes de qualquer decisão",
+      "Score 4T intermediário; suspender heparina mas aguardar confirmação laboratorial antes de iniciar anticoagulação alternativa para não expor o paciente a riscos desnecessários"
+    ],
+    "answer": [
+      "Score 4T intermediário (5–5 pontos); suspender heparina imediatamente, solicitar ELISA anti-PF4 e iniciar anticoagulante alternativo não-heparina sem aguardar confirmação laboratorial"
+    ],
+    "type": "multi",
+    "justification": "Calculando o <strong>Score 4T</strong>:<br><br>• <strong>T</strong>rombocitopenia: queda de 240→95 = queda de ~60% e nadir > 20.000 → <strong>2 pontos</strong><br>• <strong>T</strong>iming: dia 6 (5–10 dias) → queda clara nessa janela → <strong>2 pontos</strong><br>• <strong>T</strong>rombose: ausente → <strong>0 pontos</strong><br>• ou<strong>T</strong>ra causa: nenhuma identificada → <strong>1 ponto</strong><br><br><strong>Total: 5 pontos = Probabilidade Intermediária</strong><br><br><em>Conduta na probabilidade intermediária:</em><br>• SUSPENDER toda heparina imediatamente (incluindo flush de cateteres com heparina, heparina nos sistemas de diálise, etc.)<br>• SOLICITAR ELISA anti-PF4/heparina (sensibilidade ~97%) e, se positivo, teste funcional (SRA — serotonin release assay — especificidade ~95%)<br>• INICIAR anticoagulação alternativa NÃO-heparina IMEDIATAMENTE (argatrobana se IR; fondaparinux como opção; rivaroxabano emergindo como alternativa oral)<br>• NÃO aguardar confirmação laboratorial para iniciar alternativa — o risco de trombose (TEV, IAM, AVC) sem anticoagulação é muito alto<br><br>NÃO transfundir plaquetas profilaticamente (risco de trombose)."
+  },
+  {
+    "question": "A Proteína Z é um fator de coagulação dependente de vitamina K com função anticoagulante. Ela age como cofator do ZPI (Z-dependent Protease Inhibitor). O mecanismo de ação do sistema Proteína Z-ZPI é",
+    "options": [
+      "A Proteína Z compete com o FVa pelo sítio de ligação ao FXa no complexo protrombinase, reduzindo a geração de trombina",
+      "A Proteína Z ancora o ZPI às membranas fosfolipídicas via domínio Gla, permitindo que o ZPI iniba eficientemente o FXa ligado à membrana; sem Proteína Z, o ZPI inibe FXa em solução 1.000x mais lentamente",
+      "A Proteína Z ativa o ZPI por proteólise limitada, funcionando como um cofator enzimático semelhante à relação trombomodulina-Proteína C",
+      "O sistema Proteína Z-ZPI é o principal mecanismo de degradação do FVIIa livre, prevenindo ativação espontânea da via extrínseca"
+    ],
+    "answer": [
+      "A Proteína Z ancora o ZPI às membranas fosfolipídicas via domínio Gla, permitindo que o ZPI iniba eficientemente o FXa ligado à membrana; sem Proteína Z, o ZPI inibe FXa em solução 1.000x mais lentamente"
+    ],
+    "type": "multi",
+    "justification": "A <strong>Proteína Z</strong> é uma glicoproteína dependente de vitamina K (domínio Gla + domínios EGF-like + domínio catalítico inativo). Ela não tem atividade proteolítica própria, mas funciona como <em>cofator de ancoramento</em>.<br><br>O <strong>ZPI (Z-dependent Protease Inhibitor / Inibidor de Protease dependente de Proteína Z)</strong> é uma serpina que inibe FXa (e FXIa, FIXa em menor grau).<br><br><strong>Mecanismo:</strong> A Proteína Z (via domínio Gla + Ca²⁺) ancora-se à fosfatidilserina das membranas plaquetárias. Uma vez ancorada, recruta e apresenta o ZPI ao FXa ligado à mesma membrana → inibição local do FXa ~1.000× mais eficiente do que em solução.<br><br><em>Relevância clínica emergente:</em> Deficiências de Proteína Z ou ZPI estão sendo associadas a risco aumentado de trombose venosa e eventos obstétricos adversos. Também, deficiência de Proteína Z pode ser um fator modificador na hemofilia (doentes com Hemofilia A e baixa Proteína Z tendem a ter fenótipo hemorrágico mais grave)."
+  },
+  {
+    "question": "Na ressuscitação hemostática da hemorragia maciça, a proporção CGR:PFC:Plaquetas de 1:1:1 baseia-se no conceito de 'sangue total reconstituído'. Qual é a limitação fisiopatológica desta abordagem quando se usa sangue armazenado?",
+    "options": [
+      "O sangue armazenado tem 2,3-DPG depletado, reduzindo a entrega de O₂; FV e FVIII degradam-se no PFC armazenado; e as plaquetas têm função comprometida após 5 dias, tornando o ratio 1:1:1 com produtos armazenados menos eficaz que sangue total fresco",
+      "A proporção 1:1:1 dilui excessivamente o hematócrito porque o volume de plasma e plaquetas é maior que o de hemácias, causando anemia dilucional aguda",
+      "O PFC contém citrato em excesso que, em grandes volumes, causa hipercalcemia paradoxal por mobilização de Ca²⁺ ósseo",
+      "A proporção 1:1:1 não fornece fibrinogênio suficiente, pois o PFC contém apenas ~2 mg/mL de fibrinogênio e as plaquetas contêm muito pouco"
+    ],
+    "answer": [
+      "O sangue armazenado tem 2,3-DPG depletado, reduzindo a entrega de O₂; FV e FVIII degradam-se no PFC armazenado; e as plaquetas têm função comprometida após 5 dias, tornando o ratio 1:1:1 com produtos armazenados menos eficaz que sangue total fresco"
+    ],
+    "type": "multi",
+    "justification": "A proporção <strong>1:1:1</strong> (CGR:PFC:Plaquetas) tenta mimetizar o sangue total, mas com produtos armazenados separadamente há <em>múltiplas limitações funcionais</em>:<br><br><strong>1. CGR:</strong> 2,3-DPG depleta após semana 2 → curva de dissociação à esquerda → hemácias entregam menos O₂ nos tecidos (normaliza em 12–24h pós-transfusão)<br><br><strong>2. PFC:</strong> FV e FVIII são lábeis → degradam-se mesmo a -18°C. PFC com > 12 meses tem ~50% da atividade inicial de FVIII. Fibrinogênio é relativamente estável no PFC (~2 mg/mL), mas o PFC é pobre em fibrinogênio em quantidade.<br><br><strong>3. Plaquetas:</strong> Lesão de estocagem progressiva após 3–5 dias — as plaquetas perdem microtúbulos, ativam-se parcialmente e têm menor função hemostática.<br><br><em>Por isso há interesse crescente em</em> <strong>sangue total fresco</strong> (trauma militar) ou sangue total reconstituído liofilizado, e em guiar reposição por TEG/ROTEM em vez de ratio fixo.<br><br><em>A opção sobre fibrinogênio é parcialmente verdadeira</em> mas não é a limitação principal — o fibrinogênio do PFC é suficiente para casos moderados, mas em hemorragia maciça é necessário crioprecipitado ou concentrado de fibrinogênio."
+  },
+  {
+    "question": "O voxelotor é uma nova terapia para doença falciforme que estabiliza a hemoglobina S no estado R. Como esta estratégia interfere com a hemostasia e que monitorização é necessária?",
+    "options": [
+      "O voxelotor aumenta a viscosidade sanguínea por prevenir a falcização, aumentando o risco de síndrome hiperviscosidade; monitorizar viscosimetria",
+      "O voxelotor inibe a COX-1 plaquetária como efeito off-target, causando disfunção plaquetária; monitorizar PFA-100",
+      "O estado R estabilizado aumenta a síntese de 2,3-DPG como compensação, revertendo o efeito terapêutico; monitorizar 2,3-DPG eritrocitário",
+      "Ao manter HbS no estado R oxigenado, reduz a polimerização e a falcização; como efeito colateral, a curva de dissociação desloca à esquerda (P50 reduzido), potencialmente reduzindo a entrega de O₂ nos tecidos; monitorizar saturação venosa mista e lactato"
+    ],
+    "answer": [
+      "Ao manter HbS no estado R oxigenado, reduz a polimerização e a falcização; como efeito colateral, a curva de dissociação desloca à esquerda (P50 reduzido), potencialmente reduzindo a entrega de O₂ nos tecidos; monitorizar saturação venosa mista e lactato"
+    ],
+    "type": "multi",
+    "justification": "O <strong>voxelotor</strong> (GBT440) liga-se ao resíduo Lys82 da cadeia α da hemoglobina e estabiliza o estado R. Isso previne a transição para estado T (desoxigenado) que é necessário para a polimerização da HbS.<br><br><strong>Benefício:</strong> Menos polimerização → menos falcização → menos oclusão vascular e hemólise.<br><br><strong>Efeito adverso hemodinâmico:</strong> Ao estabilizar o estado R, o voxelotor age como um modulador alostérico positivo → <em>curva de dissociação à esquerda</em> → P50 reduzido → a HbS tratada libera menos O₂ nos tecidos com a mesma PO₂ venosa.<br><br>Em pacientes já com anemia grave (Hb 6–9 g/dL), este efeito pode agravar a hipóxia tecidual mesmo com Hb aparentemente melhorada (pois a Hb aumentada pelo voxelotor transporta menos O₂ útil por grama).<br><br><em>Monitorização clínica:</em> SvO₂ (saturação venosa mista) e lactato sérico para verificar se a entrega de O₂ é adequada apesar da curva deslocada à esquerda.<br><br>Na prática clínica, o benefício de reduzir hemólise e crises supera o efeito adverso na dissociação para a maioria dos pacientes."
+  },
+  {
+    "question": "O teste do tempo de trombina (TT) está prolongado em um paciente que nunca recebeu heparina. As causas possíveis incluem",
+    "options": [
+      "Disfibrinogenemia (fibrinogênio estruturalmente anormal que não polimeriza adequadamente)",
+      "Presença de dabigatrano (inibidor direto da trombina)",
+      "Hipofibrinogenemia grave (fibrinogênio < 80 mg/dL)",
+      "Presença de produtos de degradação da fibrina (FDPs) em alta concentração que interferem na polimerização"
+    ],
+    "answer": [
+      "Hipofibrinogenemia grave (fibrinogênio < 80 mg/dL)",
+      "Disfibrinogenemia (fibrinogênio estruturalmente anormal que não polimeriza adequadamente)",
+      "Presença de dabigatrano (inibidor direto da trombina)",
+      "Presença de produtos de degradação da fibrina (FDPs) em alta concentração que interferem na polimerização"
+    ],
+    "type": "multi",
+    "justification": "O <strong>Tempo de Trombina (TT / Thrombin Time)</strong> mede a <em>última etapa</em> da coagulação: trombina exógena + plasma → tempo para formação de fibrina. Qualquer problema nessa etapa final prolonga o TT.<br><br><strong>Causas de TT prolongado (sem heparina):</strong><br>• <strong>Hipofibrinogenemia:</strong> < 80–100 mg/dL → substrato insuficiente<br>• <strong>Disfibrinogenemia:</strong> fibrinogênio quantitativamente normal mas qualitativamente deficiente → polimerização lenta ou defeituosa (mutações hereditárias ou adquiridas na cirrose)<br>• <strong>Inibidores diretos da trombina:</strong> dabigatrano, bivalirudina, argatrobana — o fármaco inibe a trombina exógena adicionada no teste<br>• <strong>FDPs elevados:</strong> fragmentos de fibrinogênio/fibrina degradados interferem estéricamente na polimerização da fibrina → classicamente na CID<br>• Paraproteínas (mieloma) que interferem na polimerização<br><br><em>Diferenciação da heparina:</em> A heparina prolonga o TT por inibição da trombina via ATIII; se corrigir com tempo de reptilase (batroxobina — cobra Bothrops que não é afetada pela heparina) → confirma heparina. Se reptilase também prolongado → problema no fibrinogênio ou FDPs."
+  },
+  {
+    "question": "A via Rapoport-Luebering, exclusiva das hemácias, produz 2,3-DPG a partir de 1,3-BPG, desviando um passo da glicolise. As plaquetas, ao contrário das hemácias, têm mitocôndrias. Qual implicação metabólica isto tem para a produção de energia plaquetária comparada à da hemácia?",
+    "options": [
+      "Plaquetas e hemácias têm o mesmo metabolismo porque ambas derivam do mesmo precursor megacariocítico",
+      "A presença de mitocôndrias nas plaquetas permite síntese de heme e protege contra estresse oxidativo via fosforilação oxidativa, funções inexistentes nas hemácias",
+      "Plaquetas podem usar oxidação fosforilativa mitocondrial para gerar ATP eficientemente, tornando-as menos dependentes da glicolise anaeróbia e do 2,3-DPG; hemácias dependem exclusivamente da glicolise de Embden-Meyerhof",
+      "Plaquetas produzem 2,3-DPG mitocondrial para regular sua própria afinidade por O₂, processo ausente nas hemácias"
+    ],
+    "answer": [
+      "Plaquetas podem usar oxidação fosforilativa mitocondrial para gerar ATP eficientemente, tornando-as menos dependentes da glicolise anaeróbia e do 2,3-DPG; hemácias dependem exclusivamente da glicolise de Embden-Meyerhof"
+    ],
+    "type": "multi",
+    "justification": "Esta questão explora a diferença metabólica fundamental entre plaquetas e hemácias:<br><br><strong>Hemácias:</strong> Anucleadas, sem mitocôndrias → energia exclusivamente via <em>glicolise anaeróbia</em> (Embden-Meyerhof) → ~2 ATP/glicose. A via Rapoport-Luebering desvia 1,3-BPG para 2,3-DPG (sem geração de ATP nessa etapa), regulando a afinidade da Hb.<br><br><strong>Plaquetas:</strong> Anucleadas, MAS têm mitocôndrias funcionais. Em repouso, usam <em>fosforilação oxidativa</em> → ~30 ATP/glicose. Durante ativação, a demanda de ATP aumenta abruptamente e a glicolise se torna predominante (para velocidade).<br><br><em>Relevância clínica:</em> Plaquetas são <em>muito mais sensíveis à hipóxia e ao sangue armazenado a 4°C</em> (que reduz a atividade mitocondrial) do que as hemácias. O estresse oxidativo mitocondrial plaquetário é marcador de disfunção plaquetária e está elevado em síndrome metabólica, DM2 e doenças cardiovasculares.<br><br><em>Bioenergia plaquetária</em> é uma área emergente de pesquisa para biomarcadores cardiovasculares."
+  },
+  {
+    "question": "Uma mulher de 28 anos, 34 semanas de gestação, apresenta trombocitopenia isolada de 85.000/µL, sem outros sintomas. Qual é o diagnóstico mais provável e o mecanismo fisiopatológico correto?",
+    "options": [
+      "PTI gestacional: autoanticorpos anti-GPIIb/IIIa atravessam a placenta e causam trombocitopenia tanto na mãe quanto no neonato; requer tratamento com corticoides e IVIG",
+      "Síndrome HELLP: hemólise + enzimas hepáticas elevadas + plaquetas baixas; emergência obstétrica que requer parto imediato independentemente da idade gestacional",
+      "Trombocitopenia gestacional (incidental): hemodiluição + aumento do consumo plaquetário pelo espaço placentário; benigna, sem risco para a mãe ou feto, resolve-se após o parto",
+      "Pré-eclâmpsia: trombocitopenia de consumo por microangiopatia placentária; requer avaliação com pressão arterial, proteinúria e transaminases"
+    ],
+    "answer": [
+      "Trombocitopenia gestacional (incidental): hemodiluição + aumento do consumo plaquetário pelo espaço placentário; benigna, sem risco para a mãe ou feto, resolve-se após o parto"
+    ],
+    "type": "multi",
+    "justification": "A <strong>trombocitopenia gestacional</strong> (também chamada trombocitopenia incidental da gravidez) é a causa mais comum de trombocitopenia durante a gravidez (~75% dos casos).<br><br><strong>Mecanismo:</strong><br>• <em>Hemodiluição:</em> o volume plasmático aumenta 40–50% na gestação → concentração plaquetária cai proporcionalmente<br>• <em>Consumo aumentado:</em> a placenta com seu grande leito vascular capilar acelera o clearance plaquetário<br><br><strong>Características:</strong><br>• Geralmente leve: plaquetas 70.000–150.000/µL<br>• Assintomática<br>• Sem autoanticorpos detectáveis<br>• Sem risco para o neonato (não atravessa placenta)<br>• Resolve-se espontaneamente 1–2 meses após o parto<br><br><em>A PTI gestacional</em> é mais grave (pode ser < 50.000/µL), os autoanticorpos IgG atravessam a placenta e o neonato pode ter trombocitopenia.<br><em>Pré-eclâmpsia e HELLP</em> requerem outros sinais além de trombocitopenia isolada.<br><br><em>Manejo da trombocitopenia gestacional:</em> Observação, sem tratamento. Plaquetas > 50.000/µL permitem anestesia regional para parto."
+  },
+  {
+    "question": "A Trombastenia de Glanzmann é uma rara doença plaquetária hereditária. O defeito molecular resulta em",
+    "options": [
+      "Ausência ou disfunção grave do complexo GPIIb/IIIa (αIIbβ3): as plaquetas aderem normalmente ao subendotélio mas não conseguem agregar entre si por falta do receptor de fibrinogênio",
+      "Ausência do complexo GPIb-IX-V: as plaquetas não aderem ao subendotélio mediado pelo vWF, mas se aggregate normalmente quando há estímulo suficiente",
+      "Deficiência dos grânulos densos: as plaquetas aderem e mudam de forma mas não liberam ADP para amplificar a resposta",
+      "Ausência de COX-1 plaquetária: sem síntese de TXA₂, a ativação é insuficiente para agregar"
+    ],
+    "answer": [
+      "Ausência ou disfunção grave do complexo GPIIb/IIIa (αIIbβ3): as plaquetas aderem normalmente ao subendotélio mas não conseguem agregar entre si por falta do receptor de fibrinogênio"
+    ],
+    "type": "multi",
+    "justification": "A <strong>Trombastenia de Glanzmann</strong> (herança autossômica recessiva) resulta de mutações nos genes <em>ITGA2B</em> (αIIb) ou <em>ITGB3</em> (β3) → ausência ou disfunção grave do <strong>GPIIb/IIIa (αIIbβ3)</strong>.<br><br><strong>Achados laboratoriais característicos:</strong><br>• Contagem de plaquetas: <em>normal</em><br>• Tempo de sangramento e PFA-100: muito <em>prolongados</em><br>• Agregação com ADP, colágeno, adrenalina, ácido araquidônico: <em>ausente</em><br>• Agregação com ristocetina: <em>normal</em> (GPIb intacto, vWF intacto → aglutinação preservada)<br><br><em>Fisiologia do defeito:</em> O GPIIb/IIIa em alta afinidade (estado ativado) é o único receptor que liga fibrinogênio de forma eficiente → sem ele, o fibrinogênio não pode fazer pontes entre plaquetas → sem agregação, por qualquer agonista.<br><br><strong>A doença de Bernard-Soulier</strong> (ausência de GPIb-IX-V) é o diagnóstico diferencial: não agrega com ristocetina (porque GPIb está ausente), mas agrega normalmente com outros agonistas.<br><br><em>Tratamento:</em> Transfusão de plaquetas (risco de aloimunização). FVIIa recombinante em situações refratárias."
+  },
+  {
+    "question": "No ROTEM, o parâmetro CT (Clotting Time / Tempo de Coagulação) do EXTEM está prolongado, mas o CT do FIBTEM é similar. O CT do INTEM também está prolongado, mas normaliza com o teste HEPTEM. A interpretação mais correta é",
+    "options": [
+      "Deficiência de Fator XII com TTPA prolongado mas sem tendência hemorrágica clínica",
+      "Inibidor lúpico que interfere na fase de contato de ambas as vias; HEPTEM normaliza porque heparinase remove cofatores fosfolipídicos do anticoagulante lúpico",
+      "Deficiência de fibrinogênio isolada que afeta tanto a via extrínseca quanto intrínseca de forma equipotente",
+      "Presença de heparina residual na amostra (HEPTEM usa heparinase para neutralizar a heparina → normaliza o INTEM-CT); o prolongamento do EXTEM-CT reflete o mesmo efeito da heparina sobre a via extrínseca"
+    ],
+    "answer": [
+      "Presença de heparina residual na amostra (HEPTEM usa heparinase para neutralizar a heparina → normaliza o INTEM-CT); o prolongamento do EXTEM-CT reflete o mesmo efeito da heparina sobre a via extrínseca"
+    ],
+    "type": "multi",
+    "justification": "<strong>Interpretação sistemática do padrão ROTEM:</strong><br><br>• <strong>EXTEM-CT prolongado:</strong> Problema na via extrínseca (TF) ou fatores comuns (FX, FV, FII, FI) — ou heparina (que inibe trombina via ATIII).<br>• <strong>FIBTEM-CT normal em relação ao EXTEM:</strong> O FIBTEM usa o mesmo ativador do EXTEM; se CT similar, o problema não é específico ao fibrinogênio.<br>• <strong>INTEM-CT prolongado:</strong> Via intrínseca (de contato) comprometida.<br>• <strong>HEPTEM-CT normaliza o INTEM:</strong> O HEPTEM usa heparinase para destruir a heparina na amostra. Se o CT normaliza → confirma que o prolongamento era causado por <strong>heparina residual</strong>.<br><br><em>O EXTEM-CT também fica prolongado pela heparina</em> porque a heparina potencia a ATIII contra trombina, afetando ambas as vias.<br><br><em>Contexto típico:</em> Paciente em cirurgia cardíaca com CEC (uso de heparina) onde o reversor protamina pode ter sido insuficiente → heparina residual → padrão descrito. Solução: dose adicional de protamina.<br><br>O anticoagulante lúpico <em>não</em> é neutralizado pela heparinase — portanto não explicaria a normalização com HEPTEM."
+  },
+  {
+    "question": "A hepcidina hepática regula a absorção intestinal de ferro e o seu papel na coagulação é indireto. Em pacientes com inflamação crônica, a hepcidina elevada contribui para anemia de doença crônica através de qual mecanismo que também afeta a síntese dos fatores de coagulação?",
+    "options": [
+      "Hepcidina causa trombocitopenia por suprimir a trombopoietina hepática",
+      "Hepcidina elevada não afeta a síntese dos fatores de coagulação; apenas afeta a produção de hemoglobina",
+      "Hepcidina bloqueia diretamente a transcrição dos genes dos fatores de coagulação dependentes de vitamina K como resposta à inflamação",
+      "Hepcidina induz a degradação da ferroportina nos enterócitos e macrófagos → ferro aprisionado intracelularmente → ferro sérico baixo → síntese hepática de fatores de coagulação contendo Fe (FII, FVII) comprometida por falta de substrato"
+    ],
+    "answer": [
+      "Hepcidina elevada não afeta a síntese dos fatores de coagulação; apenas afeta a produção de hemoglobina"
+    ],
+    "type": "multi",
+    "justification": "Esta questão tem como resposta correta a opção que parece incorreta à primeira vista — exige raciocínio crítico:<br><br>A <strong>hepcidina</strong> induz degradação da <strong>ferroportina</strong> → reduz a exportação de ferro pelos enterócitos, hepatócitos e macrófagos → ferro sérico e transferrina saturada caem → eritroblastos têm menos ferro para síntese de heme → <em>anemia de doença crônica</em>.<br><br><strong>Contudo,</strong> os fatores de coagulação <em>não são proteínas ferrosas</em> (exceto em descrições equivocadas). Os fatores de coagulação hepáticos (FII, FVII, FIX, FX, Proteína C, S) são glicoproteínas que dependem de <em>vitamina K</em> para γ-carboxilação, não de ferro. O ferro não é substrato nem cofator para sua síntese.<br><br>Na hepatopatia grave, os fatores de coagulação caem por falência de síntese proteica geral pelo hepatócito, não por deficiência de ferro.<br><br><em>Armadilha conceitual:</em> A opção A é elegantemente falsa — cria uma cadeia lógica plausível mas incorreta biologicamente. Os fatores de coagulação relevantes não contêm Fe como componente estrutural funcional. Esta questão testa a habilidade de distinguir correlação (inflamação crônica → hepcidina alta E distúrbios de coagulação) de causalidade direta."
+  },
+  {
+    "question": "A Doença de von Willebrand tipo 2B difere do tipo 2A por um paradoxo clínico-laboratorial: as plaquetas agregam espontaneamente com ristocetina em doses muito baixas (RIPA aumentada) e paradoxalmente há trombocitopenia. Explique o mecanismo molecular",
+    "options": [
+      "A trombocitopenia na DvW 2B resulta de anticorpos contra GPIb induzidos pela exposição crônica de epítopos do vWF anormal",
+      "Na DvW 2B, mutação de ganho de função no domínio A1 do vWF aumenta a afinidade pelo GPIb, causando ligação espontânea do vWF multimértico às plaquetas na circulação → clearance acelerado dos complexos vWF-plaqueta pelo sistema reticuloendotelial → perda de ultrameros e trombocitopenia",
+      "Na DvW 2B, há produção excessiva de vWF pelos corpúsculos de Weibel-Palade que supera a capacidade do ADAMTS-13 de clivar os multímeros → acúmulo → ligação espontânea → como na PTT",
+      "Na DvW 2B, o vWF mutante possui sítio de ligação ao ferro que ativa as plaquetas por mecanismo redox independente do GPIb"
+    ],
+    "answer": [
+      "Na DvW 2B, mutação de ganho de função no domínio A1 do vWF aumenta a afinidade pelo GPIb, causando ligação espontânea do vWF multimértico às plaquetas na circulação → clearance acelerado dos complexos vWF-plaqueta pelo sistema reticuloendotelial → perda de ultrameros e trombocitopenia"
+    ],
+    "type": "multi",
+    "justification": "Na <strong>DvW tipo 2B</strong>, mutações de <em>ganho de função</em> no domínio A1 do vWF (ex.: Arg1306Trp, Arg1308Cys) <em>aumentam</em> a afinidade espontânea do vWF pelo receptor GPIb plaquetário, mesmo sem shear stress ou distensão molecular.<br><br><strong>Sequência fisiopatológica:</strong><br>1. vWF 2B liga-se às plaquetas na circulação de forma espontânea (especialmente os ultrameros mais longos, que têm mais domínios A1)<br>2. Os complexos vWF-plaqueta são reconhecidos e removidos pelo SER (baço principalmente) → <em>trombocitopenia por consumo</em><br>3. Os ultrameros são preferencialmente consumidos → <em>perda dos multímeros maiores</em> (paradoxalmente, o vWF que sobra no plasma está empobrecido nos multímeros altos, como no tipo 2A)<br><br><strong>RIPA:</strong> A ristocetina em baixa dose induz ligação GPIb-vWF → na DvW 2B, o vWF já está predisposto a ligar GPIb → RIPA acontece com doses muito baixas de ristocetina (< 0,6 mg/mL, que não ativaria plaquetas normais).<br><br><em>Importante:</em> Na DvW tipo 2B, <strong>não usar desmopressina</strong> — libera mais vWF anormal que pioraria a agregação espontânea e a trombocitopenia."
+  },
+  {
+    "question": "A hemostatia em pacientes com insuficiência hepática grave apresenta reequilíbrio hemostático paradoxal. A afirmação que melhor descreve este estado é",
+    "options": [
+      "Embora TP/INR e TTPA estejam prolongados (refletindo queda de fatores pró-coagulantes), a Proteína C e Proteína S também estão reduzidas (anticoagulantes dependentes de vitamina K também hepáticos), resultando em novo equilíbrio que pode ser pró-trombótico para trombose venosa portal e hepática",
+      "A insuficiência hepática é exclusivamente hemorrágica porque os fatores de coagulação caem mais rapidamente que os inibidores naturais",
+      "A trombocitopenia na cirrose é causada unicamente pelo hiperesplenismo, sem componente de produção reduzida de trombopoietina",
+      "O INR prolongado na cirrose reflete precisamente a capacidade hemostática global, sendo um guia confiável para indicação de plasma fresco congelado antes de procedimentos"
+    ],
+    "answer": [
+      "Embora TP/INR e TTPA estejam prolongados (refletindo queda de fatores pró-coagulantes), a Proteína C e Proteína S também estão reduzidas (anticoagulantes dependentes de vitamina K também hepáticos), resultando em novo equilíbrio que pode ser pró-trombótico para trombose venosa portal e hepática"
+    ],
+    "type": "multi",
+    "justification": "A <strong>cirrose hepática</strong> gera um estado de <em>rebalanceamento hemostático</em> (Tripodi & Mannucci, 2011):<br><br><strong>Fatores pró-coagulantes reduzidos (síntese hepática):</strong> FII, FV, FVII, FX, FIX, FVIII (parcialmente), fibrinogênio → TP/INR e TTPA prolongados.<br><br><strong>Fatores anticoagulantes igualmente reduzidos:</strong> Proteína C, Proteína S, ATIII, TFPI → redução equivalente ou até proporcionalmente maior dos anticoagulantes.<br><br>O resultado é um <em>reequilíbrio instável</em> onde o TP/INR <strong>superestima o risco hemorrágico</strong> (pois não detecta a queda dos anticoagulantes naturais). O INR foi validado para monitorizar warfarina em pacientes saudáveis — na cirrose, é um mau indicador do risco real de sangramento.<br><br><em>Evidência:</em> Pacientes cirróticos têm risco aumentado de <strong>trombose venosa portal e esplênica</strong>, provando que o estado não é simplesmente hemorrágico.<br><br><em>Avaliação hemostática na cirrose:</em> TEG/ROTEM (avalia o equilíbrio real) é superior ao TP/INR isolado. O <em>ROTEM de geração de trombina</em> (TGA) frequentemente mostra geração normal ou aumentada em cirróticos."
+  },
+  {
+    "question": "O complexo GPIb-IX-V é o principal receptor plaquetário responsável pela agregação plaquetária, ligando-se ao fibrinogênio para formar pontes entre plaquetas adjacentes.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O <strong>GPIb-IX-V</strong> é responsável pela <em>adesão</em> plaquetária ao subendotélio (liga-se ao domínio A1 do <strong>vWF</strong>), especialmente em condições de alto shear stress. É o primeiro contato reversível da plaqueta com a lesão vascular.<br><br>A <strong>agregação</strong> plaquetária é mediada pelo <strong>GPIIb/IIIa (αIIbβ3)</strong>, que na forma ativada liga <em>fibrinogênio</em> (e vWF em alta turbulência), formando pontes entre plaquetas adjacentes.<br><br><em>Distinção clínica:</em> Deficiência de GPIb-IX-V → <strong>Doença de Bernard-Soulier</strong> (adesão defeituosa, RIPA ausente). Deficiência de GPIIb/IIIa → <strong>Trombastenia de Glanzmann</strong> (agregação defeituosa, RIPA normal). O erro sutil da assertiva é trocar o papel dos dois complexos."
+  },
+  {
+    "question": "Em condições fisiológicas, a via extrínseca da coagulação é iniciada pelo contato do Fator XII com superfícies carregadas negativamente no local de lesão vascular.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A afirmativa descreve o mecanismo da <strong>via de contato (via intrínseca)</strong>, não da via extrínseca.<br><br>A <strong>via extrínseca</strong> é iniciada pela exposição do <strong>Fator Tecidual (TF / Fator III)</strong> ao sangue após lesão do endotélio — o TF está presente nos fibroblastos subendoteliais, células do músculo liso e pericitos. O TF liga-se ao FVII circulante → complexo TF:FVIIa (tenase extrínseca).<br><br>O <strong>Fator XII</strong> é ativado por contato com superfícies artificiais (vidro, kaolinite) <em>in vitro</em>, mas sua relevância fisiológica <em>in vivo</em> para a hemostasia é mínima (deficiência de FXII não causa sangramento). Este é o mecanismo da via intrínseca/de contato.<br><br><em>Importância do equívoco:</em> Esta confusão é extremamente comum em exames — o candidato deve memorizar que a via extrínseca = TF + FVII, e via intrínseca = FXII → FXI → FIX."
+  },
+  {
+    "question": "A heparina de baixo peso molecular (HBPM) inibe a trombina com eficiência equivalente à da heparina não fracionada (HNF), diferindo apenas na meia-vida plasmática.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Esta é uma distinção farmacológica fundamental. A <strong>HNF</strong> (cadeias longas, > 18 unidades) inibe tanto a <strong>trombina (FIIa)</strong> quanto o <strong>FXa</strong> de forma equipotente, pois as cadeias longas formam a ponte necessária para a inibição da trombina (ATIII + heparina + trombina em simultâneo).<br><br>A <strong>HBPM</strong> (cadeias curtas, 4.000–6.000 Da) ativa a ATIII mas as cadeias são curtas demais para fazer a ponte molecular com a trombina → inibe predominantemente <strong>FXa</strong> (relação anti-Xa:anti-IIa ≈ 2:1 a 4:1 dependendo do produto).<br><br><em>Consequências práticas:</em><br>• HNF prolonga o TTPA (reflete inibição da trombina); HBPM prolonga pouco o TTPA<br>• Monitorização da HBPM por <strong>anti-Xa</strong>, não TTPA<br>• Reversão com protamina: HNF revertida 100%; HBPM revertida apenas 60–80% (protamina não neutraliza a atividade anti-Xa das cadeias curtas)"
+  },
+  {
+    "question": "A desmopressina (DDAVP) trata a Doença de von Willebrand tipo 3 ao estimular a liberação de vWF dos corpúsculos de Weibel-Palade endoteliais, elevando os níveis plasmáticos de vWF.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A desmopressina é eficaz na <strong>DvW tipo 1</strong> (deficiência quantitativa parcial) e na <strong>Hemofilia A leve/moderada</strong>, mas é <em>ineficaz e contraindicada</em> na <strong>DvW tipo 3</strong>.<br><br><strong>Razão:</strong> Na DvW tipo 3, há <em>ausência completa</em> de vWF — sem reservas nos corpúsculos de Weibel-Palade nem nos grânulos α plaquetários. A DDAVP estimula a liberação dos estoques existentes (via receptor V2 nos corpúsculos de Weibel-Palade → elevação 3–5× do vWF), mas se não há estoques, não há o que liberar.<br><br><em>Tratamento da DvW tipo 3:</em> Concentrado de vWF/FVIII (ex: Haemate-P®, Wilate®) em todas as situações hemorrágicas e perioperatórias.<br><br><em>Cuidado adicional:</em> Na DvW tipo 2B, a DDAVP também é contraindicada pois libera o vWF anormal de ganho de função que agrava a agregação espontânea e trombocitopenia."
+  },
+  {
+    "question": "O warfarin prolonga o INR mais rapidamente que o TTPA no início do tratamento porque o Fator VII tem a menor meia-vida entre todos os fatores dependentes de vitamina K.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A warfarina inibe o VKORC1 → depleção progressiva de todos os fatores dependentes de vitamina K. A taxa de queda de cada fator segue sua meia-vida plasmática:<br><br>• <strong>FVII: ~6 horas</strong> → cai primeiro → TP/INR se prolonga precocemente (via extrínseca)<br>• Proteína C: ~8 horas → risco de estado pró-coagulante transitório<br>• FIX: ~24 horas<br>• FX: ~40 horas<br>• FII: ~60 horas → o último a cair<br><br>O <strong>TTPA</strong> reflete principalmente a via intrínseca (FIX, FX, FII) que tem fatores com meias-vidas mais longas → prolongamento mais tardio.<br><br><em>Consequências práticas:</em> O INR terapêutico (2–3) nos primeiros 1–3 dias de warfarina reflete principalmente a queda do FVII, não a anticoagulação plena. O estado anticoagulante completo (quando FII e FX também caem) leva 3–5 dias — por isso a sobreposição com heparina é essencial."
+  },
+  {
+    "question": "A deficiência homozigótica de Proteína C se manifesta clinicamente como púrpura fulminante neonatal, uma trombose microvascular disseminada com necrose cutânea grave nas primeiras horas de vida.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>deficiência homozigótica de Proteína C</strong> (ou raramente Proteína S) é uma emergência neonatal:<br><br>Sem Proteína C → FVa e FVIIIa não são inativados → coagulação descontrolada nos microvasos → <strong>púrpura fulminante neonatal</strong>, que se manifesta nas primeiras horas/dias de vida com púrpura, necrose cutânea, CID e morte se não tratada.<br><br><em>Tratamento de emergência:</em> Plasma fresco congelado (repõe Proteína C) ou concentrado de Proteína C → estabilizar agudamente. A longo prazo: anticoagulação e possível transplante hepático (para corrigir a deficiência sintetizada pelo fígado).<br><br><em>Contraste:</em> Heterozigotos (50% de atividade) têm risco aumentado de TVP/EP na vida adulta, mas raramente manifestam doença na infância. A homozigose (< 1% de atividade) é incompatível com sobrevida sem tratamento neonatal imediato."
+  },
+  {
+    "question": "O fondaparinux é um pentassacarídeo sintético que inibe tanto o FXa quanto a trombina por potenciação da antitrombina, com perfil farmacológico semelhante às heparinas de baixo peso molecular.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O <strong>fondaparinux</strong> inibe <em>exclusivamente</em> o <strong>FXa</strong> — não inibe a trombina diretamente nem indiretamente. O pentassacarídeo sintético liga-se à ATIII (domínio de ligação à heparina da ATIII) → induz mudança conformacional → ATIII inativada liga irreversivelmente apenas <strong>FXa</strong>. As cadeias do fondaparinux são curtas demais para formar a ponte com a trombina.<br><br>Esta é uma diferença fundamental:<br>• <strong>HNF:</strong> inibe FXa + FIIa (trombina) ≈ 1:1<br>• <strong>HBPM:</strong> inibe FXa > FIIa (2:1 a 4:1)<br>• <strong>Fondaparinux:</strong> inibe <em>apenas</em> FXa (relação anti-Xa:anti-IIa = infinito)<br><br><em>Consequências práticas:</em><br>• Fondaparinux NÃO prolonga TTPA<br>• NÃO é revertido pela protamina (não tem estrutura para ligar protamina)<br>• Monitorização por anti-Xa<br>• Vantagem: menor risco de HIT (não forma complexos com PF4 de forma relevante)"
+  },
+  {
+    "question": "O Fator V de Leiden aumenta o risco trombótico principalmente porque o FVa mutante gera mais trombina por unidade de tempo em comparação com o FVa normal.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O <strong>Fator V de Leiden</strong> não torna o FVa <em>mais ativo</em> — ele torna o FVa <em>resistente à inativação</em>. A mutação Arg506Gln não altera a função catalítica do FVa no complexo protrombinase; a eficiência de geração de trombina por molécula de FVa é a mesma.<br><br>O mecanismo é de <strong>prolongamento da meia-vida do FVa</strong>: normalmente, a Proteína C ativada (PCa) cliva e inativa o FVa em minutos. Com a mutação, a PCa não consegue clivar na Arg506 → o FVa permanece ativo por muito mais tempo → o complexo protrombinase continua gerando trombina depois que normalmente seria apagado.<br><br><em>Analogia:</em> É como um semáforo que não vai ao vermelho — o carro (FVa) tem a mesma velocidade, mas não para quando deveria, resultando em mais trombina produzida ao longo do tempo por persistência da sinalização, não por maior intensidade por unidade de tempo."
+  },
+  {
+    "question": "Na Coagulação Intravascular Disseminada (CID), a trombocitopenia resulta exclusivamente do consumo periférico das plaquetas nos microtrombos.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Embora o <em>consumo periférico</em> nos microtrombos seja o mecanismo principal, a trombocitopenia na <strong>CID</strong> é multifatorial:<br><br><strong>1. Consumo em microtrombos:</strong> Plaquetas são incorporadas nos trombos fibrinoplaquetários na microcirculação → mecanismo principal.<br><br><strong>2. Ativação e clearance acelerado:</strong> Plaquetas ativadas pela trombina são reconhecidas e removidas pelo SER (baço/fígado) mesmo antes de se tornarem parte de microtrombos.<br><br><strong>3. Supressão medular:</strong> Na sepse grave (causa comum de CID), citocinas inflamatórias (TNF-α, IL-1) inibem a trombopoiese medular diretamente → produção reduzida de megacariócitos.<br><br><strong>4. Microangiopatia:</strong> Os eritrócitos fragmentados (esquizócitos) são um sinal de que microtrombos causam hemólise mecânica — a mesma força que fragmenta eritrócitos ativa e consome plaquetas.<br><br><em>Relevância clínica:</em> A multipla etiologia explica por que a trombocitopenia na CID pode ser grave (< 30.000) mesmo com tratamento da causa → recuperação é mais lenta."
+  },
+  {
+    "question": "O emicizumab (Hemlibra®) mimetiza a função do Fator VIII ao se ligar simultaneamente ao FIXa e ao FX, substituindo o Fator VIII na tenase intrínseca e sendo eficaz tanto na Hemofilia A com inibidores quanto sem inibidores.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O <strong>emicizumab</strong> é um anticorpo monoclonal biespecífico que liga simultaneamente:<br>• <strong>FIXa</strong> (via um braço do anticorpo)<br>• <strong>FX</strong> (via o outro braço)<br><br>Ao aproximar FIXa e FX, mimetiza a função de cofator do <strong>FVIIIa</strong> na tenase intrínseca → geração de FXa → coagulação → hemostasia.<br><br><em>Vantagens revolucionárias:</em><br>• Administração <strong>subcutânea</strong> (semanal, quinzenal ou mensal)<br>• Eficaz na presença de <strong>inibidores anti-FVIII</strong> (porque não contém FVIII e não é alvo dos inibidores)<br>• Eficaz sem inibidores (como profilaxia)<br>• Meia-vida longa (~27 dias)<br><br><em>Monitorização importante:</em> O TTPA NÃO pode ser usado para monitorizar a resposta ao emicizumab (o emicizumab encurta o TTPA artificialmente). Usar ensaios cromogênicos de FVIII baseados em FX bovino para monitorizar o nível real de FVIII no contexto de investigação de sangramento."
+  },
+  {
+    "question": "O inibidor anti-Xa (andexanet alfa) pode ser administrado em qualquer paciente com hemorragia grave em uso de rivaroxabano, independentemente da função renal, por ser eliminado exclusivamente por via hepática.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O <strong>andexanet alfa (Andexxa®)</strong> é um FXa recombinante cataliticamente inativo (Ser419Ala + Gla-domínio deletado) que funciona como <em>decoy receptor</em> — captura e neutraliza os inibidores de FXa (rivaroxabano, apixabano, edoxabano).<br><br>A afirmativa tem <em>dois erros</em>:<br><br><strong>1. Eliminação:</strong> O andexanet alfa é uma proteína recombinante eliminada principalmente por <em>proteólise plasmática e renal</em>, não exclusivamente hepática. A farmacocinética não depende primariamente do fígado.<br><br><strong>2. Indicação restrita:</strong> O andexanet alfa está aprovado especificamente para rivaroxabano e apixabano. Para <em>edoxabano</em>, as evidências são mais limitadas. O <em>ciraparantag</em> está em desenvolvimento como antídoto universal.<br><br><em>Consideração prática:</em> O andexanet alfa é um complexo biológico caro, com risco de trombose rebote (~10% em estudos), e deve ser reservado para hemorragias graves (intracraniana, retroperitoneal, GI grave) com uso confirmado de inibidor de FXa nas últimas 18 horas."
+  },
+  {
+    "question": "Na avaliação pré-operatória, um TTPA discretamente prolongado (38–45 segundos) com TP normal em paciente assintomático sem história pessoal ou familiar de sangramento indica risco hemorrágico cirúrgico aumentado e deve levar ao adiamento da cirurgia para investigação.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Um TTPA discretamente prolongado (<strong>38–45 segundos</strong>) com TP normal em paciente sem história hemorrágica deve ser investigado, mas <em>não necessariamente adia a cirurgia</em>.<br><br>As causas mais comuns de TTPA discretamente prolongado sem sangramento:<br>• <strong>Deficiência de FXII:</strong> Mais frequente; TTPA pode atingir 2–3× o normal. <em>Não causa sangramento.</em><br>• <strong>Deficiência leve de FXI:</strong> TTPA levemente prolongado; risco hemorrágico variável (não correlaciona bem com o nível).<br>• <strong>Deficiência leve de FIX ou FVIII:</strong> Hemofilia B ou A leve (FVIII/FIX > 5%).<br>• <strong>Anticoagulante lúpico incidental</strong> (SAF assintomático).<br><br><em>Abordagem correta:</em> Teste de mistura (distingue deficiência de inibidor) → dosagem de fatores específicos. O resultado orienta a conduta — deficiência de FXII: cirurgia segue; hemofilia A leve: usar DDAVP; anticoagulante lúpico: avaliar risco trombótico vs hemorrágico."
+  },
+  {
+    "question": "O clopidogrel inibe irreversivelmente o receptor P2Y12, mas como é um pró-fármaco que requer ativação hepática, seu início de ação é mais lento que o do ticagrelor, que inibe reversivelmente o mesmo receptor sem necessidade de biotransformação.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Esta questão cobre múltiplos conceitos simultaneamente:<br><br><strong>Clopidogrel:</strong><br>• Pró-fármaco → requer CYP2C19 hepático → metabolização pode levar horas<br>• O metabólito ativo tiol liga-se <em>irreversivelmente</em> à Cys17 do P2Y12<br>• Início de ação pleno: 6–8h com dose de ataque de 600mg; 24h com dose padrão<br><br><strong>Ticagrelor:</strong><br>• Não é pró-fármaco → liga-se diretamente ao P2Y12 (sítio alostérico diferente da adenosina difosfato)<br>• Inibição <em>reversível</em> (dissocia do receptor)<br>• Início de ação mais rápido: 30–60min com dose de ataque (180mg)<br>• Por ser reversível, a função plaquetária se recupera 3–5 dias após suspensão (vs 7–10 dias para clopidogrel)<br><br><em>Implicação cirúrgica:</em> Suspender ticagrelor 3–5 dias antes de cirurgia eletiva; clopidogrel 5–7 dias. A reversibilidade do ticagrelor é vantagem em situações de emergência cirúrgica."
+  },
+  {
+    "question": "No modelo baseado em células de Hoffman e Monroe (2001), a fase de propagação da coagulação ocorre principalmente na superfície das plaquetas ativadas, onde se gera a maior explosão de trombina do processo hemostático.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O <strong>modelo baseado em células</strong> divide a coagulação em três fases funcionais:<br><br><strong>1. Iniciação</strong> (nas células que expressam TF): TF:VIIa gera pequenas quantidades de FXa e FIXa → pequeno burst inicial de trombina.<br><br><strong>2. Amplificação</strong> (na superfície das plaquetas): O burst inicial de trombina ativa plaquetas (PAR-1/4), ativa FV (grânulos α plaquetários) e FVIII (dissocia do vWF). A plaqueta ativada expõe fosfatidilserina.<br><br><strong>3. Propagação</strong> (na superfície fosfolipídica das plaquetas ativadas): FIXa + FVIIIa (tenase intrínseca) → enorme quantidade de FXa → FXa + FVa (protrombinase) → <em>thrombin burst</em> — explosão de trombina suficiente para clivar todo o fibrinogênio local e ativar FXIII.<br><br><em>Relevância:</em> Este modelo explica por que hemofilia A/B causa sangramento (sem FVIII/FIX, a propagação falha) e por que FXII não é necessário (não está na fase de propagação plaquetária). Fundou a base para terapias como emicizumab e FVIIa recombinante."
+  },
+  {
+    "question": "A aspirina em baixas doses (75–100mg/dia) inibe a síntese de TXA₂ plaquetário de forma preferencial em relação à síntese de PGI₂ endotelial porque as plaquetas, sendo anucleadas, não podem regenerar a COX-1 acetilada, enquanto as células endoteliais, sendo nucleadas, sintetizam nova COX-2 em horas.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Esta é a base racional da seletividade da aspirina em baixas doses:<br><br><strong>Nas plaquetas:</strong><br>• COX-1 é a isoforma predominante<br>• A plaqueta é anucleada → não pode sintetizar nova COX-1<br>• A acetilação pela aspirina é permanente para toda a vida da plaqueta (7–10 dias)<br>• Dose de 75–100 mg/dia é suficiente para inibir acumulativamente a COX-1 de toda a população plaquetária<br><br><strong>No endotélio vascular:</strong><br>• COX-1 e COX-2 coexistem<br>• As células endoteliais têm núcleo → sintetizam nova COX dentro de horas após acetilação pela aspirina<br>• Baixas doses de aspirina têm meia-vida curta (15–30 min) → endotélio recupera a função antes da próxima dose<br>• A PGI₂ (antiagregante, vasodilatador) é relativamente preservada<br><br><em>Consequência clínica:</em> Esta seletividade justifica o uso de baixas doses para antiplaquetário. Doses altas inibem tanto TXA₂ quanto PGI₂, anulando parte do benefício."
+  },
+  {
+    "question": "A plasmina não apenas degrada a fibrina, mas também degrada o fibrinogênio nativo, o FV e o FVIII, podendo causar coagulopatia hemorrágica grave em estados de hiperfibrinólise sistêmica.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>plasmina</strong> é uma serina-protease de especificidade relativamente ampla. Embora sua atividade seja normalmente localizada na fibrina (onde o plasminogênio é ativado por t-PA ligado à fibrina), em estados de <em>hiperfibrinólise sistêmica</em>, a plasmina livre na circulação degrada múltiplos substratos:<br><br><strong>Substratos da plasmina livre:</strong><br>• <strong>Fibrina</strong> (ação principal, desejada em terapia fibrinolítica)<br>• <strong>Fibrinogênio</strong> → hipofibrinogenemia<br>• <strong>FV e FVIII</strong> → coagulopatia<br>• Complemento (C3, C5)<br>• Proteínas da matriz (laminina, fibronectina)<br><br><em>Contexto clínico:</em> Hiperfibrinólise sistêmica ocorre em:<br>• Trauma grave (liberação maciça de t-PA)<br>• LPA (leucemia promielocítica) com excesso de receptor de plasminogênio (anexina II)<br>• Cirurgia hepática (fígado não cliva t-PA eficientemente)<br>• Complicações de terapia fibrinolítica (alteplase sistêmica)<br><br>Ácido tranexâmico previne esta degradação inespecífica ao bloquear os sítios de ligação da lisina no plasminogênio."
+  },
+  {
+    "question": "O receptor P2Y12 está presente apenas nas plaquetas, sendo sua inibição farmacológica (clopidogrel, ticagrelor) totalmente seletiva para o sistema plaquetário sem efeitos em outras células.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O receptor <strong>P2Y12</strong> não é exclusivo das plaquetas. Está expresso em:<br><br><strong>1. Células da micróglia cerebral:</strong> O P2Y12 medeia a quimiotaxia das células microgliais para sítios de lesão cerebral em resposta ao ADP liberado por neurônios danificados. Inibição farmacológica pode afetar respostas neuroinflamatórias.<br><br><strong>2. Células dendríticas:</strong> Modula a resposta imune inata.<br><br><strong>3. Músculo liso vascular</strong> (expressão baixa).<br><br><em>Implicação clínica emergente:</em> Há estudos investigando se inibidores de P2Y12 afetam respostas cerebrais à isquemia de forma neuroprotetora ou deletéria. Também há investigação sobre o papel do P2Y12 na modulação da função microglial na doença de Alzheimer.<br><br><em>Na prática clínica atual,</em> o principal efeito farmacológico dos bloqueadores de P2Y12 é ainda claramente antiplaquetário, mas a caracterização do P2Y12 como receptor exclusivamente plaquetário é incorreta do ponto de vista biológico."
+  },
+  {
+    "question": "As plaquetas (trombócitos) são células completas com núcleo bem definido, produzidas diretamente pelas células-tronco da medula óssea por divisão mitótica convencional.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> As plaquetas são <em>fragmentos celulares anucleados</em> — não células completas com núcleo. São derivadas de <strong>megacariócitos</strong> (células gigantes com até 100 µm da medula óssea) que se fragmentam, lançando seus pedaços citoplasmáticos na circulação como plaquetas.<br><br>O megacariócito passa por <strong>endomitose</strong> (o DNA replica mas a célula não se divide) → torna-se poliplóide → o citoplasma se fragmenta em pró-plaquetas → as forças de cisalhamento do fluxo sanguíneo liberam as plaquetas individuais.<br><br><em>Características estruturais:</em> Têm formato de disco, ~3 µm de diâmetro, citoplasma contendo grânulos (com ADP, TXA₂ e outras substâncias), actina e miosina (para contração), e glicoproteínas na superfície (para ligação ao colágeno e fibrinogênio).<br><br><em>Tempo de vida:</em> 8–12 dias, após os quais são removidas pelo baço."
+  },
+  {
+    "question": "O citoplasma das plaquetas contém actina e miosina, proteínas que permitem a contração plaquetária durante a retração do coágulo.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> As plaquetas contêm actina e miosina no seu citoplasma — as mesmas proteínas contráteis do músculo, mas numa proporção e organização diferentes. Na retração do coágulo, as plaquetas ativadas contraem as suas espículas que estão aderidas às fibras de fibrina, comprimindo o coágulo em cerca de 40% do seu volume original em poucas horas.<br><br><em>Outras proteínas contráteis plaquetárias:</em> tromboestenina, que também participa na contração pós-coagulação.<br><br><em>Importância funcional:</em><br>• Retração do coágulo aproxima as margens da ferida<br>• Expulsa o soro do coágulo (soro = plasma sem fatores de coagulação)<br>• Aumenta a firmeza e a capacidade hemostática<br><br><em>Clinicamente:</em> Na Trombastenia de Glanzmann, além do defeito de agregação (por falta de GPIIb/IIIa), a retração do coágulo também está comprometida — usada como teste diagnóstico de função plaquetária."
+  },
+  {
+    "question": "A contagem normal de plaquetas no sangue periférico está entre 150.000 e 450.000 plaquetas por microlitro; valores acima de 450.000/µL definem trombocitose e abaixo de 150.000/µL definem trombocitopenia.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Estes são os valores de referência universalmente aceites:<br><br><strong>Trombocitose (> 450.000/µL):</strong><br>Causas:<br>• Pós-esplenectomia (o baço normalmente remove plaquetas envelhecidas — sem ele, acumulam)<br>• Pós-natal, infecções, lesões graves, cirurgias e parto (trombocitose reativa)<br>• Desordens mieloproliferativas: leucemia mieloide crónica, policitemia vera, mielofibrose<br><br><strong>Trombocitopenia (< 150.000/µL):</strong><br>Causas:<br>• PTI (Púrpura Trombocitopénica Imune/Idiopática)<br>• Depressão medular: drogas citotóxicas, irradiação, anemia aplásica<br>• Leucemia aguda<br>• Infecções: varicela, dengue<br>• Toxemia, septicemia, uremia<br><br><em>Risco clínico por grau de trombocitopenia:</em> Sangramento espontâneo grave tipicamente < 20.000/µL. Petéquias e equimoses podem aparecer < 50.000/µL."
+  },
+  {
+    "question": "A hemostasia envolve apenas dois eventos sequenciais: espasmo vascular e formação do tampão plaquetário, sendo a coagulação um processo separado e posterior.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A hemostasia envolve <strong>três eventos</strong> que ocorrem de forma coordenada e em grande parte simultânea:<br><br><strong>1. Espasmo vascular (vasoconstrição):</strong> Ocorre imediatamente após a lesão — reflexo miogénico local + serotonina (5-HT) das plaquetas + tromboxano A₂ + endotelina das células endoteliais.<br><br><strong>2. Formação do tampão plaquetário:</strong> Adesão → ativação → agregação das plaquetas. Fecha pequenas rupturas. É a hemostasia primária.<br><br><strong>3. Coagulação:</strong> A cascata enzimática que converte o tampão plaquetário frágil numa rede de fibrina resistente. É a hemostasia secundária.<br><br><em>Os três não são completamente sequenciais</em> — ocorrem em paralelo e amplificam-se mutuamente. A coagulação começa enquanto o tampão plaquetário ainda está a ser formado, e as plaquetas ativadas fornecem a superfície fosfolipídica necessária para os complexos enzimáticos da cascata."
+  },
+  {
+    "question": "No espasmo vascular, a vasoconstrição é mediada exclusivamente por reflexos neurais locais, sem envolvimento de substâncias químicas libertadas pelas plaquetas ou pelo endotélio.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O espasmo vascular é mediado por <em>múltiplos mecanismos simultâneos</em>:<br><br><strong>1. Reflexos neurais:</strong> A lesão tecidual ativa reflexos locais que estimulam a contração do músculo liso vascular.<br><br><strong>2. Substâncias libertadas pelas plaquetas:</strong><br>• <strong>Tromboxano A₂ (TXA₂):</strong> potente vasoconstritor, sintetizado pelas plaquetas via COX-1 após ativação<br>• <strong>Serotonina (5-HT):</strong> libertada pelos grânulos densos plaquetários, causa vasoconstrição<br><br><strong>3. Substâncias das células endoteliais:</strong><br>• <strong>Endotelina-1:</strong> o vasoconstritor endógeno mais potente conhecido, libertado pelo endotélio lesado<br><br><em>Importância clínica:</em> A aspirina inibe a síntese de TXA₂ nas plaquetas (via inibição da COX-1) → reduz o componente vasoconstritivo plaquetário. Por isso o uso crónico de aspirina pode prolongar ligeiramente o tempo de sangramento, para além do seu efeito antiplaquetário."
+  },
+  {
+    "question": "Na adesão plaquetária, o fator de von Willebrand (vWF) funciona como uma ponte molecular entre o colágeno subendotelial exposto e os receptores na superfície das plaquetas, sendo produzido e secretado pelas células endoteliais.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Esta é a descrição correta do papel do vWF na hemostasia primária:<br><br><strong>Origem do vWF:</strong> Produzido pelas <em>células endoteliais</em> (armazenado nos corpúsculos de Weibel-Palade) e pelos megacariócitos/plaquetas (armazenado nos grânulos α).<br><br><strong>Mecanismo:</strong><br>1. Lesão vascular expõe colágeno subendotelial<br>2. vWF (libertado do subendotélio e do plasma) liga-se ao colágeno via domínio A3<br>3. O fluxo sanguíneo (shear stress) estende o vWF, expondo o domínio A1<br>4. O domínio A1 liga-se ao receptor <strong>GPIb-IX-V</strong> nas plaquetas → adesão plaquetária<br>5. Ligação GPVI-colágeno estabiliza a adesão<br><br><em>Relevância:</em> Deficiência de vWF → Doença de von Willebrand (a mais comum doença hemorrágica hereditária). Ausência de vWF → adesão plaquetária impossível → sangramento mucoso grave."
+  },
+  {
+    "question": "Durante a ativação plaquetária, as plaquetas liberam ADP e tromboxano A₂ por exocitose, que se ligam a receptores de outras plaquetas causando uma cascata de feedback positivo que recruta mais plaquetas para o tampão.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A ativação plaquetária caracteriza-se por um mecanismo de <em>feedback positivo</em> amplificador:<br><br><strong>Sequência:</strong><br>1. Plaquetas aderem ao colágeno → ativação inicial<br>2. Grânulos densos libertam <strong>ADP</strong> e serotonina; grânulos α libertam fibrinogênio, vWF, FV<br>3. A COX-1 plaquetária converte ácido araquidônico em <strong>TXA₂</strong><br>4. ADP liga-se a receptores <strong>P2Y₁ e P2Y₁₂</strong> nas plaquetas vizinhas → ativação<br>5. TXA₂ liga-se ao receptor TP → ativação adicional + vasoconstrição<br>6. Plaquetas ativadas libertam mais ADP e TXA₂ → recruta mais plaquetas<br><br><em>A trombina</em> (gerada pela cascata de coagulação) é o ativador plaquetário mais potente — via receptores PAR-1 e PAR-4.<br><br><em>Farmacologia:</em> Aspirina inibe TXA₂; clopidogrel/ticagrelor inibem P2Y₁₂ — interrompem este ciclo de feedback positivo."
+  },
+  {
+    "question": "Na agregação plaquetária, o fibrinogênio forma pontes entre receptores de fibrinogênio (GPIIb/IIIa) de diferentes plaquetas, sendo este o mecanismo final que consolida o tampão plaquetário.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A agregação plaquetária depende criticamente do receptor <strong>GPIIb/IIIa (αIIbβ3)</strong>:<br><br><strong>Mecanismo:</strong><br>1. Plaqueta em repouso: GPIIb/IIIa em conformação de baixa afinidade (não liga fibrinogênio)<br>2. Ativação → sinalização intracelular → mudança conformacional do GPIIb/IIIa para alta afinidade (inside-out signaling)<br>3. GPIIb/IIIa na forma ativa liga <strong>fibrinogênio</strong> (e vWF, fibronectina)<br>4. Fibrinogênio é bivalente → liga GPIIb/IIIa de duas plaquetas diferentes simultaneamente → ponte física<br>5. Formação do tampão plaquetário por acumulação de plaquetas interligadas por fibrinogênio<br><br><em>As plaquetas ativadas também libertam fosfolipídios (fator plaquetário III) e FV</em>, importantes para a fase de coagulação.<br><br><em>Doença de Glanzmann:</em> ausência de GPIIb/IIIa → sem agregação → sangramento grave. A contagem de plaquetas é normal, mas não formam pontes."
+  },
+  {
+    "question": "A cascata de coagulação foi denominada assim em 1976 por R.G. Macfarlane e consiste em três passos principais: formação do ativador de protrombina, conversão de protrombina em trombina e conversão de fibrinogênio em fibrina.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O erro está na <em>data</em>. O modelo em cascata da coagulação foi proposto em <strong>1964</strong> (não 1976) por R.G. <strong>Macfarlane</strong> (publicado na revista <em>Nature</em>) e independentemente por <strong>Davie & Ratnoff</strong> (publicado na <em>Science</em>) no mesmo ano.<br><br>O texto do manual cita 1976, mas a data correta é <strong>1964</strong>.<br><br><em>Os três passos principais são:</em><br>1. <strong>Formação do ativador de protrombina</strong> (via extrínseca ou intrínseca → FXa + FVa + Ca²⁺ + fosfolipídios)<br>2. <strong>Conversão de protrombina em trombina</strong> (pelo complexo ativador de protrombina)<br>3. <strong>Conversão de fibrinogênio em fibrina</strong> (pela trombina → polimerização → estabilização pelo FXIIIa)<br><br><em>Este é um ponto factual que testa atenção ao detalhe histórico</em> — a ciência da coagulação foi revolucionada em 1964, não 1976."
+  },
+  {
+    "question": "Na via extrínseca da coagulação, o fator VII se combina com a tromboplastina tecidual (fator III) para formar um complexo que ativa o fator X na presença de Ca²⁺, iniciando assim a via extrínseca.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A sequência da via extrínseca:<br><br><strong>Passo 1 — Libertação de tromboplastina:</strong> Tecidos traumatizados libertam substâncias coletivamente chamadas de <em>tromboplastina tecidual</em> (Fator Tecidual / Fator III).<br><br><strong>Passo 2 — Formação do complexo TF:VIIa:</strong> A tromboplastina tecidual (TF) combina-se com o <strong>Fator VII</strong> → forma complexo TF:FVII → ativa FX em FXa, na presença de <strong>Ca²⁺</strong>.<br><br><strong>Passo 3 — Formação do ativador de protrombina:</strong> FXa + fosfolipídios teciduais (das plaquetas) + FV + Ca²⁺ → <em>complexo ativador de protrombina</em>.<br><br><em>Adicionalmente:</em> o complexo TF:VIIa também ativa o FIX (ligação com a via intrínseca), explicando por que a via intrínseca é necessária para amplificação — o TFPI rapidamente inibe o FXa da via extrínseca.<br><br><em>Monitorização laboratorial:</em> TP/INR avalia a integridade da via extrínseca (principalmente sensível ao FVII, de meia-vida mais curta)."
+  },
+  {
+    "question": "Na via intrínseca da coagulação, a sequência correta de ativação é: FXII → FXI → FIX → FVIII → FX, todos dependentes de Ca²⁺ em cada etapa.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A sequência está <em>parcialmente incorreta</em>. A sequência correta da via intrínseca é:<br><br><strong>XII → XIIa → XI → XIa → IX → IXa → (+ FVIIIa + Ca²⁺ + fosfolipídios) → FX → FXa</strong><br><br>O erro na afirmativa é colocar o FVIII como um passo intermediário isolado na sequência de ativação em cascata. Na realidade, o <strong>FVIIIa é um cofator</strong> (não uma serina-protease): ele não ativa o FX diretamente, mas é necessário no complexo tenase intrínseca (FIXa + FVIIIa + Ca²⁺ + fosfolipídios) para que o FIXa ative eficientemente o FX.<br><br><em>Outro erro sutil:</em> O Ca²⁺ não é necessário nas duas primeiras reações da via intrínseca (FXII → FXIIa e FXI → FXIa). O Ca²⁺ é essencial a partir da ativação do FIX em diante.<br><br><em>Memória:</em> FVIII é cofator (amplifica 200.000×), não enzima. Deficiência de FVIII = Hemofilia A."
+  },
+  {
+    "question": "O complexo ativador de protrombina é formado por FXa + fosfolipídios + FV + Ca²⁺ e é responsável pela conversão de protrombina em trombina, reação que ocorre preferencialmente na superfície das plaquetas que formam o tampão.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O <strong>complexo protrombinase</strong> (ativador de protrombina) tem composição precisa:<br><br>• <strong>FXa</strong> (componente enzimático, serina-protease)<br>• <strong>FVa</strong> (cofator — acelera a reação em ~10.000×)<br>• <strong>Ca²⁺</strong> (âncora os fatores dependentes de vitamina K via domínios Gla)<br>• <strong>Fosfolipídios aniônicos</strong> (principalmente fosfatidilserina exposta pelas plaquetas ativadas)<br><br><em>Localização preferencial:</em> Na superfície das plaquetas ativadas que compõem o tampão plaquetário — a fosfatidilserina flipada para a face externa fornece a plataforma aniônica que concentra o complexo.<br><br><em>Resultado:</em> Conversão massiva de <strong>protrombina → trombina</strong> (thrombin burst). Esta trombina então:<br>• Cliva fibrinogênio → fibrina<br>• Ativa FV, FVIII, FXI (amplificação)<br>• Ativa FXIII (estabilização da fibrina)<br>• Ativa plaquetas via PAR-1/4 (mais amplificação)"
+  },
+  {
+    "question": "A trombina exerce apenas funções pró-coagulantes, convertendo fibrinogênio em fibrina e ativando fatores de amplificação; qualquer papel anticoagulante da trombina é irrelevante em condições fisiológicas.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A trombina tem <em>papéis duais</em> e o papel anticoagulante é fisiologicamente essencial:<br><br><strong>Papéis pró-coagulantes da trombina:</strong><br>• Converte fibrinogênio → fibrina (cliva fibrinopeptídeos A e B)<br>• Ativa FVIII, FV, FXI (amplificação da cascata)<br>• Ativa FXIII (estabilização da fibrina por cross-links)<br>• Ativa plaquetas via PAR-1 e PAR-4<br><br><strong>Papel anticoagulante da trombina (via trombomodulina):</strong><br>• Quando a trombina atinge o endotélio intacto além da lesão, liga-se à <strong>trombomodulina</strong><br>• O complexo trombina:trombomodulina ativa a <strong>Proteína C</strong><br>• Proteína C ativada (PCa) inativa FVa e FVIIIa → anticoagulação<br>• PCa também estimula fibrinólise (inativa o inibidor do t-PA → mais t-PA ativo → mais plasmina)<br><br><em>Este mecanismo dual</em> é elegante: a mesma molécula que promove a coagulação no local de lesão a limita e dissolve quando alcança o endotélio saudável."
+  },
+  {
+    "question": "Na conversão de fibrinogênio em fibrina, ocorrem três reações sequenciais: proteólise (remoção de peptídeos pelo trombina), polimerização (formação de filamentos) e estabilização (cross-links pelo FXIIIa na presença de Ca²⁺).",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> As três etapas da conversão de fibrinogênio em fibrina são precisamente:<br><br><strong>1. Proteólise:</strong> A trombina remove <strong>4 peptídeos de baixo peso molecular</strong> (fibrinopeptídeos A das cadeias Aα e fibrinopeptídeos B das cadeias Bβ) da molécula de fibrinogênio → formação de <strong>monômeros de fibrina</strong>.<br><br><strong>2. Polimerização:</strong> Os monômeros de fibrina polimerizam espontaneamente por interações não-covalentes (ligações knob-hole entre domínios D e E) → formam filamentos longos de fibrina → rede do coágulo. Este coágulo inicial é <em>fraco</em> pois os filamentos não estão ligados covalentemente.<br><br><strong>3. Estabilização:</strong> A trombina ativa o <strong>FXIII → FXIIIa</strong> (transglutaminase). O FXIIIa, na presença de Ca²⁺, forma <strong>ligações isopeptídicas covalentes</strong> (cross-links) entre resíduos de glutamina e lisina de filamentos adjacentes → fibrina insolúvel, resistente à fibrinólise.<br><br><em>Diagnóstico da deficiência de FXIII:</em> Coágulo se forma mas dissolve em ureia 5M (sem cross-links); TP e TTPA normais."
+  },
+  {
+    "question": "A retração do coágulo começa 30 a 60 minutos após a coagulação e pode reduzir o volume do coágulo em cerca de 40%, sendo mediada pelas proteínas contráteis tromboestenina, actina e miosina das plaquetas.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>retração do coágulo</strong> é um processo ativo mediado pelas plaquetas:<br><br><strong>Sequência:</strong><br>1. Plaquetas no coágulo têm espículas (pseudópodos) aderidas às fibras de fibrina<br>2. As proteínas contráteis (<strong>tromboestenina, actina e miosina</strong>) das plaquetas são ativadas pela elevação do Ca²⁺ intracelular<br>3. Contração das espículas → aproximação das fibras de fibrina → compressão do coágulo<br>4. <strong>30–60 minutos</strong> após formação → início da retração<br>5. Em horas: redução de ~<strong>40% do volume original</strong><br><br><strong>Consequências funcionais:</strong><br>• Expulsa o soro (plasma sem fatores de coagulação e fibrinogênio)<br>• Aproxima as margens da ferida vascular<br>• Aumenta a resistência mecânica do coágulo<br><br><em>A retração inadequada do coágulo</em> é teste de triagem para função plaquetária — a ausência de retração sugere Trombastenia de Glanzmann (sem GPIIb/IIIa para ancorar a fibrina às plaquetas)."
+  },
+  {
+    "question": "O cálcio (Ca²⁺) é necessário para todas as reações da cascata de coagulação, incluindo as duas primeiras reações da via intrínseca (ativação de FXII e FXI), sendo sua quelação pelos citratos o princípio do uso destes como anticoagulantes in vitro.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O Ca²⁺ é necessário para <em>quase</em> todas as reações, mas há exceções específicas: as <strong>duas primeiras reações da via intrínseca</strong> — a ativação do FXII em FXIIa e a ativação do FXI em FXIa — <strong>não requerem Ca²⁺</strong>.<br><br>A afirmativa diz que o Ca²⁺ é necessário para <em>todas</em> as reações <em>incluindo</em> as duas primeiras da via intrínseca, o que é incorreto.<br><br><em>O texto do manual refere-se a isso:</em> \"o cálcio é importante para a promoção de todas (exceto as duas primeiras reações da via intrínseca) as reações\".<br><br><strong>Princípio anticoagulante in vitro:</strong> Correto — o citrato (e o oxalato) <strong>quelam Ca²⁺</strong> no sangue colhido → bloqueiam a cascata → sangue não coagula → permite processamento para análise do TP, TTPA, etc. A coagulação é reiniciada adicionando CaCl₂ no início do teste.<br><br><em>EDTA</em> (nos tubos de hemograma) também quela Ca²⁺ mas deforma as plaquetas — por isso não é usado para testes de coagulação."
+  },
+  {
+    "question": "A vitamina K é necessária para a síntese hepática de protrombina, fator VII, IX e X, assim como de anticoagulantes circulantes; a sua deficiência prolonga o tempo de protrombina e pode causar hemorragia grave.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>vitamina K</strong> (derivado da naftoquinona) é indispensável para a γ-carboxilação dos fatores de coagulação:<br><br><strong>Fatores dependentes de vitamina K (sintetizados no fígado):</strong><br>Pró-coagulantes: <strong>FII (protrombina), FVII, FIX, FX</strong><br>Anticoagulantes: <strong>Proteína C, Proteína S</strong>, Proteína Z<br><br><strong>Fontes de vitamina K:</strong><br>• Alimentar (vegetais de folha verde — Vitamina K₁/Filoquinona)<br>• Síntese pela flora intestinal (Vitamina K₂/Menaquinona)<br><br><strong>Deficiência causa:</strong><br>• TP prolongado (FVII cai primeiro por ter meia-vida mais curta ~6h)<br>• TTPA prolongado (com queda de FIX e FX)<br>• Hemorragia grave (equiparada clinicamente à deficiência severa de fatores)<br><br><em>Aplicações clínicas:</em><br>• Warfarina antagoniza o ciclo da vitamina K (inibe VKORC1)<br>• RN recebem vitamina K profilática (flora intestinal ainda não desenvolvida → risco de doença hemorrágica do RN)"
+  },
+  {
+    "question": "O fígado sintetiza apenas fatores pró-coagulantes (FV, FVII, FIX, FX, protrombina e fibrinogênio) e não produz anticoagulantes, sendo estes de origem endotelial exclusivamente.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O fígado tem papel <em>dual</em> fundamental na hemostasia — síntese tanto de pró-coagulantes quanto de anticoagulantes:<br><br><strong>Pró-coagulantes sintetizados pelo fígado:</strong><br>• FV, FVII, FIX, FX, protrombina (FII), fibrinogênio (FI)<br>• FXII, FXI, FXIII, vWF (parcialmente)<br><br><strong>Anticoagulantes sintetizados pelo fígado:</strong><br>• <strong>Heparina</strong> (principalmente mastócitos/basófilos do fígado, pulmão e tecido conjuntivo)<br>• <strong>Antitrombina III (ATIII)</strong><br>• <strong>Proteína C</strong><br>• <strong>Proteína S</strong><br><br><em>Funções do fígado na coagulação:</em><br>1. Síntese de pró-coagulantes<br>2. Síntese de anticoagulantes<br>3. Remoção de pró-coagulantes ativados da circulação (clearance)<br><br><em>Falência hepática:</em> Prejudica tanto a síntese de fatores pró-coagulantes quanto anticoagulantes → estado de hemostasia desregulado com risco simultâneo de hemorragia e trombose."
+  },
+  {
+    "question": "A prostaciclina (PGI₂) é um fator endógeno que impede a agregação plaquetária ao inibir a formação de tromboxano A₂, sendo este o seu único mecanismo de ação antiplaquetária.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A <strong>prostaciclina (PGI₂)</strong> inibe a agregação plaquetária, mas <em>não</em> pelo mecanismo descrito na afirmativa.<br><br><strong>Mecanismo correto da PGI₂:</strong><br>• Sintetizada pelo endotélio via COX (especialmente COX-2) a partir do ácido araquidônico<br>• Liga-se ao receptor IP nas plaquetas → ativa adenilil ciclase → ↑ AMPc intracelular → ativa PKA → <strong>inibe a ativação plaquetária</strong> (inibe mobilização de Ca²⁺, inibe degranulação, inibe GPIIb/IIIa ativa)<br>• Também causa <strong>vasodilatação</strong> (opõe-se ao TXA₂ vasoconstritor)<br><br><strong>A PGI₂ não inibe diretamente a síntese de TXA₂</strong> — as duas vias atuam em paralelo e em sentidos opostos:<br>• TXA₂ (plaquetas): ↑ AMPc → vasoconstrição + agregação<br>• PGI₂ (endotélio): ↑ AMPc → vasodilatação + inibição da agregação<br><br><em>Relevância:</em> O balanço TXA₂/PGI₂ determina se as plaquetas se agregam ou não. A aspirina inibe ambos, mas o efeito nas plaquetas (sem núcleo) é irreversível e o do endotélio (com núcleo) é transitório."
+  },
+  {
+    "question": "A heparina é um polissacarídeo com grupos sulfato, secretado por basófilos e mastócitos, que age como anticoagulante impedindo a conversão de protrombina em trombina e inibindo a ação da trombina sobre o fibrinogênio.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>heparina endógena</strong> é um anticoagulante natural com características únicas:<br><br><strong>Estrutura:</strong><br>• Polissacarídeo aniônico (glicosaminoglicano) com múltiplos grupos sulfato<br>• Peso molecular: 15.000–18.000 Da (heparina não-fracionada natural)<br>• A sua carga negativa intensa é fundamental para a atividade anticoagulante<br><br><strong>Origem:</strong> Mastócitos e basófilos (presentes no fígado — onde foi inicialmente isolada, daí o nome, do grego <em>hepar</em> = fígado), pulmão e tecido conjuntivo<br><br><strong>Mecanismos de ação:</strong><br>1. Impede conversão de protrombina em trombina (via ATIII)<br>2. Inibe a ação da trombina sobre o fibrinogênio (via ATIII)<br>3. Age como cofator da ATIII → inibe FIXa, FXa, FXIa, FXIIa<br><br><em>Na prática,</em> a heparina exógena (HNF ou HBPM) é um dos anticoagulantes mais usados em medicina, administrada por via parenteral (IV ou SC) — não é absorvida por via oral devido ao seu tamanho e carga."
+  },
+  {
+    "question": "A trombomodulina é produzida pelas células endoteliais de todos os órgãos, incluindo as cerebrais, e converte a trombina num ativador da proteína C.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A afirmativa contém um erro específico: a trombomodulina é expressa pelas células endoteliais de <em>quase todos</em> os tecidos, <strong>exceto pelas células endoteliais cerebrais</strong>.<br><br>O manual refere explicitamente: <em>\"trombomodulina → é um ligante da trombina produzida pelas células endoteliais (excepto cerebrais)\"</em>.<br><br><strong>Razão da exceção cerebral:</strong> A barreira hematoencefálica tem características endoteliais únicas. A ausência de trombomodulina no endotélio cerebral pode contribuir para a maior susceptibilidade do cérebro a trombose microvascular em certas condições e à ausência de fibrinólise local eficiente.<br><br><strong>Função da trombomodulina (quando presente):</strong><br>• Liga-se à trombina → complexo TM:Trombina<br>• Este complexo ativa Proteína C (1.000× mais eficientemente que trombina livre)<br>• Proteína C ativada (+ Proteína S) inativa FVa e FVIIIa → anticoagulação localizada"
+  },
+  {
+    "question": "A proteína C ativada (APC) inativa os fatores Va e VIIIa, interrompendo a coagulação, e também estimula a fibrinólise ao aumentar a formação de plasmina por inativação do inibidor do ativador do plasminogênio.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>proteína C ativada (APC)</strong> tem ações anticoagulantes e pró-fibrinolíticas:<br><br><strong>Via anticoagulante:</strong><br>• APC + Proteína S (cofator) → inativa proteoliticamente <strong>FVa e FVIIIa</strong><br>• Sem FVa: o complexo protrombinase falha<br>• Sem FVIIIa: o complexo tenase intrínseca falha<br>• Resultado: geração de trombina interrompida<br><br><strong>Via pró-fibrinolítica:</strong><br>• APC inativa o <strong>inibidor do ativador do plasminogênio (PAI-1)</strong><br>• Menos PAI-1 → o t-PA (ativador tecidual do plasminogênio) fica mais ativo<br>• Mais t-PA → mais plasminogênio convertido em plasmina<br>• Mais plasmina → mais degradação de fibrina → fibrinólise estimulada<br><br><em>Este duplo efeito</em> (anticoagulante + pró-fibrinolítico) posiciona a APC como regulador central da hemostasia secundária e terciária.<br><br><em>Clinicamente:</em> Deficiência de Proteína C = risco de TVP/EP. Resistência à APC (Fator V de Leiden) = trombofilia hereditária mais comum."
+  },
+  {
+    "question": "A plasmina, forma ativa derivada do plasminogênio (profibrinolisina), degrada a fibrina e o fibrinogênio em fragmentos chamados produtos da degradação da fibrina (FDP), que exercem feedback negativo inibindo a trombina.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>plasmina</strong> é o executor central da fibrinólise:<br><br><strong>Origem:</strong> Plasminogênio (profibrinolisina) → convertido em plasmina pelo t-PA, u-PA ou FXIIa/calicreína<br><br><strong>Ações da plasmina:</strong><br>• Degrada <strong>fibrina cross-linked</strong> → fragmentos incluindo o <strong>D-dímero</strong><br>• Degrada <strong>fibrinogênio</strong> nativo → FDPs (Fibrin/Fibrinogen Degradation Products)<br>• Em hiperfibrinólise: também degrada FV, FVIII, fibronectina<br><br><strong>FDPs e feedback negativo:</strong><br>• Os FDPs (fragmentos X, Y, D, E) inibem a polimerização da fibrina<br>• Competem com a trombina pelo substrato fibrinogênio<br>• Este feedback negativo limita a extensão da fibrinólise e da coagulação<br><br><em>Importância diagnóstica:</em> D-dímero (subconjunto específico dos FDPs, derivado apenas de fibrina cross-linked pelo FXIIIa) é marcador sensível de ativação da coagulação + fibrinólise → usado para rastreio de TVP/EP e monitorização de CID."
+  },
+  {
+    "question": "O sistema extrínseco de ativação do plasminogênio funciona através do ativador tecidual do plasminogênio (t-PA), libertado pelo endotélio vascular, e do ativador tipo uroquinase (u-PA); a estreptoquinase é uma enzima bacteriana com mecanismo de ação semelhante usada no tratamento do IAM.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O <strong>sistema fibrinolítico extrínseco</strong> inclui:<br><br><strong>t-PA (Ativador Tecidual do Plasminogênio / tissue Plasminogen Activator):</strong><br>• Produzido pelas células endoteliais<br>• Libertado em resposta à trombina, estase, hipóxia, adrenalina<br>• Ativa plasminogênio preferentemente quando este está ligado à fibrina (fibrinólise localizada)<br>• Base das terapias trombolíticas: <strong>alteplase</strong> (rt-PA recombinante), tenecteplase, reteplase<br><br><strong>u-PA (Uroquinase):</strong><br>• Encontrado em endotélio, células renais e tumorais<br>• Papel na remodelação tecidual e fibrinólise urinária<br><br><strong>Estreptoquinase (origem bacteriana — Streptococcus):</strong><br>• Não é uma enzima direta — forma complexo com plasminogênio que ativa outros plasminogênios<br>• Usada no tratamento precoce de IAM (hoje suplantada pelo rt-PA)<br>• Risco de reação alérgica (proteína bacteriana estranha)<br><br><em>O manual menciona também a estafiloquinase</em> (do Staphylococcus) como fibrinolítico bacteriano."
+  },
+  {
+    "question": "O sistema intrínseco de ativação do plasminogênio envolve o fator XIIa e calicreínas que, além de estimularem a coagulação, também estimulam a dissolução do coágulo, demonstrando o papel dual do sistema de contato.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O sistema de contato (via intrínseca) tem uma dualidade fascinante — ativa simultaneamente a coagulação e a fibrinólise:<br><br><strong>Coagulação (sentido pró-coagulante):</strong><br>• FXIIa → FXI → FIX → ... → formação de fibrina<br><br><strong>Fibrinólise (sentido fibrinolítico):</strong><br>• FXIIa ativa pré-calicreína → calicreína<br>• Calicreína ativa plasminogênio → plasmina → fibrinólise<br>• FXIIa também ativa diretamente o plasminogênio<br><br><em>Este sistema dual é um mecanismo de equilíbrio automático:</em> quando a via de contato é ativada, tanto a coagulação quanto a fibrinólise são desencadeadas, garantindo que o coágulo formado seja subsequentemente dissolvido quando a reparação tecidual for concluída.<br><br><em>Inibidores do sistema fibrinolítico:</em><br>• α₂-antiplasmina (inibe plasmina livre)<br>• Aprotinina (inibidor de tripsina, inibe plasmina e calicreína)<br>• Ácido ε-aminocapróico (análogo da lisina, bloqueia ativação do plasminogênio)<br>• Ácido tranexâmico (mecanismo similar ao ε-aminocapróico)"
+  },
+  {
+    "question": "A esplenectomia pode causar trombocitose porque o baço é o principal local de remoção de plaquetas envelhecidas da circulação e o seu sequestro fisiológico de plaquetas é eliminado após a sua remoção.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O <strong>baço</strong> desempenha papel central na remoção de plaquetas velhas e danificadas:<br><br><strong>Funções esplénicas relacionadas às plaquetas:</strong><br>1. <em>Sequestro fisiológico:</em> ~30% das plaquetas circulantes estão reservadas no baço a qualquer momento<br>2. <em>Clearance:</em> Plaquetas com glicosilação alterada (envelhecidas, 8–12 dias) são reconhecidas e destruídas por macrófagos esplênicos<br><br><strong>Após esplenectomia:</strong><br>• As plaquetas que seriam sequestradas no baço agora permanecem em circulação<br>• O clearance de plaquetas envelhecidas está reduzido<br>• Resultado: <strong>trombocitose</strong> (às vezes > 1.000.000/µL nos primeiros dias pós-cirurgia)<br>• Pode aumentar o risco de trombose (especialmente trombose da veia portal)<br><br><em>Trombocitose pós-esplenectomia</em> é geralmente transitória e benigna, mas em valores muito elevados (> 800.000–1.000.000) pode ser necessária profilaxia antitrombótica temporária.<br><br><em>Na PTI,</em> a esplenectomia também remove o principal local de destruição das plaquetas pelos anticorpos."
+  },
+  {
+    "question": "A aspirina impede a formação do tampão plaquetário ao inibir irreversivelmente a COX-1 nas plaquetas, bloqueando a síntese de TXA₂; esta propriedade torna a aspirina útil na prevenção da trombose em pacientes com risco de IAM e AVC.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Este é o mecanismo correto da ação antitrombótica da aspirina:<br><br><strong>Mecanismo molecular:</strong><br>• Aspirina (ácido acetilsalicílico) acetila irreversivelmente a <strong>Ser530 da COX-1</strong> plaquetária<br>• COX-1 bloqueada → não converte ácido araquidônico em PGG₂ → sem PGH₂ → sem <strong>TXA₂</strong><br>• Sem TXA₂: inibição da vasoconstrição e da amplificação da agregação plaquetária<br><br><strong>Por que o efeito dura 7–10 dias:</strong><br>• Plaquetas são anucleadas → não sintetizam nova COX-1<br>• A inibição é permanente para toda a vida da plaqueta<br><br><strong>Indicações estabelecidas:</strong><br>• Prevenção secundária de IAM e AVC isquêmico<br>• SCA (síndrome coronária aguda) — dose de ataque 300 mg + manutenção 75–100 mg/dia<br>• Intervenção coronária percutânea (ICP)<br><br><em>A prevenção primária</em> com aspirina é mais controversa — o benefício cardiovascular deve ser ponderado contra o risco de sangramento GI, especialmente em populações de baixo risco."
+  },
+  {
+    "question": "A Púrpura Trombocitopénica Idiopática (PTI) é uma causa de trombocitopenia por depressão da produção medular, semelhante ao efeito dos quimioterápicos na medula óssea.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A <strong>PTI (Púrpura Trombocitopénica Idiopática / Imune)</strong> tem mecanismo completamente diferente da depressão medular por citotóxicos:<br><br><strong>PTI — Mecanismo:</strong><br>• Doença autoimune: anticorpos <strong>IgG anti-GPIIb/IIIa</strong> (e outras glicoproteínas plaquetárias) são produzidos<br>• Plaquetas revestidas por anticorpos são reconhecidas pelos macrófagos esplênicos → destruição <em>periférica</em> acelerada<br>• A medula óssea responde com <em>aumento</em> da produção de megacariócitos (trombopoiese aumentada, não deprimida)<br>• Os anticorpos também podem inibir a maturação dos megacariócitos<br><br><strong>Depressão medular por citotóxicos/irradiação:</strong><br>• Destruição direta das células precursoras (incluindo megacariócitos)<br>• Trombocitopenia por <em>falha de produção</em><br>• Também causa neutropenia e anemia (pancitopenia)<br><br><em>Diferença diagnóstica:</em> Na PTI, o mielograma mostra megacariócitos aumentados; na depressão medular, estão diminuídos. Contagem de reticulócitos também difere.<br><br><em>Tratamento da PTI:</em> Corticosteróides, IVIG, rituximab, agonistas de TPO (romiplostim, eltrombopag), esplenectomia."
+  },
+  {
+    "question": "O tempo de vida das plaquetas na circulação é de 8 a 12 dias, após o qual são removidas principalmente pelo baço e pelo fígado.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> As plaquetas têm uma vida média de <strong>8–12 dias</strong> na circulação. Durante este período:<br><br><strong>Remoção fisiológica:</strong><br>• Plaquetas envelhecidas expressam sinais de apoptose (exposição de fosfatidilserina, alterações de glicosilação)<br>• São reconhecidas e fagocitadas por macrófagos do <strong>baço</strong> (principal) e do <strong>fígado</strong> (células de Kupffer)<br>• ~10% das plaquetas são consumidas diariamente na manutenção da integridade vascular (fechamento de microporos nos capilares)<br><br><strong>Regulação da produção:</strong><br>• O ritmo de produção de novas plaquetas é coordenado com o ritmo de remoção das velhas via feedback de trombopoietina (TPO)<br>• Produção diária: ~1,5 × 10¹¹ plaquetas em condições basais<br><br><em>Relevância para transfusão:</em> Concentrados de plaquetas têm validade de 5–7 dias a 22°C com agitação contínua. Após este prazo, a função plaquetária deteriora significativamente — são os primeiros hemocomponentes a ficar inutilizáveis."
+  },
+  {
+    "question": "A dengue causa trombocitopenia principalmente por depressão da produção medular de megacariócitos pelo vírus, e não por mecanismo imunológico ou de consumo periférico.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A trombocitopenia na <strong>dengue</strong> tem mecanismo <em>multifatorial</em>, sendo a depressão medular apenas um dos componentes:<br><br><strong>Mecanismos da trombocitopenia na dengue:</strong><br>1. <em>Supressão medular:</em> O vírus da dengue infecta células progenitoras hematopoiéticas → inibe a megacariocitopoiese diretamente<br>2. <em>Destruição imunológica:</em> Anticorpos anti-dengue têm reação cruzada com glicoproteínas plaquetárias (mimetismo molecular) → IgG liga-se às plaquetas → destruição pelo SER<br>3. <em>Consumo periférico:</em> Ativação endotelial pelo vírus → microtrombos → consumo de plaquetas<br>4. <em>Infecção direta das plaquetas:</em> O vírus pode infectar as plaquetas, causando ativação e destruição precoce<br><br><em>A trombocitopenia grave na dengue</em> (< 20.000/µL) é fator de risco para hemorragias graves (hemorrágica dengue). Contudo, a transfusão profilática de plaquetas é controversa e geralmente não indicada na ausência de sangramento ativo.<br><br><em>Recuperação:</em> A contagem plaquetária geralmente começa a recuperar por volta do 6º–7º dia de doença."
+  },
+  {
+    "question": "A varicela pode causar trombocitopenia, sendo um exemplo de causa infecciosa de redução na contagem de plaquetas, tal como o citado no manual.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>varicela</strong> (causada pelo vírus varicela-zóster / VZV) pode causar trombocitopenia por múltiplos mecanismos:<br><br><strong>Mecanismos:</strong><br>1. <em>Imunológico:</em> O VZV induz produção de anticorpos que podem ter reação cruzada com glicoproteínas plaquetárias<br>2. <em>Supressão medular transitória:</em> A infecção viral pode suprimir a hematopoiese temporariamente<br>3. <em>Consumo:</em> Lesão endotelial pelas vesículas cutâneas com microtrombose<br><br><strong>Manifestação clínica:</strong> Trombocitopenia na varicela é geralmente transitória e leve, resolvendo-se com a infecção. Pode ocorrer púrpura trombocitopénica aguda pós-varicela (forma grave).<br><br><em>Outras infecções virais que causam trombocitopenia (além das citadas no manual):</em><br>• HIV (trombocitopenia imune)<br>• CMV, EBV (mononucleose)<br>• Hantavírus<br>• SARS-CoV-2 (COVID-19)<br>• Sarampo<br><br><em>Contexto pediátrico:</em> A trombocitopenia pós-infecciosa é mais comum na infância e geralmente autolimitada. O diagnóstico diferencial com leucemia aguda (também causa trombocitopenia) é importante."
+  },
+  {
+    "question": "O fibrinogênio é importante tanto para a hemostasia primária (como ponte entre plaquetas na agregação via GPIIb/IIIa) quanto para a hemostasia secundária (como substrato da trombina na formação da rede de fibrina).",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O <strong>fibrinogênio (Fator I)</strong> é único por participar em ambas as fases da hemostasia:<br><br><strong>Hemostasia primária (tampão plaquetário):</strong><br>• O GPIIb/IIIa ativado liga o fibrinogênio (que é bivalente — tem dois sítios de ligação)<br>• Uma molécula de fibrinogênio conecta GPIIb/IIIa de duas plaquetas → ponte molecular → agregação<br>• Sem fibrinogênio: sem agregação plaquetária (mesmo que GPIIb/IIIa funcional)<br><br><strong>Hemostasia secundária (coagulação):</strong><br>• A trombina cliva os fibrinopeptídeos A e B do fibrinogênio → monômeros de fibrina<br>• Monômeros polimerizam → rede de fibrina solúvel<br>• FXIIIa (+ Ca²⁺) cross-linka → fibrina insolúvel → coágulo estável<br><br><em>Hipofibrinogenemia:</em> Compromete ambas as fases → sangramento grave. Monitorização em hemorragia maciça é essencial — repor com crioprecipitado (rico em fibrinogênio) ou concentrado de fibrinogênio quando < 150 mg/dL.<br><br><em>Curiosidade:</em> O fibrinogênio é também um reagente de fase aguda (sobe nas inflamações) e contribui para a velocidade de hemossedimentação (VHS)."
+  },
+  {
+    "question": "As plaquetas ativadas libertam o fator plaquetário III (fosfolipídios de membrana) e o fator V, substâncias importantes para a formação do coágulo, fornecendo a superfície e o cofator necessários para os complexos enzimáticos da coagulação.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> As plaquetas ativadas contribuem para a coagulação por libertação de componentes essenciais:<br><br><strong>Fator Plaquetário 3 (FP3 / Fosfolipídios plaquetários):</strong><br>• Corresponde à <strong>fosfatidilserina</strong> exposta na face externa da membrana plaquetária após ativação (via scramblase)<br>• Fornece a superfície carregada negativamente onde se montam os complexos:<br>&nbsp;&nbsp;→ Tenase intrínseca: FIXa + FVIIIa + Ca²⁺ + FP3<br>&nbsp;&nbsp;→ Protrombinase: FXa + FVa + Ca²⁺ + FP3<br>• Concentra os fatores no local da lesão e acelera enormemente as reações<br><br><strong>Fator V plaquetário:</strong><br>• Armazenado nos grânulos α<br>• Libertado durante a ativação e incorporado no complexo protrombinase<br>• Funciona como cofator essencial para a conversão de protrombina em trombina<br><br><em>Esta contribuição plaquetária</em> para a coagulação explica por que a trombocitopenia grave não causa apenas falha do tampão plaquetário primário, mas também compromete a coagulação secundária."
+  },
+  {
+    "question": "O sistema fibrinolítico pode ser ativado por stress físico ou mental, um mecanismo possivelmente relacionado com a libertação de adrenalina que estimula a produção de t-PA pelo endotélio.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A fibrinólise pode ser estimulada pelo stress, e este é um fenômeno biologicamente documentado:<br><br><strong>Mecanismo:</strong><br>• O stress (físico ou mental) → libertação de <strong>adrenalina (epinefrina)</strong> pelas supra-renais<br>• Adrenalina estimula as células endoteliais a libertar <strong>t-PA</strong> (ativador tecidual do plasminogênio)<br>• Mais t-PA → mais plasminogênio convertido em plasmina → fibrinólise aumentada<br><br><em>O manual cita o exemplo fascinante:</em> Em mortes violentas (soldados em guerra), o sangue é fluido e não coagulável — atribuído à grande quantidade de adrenalina libertada antes da morte, que estimulou massivamente a produção de t-PA.<br><br><em>Outros estímulos que libertam t-PA endotelial:</em><br>• Trombina local<br>• Bradicinina<br>• Exercício físico intenso<br>• Hipóxia local<br>• Oclusão venosa transitória<br><br><em>Este fenômeno</em> é a base para o uso de exercício físico moderado como proteção cardiovascular — aumenta a fibrinólise basal e previne trombose intravascular silenciosa."
+  },
+  {
+    "question": "Os produtos da degradação da fibrina (FDP), gerados pela ação da plasmina, apenas sinalizam que houve coagulação e fibrinólise, sem exercer nenhum efeito inibitório sobre a própria cascata de coagulação.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Os <strong>FDPs (Fibrin/Fibrinogen Degradation Products)</strong> têm ação inibitória ativa sobre a coagulação — não são apenas marcadores passivos:<br><br><strong>Ações inibitórias dos FDPs:</strong><br>1. <em>Inibição da trombina:</em> Os fragmentos D e E competem com a trombina pelo fibrinogênio (competição pelo substrato) → menos fibrinogênio disponível para ser convertido em fibrina<br>2. <em>Inibição da polimerização da fibrina:</em> FDPs ligam-se aos sítios de polimerização do fibrinogênio → interferem na formação da rede<br>3. <em>Ação anticoagulante dos fragmentos:</em> Fragmentos Y e D inibem diretamente a trombina<br><br>O manual cita: <em>\"FDPs que inibem a trombina (feedback negativo para síntese de plasmina)\"</em> — os FDPs inibem a trombina, e menos trombina significa menos ativação do plasminogênio mediada pela trombina → mecanismo de autolimitação.<br><br><em>Relevância na CID:</em> Na CID, FDPs altíssimos → inibição da polimerização da fibrina → os coágulos formados são instáveis → coagulopatia paradoxal onde coagulação e sangramento coexistem."
+  },
+  {
+    "question": "Após a esplenectomia, o número de plaquetas pode aumentar porque o baço, além de remover plaquetas velhas, também armazena cerca de 30% das plaquetas circulantes; sem o baço, estas plaquetas retornam à circulação.",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O baço tem duas funções relacionadas às plaquetas que, quando eliminadas pela esplenectomia, contribuem para a trombocitose:<br><br><strong>1. Função de clearance (remoção):</strong><br>• Macrófagos esplênicos removem plaquetas envelhecidas (8–12 dias de vida)<br>• Após esplenectomia: plaquetas velhas permanecem mais tempo na circulação<br>• Contribui para aumento das plaquetas totais<br><br><strong>2. Função de reservatório:</strong><br>• O baço retém normalmente <strong>~30% das plaquetas corporais totais</strong> num pool de reserva<br>• Em condições de necessidade (hemorragia, exercício), este pool é mobilizado para a circulação<br>• Após esplenectomia: este pool de 30% permanece permanentemente na circulação periférica<br>• Efeito imediato: aumento de ~30% na contagem periférica de plaquetas<br><br><em>Combinação dos dois efeitos:</em> Remoção menos eficiente (mais plaquetas velhas circulam) + libertação do pool de reserva → trombocitose pós-esplenectomia, por vezes > 1.000.000/µL na primeira semana."
+  },
+  {
+    "question": "O tampão plaquetário formado na hemostasia primária é suficiente para fechar qualquer ferida vascular, não sendo necessária a coagulação secundária para garantir hemostasia definitiva.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O tampão plaquetário é adequado apenas para fechar <em>pequenas rupturas</em> nos capilares e vénulas — é suficiente para a hemostasia diária de microporos que se formam espontaneamente nos vasos. Para feridas maiores, é necessária a coagulação secundária.<br><br><strong>Limitações do tampão plaquetário:</strong><br>• É friável — mantido apenas por ligações não-covalentes (fibrinogênio como pontes)<br>• Não suporta as forças de shear stress arterial sem reforço de fibrina<br>• Em feridas de vasos de médio e grande calibre, o tampão seria arrastado pelo fluxo<br><br><strong>Papel da coagulação secundária:</strong><br>• A rede de fibrina cross-linked (pelo FXIIIa) envolve e estabiliza o tampão plaquetário<br>• Transforma o tampão branco e friável num coágulo vermelho coeso e resistente<br>• Resiste ao shear stress arterial<br>• Persiste por dias até a reparação tecidual<br><br><em>Clinicamente:</em> Pacientes com defeitos apenas na hemostasia primária (ex: DvW, Trombastenia de Glanzmann) sangram de mucosas e superfícies. Pacientes com defeitos na coagulação secundária (ex: hemofilia) sangram em articulações, músculos e após traumatismos maiores."
+  },
+  {
+    "question": "O cálcio ionizado (Ca²⁺) pode ser quelado por oxalato de cálcio in vitro para prevenir a coagulação, pois o oxalato precipita o Ca²⁺ como oxalato de cálcio insolúvel, tornando-o indisponível para as reações enzimáticas da cascata.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O raciocínio está invertido: o oxalato não precipita o <em>cálcio como oxalato de cálcio insolúvel eliminando-o</em> — ele o quela (liga-se quimicamente ao Ca²⁺ formando quelato solúvel mas não ionizado, tornando-o indisponível para a coagulação sem precipitá-lo).<br><br><em>Mais importante:</em> O anticoagulante mais utilizado clinicamente em tubos de colheita para hemostasia <strong>não é o oxalato</strong>, mas sim o <strong>citrato de sódio 3,2%</strong>.<br><br><strong>Anticoagulantes in vitro por quelação de Ca²⁺:</strong><br>• <strong>Citrato de sódio:</strong> Usado nos tubos de coagulação (tampa azul). Forma complexo solúvel com Ca²⁺ → Ca²⁺ ionizado cai → coagulação bloqueada. Reversível (adiciona-se CaCl₂ para reiniciar o teste).<br>• <strong>EDTA:</strong> Usado nos tubos de hemograma (tampa roxa). Quela Ca²⁺ e Mg²⁺ com muito alta afinidade.<br>• <strong>Oxalato:</strong> Usado historicamente, hoje em desuso para hemostasia. Forma sal insolúvel com Ca²⁺.<br><br><em>O citrato</em> é preferido para hemostasia porque a sua quelação é reversível a pH fisiológico e não altera morfologicamente as plaquetas."
+  },
+  {
+    "question": "A desordem mieloproliferativa denominada policitemia vera cursa com aumento apenas dos eritrócitos, sem alteração na contagem de plaquetas ou de leucócitos.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A <strong>policitemia vera</strong> é uma <em>neoplasia mieloproliferativa</em> causada pela mutação <strong>JAK2 V617F</strong> em mais de 95% dos casos, que afeta a célula-tronco hematopoiética multipotente. Por isso, tipicamente causa aumento de <em>múltiplas linhagens</em>:<br><br><strong>Achados hematológicos típicos:</strong><br>• <strong>Eritrocitose:</strong> Hb e Hct elevados (manifestação principal)<br>• <strong>Trombocitose:</strong> Plaquetas frequentemente acima de 400.000–600.000/µL — pode causar trombose e paradoxalmente sangramento (síndrome de von Willebrand adquirida em contagens muito altas)<br>• <strong>Leucocitose:</strong> Neutrofilia é comum<br>• <strong>Esplenomegalia</strong> (hematopoiese extramedular)<br><br>O texto do manual cita a policitemia vera como causa de trombocitose, confirmando que as plaquetas estão aumentadas.<br><br><em>Diagnóstico:</em> Critérios da OMS 2016 — Hb elevada + biópsia medular + JAK2 V617F.<br><em>Tratamento:</em> Flebotomia, hidroxiureia, ruxolitinibe (inibidor de JAK2)."
+  },
+  {
+    "question": "A uremia (acúmulo de ureia e outros solutos nitrogenados na insuficiência renal) causa trombocitopenia por depressão direta da síntese de trombopoietina renal, reduzindo a produção de megacariócitos.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A trombocitopenia na uremia tem mecanismo diferente do descrito. A <strong>uremia</strong> causa principalmente <em>disfunção plaquetária</em> (trombocitopatia), e quando há trombocitopenia, o mecanismo dominante não é a redução da trombopoietina.<br><br><strong>Mecanismo real da disfunção hemostática na uremia:</strong><br>1. <em>Disfunção plaquetária:</em> toxinas urêmicas (ácido guanidinosuccínico, fenol, metilguanidina) inibem a ativação plaquetária e a síntese de TXA₂<br>2. <em>Anemia:</em> os eritrócitos normalmente «empurram» as plaquetas para a periferia do fluxo laminar (marginalização) — sem eritrócitos suficientes, as plaquetas ficam no centro do fluxo e interagem menos com o endotélio<br>3. <em>Alteração do vWF:</em> o vWF fica funcionalmente anormal na uremia<br><br><strong>A trombopoietina é produzida predominantemente no fígado (~90%)</strong>, não nos rins — portanto a insuficiência renal não afeta primariamente a produção de TPO.<br><br><em>Tratamento da disfunção hemostática urêmica:</em> Diálise adequada, DDAVP (liberta vWF do endotélio), transfusão para manter Hb > 10 g/dL, crioprecipitado."
+  },
+  {
+    "question": "A leucemia mieloide crónica (LMC) é uma causa de trombocitose porque as células leucêmicas mieloides em excesso incluem megacariócitos hiperproliferativos que produzem grande quantidade de plaquetas.",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Esta afirmativa mistura conceitos corretos com incorretos de forma enganosa.<br><br><strong>O que é verdadeiro:</strong> A LMC (causada pela translocação t(9;22) = cromossoma Philadelphia, gene BCR-ABL) é de facto uma causa de trombocitose (citada no manual). O clone leucêmico pode incluir megacariócitos anormais que produzem mais plaquetas.<br><br><strong>O que é impreciso/enganoso:</strong><br>• Na LMC, o problema não são simplesmente \"megacariócitos hiperproliferativos\" — é uma neoplasia da célula-tronco hematopoiética com expansão do clone BCR-ABL em todas as linhagens mieloides<br>• A LMC caracteriza-se mais tipicamente por <em>leucocitose marcada</em> (neutrófilos e precursores) do que por trombocitose pura<br>• A fase crónica da LMC cursa frequentemente com contagens de plaquetas normais ou levemente elevadas; trombocitopenia é mais comum em fases acelerada/blástica<br><br><em>Na verdade:</em> A trombocitose mieloproliferativa primária com megacariócitos hiperproliferativos é mais característica da <strong>trombocitemia essencial</strong> (outra neoplasia mieloproliferativa), não da LMC.<br><br><em>Tratamento da LMC:</em> Inibidores de tirosino-quinase (imatinib, dasatinib, nilotinib)."
+  }
+]
+
+/* ══════════════ ESTADO DO QUIZ ══════════════ */
+let currentQ = 0;
+let userAnswers  = new Array(quizData.length).fill(null).map(()=>[]);
+let attempted    = new Array(quizData.length).fill(false);
+
+/* ══════════════ ELEMENTOS DOM ══════════════ */
+const content     = document.getElementById('quiz-content');
+const progressFill= document.getElementById('quiz-progress');
+const progressLbl = document.getElementById('progress-label');
+const prevBtn     = document.getElementById('prev-btn');
+const answerBtn   = document.getElementById('answer-btn');
+const nextBtn     = document.getElementById('next-btn');
+const submitBtn   = document.getElementById('submit-btn');
+const resultsDiv  = document.getElementById('results-container');
+const reportDiv   = document.getElementById('report-container');
+const navDiv      = document.getElementById('navigation-buttons');
+const progressWrap= document.querySelector('.progress-wrapper');
+
+/* ══════════════ RENDER ══════════════ */
+function init(){
+  shuffleArray(quizData);
+  renderAll();
+  goTo(0);
+  bindEvents();
+}
+
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+
+function renderAll(){
+  content.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className='question-card';
+    card.id=`q-${i}`;
+
+    const badgeClass = q.type==='tf' ? 'badge-tf' : 'badge-multi';
+    const badgeText  = q.type==='tf' ? '✦ V/F' : '◈ Múltipla escolha';
+
+    let optsHTML='';
+    if(q.type==='tf'){
+      optsHTML=`<div class="tf-options-container">
+        <button class="tf-option tf-v" data-q="${i}" data-o="V"><i class="fas fa-check"></i> Verdadeiro</button>
+        <button class="tf-option tf-f" data-q="${i}" data-o="F"><i class="fas fa-times"></i> Falso</button>
+      </div>`;
+    } else {
+      const letters=['A','B','C','D','E','F'];
+      optsHTML=`<div class="options-container">${q.options.map((opt,oi)=>`
+        <button class="mc-option" data-q="${i}" data-o="${opt.replace(/"/g,'&quot;')}">
+          <span class="option-indicator">${letters[oi]}</span>
+          <span>${opt}</span>
+        </button>`).join('')}</div>`;
+    }
+
+    card.innerHTML=`
+      <div class="q-meta">
+        <span class="q-num">Questão ${i+1} / ${quizData.length}</span>
+        <span class="q-type-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <p class="question-text">${q.question}</p>
+      ${optsHTML}
+      <div class="feedback" id="fb-${i}"></div>`;
+    content.appendChild(card);
+  });
+}
+
+/* ══════════════ NAVIGATION ══════════════ */
+function goTo(idx){
+  if(idx<0||idx>=quizData.length) return;
+  document.querySelector(`#q-${currentQ}`)?.classList.remove('active');
+  currentQ=idx;
+  document.querySelector(`#q-${currentQ}`)?.classList.add('active');
+  updateUI();
+}
+
+function updateUI(){
+  const done = attempted.filter(Boolean).length;
+  progressFill.style.width=`${(done/quizData.length)*100}%`;
+  progressLbl.textContent=`${done} / ${quizData.length}`;
+
+  const isAttempted = attempted[currentQ];
+  const hasSelection= userAnswers[currentQ].length>0;
+  const isLast = currentQ===quizData.length-1;
+
+  setBtn(prevBtn,   currentQ>0);
+  setBtn(answerBtn, !isAttempted);
+  setBtn(nextBtn,   isAttempted && !isLast);
+  setBtn(submitBtn, isAttempted && isLast);
+  if(!isAttempted) answerBtn.disabled=!hasSelection;
+}
+
+function setBtn(btn,show){ btn.classList.toggle('show',show); }
+
+/* ══════════════ SELECTION ══════════════ */
+function bindEvents(){
+  content.addEventListener('click',e=>{
+    const mc=e.target.closest('.mc-option');
+    const tf=e.target.closest('.tf-option');
+    if(mc) handleMC(mc);
+    if(tf) handleTF(tf);
+  });
+  answerBtn.addEventListener('click', validate);
+  nextBtn.addEventListener('click',()=>goTo(currentQ+1));
+  prevBtn.addEventListener('click',()=>goTo(currentQ-1));
+  submitBtn.addEventListener('click', finishQuiz);
+  document.getElementById('show-report-btn').addEventListener('click',()=>{resultsDiv.style.display='none';reportDiv.style.display='flex';});
+  document.getElementById('back-btn').addEventListener('click',()=>{reportDiv.style.display='none';resultsDiv.style.display='flex';});
+  document.getElementById('retry-btn').addEventListener('click',()=>location.reload());
+}
+
+function handleMC(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  const idx=userAnswers[qi].indexOf(opt);
+  if(idx>-1){ userAnswers[qi].splice(idx,1); btn.classList.remove('selected'); }
+  else{ userAnswers[qi].push(opt); btn.classList.add('selected'); }
+  updateUI();
+}
+
+function handleTF(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  userAnswers[qi]=[opt];
+  document.querySelectorAll(`.tf-option[data-q='${qi}']`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateUI();
+}
+
+/* ══════════════ VALIDATE ══════════════ */
+function validate(){
+  if(attempted[currentQ]) return;
+  const q=quizData[currentQ];
+  const fb=document.getElementById(`fb-${currentQ}`);
+  const userAns=userAnswers[currentQ]||[];
+  const correctAns=Array.isArray(q.answer)?q.answer:[q.answer];
+  const isCorrect=JSON.stringify([...userAns].sort())===JSON.stringify([...correctAns].sort());
+
+  // mark options
+  const sel = q.type==='tf' ? `.tf-option[data-q='${currentQ}']` : `.mc-option[data-q='${currentQ}']`;
+  document.querySelectorAll(sel).forEach(opt=>{
+    opt.classList.add('disabled');
+    const ov=opt.dataset.o;
+    if(correctAns.includes(ov)) opt.classList.add('correct');
+    else if(userAns.includes(ov)) opt.classList.add('incorrect');
+  });
+
+  // build feedback
+  const icon = isCorrect ? 'fa-check-circle' : 'fa-times-circle';
+  const title= isCorrect ? 'Correto!' : 'Incorreto';
+  const verdictClass = isCorrect ? 'correct' : 'incorrect';
+
+  let correctListHTML='';
+  if(!isCorrect){
+    correctListHTML=`<div style="margin-top:.5rem;font-size:.82rem;color:var(--muted2);">${correctAns.length>1?'Respostas corretas':'Resposta correta'}:</div>
+    <ul class="correct-list">${correctAns.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+  }
+
+  fb.className=`feedback ${verdictClass}`;
+  fb.innerHTML=`
+    <div class="feedback-verdict"><i class="fas ${icon}"></i>${title}${correctListHTML}</div>
+    <div class="justification">
+      <div class="just-label"><i class="fas fa-flask"></i> Justificativa Clínico-Molecular</div>
+      <div class="just-text">${q.justification}</div>
+    </div>`;
+  fb.style.display='block';
+
+  toast(isCorrect);
+  attempted[currentQ]=true;
+  [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=true);
+
+  setTimeout(()=>{
+    [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=false);
+    const isLast=currentQ===quizData.length-1;
+    if(isLast) finishQuiz(); else goTo(currentQ+1);
+  },2400);
+}
+
+/* ══════════════ RESULTS ══════════════ */
+function finishQuiz(){
+  let score=0;
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    if(JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort())) score++;
+  });
+  const pct=Math.round(score/quizData.length*100);
+
+  document.getElementById('pct-display').textContent=`${pct}%`;
+  document.getElementById('score-display').innerHTML=`Acertos: <strong>${score} de ${quizData.length}</strong>`;
+
+  // Animate ring
+  const circumference=408.4;
+  const ring=document.getElementById('score-ring');
+  setTimeout(()=>{ ring.style.strokeDashoffset=circumference*(1-pct/100); },100);
+
+  const msg=document.getElementById('feedback-message');
+  if(pct>=90) msg.textContent='🎉 Excelente domínio! Você está pronto para a prova.';
+  else if(pct>=70) msg.textContent='👏 Muito bem! Revise os pontos que errou e você chegará lá.';
+  else if(pct>=50) msg.textContent='👍 Bom esforço! Revise as justificativas com atenção.';
+  else msg.textContent='💪 Continue estudando! As justificativas abaixo são seu mapa.';
+
+  buildReport();
+
+  content.style.display='none';
+  navDiv.style.display='none';
+  progressWrap.style.display='none';
+  resultsDiv.style.display='flex';
+}
+
+function buildReport(){
+  const list=document.getElementById('report-list');
+  list.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    const ok=JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort());
+    const item=document.createElement('div');
+    item.className=`report-item ${ok?'correct':'incorrect'}`;
+    item.innerHTML=`<p class="ri-q"><strong>Questão ${i+1}:</strong> ${q.question}</p>
+      <p><strong>Sua resposta:</strong> ${ua.length?ua.join(', '):'<em>Não respondida</em>'}</p>
+      <p><strong>Correta:</strong> ${ca.join(', ')}</p>`;
+    list.appendChild(item);
+  });
+}
+
+/* ══════════════ TOAST ══════════════ */
+function toast(ok){
+  Swal.mixin({
+    toast:true,position:'top-end',
+    showConfirmButton:false,
+    timer:1400,timerProgressBar:true,
+    background: ok ? '#0a2e1f' : '#2e0a14',
+    color: ok ? '#34d399' : '#fb7185',
+  }).fire({icon:ok?'success':'error',title:ok?'✓ Correto!':'✗ Incorreto!'});
+}
+
+init();
+});
+</script>
+</body>
+</html>

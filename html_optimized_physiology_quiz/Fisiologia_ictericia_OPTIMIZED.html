@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz · Icterícia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --surface:   #111827;
+  --card:      #151e2e;
+  --border:    #1e2d42;
+  --border2:   #253044;
+  --primary:   #4f9cf9;
+  --primary2:  #2563eb;
+  --accent:    #f87171;
+  --gold:      #f59e0b;
+  --emerald:   #34d399;
+  --rose:      #fb7185;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --muted2:    #94a3b8;
+  --correct-bg:#0a2e1f;
+  --correct-b: #34d399;
+  --wrong-bg:  #2e0a14;
+  --wrong-b:   #fb7185;
+  --just-bg:   #0d1b2e;
+  --just-b:    #4f9cf9;
+  --radius:    14px;
+  --trans:     all .28s cubic-bezier(.4,0,.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.5rem 1rem 3rem;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND MESH ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(79,156,249,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 90%, rgba(248,113,113,.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 40%, rgba(52,211,153,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  width:100%;max-width:820px;
+  text-align:center;
+  margin-bottom:2rem;
+  position:relative;z-index:1;
+}
+.header-badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  border-radius:50px;
+  padding:.3rem .9rem;
+  font-size:.75rem;font-weight:500;
+  color:var(--primary);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.header h1{
+  font-family:'Crimson Pro',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;
+  line-height:1.2;
+  color:#f1f5f9;
+  letter-spacing:-.02em;
+}
+.header h1 span{color:var(--primary);}
+.header p{
+  color:var(--muted2);
+  font-size:.92rem;
+  margin-top:.5rem;
+}
+
+/* ── QUIZ CONTAINER ── */
+#quiz-container{
+  width:100%;max-width:820px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:2.2rem 2rem;
+  position:relative;z-index:1;
+  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+}
+
+/* top accent line */
+#quiz-container::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary2),var(--primary),var(--accent));
+  border-radius:22px 22px 0 0;
+}
+
+/* ── PROGRESS ── */
+.progress-wrapper{
+  display:flex;align-items:center;gap:.9rem;
+  margin-bottom:1.8rem;
+}
+.progress-track{
+  flex:1;height:6px;
+  background:var(--border2);
+  border-radius:50px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary2),var(--primary));
+  border-radius:50px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 10px rgba(79,156,249,.5);
+}
+.progress-label{
+  font-size:.78rem;font-weight:500;
+  color:var(--muted2);
+  white-space:nowrap;min-width:60px;text-align:right;
+  font-family:'DM Mono',monospace;
+}
+
+/* ── QUESTION CARD ── */
+.question-card{
+  display:none;flex-direction:column;align-items:stretch;
+  animation:slideIn .38s cubic-bezier(.4,0,.2,1);
+}
+.question-card.active{display:flex;}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.q-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.4rem;
+}
+.q-num{
+  font-family:'DM Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  color:var(--muted);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.q-type-badge{
+  font-size:.68rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:50px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-multi{background:rgba(79,156,249,.15);color:var(--primary);border:1px solid rgba(79,156,249,.3);}
+.badge-tf{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+
+.question-text{
+  font-family:'Crimson Pro',serif;
+  font-size:1.28rem;font-weight:400;
+  line-height:1.6;
+  color:#f1f5f9;
+  margin-bottom:1.6rem;
+  padding-bottom:1.4rem;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── OPTIONS ── */
+.options-container{display:flex;flex-direction:column;gap:.65rem;}
+.tf-options-container{display:flex;gap:.75rem;justify-content:center;}
+
+.mc-option{
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  cursor:pointer;
+  transition:var(--trans);
+  color:var(--text);
+  font-size:.95rem;
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.mc-option::after{
+  content:'';position:absolute;inset:0;
+  background:var(--primary);
+  opacity:0;transition:opacity .2s;
+}
+.mc-option:hover:not(.disabled){
+  border-color:var(--primary);
+  transform:translateX(4px);
+  box-shadow:0 4px 16px rgba(79,156,249,.15);
+}
+.mc-option.selected{
+  border-color:var(--primary);
+  background:rgba(79,156,249,.08);
+}
+
+.tf-option{
+  flex:1;max-width:200px;
+  padding:1rem 1.5rem;
+  border-radius:var(--radius);
+  font-size:1rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.tf-option.tf-v{
+  background:rgba(52,211,153,.08);
+  border:1.5px solid rgba(52,211,153,.25);
+  color:var(--emerald);
+}
+.tf-option.tf-f{
+  background:rgba(251,113,133,.08);
+  border:1.5px solid rgba(251,113,133,.25);
+  color:var(--rose);
+}
+.tf-option:hover:not(.disabled){transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+.tf-option.selected{box-shadow:0 0 0 3px rgba(79,156,249,.4);}
+.tf-option.tf-v.selected{background:rgba(52,211,153,.18);border-color:var(--emerald);}
+.tf-option.tf-f.selected{background:rgba(251,113,133,.18);border-color:var(--rose);}
+
+/* correct / incorrect highlights */
+.mc-option.correct,.tf-option.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.mc-option.incorrect,.tf-option.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.mc-option.disabled,.tf-option.disabled{cursor:not-allowed;}
+
+.option-indicator{
+  min-width:28px;height:28px;
+  border-radius:8px;
+  background:var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:.78rem;font-weight:600;
+  color:var(--muted2);
+  flex-shrink:0;
+  transition:var(--trans);
+}
+.mc-option.selected .option-indicator{background:var(--primary);color:#fff;}
+.mc-option.correct  .option-indicator{background:var(--emerald);color:#0a2e1f;}
+.mc-option.incorrect .option-indicator{background:var(--rose);color:#2e0a14;}
+
+/* ── FEEDBACK BOX ── */
+.feedback{
+  margin-top:1.4rem;
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:none;
+  animation:slideIn .35s ease;
+}
+.feedback.correct{display:block;}
+.feedback.incorrect{display:block;}
+
+.feedback-verdict{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.75rem 1.1rem;
+  font-weight:600;font-size:.95rem;
+}
+.feedback.correct .feedback-verdict{
+  background:rgba(52,211,153,.15);
+  color:var(--emerald);
+  border-left:4px solid var(--emerald);
+}
+.feedback.incorrect .feedback-verdict{
+  background:rgba(251,113,133,.15);
+  color:var(--rose);
+  border-left:4px solid var(--rose);
+}
+
+/* ── JUSTIFICATION PANEL ── */
+.justification{
+  background:var(--just-bg);
+  border:1px solid rgba(79,156,249,.18);
+  border-top:none;
+  padding:1.1rem 1.3rem;
+}
+.just-label{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--primary);
+  margin-bottom:.65rem;
+  opacity:.8;
+}
+.just-label i{font-size:.8rem;}
+.just-text{
+  font-size:.9rem;
+  line-height:1.75;
+  color:#b8cce4;
+}
+.just-text strong{color:var(--primary);font-weight:600;}
+.just-text em{color:var(--gold);font-style:normal;}
+.just-text .correct-list{
+  margin-top:.6rem;padding-left:1rem;
+  list-style:none;
+}
+.just-text .correct-list li{
+  padding:.25rem 0;
+  padding-left:1.1rem;
+  position:relative;
+  color:#c7ddf4;
+}
+.just-text .correct-list li::before{
+  content:'✦';
+  position:absolute;left:0;
+  color:var(--emerald);font-size:.7rem;
+  top:.35rem;
+}
+.just-text .tag{
+  display:inline-block;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  color:var(--primary);
+  border-radius:4px;
+  padding:.05rem .35rem;
+  font-family:'DM Mono',monospace;
+  font-size:.8em;
+}
+
+/* ── NAVIGATION BUTTONS ── */
+#navigation-buttons{
+  display:flex;justify-content:center;
+  gap:.75rem;flex-wrap:wrap;
+  margin-top:1.8rem;
+}
+.nav-btn{
+  display:none;align-items:center;gap:.5rem;
+  padding:.7rem 1.5rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+  border:none;
+}
+.nav-btn.show{display:flex;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.nav-btn:hover:not(:disabled){transform:translateY(-2px);}
+
+#prev-btn{
+  background:transparent;
+  color:var(--primary);
+  border:1.5px solid rgba(79,156,249,.4);
+}
+#prev-btn:hover:not(:disabled){background:rgba(79,156,249,.08);}
+#answer-btn{
+  background:linear-gradient(135deg,var(--primary2),var(--primary));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(79,156,249,.35);
+}
+#answer-btn:hover:not(:disabled){box-shadow:0 6px 24px rgba(79,156,249,.5);}
+#next-btn{
+  background:var(--surface);
+  color:var(--text);
+  border:1.5px solid var(--border);
+}
+#next-btn:hover:not(:disabled){border-color:var(--primary);}
+#submit-btn{
+  background:linear-gradient(135deg,#7c3aed,var(--primary2));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(124,58,237,.35);
+}
+
+/* ── RESULTS ── */
+#results-container,#report-container{
+  display:none;flex-direction:column;align-items:center;
+}
+.score-ring-wrap{position:relative;margin:1rem auto 1.5rem;}
+.score-ring-wrap svg{display:block;}
+.score-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.score-pct{
+  font-family:'Crimson Pro',serif;
+  font-size:2.8rem;font-weight:700;
+  color:var(--primary);line-height:1;
+}
+.score-label{font-size:.75rem;color:var(--muted2);margin-top:.15rem;}
+.score-stat{
+  font-size:1.1rem;color:var(--muted2);margin-bottom:.5rem;
+}
+.score-stat strong{color:var(--text);}
+.feedback-msg{
+  font-family:'Crimson Pro',serif;
+  font-size:1.4rem;font-weight:400;
+  color:#e2e8f0;
+  margin-bottom:1.5rem;text-align:center;
+}
+.action-buttons{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;}
+.action-btn{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;border:none;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.action-btn:hover{transform:translateY(-2px);}
+.btn-report{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+.btn-retry{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;box-shadow:0 4px 16px rgba(79,156,249,.3);}
+
+/* ── REPORT ── */
+.report-item{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.1rem 1.3rem;
+  margin-bottom:.8rem;
+  text-align:left;
+  border-left:4px solid;
+}
+.report-item.correct{border-left-color:var(--emerald);}
+.report-item.incorrect{border-left-color:var(--rose);}
+.report-item p{font-size:.88rem;line-height:1.6;color:var(--muted2);}
+.report-item p strong{color:var(--text);}
+.report-item .ri-q{font-size:.95rem;color:var(--text);margin-bottom:.4rem;font-weight:500;}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:2rem;
+  font-size:.75rem;
+  color:var(--muted);
+  text-align:center;
+  position:relative;z-index:1;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #quiz-container{padding:1.4rem 1rem;}
+  .question-text{font-size:1.1rem;}
+  .tf-options-container{flex-direction:column;align-items:stretch;}
+  .tf-option{max-width:none;}
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><i class="fas fa-atom"></i> Medicina · Hematologia</div>
+  <h1>Icterícia</h1>
+  <p>Quiz de alta performance com justificativas clínico-moleculares</p>
+</div>
+
+<div id="quiz-container">
+  <div class="progress-wrapper">
+    <div class="progress-track"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
+  </div>
+
+  <div id="quiz-content"></div>
+
+  <div id="navigation-buttons">
+    <button id="prev-btn"   class="nav-btn"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <button id="answer-btn" class="nav-btn show">Responder <i class="fas fa-check"></i></button>
+    <button id="next-btn"   class="nav-btn">Próximo <i class="fas fa-arrow-right"></i></button>
+    <button id="submit-btn" class="nav-btn"><i class="fas fa-flag-checkered"></i> Ver Resultados</button>
+  </div>
+
+  <div id="results-container">
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="65" fill="none" stroke="#1e2d42" stroke-width="12"/>
+        <circle id="score-ring" cx="80" cy="80" r="65" fill="none"
+                stroke="url(#ringGrad)" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="408.4"
+                stroke-dashoffset="408.4"
+                transform="rotate(-90 80 80)"
+                style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#4f9cf9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-center">
+        <div class="score-pct" id="pct-display">0%</div>
+        <div class="score-label">acertos</div>
+      </div>
+    </div>
+    <div class="score-stat" id="score-display"></div>
+    <div class="feedback-msg" id="feedback-message"></div>
+    <div class="action-buttons">
+      <button id="show-report-btn" class="action-btn btn-report"><i class="fas fa-list-alt"></i> Ver Correção</button>
+      <button id="retry-btn"       class="action-btn btn-retry"><i class="fas fa-redo"></i> Tentar Novamente</button>
+    </div>
+  </div>
+
+  <div id="report-container">
+    <h3 style="color:var(--primary);margin-bottom:1.2rem;font-family:'Crimson Pro',serif;font-size:1.4rem;">
+      <i class="fas fa-clipboard-list"></i> Correção Detalhada
+    </h3>
+    <div id="report-list" style="width:100%"></div>
+    <div class="action-buttons" style="margin-top:1rem;">
+      <button id="back-btn" class="action-btn btn-report"><i class="fas fa-arrow-left"></i> Voltar ao Resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Fisiologia Médica · Quiz gerado para estudo intensivo</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+/* ══════════════════════════════════════════════
+   BANCO DE QUESTÕES COM JUSTIFICATIVAS
+══════════════════════════════════════════════ */
+const quizData = [
+  {
+    "question": "O eritrócito maduro é uma célula altamente especializada. Sobre sua morfologia e biologia, assinale as alternativas corretas:",
+    "options": [
+      "O formato bicôncavo aumenta a relação área/volume em ~1,5× comparado a uma esfera de mesmo volume, favorecendo difusão de gases",
+      "A Na⁺/K⁺-ATPase é dispensável na hemácia madura pois, sem mitocôndrias, não há gradiente iônico a manter",
+      "A espessura de ~1 µm no centro e ~2 µm nas bordas permite que eritrócitos de 6–8 µm atravessem capilares esplênicos de 2–3 µm",
+      "A ausência de núcleo impede síntese proteica, tornando os eritrócitos incapazes de reparar danos às proteínas do citoesqueleto",
+      "O VCM (Volume Corpuscular Médio / MCV — Mean Corpuscular Volume) normal é de ~90 fL, medido diretamente por impedância elétrica nos contadores automáticos"
+    ],
+    "answer": [
+      "O formato bicôncavo aumenta a relação área/volume em ~1,5× comparado a uma esfera de mesmo volume, favorecendo difusão de gases",
+      "A espessura de ~1 µm no centro e ~2 µm nas bordas permite que eritrócitos de 6–8 µm atravessem capilares esplênicos de 2–3 µm",
+      "A ausência de núcleo impede síntese proteica, tornando os eritrócitos incapazes de reparar danos às proteínas do citoesqueleto",
+      "O VCM (Volume Corpuscular Médio / MCV — Mean Corpuscular Volume) normal é de ~90 fL, medido diretamente por impedância elétrica nos contadores automáticos"
+    ],
+    "type": "multi",
+    "justification": "A Na⁺/K⁺-ATPase é <strong>essencial</strong> na hemácia madura: consome ~50% do ATP eritrocitário para manter o gradiente iônico (baixo Na⁺, alto K⁺ intracelular). Sua falência por depleção de ATP leva à entrada de Na⁺ e água → edema celular → mudança de forma bicôncava → perda de deformabilidade → hemólise. As demais afirmações são corretas: a relação área/volume favorece difusão; a biconcavidade permite deformação em capilares esplênicos; a incapacidade de síntese proteica explica o envelhecimento acumulativo de danos; o MCV é calculado por contadores automatizados via impedância ou dispersão de luz."
+  },
+  {
+    "question": "Sobre o citoesqueleto da membrana eritrocitária e suas patologias associadas, identifique a(s) afirmação(ões) correta(s):",
+    "options": [
+      "A anquirina conecta o heterodímero αβ-espectrina à proteína Banda 3 (AE1), ancorando o citoesqueleto à membrana lipídica",
+      "A proteína 4.1 estabiliza as junções espectrina-actina e sua deficiência causa eliptocitose hereditária",
+      "A esferocitose hereditária resulta predominantemente de defeito na síntese do grupo heme, tornando os eritrócitos rígidos e esféricos",
+      "A Banda 3 (AE1 — Anion Exchanger 1) realiza a troca de HCO₃⁻ por Cl⁻ (troca de Hamburger), fundamental para o transporte de CO₂",
+      "Mutações na Banda 3 causam formas de eliptocitose, nunca de esferocitose"
+    ],
+    "answer": [
+      "A anquirina conecta o heterodímero αβ-espectrina à proteína Banda 3 (AE1), ancorando o citoesqueleto à membrana lipídica",
+      "A proteína 4.1 estabiliza as junções espectrina-actina e sua deficiência causa eliptocitose hereditária",
+      "A Banda 3 (AE1 — Anion Exchanger 1) realiza a troca de HCO₃⁻ por Cl⁻ (troca de Hamburger), fundamental para o transporte de CO₂"
+    ],
+    "type": "multi",
+    "justification": "Dois distratores técnicos: (1) A esferocitose hereditária resulta de defeito em <strong>proteínas do citoesqueleto</strong> (espectrina, anquirina, Banda 3, proteína 4.2) — <em>não</em> do grupo heme. (2) Mutações na Banda 3 causam tanto <strong>esferocitose</strong> quanto eliptocitose, dependendo da região afetada — a afirmação 'nunca de esferocitose' é incorreta. As demais são corretas: anquirina conecta espectrina à Banda 3; proteína 4.1 estabiliza junções espectrina-actina; Banda 3 é o principal trocador aniônico eritrocitário."
+  },
+  {
+    "question": "A hemoglobina A do adulto (HbA) é um tetrâmero α₂β₂. Sobre sua estrutura e variantes fisiológicas:",
+    "options": [
+      "A HbA₂ (α₂δ₂) representa 2–3,5% da Hb adulta e sua elevação acima de 3,5% é critério diagnóstico de β-talassemia minor",
+      "A HbF (α₂γ₂) tem P50 ≈ 18 mmHg versus P50 ≈ 26 mmHg da HbA, conferindo-lhe maior afinidade por O₂ devido à substituição de histidina β143 por serina nas cadeias γ",
+      "A HbS é considerada hemoglobina fisiológica por estar presente em 8% da população africana em forma heterozigota",
+      "Cada subunidade da HbA contém um grupo heme com Fe²⁺ coordenado com 4 nitrogênios do anel porfirínico e com a histidina proximal F8",
+      "A HbA₂ possui maior afinidade por O₂ que a HbA por conter cadeias delta que interagem menos com o 2,3-DPG que as cadeias beta"
+    ],
+    "answer": [
+      "A HbA₂ (α₂δ₂) representa 2–3,5% da Hb adulta e sua elevação acima de 3,5% é critério diagnóstico de β-talassemia minor",
+      "A HbF (α₂γ₂) tem P50 ≈ 18 mmHg versus P50 ≈ 26 mmHg da HbA, conferindo-lhe maior afinidade por O₂ devido à substituição de histidina β143 por serina nas cadeias γ",
+      "Cada subunidade da HbA contém um grupo heme com Fe²⁺ coordenado com 4 nitrogênios do anel porfirínico e com a histidina proximal F8"
+    ],
+    "type": "multi",
+    "justification": "Dois distratores: (1) <strong>HbS é uma hemoglobina patológica</strong>, não fisiológica — a prevalência elevada em heterozigotos em populações africanas reflete vantagem seletiva contra malária, mas não a torna fisiológica. (2) A HbA₂ tem afinidade por O₂ <em>semelhante</em> à HbA — cadeias δ e β diferem em apenas 10 aminoácidos, e a posição 143 das cadeias δ também é histidina, mantendo ligação ao 2,3-DPG. Apenas as cadeias <strong>γ</strong> (HbF) têm serina na posição 143, conferindo menor ligação ao 2,3-DPG."
+  },
+  {
+    "question": "O grupo heme é uma protoporfirina IX com ferro central. Sobre sua bioquímica e implicações clínicas:",
+    "options": [
+      "O Fe²⁺ (ferroso) liga O₂ de forma reversível sem se oxidar — o processo é oxigenação, não oxidação",
+      "A formação de MetHb ocorre quando Fe²⁺ é reduzido a Fe⁰ por agentes redutores potentes como a dapsona",
+      "A Zinco-Protoporfirina (ZPP) forma-se quando o zinco substitui o ferro na ferroquelatase — marcador precoce de deficiência de ferro e intoxicação por chumbo",
+      "A síntese do grupo heme inicia-se no citoplasma com a ação da ALA-sintase sobre succinil-CoA e glicina",
+      "A protoporfiria eritropoiética resulta da deficiência de ferroquelatase, causando acúmulo de protoporfirina livre e fotossensibilidade"
+    ],
+    "answer": [
+      "O Fe²⁺ (ferroso) liga O₂ de forma reversível sem se oxidar — o processo é oxigenação, não oxidação",
+      "A Zinco-Protoporfirina (ZPP) forma-se quando o zinco substitui o ferro na ferroquelatase — marcador precoce de deficiência de ferro e intoxicação por chumbo",
+      "A protoporfiria eritropoiética resulta da deficiência de ferroquelatase, causando acúmulo de protoporfirina livre e fotossensibilidade"
+    ],
+    "type": "multi",
+    "justification": "Dois erros embutidos: (1) MetHb forma-se por <strong>oxidação</strong> de Fe²⁺ → Fe³⁺ (não redução a Fe⁰ — isso não ocorre fisiologicamente). (2) A síntese do heme inicia-se na <strong>mitocôndria</strong> (não no citoplasma): ALA-sintase usa succinil-CoA + glicina → δ-ALA na matriz mitocondrial. O ALA depois vai ao citoplasma para várias etapas intermediárias e retorna à mitocôndria para as últimas etapas (inclusão do ferro pela ferroquelatase)."
+  },
+  {
+    "question": "A curva de dissociação do oxigênio da hemoglobina tem forma sigmoide. Analise os fatores modulatórios:",
+    "options": [
+      "Acidose metabólica com pH 7,1 desloca a curva à direita (↑P50) via efeito Bohr, facilitando entrega de O₂ nos tecidos",
+      "O 2,3-DPG (2,3-Bisfosfoglicerato) liga-se preferencialmente ao estado R da Hb, estabilizando a conformação de alta afinidade",
+      "Na intoxicação por CO, além de bloquear sítios de ligação de O₂, o CO estabiliza o estado R nas subunidades livres, dificultando a descarga de O₂ nos tecidos",
+      "A alcalose respiratória aguda desloca a curva à esquerda, podendo causar tetania e parestesias paradoxalmente mesmo com PaO₂ normal",
+      "Em sangue estocado por >3 semanas, a depleção de 2,3-DPG reduz o P50 para ~15 mmHg, tornando as hemácias transfundidas funcionalmente similares à HbF até regeneração em 12–24h"
+    ],
+    "answer": [
+      "Acidose metabólica com pH 7,1 desloca a curva à direita (↑P50) via efeito Bohr, facilitando entrega de O₂ nos tecidos",
+      "Na intoxicação por CO, além de bloquear sítios de ligação de O₂, o CO estabiliza o estado R nas subunidades livres, dificultando a descarga de O₂ nos tecidos",
+      "A alcalose respiratória aguda desloca a curva à esquerda, podendo causar tetania e parestesias paradoxalmente mesmo com PaO₂ normal",
+      "Em sangue estocado por >3 semanas, a depleção de 2,3-DPG reduz o P50 para ~15 mmHg, tornando as hemácias transfundidas funcionalmente similares à HbF até regeneração em 12–24h"
+    ],
+    "type": "multi",
+    "justification": "O distrator crítico: o 2,3-DPG liga-se <strong>exclusivamente ao estado T</strong> (desoxiHb), na cavidade central entre as cadeias β. No estado R, a cavidade central colapsa — afinidade pelo 2,3-DPG ≈ zero. Esta é uma confusão frequente: mais 2,3-DPG → mais estado T estabilizado → <em>menor</em> afinidade por O₂ → curva à direita. As demais alternativas são corretas e descrevem mecanismos moleculares precisos."
+  },
+  {
+    "question": "O Efeito Bohr e o Efeito Haldane são fenômenos complementares. Sobre a base molecular de ambos:",
+    "options": [
+      "No Efeito Bohr, o H⁺ liga-se à histidina HC3-β146, formando pontes salinas com Asp β94 que estabilizam o estado T, reduzindo a afinidade por O₂",
+      "O Efeito Haldane descreve que a oxiHb transporta mais CO₂ na forma de carbamato que a desoxiHb, pois o estado R facilita a carbamilação dos grupos N-terminais",
+      "O CO₂ forma carbaminohemoglobina ao reagir com grupos NH₂ N-terminais das cadeias globínicas — não com o ferro do heme",
+      "V-A CO₂ gap (diferença venoarterial de CO₂) > 6 mmHg sugere baixo débito cardíaco, explorando o efeito Haldane para inferir estase venosa",
+      "O Efeito Bohr explica por que o sangue venoso tem menor capacidade de transportar CO₂ que o arterial, dado que a DesoxiHb é melhor tampão de H⁺"
+    ],
+    "answer": [
+      "No Efeito Bohr, o H⁺ liga-se à histidina HC3-β146, formando pontes salinas com Asp β94 que estabilizam o estado T, reduzindo a afinidade por O₂",
+      "O CO₂ forma carbaminohemoglobina ao reagir com grupos NH₂ N-terminais das cadeias globínicas — não com o ferro do heme",
+      "V-A CO₂ gap (diferença venoarterial de CO₂) > 6 mmHg sugere baixo débito cardíaco, explorando o efeito Haldane para inferir estase venosa"
+    ],
+    "type": "multi",
+    "justification": "Dois erros sutis: (1) O Efeito Haldane descreve que a <strong>desoxiHb</strong> transporta <em>mais</em> CO₂ que a oxiHb — é exatamente o oposto da alternativa. A desoxiHb tem grupos amino N-terminais mais reativos e maior capacidade de tamponar H⁺, facilitando a formação de carbamatos. (2) O Efeito Bohr não implica que o sangue venoso tenha <em>menor</em> capacidade de transportar CO₂ — pelo contrário, o Efeito Haldane diz que o sangue venoso (com desoxiHb) transporta <em>mais</em> CO₂."
+  },
+  {
+    "question": "Na cooperatividade positiva da hemoglobina, a ligação sequencial de O₂ altera a conformação do tetrâmero:",
+    "options": [
+      "A ligação do 1º O₂ ao Fe²⁺ traciona a histidina proximal F8, deslocando a hélice F e rompendo pontes salinas do estado T, iniciando a transição para o estado R",
+      "O coeficiente de Hill (n) da hemoglobina normal é ~2,8, indicando cooperatividade positiva, enquanto n=1 para a mioglobina indica ausência de cooperatividade",
+      "No modelo MWC (Monod-Wyman-Changeux), as subunidades mudam de conformação sequencialmente, uma a uma, conforme cada O₂ se liga",
+      "A sigmoidicidade da curva de dissociação é fisiologicamente vantajosa pois permite carga eficiente nos alvéolos (alta PO₂) e descarga eficiente nos tecidos (baixa PO₂)",
+      "Hemoglobinas de alta afinidade com mutações estabilizadoras do estado R (ex: Hb Kempsey) causam eritrocitose familiar por hipóxia tecidual relativa"
+    ],
+    "answer": [
+      "A ligação do 1º O₂ ao Fe²⁺ traciona a histidina proximal F8, deslocando a hélice F e rompendo pontes salinas do estado T, iniciando a transição para o estado R",
+      "O coeficiente de Hill (n) da hemoglobina normal é ~2,8, indicando cooperatividade positiva, enquanto n=1 para a mioglobina indica ausência de cooperatividade",
+      "A sigmoidicidade da curva de dissociação é fisiologicamente vantajosa pois permite carga eficiente nos alvéolos (alta PO₂) e descarga eficiente nos tecidos (baixa PO₂)",
+      "Hemoglobinas de alta afinidade com mutações estabilizadoras do estado R (ex: Hb Kempsey) causam eritrocitose familiar por hipóxia tecidual relativa"
+    ],
+    "type": "multi",
+    "justification": "O modelo MWC (<em>concerted</em>) postula que <strong>todas as 4 subunidades mudam simultaneamente</strong> entre estados T e R — não sequencialmente. O modelo sequencial é o de Koshland (KNF — Koshland-Nemethy-Filmer). Na prática, o comportamento real da Hb é intermediário, mas o modelo MWC é o mais aceito para descrever a cooperatividade. As demais alternativas são molecularmente precisas."
+  },
+  {
+    "question": "A metahemoglobina (MetHb) é uma forma não funcional da hemoglobina. Sobre seu mecanismo de toxicidade e tratamento:",
+    "options": [
+      "A MetHb contém Fe³⁺ que não liga O₂, mas o efeito mais deletério é a estabilização do estado R nas subunidades funcionais remanescentes, impedindo descarga de O₂ nos tecidos",
+      "A citocromo b5 redutase (MetHb redutase NADH-dependente) mantém MetHb fisiológica <1%; sua deficiência congênita causa cianose com SpO₂ falsamente normal na oximetria de pulso",
+      "O azul de metileno reduz MetHb via ativação da MetHb redutase NADPH-dependente, sendo contraindicado em pacientes com deficiência de G6PD por falta de NADPH",
+      "A oximetria de pulso de rotina é confiável para detectar MetHb pois a absorção óptica do Fe³⁺ difere suficientemente do Fe²⁺ para gerar leitura distinta",
+      "O sangue com MetHb elevada tem cor marrom-chocolate característica, que não melhora com a exposição ao ar (diferenciando de hemólise intravascular que cora o sangue avermelhado)"
+    ],
+    "answer": [
+      "A MetHb contém Fe³⁺ que não liga O₂, mas o efeito mais deletério é a estabilização do estado R nas subunidades funcionais remanescentes, impedindo descarga de O₂ nos tecidos",
+      "A citocromo b5 redutase (MetHb redutase NADH-dependente) mantém MetHb fisiológica <1%; sua deficiência congênita causa cianose com SpO₂ falsamente normal na oximetria de pulso",
+      "O azul de metileno reduz MetHb via ativação da MetHb redutase NADPH-dependente, sendo contraindicado em pacientes com deficiência de G6PD por falta de NADPH"
+    ],
+    "type": "multi",
+    "justification": "A oximetria de pulso <strong>NÃO é confiável</strong> para MetHb: o oxímetro usa apenas 2 comprimentos de onda (660 nm e 940 nm) e lê MetHb como ~85% de saturação independentemente do valor real — podendo subestimar ou superestimar a saturação real. O diagnóstico requer <strong>co-oximetria</strong> na gasometria arterial. A cor marrom-chocolate é correta, mas diferencia-se de desoxiHb (cor vinho escuro) e não de hemoglobinúria."
+  },
+  {
+    "question": "A síntese do grupo heme ocorre em etapas mitocondriais e citossólicas. Sobre suas enzimas e relevância clínica:",
+    "options": [
+      "A ALA-sintase (δ-aminolevulinato sintase / ALAS) catalisa a etapa limitante na mitocôndria, requerendo piridoxal-5-fosfato (PLP) como cofator — sua deficiência explica anemia sideroblástica por isoniazida",
+      "O chumbo inibe a ferroquelatase e a ALA-desidratase, causando acúmulo de ZPP (Zinco-Protoporfirina) e ALA urinário — base do diagnóstico laboratorial de saturnismo",
+      "A ferroquelatase insere Fe³⁺ na protoporfirina IX em ambiente neutro do citoplasma, etapa regulada pela concentração de transferrina sérica",
+      "Na deficiência de vitamina B6, a falha na síntese de ALA leva à anemia sideroblástica com ferro sérico elevado e ferritina alta, pois o ferro não é utilizado",
+      "A protoporfiria eritropoiética manifesta-se com fotossensibilidade grave pois a protoporfirina livre acumulada absorve luz visível gerando radicais livres na pele"
+    ],
+    "answer": [
+      "A ALA-sintase (δ-aminolevulinato sintase / ALAS) catalisa a etapa limitante na mitocôndria, requerendo piridoxal-5-fosfato (PLP) como cofator — sua deficiência explica anemia sideroblástica por isoniazida",
+      "O chumbo inibe a ferroquelatase e a ALA-desidratase, causando acúmulo de ZPP (Zinco-Protoporfirina) e ALA urinário — base do diagnóstico laboratorial de saturnismo",
+      "Na deficiência de vitamina B6, a falha na síntese de ALA leva à anemia sideroblástica com ferro sérico elevado e ferritina alta, pois o ferro não é utilizado",
+      "A protoporfiria eritropoiética manifesta-se com fotossensibilidade grave pois a protoporfirina livre acumulada absorve luz visível gerando radicais livres na pele"
+    ],
+    "type": "multi",
+    "justification": "A ferroquelatase insere <strong>Fe²⁺</strong> (ferroso), não Fe³⁺ (férrico), na protoporfirina IX — e essa etapa ocorre na <strong>membrana interna mitocondrial</strong>, não no citoplasma. A regulação não é pela transferrina sérica, mas pelo pool de ferro mitocondrial disponível. Este erro é tecnicamente sutil: Fe³⁺ não pode ser incorporado; o ferro deve ser reduzido a Fe²⁺ antes da incorporação pela ferroquelatase."
+  },
+  {
+    "question": "Sobre as vias metabólicas do eritrócito e sua relevância para a função celular:",
+    "options": [
+      "A via das pentoses fosfato (hexose monofosfato shunt) gera NADPH que regenera glutationa reduzida (GSH), protegendo a Hb de oxidação — sua falha na deficiência de G6PD causa hemólise com agentes oxidantes",
+      "O 2,3-DPG é produzido pela via de Luebering-Rapoport, um desvio entre 1,3-BPG e 3-fosfoglicerato na glicólise, sem geração de ATP nesse desvio",
+      "A via glicolítica de Embden-Meyerhof gera ATP aerobiamente nas mitocôndrias, sustentando a Na⁺/K⁺-ATPase e mantendo a forma bicôncava",
+      "A deficiência de piruvato quinase (PK) aumenta o 2,3-DPG por acúmulo de intermediários a montante, desviando a curva de dissociação à direita — paradoxo que atenua a hipóxia tecidual",
+      "O eritrócito não pode usar ácidos graxos como fonte energética pois carece das enzimas mitocondriais de β-oxidação"
+    ],
+    "answer": [
+      "A via das pentoses fosfato (hexose monofosfato shunt) gera NADPH que regenera glutationa reduzida (GSH), protegendo a Hb de oxidação — sua falha na deficiência de G6PD causa hemólise com agentes oxidantes",
+      "O 2,3-DPG é produzido pela via de Luebering-Rapoport, um desvio entre 1,3-BPG e 3-fosfoglicerato na glicólise, sem geração de ATP nesse desvio",
+      "A deficiência de piruvato quinase (PK) aumenta o 2,3-DPG por acúmulo de intermediários a montante, desviando a curva de dissociação à direita — paradoxo que atenua a hipóxia tecidual",
+      "O eritrócito não pode usar ácidos graxos como fonte energética pois carece das enzimas mitocondriais de β-oxidação"
+    ],
+    "type": "multi",
+    "justification": "A via de Embden-Meyerhof no eritrócito é estritamente <strong>anaeróbia</strong> (sem mitocôndrias, sem fosforilação oxidativa). O ATP gerado vem da glicólise anaeróbia exclusivamente. Este é erro clássico: 'gera ATP aerobiamente' contradiz a ausência mitocondrial da hemácia madura. As demais alternativas são precisas, incluindo o paradoxo da deficiência de PK."
+  },
+  {
+    "question": "A eritropoiese normal percorre uma sequência precisa de precursores. Sobre o controle e a sequência desta diferenciação:",
+    "options": [
+      "A BFU-E (Burst-Forming Unit-Erythroid) é menos sensível à EPO que a CFU-E (Colony-Forming Unit-Erythroid), requerendo IL-3 e SCF (stem cell factor) adicionais",
+      "A EPO liga-se ao EPOR (homodímero), ativando JAK2 → STAT5 → transcrição de Bcl-xL (anti-apoptótico) e genes pró-proliferativos",
+      "A enucleação ocorre no normoblasto tardio (ortocromático) e é um processo passivo de degradação nuclear por caspases, sem participação do citoesqueleto",
+      "O proeritroblasto dá origem a ~16 eritrócitos maduros após 4 divisões mitóticas sucessivas com progressiva síntese de hemoglobina",
+      "A EPO é produzida 90% pelos rins (células intersticiais peritubulares) no adulto; no feto até a 30ª semana, o fígado é a principal fonte"
+    ],
+    "answer": [
+      "A BFU-E (Burst-Forming Unit-Erythroid) é menos sensível à EPO que a CFU-E (Colony-Forming Unit-Erythroid), requerendo IL-3 e SCF (stem cell factor) adicionais",
+      "A EPO liga-se ao EPOR (homodímero), ativando JAK2 → STAT5 → transcrição de Bcl-xL (anti-apoptótico) e genes pró-proliferativos",
+      "O proeritroblasto dá origem a ~16 eritrócitos maduros após 4 divisões mitóticas sucessivas com progressiva síntese de hemoglobina",
+      "A EPO é produzida 90% pelos rins (células intersticiais peritubulares) no adulto; no feto até a 30ª semana, o fígado é a principal fonte"
+    ],
+    "type": "multi",
+    "justification": "A enucleação é um processo <strong>ativo</strong>, não passivo: envolve actomiosina, lipid rafts, polarização nuclear e extrusão do núcleo envolto em membrana (forma um 'piropoikilocyte' transitório). Caspases participam, mas não é degradação passiva — o eritroblasto orquestra ativamente a expulsão do núcleo, que depois é fagocitado pelas células nurse da medula. 'Processo passivo' é o erro sutil embutido."
+  },
+  {
+    "question": "A regulação da eritropoiese pela hipóxia envolve o eixo HIF-EPO. Sobre este sistema:",
+    "options": [
+      "Em normóxia, as PHDs (Prolyl Hydroxylase Domain proteins) utilizam O₂ e α-cetoglutarato para hidroxilar Pro564 e Pro402 do HIF-1α/2α, permitindo reconhecimento pela VHL e ubiquitinação para proteólise",
+      "O HIF-2α é o principal indutor da produção renal de EPO (maior que HIF-1α), além de regular VEGF, LDHA e GLUT1",
+      "Os inibidores de PHD (roxadustat, daprodustat) estabilizam HIF endógeno aumentando EPO endógena — aprovados para anemia da IRC com vantagem da via oral",
+      "A mutação ativadora do HIF-2α (ganho de função) causa policitemia familiar por excesso de EPO, sem aumentar o risco cardiovascular pois a eritrocitose é compensatória",
+      "A eritroferrona (ERFE) secretada pelos eritroblastos em expansão antagoniza a via BMP-SMAD hepática, suprimindo hepcidina e liberando ferro para eritropoiese acelerada"
+    ],
+    "answer": [
+      "Em normóxia, as PHDs (Prolyl Hydroxylase Domain proteins) utilizam O₂ e α-cetoglutarato para hidroxilar Pro564 e Pro402 do HIF-1α/2α, permitindo reconhecimento pela VHL e ubiquitinação para proteólise",
+      "O HIF-2α é o principal indutor da produção renal de EPO (maior que HIF-1α), além de regular VEGF, LDHA e GLUT1",
+      "Os inibidores de PHD (roxadustat, daprodustat) estabilizam HIF endógeno aumentando EPO endógena — aprovados para anemia da IRC com vantagem da via oral",
+      "A eritroferrona (ERFE) secretada pelos eritroblastos em expansão antagoniza a via BMP-SMAD hepática, suprimindo hepcidina e liberando ferro para eritropoiese acelerada"
+    ],
+    "type": "multi",
+    "justification": "A mutação ativadora do HIF-2α <strong>sim</strong> aumenta risco cardiovascular — eritrocitose secundária eleva viscosidade sanguínea, aumentando risco de trombose, AVC e eventos cardiovasculares. Afirmar que 'não aumenta risco cardiovascular' é clinicamente incorreto e perigoso. Na doença de Chuvash (mutação VHL) e policitemia familiar por HIF-2α, o manejo inclui monitoramento cardiovascular rigoroso."
+  },
+  {
+    "question": "Sobre os fatores reguladores da produção de eritropoietina:",
+    "options": [
+      "Andrógenos estimulam a produção de EPO pelas células renais E aumentam a sensibilidade dos precursores eritroides à EPO — explicando o maior hematócrito masculino",
+      "Estrógenos inibem discretamente a eritropoiese, contribuindo para o menor hematócrito feminino comparado aos homens",
+      "O hipotireoidismo causa anemia normocítica por redução do metabolismo basal e do consumo de O₂, diminuindo o estímulo hipóxico para produção de EPO",
+      "A hemólise crônica eleva EPO por mecanismo direto de ativação medular pelas citocinas eritroides liberadas pelos eritrócitos destruídos",
+      "Tiroxina (T4/T3) aumenta a produção de EPO indiretamente via elevação do metabolismo basal e maior consumo tecidual de O₂, criando hipóxia relativa"
+    ],
+    "answer": [
+      "Andrógenos estimulam a produção de EPO pelas células renais E aumentam a sensibilidade dos precursores eritroides à EPO — explicando o maior hematócrito masculino",
+      "Estrógenos inibem discretamente a eritropoiese, contribuindo para o menor hematócrito feminino comparado aos homens",
+      "O hipotireoidismo causa anemia normocítica por redução do metabolismo basal e do consumo de O₂, diminuindo o estímulo hipóxico para produção de EPO",
+      "Tiroxina (T4/T3) aumenta a produção de EPO indiretamente via elevação do metabolismo basal e maior consumo tecidual de O₂, criando hipóxia relativa"
+    ],
+    "type": "multi",
+    "justification": "A hemólise crônica estimula EPO por <strong>hipóxia tecidual</strong> resultante da anemia — não por 'ativação direta pelas citocinas dos eritrócitos destruídos'. Eritrócitos destruídos não secretam citocinas; o sinal é a queda da Hb → ↓DO₂ tecidual → hipóxia → ↑HIF-2α → ↑EPO. O mecanismo citocínico descrito não existe. Todas as outras alternativas descrevem corretamente os reguladores da eritropoiese."
+  },
+  {
+    "question": "O catabolismo do heme dentro dos macrófagos produz bilirrubina. Sobre este processo molecular:",
+    "options": [
+      "A Heme Oxigenase (HO-1) cliva a ponte α-metina do anel porfirino usando O₂ e NADPH, produzindo biliverdina + CO + Fe²⁺",
+      "O CO gerado pelo catabolismo do heme tem efeitos vasodilatadores e anti-inflamatórios fisiológicos em concentrações nanomolares, atuando como mensageiro gasoso",
+      "A Biliverdin Reductase (BVR) reduz biliverdina a bilirrubina usando NADPH como doador de elétrons, convertendo o pigmento verde em amarelo-laranja",
+      "Aproximadamente 80% da bilirrubina diária deriva da degradação de hemoglobina em eritrócitos senescentes, com 20% de proteínas hemínicas hepáticas e musculares",
+      "A biliverdina acumula-se na insuficiência hepática grave porque a BVR é uma enzima exclusivamente hepática ausente nos macrófagos"
+    ],
+    "answer": [
+      "A Heme Oxigenase (HO-1) cliva a ponte α-metina do anel porfirino usando O₂ e NADPH, produzindo biliverdina + CO + Fe²⁺",
+      "O CO gerado pelo catabolismo do heme tem efeitos vasodilatadores e anti-inflamatórios fisiológicos em concentrações nanomolares, atuando como mensageiro gasoso",
+      "A Biliverdin Reductase (BVR) reduz biliverdina a bilirrubina usando NADPH como doador de elétrons, convertendo o pigmento verde em amarelo-laranja",
+      "Aproximadamente 80% da bilirrubina diária deriva da degradação de hemoglobina em eritrócitos senescentes, com 20% de proteínas hemínicas hepáticas e musculares"
+    ],
+    "type": "multi",
+    "justification": "A BVR é uma enzima <strong>citosólica ubíqua</strong>, presente em <em>todos</em> os tipos celulares que expressam HO — incluindo macrófagos, hepatócitos e células endoteliais. Não é exclusivamente hepática. Por isso a biliverdina é rapidamente convertida a bilirrubina nos próprios macrófagos esplênicos. Em insuficiência hepática, é a <em>conjugação</em> (UGT1A1) que falha, não a conversão biliverdina→bilirrubina."
+  },
+  {
+    "question": "A bilirrubina não conjugada (BNC) possui características físico-químicas únicas que determinam seu transporte e toxicidade:",
+    "options": [
+      "A BNC é paradoxalmente hidrofóbica apesar de possuir grupos -COOH e -NH, pois forma pontes de hidrogênio intramoleculares intensas que mascaram seus grupos polares",
+      "A albumina possui 1 sítio de alta afinidade (Kd ~10⁻⁸ M) para BNC; situações de hipoalbuminemia, acidose e drogas competidoras (sulfonamidas, AINEs) aumentam a fração livre tóxica",
+      "A BNC livre (não ligada à albumina) atravessa a BHE (Barreira Hemato-Encefálica) por difusão passiva devido à sua lipossolubilidade — base do kernicterus",
+      "A BNC pode ser filtrada pelo glomérulo renal independentemente da ligação à albumina, causando bilirrubinúria em anemias hemolíticas graves",
+      "A bilirrubina possui atividade antioxidante fisiológica — atua como 'scavenger' de superóxido, e o ciclo bilirrubina↔biliverdina pode ser clinicamente protetor em baixas concentrações"
+    ],
+    "answer": [
+      "A BNC é paradoxalmente hidrofóbica apesar de possuir grupos -COOH e -NH, pois forma pontes de hidrogênio intramoleculares intensas que mascaram seus grupos polares",
+      "A albumina possui 1 sítio de alta afinidade (Kd ~10⁻⁸ M) para BNC; situações de hipoalbuminemia, acidose e drogas competidoras (sulfonamidas, AINEs) aumentam a fração livre tóxica",
+      "A BNC livre (não ligada à albumina) atravessa a BHE (Barreira Hemato-Encefálica) por difusão passiva devido à sua lipossolubilidade — base do kernicterus",
+      "A bilirrubina possui atividade antioxidante fisiológica — atua como 'scavenger' de superóxido, e o ciclo bilirrubina↔biliverdina pode ser clinicamente protetor em baixas concentrações"
+    ],
+    "type": "multi",
+    "justification": "A BNC <strong>não é filtrada pelo glomérulo</strong> porque está ligada à albumina (PM ~67 kDa, não filtrável). Por isso anemias hemolíticas com ↑BNC <em>não cursam com bilirrubinúria</em> — este é um achado diferenciador fundamental na propedêutica da icterícia. Bilirrubinúria indica ↑bilirrubina <em>conjugada</em> (menor, hidrossolúvel, não ligada à albumina → filtrável). Este erro diagnóstico pode levar à classificação errada do tipo de icterícia."
+  },
+  {
+    "question": "O metabolismo intra-hepático da bilirrubina envolve captação, conjugação e excreção. Sobre cada etapa:",
+    "options": [
+      "A captação pelo hepatócito ocorre via OATP1B1 e OATP1B3 (transportadores de ânions orgânicos independentes de Na⁺); a albumina permanece no sinusoide",
+      "Dentro do hepatócito, a bilirrubina liga-se à ligandina (GST — Glutationa S-Transferase) e proteína Z, que a conduzem ao retículo endoplasmático para conjugação",
+      "A UGT1A1 (UDP-Glucuronosiltransferase 1A1) esterifica 2 moléculas de ácido glucurônico nos grupos propionato da bilirrubina, quebrando as pontes de H intramoleculares e tornando-a hidrossolúvel",
+      "A excreção canalicular da bilirrubina conjugada pelo MRP2 (ABCC2) é independente de ATP, ocorrendo por transporte passivo favorecido pelo gradiente de concentração bile/citoplasma",
+      "A rifampicina inibe competitivamente os OATP1B1/B3, causando hiperbilirrubinemia não conjugada iatrogênica ao reduzir a captação hepática de BNC"
+    ],
+    "answer": [
+      "A captação pelo hepatócito ocorre via OATP1B1 e OATP1B3 (transportadores de ânions orgânicos independentes de Na⁺); a albumina permanece no sinusoide",
+      "Dentro do hepatócito, a bilirrubina liga-se à ligandina (GST — Glutationa S-Transferase) e proteína Z, que a conduzem ao retículo endoplasmático para conjugação",
+      "A UGT1A1 (UDP-Glucuronosiltransferase 1A1) esterifica 2 moléculas de ácido glucurônico nos grupos propionato da bilirrubina, quebrando as pontes de H intramoleculares e tornando-a hidrossolúvel",
+      "A rifampicina inibe competitivamente os OATP1B1/B3, causando hiperbilirrubinemia não conjugada iatrogênica ao reduzir a captação hepática de BNC"
+    ],
+    "type": "multi",
+    "justification": "O MRP2 (ABCC2) é um <strong>transportador ABC (ATP-Binding Cassette)</strong> — usa ATP ativamente para excretar bilirrubina conjugada contra gradiente de concentração para os canalículos biliares. Não é transporte passivo. Esta distinção é clinicamente relevante: na síndrome de Dubin-Johnson, a mutação no MRP2 elimina o transporte ativo, causando acúmulo de BC no hepatócito — icterícia conjugada benigna."
+  },
+  {
+    "question": "O destino intestinal da bilirrubina e o ciclo êntero-hepático determinam a coloração das fezes e da urina:",
+    "options": [
+      "Bactérias intestinais (Clostridium, Eubacterium) convertem bilirrubina conjugada → urobilinogênio → estercobilinogênio → estercobilina, pigmento marrom responsável pela cor normal das fezes",
+      "~20% do urobilinogênio é reabsorvido no intestino grosso, entra na circulação porta, é reexcretado na bile (circulação êntero-hepática) e uma pequena fração é excretada na urina como urobilinina",
+      "Fezes acólicas (brancas/argila) indicam ausência de estercobilina por obstrução ao fluxo biliar — sinal cardinal de colestase extra-hepática ou intra-hepática grave",
+      "Na hemólise intravascular maciça, a bilirrubina conjugada excretada em excesso pelo fígado é parcialmente reabsorvida no cólon e excretada na urina, causando urina escura — mesmo mecanismo da colestase",
+      "A urina normal tem cor amarela derivada da urobilinina, produto de oxidação do urobilinogênio — sua ausência (urina incolor para bilirrubina) ocorre em obstrução biliar completa"
+    ],
+    "answer": [
+      "Bactérias intestinais (Clostridium, Eubacterium) convertem bilirrubina conjugada → urobilinogênio → estercobilinogênio → estercobilina, pigmento marrom responsável pela cor normal das fezes",
+      "~20% do urobilinogênio é reabsorvido no intestino grosso, entra na circulação porta, é reexcretado na bile (circulação êntero-hepática) e uma pequena fração é excretada na urina como urobilinina",
+      "Fezes acólicas (brancas/argila) indicam ausência de estercobilina por obstrução ao fluxo biliar — sinal cardinal de colestase extra-hepática ou intra-hepática grave"
+    ],
+    "type": "multi",
+    "justification": "Dois erros embutidos: (1) Na hemólise intravascular, a urina escura é causada por <strong>hemoglobinúria</strong> (Hb livre filtrada) e hemossiderinúria — não por bilirrubina conjugada reabsorvida do cólon (esse mecanismo não existe). (2) Na obstrução biliar completa, a urina fica <em>muito escura</em> (bilirrubinúria intensa) — não incolor. A 'ausência de urobilinina' ocorre em obstrução, mas a urina fica escura pela bilirrubina conjugada filtrada, não incolor."
+  },
+  {
+    "question": "Na hemólise intravascular, proteínas plasmáticas capturam os componentes liberados. Sobre esses sistemas de defesa:",
+    "options": [
+      "A haptoglobina (Hp) liga-se à Hb livre com Kd ~10⁻¹² M; o complexo Hb-Hp é captado pelo receptor CD163 nos macrófagos — haptoglobina indetectável é o marcador mais sensível de hemólise intravascular",
+      "A hemopexina liga-se à hemina (heme + Fe³⁺ oxidado) quando a haptoglobina está saturada; o complexo hemina-hemopexina é captado pelo receptor CD91 nos hepatócitos",
+      "A metahemalbumina forma-se quando haptoglobina E hemopexina são ambas saturadas; sua detecção pelo teste de Schumm indica hemólise grave",
+      "A hemoglobina livre no plasma sequestra óxido nítrico (NO) vasodilatador, causando vasoconstricção, disfunção endotelial e hipertensão pulmonar — mecanismo relevante na anemia falciforme",
+      "Na hemólise extravascular esplênica, a hemossiderinúria é achado precoce e patognomônico pois o ferro liberado no macrófago é diretamente filtrado pelo glomérulo"
+    ],
+    "answer": [
+      "A haptoglobina (Hp) liga-se à Hb livre com Kd ~10⁻¹² M; o complexo Hb-Hp é captado pelo receptor CD163 nos macrófagos — haptoglobina indetectável é o marcador mais sensível de hemólise intravascular",
+      "A hemopexina liga-se à hemina (heme + Fe³⁺ oxidado) quando a haptoglobina está saturada; o complexo hemina-hemopexina é captado pelo receptor CD91 nos hepatócitos",
+      "A metahemalbumina forma-se quando haptoglobina E hemopexina são ambas saturadas; sua detecção pelo teste de Schumm indica hemólise grave",
+      "A hemoglobina livre no plasma sequestra óxido nítrico (NO) vasodilatador, causando vasoconstricção, disfunção endotelial e hipertensão pulmonar — mecanismo relevante na anemia falciforme"
+    ],
+    "type": "multi",
+    "justification": "A hemossiderinúria <strong>não ocorre na hemólise extravascular</strong> — é um marcador de hemólise <em>intravascular</em>. Na hemólise extravascular, a Hb é degradada dentro dos macrófagos esplênicos; o ferro é armazenado como ferritina/hemossiderina nos macrófagos ou exportado via ferroportina para o plasma ligado à transferrina — nunca filtrado diretamente pelo glomérulo. A hemossiderinúria exige Hb livre plasmática que filtra pelo rim, é reabsorvida pelos túbulos e deposita ferro como hemossiderina, que aparece na urina dias após episódio de hemólise intravascular."
+  },
+  {
+    "question": "A classificação fisiopatológica da icterícia orienta a investigação clínica. Analise os seguintes perfis:",
+    "options": [
+      "Icterícia pré-hepática: ↑BI, fezes normais (coradas), sem bilirrubinúria, ↑LDH, ↓haptoglobina, ↑reticulócitos — padrão da hemólise extravascular",
+      "Icterícia obstrutiva (pós-hepática): ↑BC, fezes acólicas, urina escura (bilirrubinúria), prurido intenso, ↑FA e ↑GGT desproporcionais em relação às transaminases",
+      "Na Síndrome de Gilbert, o jejum e estresse aumentam a bilirrubina indireta porque a produção de ácidos graxos livres compete com a bilirrubina pelo sítio da albumina E o jejum reduz a atividade da UGT1A1",
+      "A bilirrubina delta (δ) é BC ligada covalentemente à albumina, com meia-vida da albumina (~20 dias), explicando icterícia persistente semanas após resolução de obstrução biliar",
+      "Icterícia hepática com predomínio de BC e ↑↑FA sem ↑↑ALT/AST sugere colestase intra-hepática (medicamentosa, gravidez, CEP) em vez de hepatite aguda"
+    ],
+    "answer": [
+      "Icterícia pré-hepática: ↑BI, fezes normais (coradas), sem bilirrubinúria, ↑LDH, ↓haptoglobina, ↑reticulócitos — padrão da hemólise extravascular",
+      "Icterícia obstrutiva (pós-hepática): ↑BC, fezes acólicas, urina escura (bilirrubinúria), prurido intenso, ↑FA e ↑GGT desproporcionais em relação às transaminases",
+      "A bilirrubina delta (δ) é BC ligada covalentemente à albumina, com meia-vida da albumina (~20 dias), explicando icterícia persistente semanas após resolução de obstrução biliar",
+      "Icterícia hepática com predomínio de BC e ↑↑FA sem ↑↑ALT/AST sugere colestase intra-hepática (medicamentosa, gravidez, CEP) em vez de hepatite aguda"
+    ],
+    "type": "multi",
+    "justification": "Na Síndrome de Gilbert, o jejum eleva a bilirrubina porque: (1) ↓aporte calórico → ↓glicuronidação (UGT1A1 com atividade já reduzida); (2) o jejum aumenta lipólise → ↑ácidos graxos livres que <em>competem pelo sítio da albumina</em>. Porém, o mecanismo molecular principal é a redução da atividade da UGT1A1 pelo polimorfismo TA7 — os ácidos graxos são fator adicional, mas a afirmação apresenta ambos como equivalentes quando na verdade a competição com ácidos graxos é mecanismo <em>secundário</em>. O erro está em equiparar os dois mecanismos como igualmente primários — a redução da UGT1A1 é o principal."
+  },
+  {
+    "question": "As síndromes de hiperbilirrubinemia hereditária têm bases moleculares distintas. Sobre cada uma:",
+    "options": [
+      "Gilbert (UGT1A1*28 — inserção TA7): ↓30-80% atividade UGT1A1, icterícia não conjugada benigna intermitente; relevante na toxicidade aumentada ao irinotecan (seu metabólito SN-38 requer glucuronidação pela UGT1A1)",
+      "Crigler-Najjar tipo I: ausência total de UGT1A1, hiperbilirrubinemia não conjugada grave (>20 mg/dL), letal na infância sem fototerapia contínua (12-16h/dia) ou transplante hepático",
+      "Dubin-Johnson: mutação no MRP2 (ABCC2) → falha na excreção canalicular de BC → ↑BC sérica; fígado escurecido por depósito de pigmento polimérico (similar a melanina) — condição benigna",
+      "Rotor: semelhante ao Dubin-Johnson porém com deficiência dos transportadores OATP1B1/1B3, causando falha na recaptação hepática de bilirrubina conjugada após circulação êntero-hepática — fígado histologicamente normal",
+      "Crigler-Najjar tipo II: ausência parcial de UGT1A1 (diferente do tipo I por mutação missense versus nonsense), responsivo ao fenobarbital que induz a atividade residual da enzima"
+    ],
+    "answer": [
+      "Gilbert (UGT1A1*28 — inserção TA7): ↓30-80% atividade UGT1A1, icterícia não conjugada benigna intermitente; relevante na toxicidade aumentada ao irinotecan (seu metabólito SN-38 requer glucuronidação pela UGT1A1)",
+      "Dubin-Johnson: mutação no MRP2 (ABCC2) → falha na excreção canalicular de BC → ↑BC sérica; fígado escurecido por depósito de pigmento polimérico (similar a melanina) — condição benigna",
+      "Rotor: semelhante ao Dubin-Johnson porém com deficiência dos transportadores OATP1B1/1B3, causando falha na recaptação hepática de bilirrubina conjugada após circulação êntero-hepática — fígado histologicamente normal",
+      "Crigler-Najjar tipo II: ausência parcial de UGT1A1 (diferente do tipo I por mutação missense versus nonsense), responsivo ao fenobarbital que induz a atividade residual da enzima"
+    ],
+    "type": "multi",
+    "justification": "O Crigler-Najjar tipo I é letal <strong>sem tratamento</strong>, mas a fototerapia convencional (12-16h/dia) tem eficácia limitada a longo prazo — não é curativa. O transplante hepático é a única cura estabelecida. A alternativa insinua que fototerapia ou transplante são igualmente curativos no tipo I, quando fototerapia é paliativa (com eficácia progressivamente menor com o crescimento corporal). Além disso, 'letal na infância' é relativo — sem tratamento neonatal imediato, o kernicterus ocorre nas primeiras semanas."
+  },
+  {
+    "question": "A icterícia neonatal tem fisiopatologia multifatorial. Identifique os mecanismos corretos:",
+    "options": [
+      "Maior carga de bilirrubina: eritrócitos fetais têm vida mais curta (~70-90 dias) e são destruídos em massa na transição para hemácias adultas após o nascimento",
+      "Captação hepática reduzida: baixa expressão de ligandina (GST) nos hepatócitos neonatais nos primeiros dias de vida",
+      "Circulação êntero-hepática amplificada: ausência de flora intestinal → β-glucuronidase intestinal desconjuga BC → reabsorção de BNC → maior carga hepática",
+      "A fototerapia com comprimento de onda de 460-490 nm isomeriza a bilirrubina (4Z,15Z → 4Z,15E e isômero lumirrubina) → fotoisômeros hidrossolúveis excretáveis sem conjugação",
+      "O kernicterus é causado por depósito de bilirrubina conjugada nos gânglios basais e cerebelo, toxicidade que pode ser completamente revertida com exsanguinotransfusão imediata"
+    ],
+    "answer": [
+      "Maior carga de bilirrubina: eritrócitos fetais têm vida mais curta (~70-90 dias) e são destruídos em massa na transição para hemácias adultas após o nascimento",
+      "Captação hepática reduzida: baixa expressão de ligandina (GST) nos hepatócitos neonatais nos primeiros dias de vida",
+      "Circulação êntero-hepática amplificada: ausência de flora intestinal → β-glucuronidase intestinal desconjuga BC → reabsorção de BNC → maior carga hepática",
+      "A fototerapia com comprimento de onda de 460-490 nm isomeriza a bilirrubina (4Z,15Z → 4Z,15E e isômero lumirrubina) → fotoisômeros hidrossolúveis excretáveis sem conjugação"
+    ],
+    "type": "multi",
+    "justification": "O kernicterus é causado por depósito de bilirrubina <strong>não conjugada livre</strong> (não conjugada). Além disso, o dano neurológico estabelecido pelo depósito de bilirrubina nos gânglios basais, cerebelo e núcleo coclear <em>não é completamente reversível</em> com exsanguinotransfusão — o dano celular agudo pode ser parcialmente amenizado se realizado precocemente, mas sequelas (coreoatetose, surdez, paralisia cerebral) frequentemente persistem quando o kernicterus já se instalou clinicamente."
+  },
+  {
+    "question": "A anemia é definida pela OMS com base nos valores de hemoglobina. Sobre sua epidemiologia e fisiopatologia:",
+    "options": [
+      "OMS define anemia em homens adultos como Hb <13 g/dL; mulheres não grávidas <12 g/dL; gestantes <11 g/dL; crianças 6m-6a <11 g/dL",
+      "A anemia afeta ~24,8% da população mundial (1,62 bilhões de pessoas), sendo a deficiência de ferro a causa mais comum globalmente",
+      "Anemia é sempre um diagnóstico definitivo; identificar seus subtipos morfológicos (micro/normo/macrocítica) é suficiente para guiar o tratamento sem investigação etiológica adicional",
+      "Os três mecanismos fisiopatológicos fundamentais de toda anemia são: produção diminuída de eritrócitos, perda aumentada (hemorragia) e destruição aumentada (hemólise)",
+      "A taquicardia e o aumento do débito cardíaco na anemia são mecanismos compensatórios que tentam manter o DO₂ (oferta de O₂) apesar da redução do conteúdo arterial de O₂"
+    ],
+    "answer": [
+      "OMS define anemia em homens adultos como Hb <13 g/dL; mulheres não grávidas <12 g/dL; gestantes <11 g/dL; crianças 6m-6a <11 g/dL",
+      "A anemia afeta ~24,8% da população mundial (1,62 bilhões de pessoas), sendo a deficiência de ferro a causa mais comum globalmente",
+      "Os três mecanismos fisiopatológicos fundamentais de toda anemia são: produção diminuída de eritrócitos, perda aumentada (hemorragia) e destruição aumentada (hemólise)",
+      "A taquicardia e o aumento do débito cardíaco na anemia são mecanismos compensatórios que tentam manter o DO₂ (oferta de O₂) apesar da redução do conteúdo arterial de O₂"
+    ],
+    "type": "multi",
+    "justification": "Anemia é um <strong>sinal clínico</strong>, não um diagnóstico definitivo. Classificar morfologicamente (micro/normo/macrocítica) é apenas o primeiro passo — é imprescindível investigar a etiologia para tratar adequadamente. Em homem adulto ou mulher pós-menopáusica com anemia ferropriva, por exemplo, é erro médico repor ferro sem investigar o trato gastrointestinal (neoplasia? úlcera? Helicobacter?). Tratar 'só o número' sem buscar a causa é perigoso."
+  },
+  {
+    "question": "O hemograma fornece parâmetros quantitativos para classificar anemias. Sobre sua interpretação avançada:",
+    "options": [
+      "O RDW (Red cell Distribution Width / Índice de Distribuição dos Eritrócitos) mede a anisocitose: RDW elevado indica heterogeneidade de tamanhos, presente precocemente na ferropriva (antes da queda do MCV)",
+      "O MCHC (Mean Corpuscular Hemoglobin Concentration / Concentração de Hemoglobina Corpuscular Média) >36 g/dL é característico de esferocitose hereditária (desidratação eritrocitária)",
+      "Na β-talassemia minor, o RDW tipicamente está NORMAL apesar do MCV baixo, pois toda a população de eritrócitos é uniformemente microcítica — diferenciando da ferropriva onde há anisocitose",
+      "Um MCV de 115 fL com neutrófilos hipersegmentados (≥5 lóbulos) e Hb 7,5 g/dL em idoso com parestesias aponta para deficiência de B12 antes da deficiência de folato, porque apenas B12 causa neuropatia",
+      "O IPR (Índice de Produção de Reticulócitos) corrigido >3 indica medula funcionante com eritropoiese acelerada (hemólise ou hemorragia), enquanto IPR <2 em paciente anêmico indica resposta medular inadequada"
+    ],
+    "answer": [
+      "O RDW (Red cell Distribution Width / Índice de Distribuição dos Eritrócitos) mede a anisocitose: RDW elevado indica heterogeneidade de tamanhos, presente precocemente na ferropriva (antes da queda do MCV)",
+      "O MCHC (Mean Corpuscular Hemoglobin Concentration / Concentração de Hemoglobina Corpuscular Média) >36 g/dL é característico de esferocitose hereditária (desidratação eritrocitária)",
+      "Na β-talassemia minor, o RDW tipicamente está NORMAL apesar do MCV baixo, pois toda a população de eritrócitos é uniformemente microcítica — diferenciando da ferropriva onde há anisocitose",
+      "Um MCV de 115 fL com neutrófilos hipersegmentados (≥5 lóbulos) e Hb 7,5 g/dL em idoso com parestesias aponta para deficiência de B12 antes da deficiência de folato, porque apenas B12 causa neuropatia",
+      "O IPR (Índice de Produção de Reticulócitos) corrigido >3 indica medula funcionante com eritropoiese acelerada (hemólise ou hemorragia), enquanto IPR <2 em paciente anêmico indica resposta medular inadequada"
+    ],
+    "type": "multi",
+    "justification": "Todas as alternativas são corretas nesta questão. O ponto de maior dificuldade é reconhecer que parestesias + macrocitose + hipersegmentação em idoso aponta para B12 (não folato) porque: (1) apenas deficiência de B12 causa neuropatia subaguda combinada (via acúmulo de MMA); (2) idosos têm maior prevalência de gastrite atrófica e anemia perniciosa. A diferenciação laboratorial definitiva é ↑MMA em B12, MMA normal em folato."
+  },
+  {
+    "question": "A anemia ferropriva é a mais prevalente no mundo. Sobre sua fisiopatologia molecular e diagnóstico:",
+    "options": [
+      "O ferro dietético Fe³⁺ é reduzido a Fe²⁺ pelo ácido gástrico e DCYTB (Duodenal Cytochrome B Reductase) antes da absorção pelo DMT1 (Divalent Metal Transporter 1) nos enterócitos duodenais",
+      "A hepcidina hepática bloqueia a ferroportina (FPN1) nos enterócitos e macrófagos; na ferropriva, a hepcidina cai → ferroportina ativa → ↑absorção intestinal e ↑liberação de ferro dos macrófagos",
+      "A ferritina sérica é o marcador mais sensível e específico de deficiência de ferro em qualquer contexto clínico, incluindo pacientes com inflamação crônica concomitante",
+      "O receptor solúvel de transferrina (sTfR) não é reagente de fase aguda — eleva-se na ferropriva mesmo com inflamação coexistente, sendo útil para distinguir ferropriva de anemia de doença crônica",
+      "Eritrócitos em 'pencil cells' (células em lápis) e target cells (células em alvo) no esfregaço são achados compatíveis com anemia ferropriva grave"
+    ],
+    "answer": [
+      "O ferro dietético Fe³⁺ é reduzido a Fe²⁺ pelo ácido gástrico e DCYTB (Duodenal Cytochrome B Reductase) antes da absorção pelo DMT1 (Divalent Metal Transporter 1) nos enterócitos duodenais",
+      "A hepcidina hepática bloqueia a ferroportina (FPN1) nos enterócitos e macrófagos; na ferropriva, a hepcidina cai → ferroportina ativa → ↑absorção intestinal e ↑liberação de ferro dos macrófagos",
+      "O receptor solúvel de transferrina (sTfR) não é reagente de fase aguda — eleva-se na ferropriva mesmo com inflamação coexistente, sendo útil para distinguir ferropriva de anemia de doença crônica",
+      "Eritrócitos em 'pencil cells' (células em lápis) e target cells (células em alvo) no esfregaço são achados compatíveis com anemia ferropriva grave"
+    ],
+    "type": "multi",
+    "justification": "A ferritina é um <strong>reagente de fase aguda positivo</strong> — na presença de inflamação crônica, infecção, neoplasia ou hepatopatia, os níveis de ferritina podem estar normais ou elevados mesmo com depleção real dos estoques de ferro. Portanto, ferritina normal não exclui ferropriva em pacientes inflamados. Este é erro diagnóstico frequente: 'ferritina normal = estoques normais' é falso quando há inflamação. O sTfR e a relação sTfR/log(ferritina) são mais confiáveis nesse contexto."
+  },
+  {
+    "question": "A anemia de doença crônica (ACD) tem mecanismo central na hepcidina. Compare com a anemia ferropriva:",
+    "options": [
+      "ACD: ↑ferritina (FA positivo), ↓ferro sérico, ↓TIBC — versus ferropriva: ↓ferritina, ↓ferro sérico, ↑TIBC",
+      "Na ACD, a IL-6 produzida na inflamação ativa a via JAK2-STAT3 nos hepatócitos, estimulando a transcrição do gene da hepcidina",
+      "O sTfR (receptor solúvel de transferrina) eleva-se em ambas as condições, impossibilitando a distinção entre ACD e ferropriva por este parâmetro isolado",
+      "Na ACD, citocinas inflamatórias (TNF-α, IL-1) reduzem a vida útil dos eritrócitos E diminuem a resposta dos precursores eritroides à EPO, além da hepcidina elevada",
+      "O tratamento da ACD com ferro IV é sempre eficaz pois a ferroportina, embora bloqueada, pode ser parcialmente reativada por doses suprafisiológicas de ferro"
+    ],
+    "answer": [
+      "ACD: ↑ferritina (FA positivo), ↓ferro sérico, ↓TIBC — versus ferropriva: ↓ferritina, ↓ferro sérico, ↑TIBC",
+      "Na ACD, a IL-6 produzida na inflamação ativa a via JAK2-STAT3 nos hepatócitos, estimulando a transcrição do gene da hepcidina",
+      "Na ACD, citocinas inflamatórias (TNF-α, IL-1) reduzem a vida útil dos eritrócitos E diminuem a resposta dos precursores eritroides à EPO, além da hepcidina elevada"
+    ],
+    "type": "multi",
+    "justification": "Dois erros: (1) O sTfR eleva-se na ferropriva mas está <strong>normal ou baixo na ACD</strong> — exatamente por isso é útil para distingui-las. A relação sTfR/log(ferritina) >2 aponta ferropriva; <1 aponta ACD. (2) O tratamento da ACD com ferro IV <em>não é sempre eficaz</em>: a hepcidina elevada bloqueia ativamente a ferroportina nos macrófagos. Supradoses de ferro não 'reativam' ferroportina — a hepcidina precisa ser controlada (tratar a doença de base). Ferro IV pode ser útil na ACD com ferropriva concomitante, mas não é universalmente eficaz."
+  },
+  {
+    "question": "As talassemias são hemoglobinopatias quantitativas com amplo espectro clínico:",
+    "options": [
+      "Na β-talassemia, cadeias α excedentes são insolúveis e precipitam nos eritroblastos → corpos de inclusão → apoptose intramedular → eritropoiese ineficaz (70-90% dos precursores destruídos antes de circular)",
+      "Na α-talassemia com deleção de 3 genes (HbH disease — β₄), o HbH tem P50 muito baixo por alta afinidade por O₂, causando hipóxia tecidual apesar de Hb relativamente preservada",
+      "O diagnóstico de β-talassemia minor exige sempre biópsia de medula óssea para quantificar o excesso de cadeias alfa nos eritroblastos",
+      "A hidropsia fetal (Hb Barts — γ₄, deleção de todos os 4 genes α) é incompatível com a vida pós-natal pois a Hb Barts tem afinidade extremamente alta por O₂ (sem efeito Bohr) e não libera O₂ nos tecidos",
+      "Na β-talassemia major, a hipertrofia da medula óssea para compensar a eritropoiese ineficaz causa deformidades esqueléticas características (fácies talassêmica, crânio alargado) e hematopoiese extramedular"
+    ],
+    "answer": [
+      "Na β-talassemia, cadeias α excedentes são insolúveis e precipitam nos eritroblastos → corpos de inclusão → apoptose intramedular → eritropoiese ineficaz (70-90% dos precursores destruídos antes de circular)",
+      "Na α-talassemia com deleção de 3 genes (HbH disease — β₄), o HbH tem P50 muito baixo por alta afinidade por O₂, causando hipóxia tecidual apesar de Hb relativamente preservada",
+      "A hidropsia fetal (Hb Barts — γ₄, deleção de todos os 4 genes α) é incompatível com a vida pós-natal pois a Hb Barts tem afinidade extremamente alta por O₂ (sem efeito Bohr) e não libera O₂ nos tecidos",
+      "Na β-talassemia major, a hipertrofia da medula óssea para compensar a eritropoiese ineficaz causa deformidades esqueléticas características (fácies talassêmica, crânio alargado) e hematopoiese extramedular"
+    ],
+    "type": "multi",
+    "justification": "O diagnóstico de β-talassemia minor é feito por <strong>eletroforese de Hb ou HPLC</strong> (HbA₂ >3,5%), hemograma (MCV baixo com RDW normal) e, quando disponível, genotipagem molecular. Biópsia de medula óssea <em>não é necessária</em> para o diagnóstico de β-talassemia minor — seria exame invasivo, desnecessário e não agregaria informação diagnóstica adicional neste contexto."
+  },
+  {
+    "question": "A anemia megaloblástica por deficiência de B12 tem mecanismo molecular distinto do folato. Sobre as vias bioquímicas:",
+    "options": [
+      "B12 como cofator da metionina sintase regenera THF (tetrahidrofolato) a partir do 5-metil-THF ('methylfolate trap'); sem THF → sem 5,10-metileno-THF → sem timidilato → falha na síntese de DNA",
+      "B12 como cofator da L-metilmalonil-CoA mutase converte metilmalonil-CoA → succinil-CoA; sua deficiência acumula MMA (ácido metilmalônico) → desmielinização das colunas posterolaterais da medula",
+      "A deficiência de folato causa anemia megaloblástica morfologicamente idêntica à deficiência de B12, mas com MMA NORMAL e homocisteína elevada — diferenciação laboratorial essencial para não tratar B12 com folato (risco de agravar neuropatia)",
+      "O metotrexato inibe a DHFR (Dihidrofolato Redutase) impedindo a regeneração de THF a partir de DHF; o resgate com leucovorin (5-formil-THF) contorna a enzima inibida",
+      "A anemia perniciosa é causada por autoanticorpos anti-células parietais e/ou anti-fator intrínseco que impedem a absorção de B12 no duodeno proximal, onde o fator intrínseco se liga à B12"
+    ],
+    "answer": [
+      "B12 como cofator da metionina sintase regenera THF (tetrahidrofolato) a partir do 5-metil-THF ('methylfolate trap'); sem THF → sem 5,10-metileno-THF → sem timidilato → falha na síntese de DNA",
+      "B12 como cofator da L-metilmalonil-CoA mutase converte metilmalonil-CoA → succinil-CoA; sua deficiência acumula MMA (ácido metilmalônico) → desmielinização das colunas posterolaterais da medula",
+      "A deficiência de folato causa anemia megaloblástica morfologicamente idêntica à deficiência de B12, mas com MMA NORMAL e homocisteína elevada — diferenciação laboratorial essencial para não tratar B12 com folato (risco de agravar neuropatia)",
+      "O metotrexato inibe a DHFR (Dihidrofolato Redutase) impedindo a regeneração de THF a partir de DHF; o resgate com leucovorin (5-formil-THF) contorna a enzima inibida"
+    ],
+    "type": "multi",
+    "justification": "A absorção de B12 ocorre no <strong>íleo terminal distal</strong> (não no duodeno proximal), via receptor cubilina/amnionless que reconhece o complexo B12-fator intrínseco. O fator intrínseco, produzido nas células parietais gástricas, liga-se à B12 no duodeno após a secreção gástrica — mas a absorção real ocorre no íleo terminal. Este erro anatômico é frequente e clinicamente relevante: doenças ileais (Crohn, ressecção ileal) causam deficiência de B12, enquanto doenças duodenais isoladas geralmente não."
+  },
+  {
+    "question": "A anemia falciforme (HbSS) resulta de mutação pontual na globina β. Analise os mecanismos moleculares e terapêuticos:",
+    "options": [
+      "A mutação GAG→GTG no códon 6 da β-globina substitui glutamato (polar, carregado negativamente) por valina (apolar), criando sítio hidrofóbico que se encaixa no bolsão Phe-β85/Leu-β88 de outra HbS desoxigenada",
+      "A polimerização da HbS ocorre exclusivamente no estado T (desoxigenado); no estado R (oxigenado), o sítio hidrofóbico da valina β6 fica ocluído pela histidina distal E7",
+      "A hidroxiureia aumenta HbF via ↑cGMP e ativação da síntese de globina γ; cada tetrâmero com ≥1 cadeia γ não polimeriza, diluindo a HbS e reduzindo crises em ~50%",
+      "O voxelotor liga-se à HbS estabilizando o estado R (alta afinidade), impedindo a desoxigenação e consequente polimerização — efeito que pode paradoxalmente reduzir a entrega de O₂ tecidual se usado em excesso",
+      "O crizanlizumab, anticorpo anti-P-selectina, impede a adesão dos eritrócitos falcizados ao endotélio vascular, reduzindo a vaso-oclusão independentemente da polimerização da HbS"
+    ],
+    "answer": [
+      "A mutação GAG→GTG no códon 6 da β-globina substitui glutamato (polar, carregado negativamente) por valina (apolar), criando sítio hidrofóbico que se encaixa no bolsão Phe-β85/Leu-β88 de outra HbS desoxigenada",
+      "A polimerização da HbS ocorre exclusivamente no estado T (desoxigenado); no estado R (oxigenado), o sítio hidrofóbico da valina β6 fica ocluído pela histidina distal E7",
+      "A hidroxiureia aumenta HbF via ↑cGMP e ativação da síntese de globina γ; cada tetrâmero com ≥1 cadeia γ não polimeriza, diluindo a HbS e reduzindo crises em ~50%",
+      "O voxelotor liga-se à HbS estabilizando o estado R (alta afinidade), impedindo a desoxigenação e consequente polimerização — efeito que pode paradoxalmente reduzir a entrega de O₂ tecidual se usado em excesso",
+      "O crizanlizumab, anticorpo anti-P-selectina, impede a adesão dos eritrócitos falcizados ao endotélio vascular, reduzindo a vaso-oclusão independentemente da polimerização da HbS"
+    ],
+    "type": "multi",
+    "justification": "Todas as alternativas são corretas. O ponto mais desafiador é o paradoxo do voxelotor: ao estabilizar o estado R, aumenta a afinidade por O₂ → CDO desvia para esquerda → Hb libera menos O₂ nos tecidos. Isso deve ser monitorado clinicamente; o benefício (menos polimerização → menos hemólise → mais Hb funcional circulando) deve superar o custo (menor extração de O₂). Este é um compromisso terapêutico real reconhecido nos trials clínicos."
+  },
+  {
+    "question": "A esferocitose hereditária (EH) é a anemia hemolítica hereditária mais comum em caucasianos:",
+    "options": [
+      "A EH resulta de defeitos em proteínas do citoesqueleto (espectrina, anquirina, Banda 3, proteína 4.2) que reduzem a deformabilidade eritrocitária → aprisionamento nos sinusóides esplênicos → hemólise extravascular",
+      "O CHCM (MCHC) >36 g/dL é achado característico da EH, refletindo a desidratação celular e a perda de membrana que concentra a hemoglobina no eritrócito esférico",
+      "O Teste de Coombs Direto (TAD) positivo para IgG confirma o diagnóstico de EH ao demonstrar anticorpos contra as proteínas do citoesqueleto defeituosas",
+      "A esplenectomia melhora dramaticamente a anemia na EH mas não cura o defeito genético — vacinação prévia contra pneumococo, meningococo e H. influenzae b é obrigatória pelo risco de OPSI (Overwhelming Post-Splenectomy Infection)",
+      "A ektacitometria (medida de deformabilidade eritrocitária por laser) é o teste mais sensível para EH, capaz de identificar portadores assintomáticos e diferenciar subtipos moleculares"
+    ],
+    "answer": [
+      "A EH resulta de defeitos em proteínas do citoesqueleto (espectrina, anquirina, Banda 3, proteína 4.2) que reduzem a deformabilidade eritrocitária → aprisionamento nos sinusóides esplênicos → hemólise extravascular",
+      "O CHCM (MCHC) >36 g/dL é achado característico da EH, refletindo a desidratação celular e a perda de membrana que concentra a hemoglobina no eritrócito esférico",
+      "A esplenectomia melhora dramaticamente a anemia na EH mas não cura o defeito genético — vacinação prévia contra pneumococo, meningococo e H. influenzae b é obrigatória pelo risco de OPSI (Overwhelming Post-Splenectomy Infection)",
+      "A ektacitometria (medida de deformabilidade eritrocitária por laser) é o teste mais sensível para EH, capaz de identificar portadores assintomáticos e diferenciar subtipos moleculares"
+    ],
+    "type": "multi",
+    "justification": "O Teste de Coombs Direto (TAD) na EH é <strong>negativo</strong> — não há autoanticorpos contra as proteínas do citoesqueleto. O TAD positivo indica AHAI (Anemia Hemolítica Autoimune). Este erro é crítico no diagnóstico diferencial: EH com Coombs negativo + esferócitos é diferente de AHAI quente com Coombs positivo + esferócitos. A confusão pode levar a tratamentos incorretos (imunossupressão em EH ou esplenectomia em AHAI não refratária)."
+  },
+  {
+    "question": "A deficiência de G6PD predispõe à hemólise episódica. Sobre a fisiopatologia e o diagnóstico:",
+    "options": [
+      "A G6PD (Glicose-6-Fosfato Desidrogenase) catalisa a etapa limitante da via das pentoses fosfato: G6P + NADP⁺ → 6-fosfogluconolactona + NADPH",
+      "Sem NADPH → GSH não é regenerada → acúmulo de H₂O₂ e radicais livres → oxidação da Hb → corpos de Heinz (Hb precipitada) → 'bite cells' (hemácias com morsura) no esfregaço",
+      "A G6PD deve ser dosada durante a crise hemolítica aguda para máxima acurácia, pois os eritrócitos mais deficientes estão circulando nesse momento",
+      "A deficiência de G6PD é ligada ao X, afetando predominantemente homens; mulheres heterozigotas raramente manifestam hemólise por mosaicismo de inativação do X (lionização)",
+      "O favismo (hemólise por ingestão de favas) ocorre porque Vicia faba contém divicina e isouramil, oxidantes potentes que esgotam o NADPH especialmente em eritrócitos G6PD-deficientes"
+    ],
+    "answer": [
+      "A G6PD (Glicose-6-Fosfato Desidrogenase) catalisa a etapa limitante da via das pentoses fosfato: G6P + NADP⁺ → 6-fosfogluconolactona + NADPH",
+      "Sem NADPH → GSH não é regenerada → acúmulo de H₂O₂ e radicais livres → oxidação da Hb → corpos de Heinz (Hb precipitada) → 'bite cells' (hemácias com morsura) no esfregaço",
+      "A deficiência de G6PD é ligada ao X, afetando predominantemente homens; mulheres heterozigotas raramente manifestam hemólise por mosaicismo de inativação do X (lionização)",
+      "O favismo (hemólise por ingestão de favas) ocorre porque Vicia faba contém divicina e isouramil, oxidantes potentes que esgotam o NADPH especialmente em eritrócitos G6PD-deficientes"
+    ],
+    "type": "multi",
+    "justification": "A G6PD deve ser dosada <strong>fora da crise hemolítica</strong>. Durante a crise, os eritrócitos mais deficientes em G6PD já foram destruídos, e os reticulócitos e eritrócitos jovens remanescentes têm <em>mais</em> G6PD que os velhos → dosagem falsamente normal ou limítrofe. Para confirmar deficiência, dosar quando o paciente está estável, sem hemólise ativa, semanas após o episódio agudo."
+  },
+  {
+    "question": "A Hemoglobinúria Paroxística Noturna (HPN) é uma clonopata adquirida das células-tronco hematopoiéticas:",
+    "options": [
+      "A mutação somática no gene PIG-A (fosfatidilinositol glicana classe A) impede a síntese de âncoras GPI → ausência de CD55 (DAF — Decay Accelerating Factor) e CD59 (Protectina/MIRL) → complemento ativa e lisa eritrócitos HPN",
+      "O diagnóstico definitivo de HPN é feito por citometria de fluxo pesquisando ausência de CD55 e CD59 (e de FLAER para granulócitos) — não por teste de Ham (acidificação) ou lise por sacarose",
+      "Na HPN, a hemólise intravascular libera Hb livre que sequestra NO → vasoconstricção, disfunção erétil, hipertensão pulmonar, trombose — o sequestro de NO explica por que trombose em sítios incomuns (veia hepática, porta) é característica",
+      "O eculizumab (anti-C5) trata a hemólise intravascular mas não o risco trombótico residual, pois trombose na HPN também é mediada por plaquetas ativadas via GPI-independente",
+      "A HPN ocorre exclusivamente em adultos jovens e sua associação com aplasia medular é acidental, sem mecanismo fisiopatológico comum"
+    ],
+    "answer": [
+      "A mutação somática no gene PIG-A (fosfatidilinositol glicana classe A) impede a síntese de âncoras GPI → ausência de CD55 (DAF — Decay Accelerating Factor) e CD59 (Protectina/MIRL) → complemento ativa e lisa eritrócitos HPN",
+      "O diagnóstico definitivo de HPN é feito por citometria de fluxo pesquisando ausência de CD55 e CD59 (e de FLAER para granulócitos) — não por teste de Ham (acidificação) ou lise por sacarose",
+      "Na HPN, a hemólise intravascular libera Hb livre que sequestra NO → vasoconstricção, disfunção erétil, hipertensão pulmonar, trombose — o sequestro de NO explica por que trombose em sítios incomuns (veia hepática, porta) é característica",
+      "O eculizumab (anti-C5) trata a hemólise intravascular mas não o risco trombótico residual, pois trombose na HPN também é mediada por plaquetas ativadas via GPI-independente"
+    ],
+    "type": "multi",
+    "justification": "A associação HPN-aplasia <strong>não é acidental</strong>: há mecanismo fisiopatológico comum. Na aplasia medular autoimune, os linfócitos T destroem células-tronco normais; células com mutação PIG-A têm escape imune (o GPI pode ser um alvo dos linfócitos T autorreativos). Assim, o clone HPN expande relativamente ao receber pressão seletiva positiva. ~30% das aplasias medulares têm clone HPN detectável. Esta relação é clinicamente importante: deve-se pesquisar HPN em aplasias."
+  },
+  {
+    "question": "A AHAI (Anemia Hemolítica Autoimune) tem subtipos com mecanismos distintos. Identifique as associações corretas:",
+    "options": [
+      "AHAI por anticorpo quente (IgG a 37°C): hemólise predominantemente extravascular via Fc-gama dos macrófagos esplênicos; Coombs direto positivo para IgG; causas: LES, LLC, metildopa",
+      "AHAI por anticorpo frio (IgM a <30°C): ativa complemento nas extremidades → C3b deposita nos eritrócitos → hemólise extravascular pelas células de Kupffer (receptor CR1/CR3); Coombs direto positivo para C3d; causas: Mycoplasma, EBV",
+      "A Síndrome de Evans combina AHAI com trombocitopenia imune (PTI), sugerindo mecanismo autoimune compartilhado — não confundir com PTT (Púrpura Trombocitopênica Trombótica)",
+      "Na AHAI por IgG, a corticoterapia é primeira linha pois reduz a atividade dos macrófagos esplênicos E diminui a síntese de autoanticorpos; rituximab (anti-CD20) é segunda linha",
+      "A AHAI por penicilina em altas doses ocorre por mecanismo haptênico: a penicilina liga-se covalentemente às proteínas da membrana eritrocitária → anticorpos IgG contra o hapteno → hemólise"
+    ],
+    "answer": [
+      "AHAI por anticorpo quente (IgG a 37°C): hemólise predominantemente extravascular via Fc-gama dos macrófagos esplênicos; Coombs direto positivo para IgG; causas: LES, LLC, metildopa",
+      "AHAI por anticorpo frio (IgM a <30°C): ativa complemento nas extremidades → C3b deposita nos eritrócitos → hemólise extravascular pelas células de Kupffer (receptor CR1/CR3); Coombs direto positivo para C3d; causas: Mycoplasma, EBV",
+      "A Síndrome de Evans combina AHAI com trombocitopenia imune (PTI), sugerindo mecanismo autoimune compartilhado — não confundir com PTT (Púrpura Trombocitopênica Trombótica)",
+      "Na AHAI por IgG, a corticoterapia é primeira linha pois reduz a atividade dos macrófagos esplênicos E diminui a síntese de autoanticorpos; rituximab (anti-CD20) é segunda linha",
+      "A AHAI por penicilina em altas doses ocorre por mecanismo haptênico: a penicilina liga-se covalentemente às proteínas da membrana eritrocitária → anticorpos IgG contra o hapteno → hemólise"
+    ],
+    "type": "multi",
+    "justification": "Todas são corretas nesta questão. O ponto mais difícil é distinguir Síndrome de Evans (AHAI + PTI autoimune, sem microangiopatia) de PTT (hemólise microangiopática + plaquetopenia por consumo em microtrombos, com esquizócitos no esfregaço). Esta distinção é emergência: PTT requer plasmaférese urgente; Evans requer imunossupressão. Confundir os dois pode ser fatal."
+  },
+  {
+    "question": "A PTT (Púrpura Trombocitopênica Trombótica) é emergência hematológica. Sobre seu mecanismo e manejo:",
+    "options": [
+      "A deficiência de ADAMTS13 (<10%) impede a clivagem dos multímeros de FvW (Fator von Willebrand) ultralargos → microtrombos plaquetários difusos → fragmentação mecânica dos eritrócitos → esquizócitos no esfregaço",
+      "A transfusão de plaquetas está indicada em PTT quando plaquetas <10.000/µL com sangramento ativo, pois o benefício hemostático supera o risco de agravar a trombose microvascular",
+      "A plasmaférese substitui o plasma do paciente (rico em anticorpos anti-ADAMTS13 e multímeros de FvW) por plasma fresco congelado (que contém ADAMTS13 funcional) — tratamento de urgência que reduz mortalidade de >90% para <20%",
+      "O pentâmero clássico da PTT (hemólise microangiopática, plaquetopenia, febre, IRA, alteração neurológica) está presente em <30% dos pacientes ao diagnóstico — a tríade hemólise+plaquetopenia+ADAMTS13 <10% já é suficiente para iniciar tratamento",
+      "A SHU (Síndrome Hemolítico-Urêmica) típica por E. coli O157:H7 difere da PTT por ADAMTS13 normal, predomínio de IRA, diarreia hemorrágica precedente e contraindicação a antibióticos"
+    ],
+    "answer": [
+      "A deficiência de ADAMTS13 (<10%) impede a clivagem dos multímeros de FvW (Fator von Willebrand) ultralargos → microtrombos plaquetários difusos → fragmentação mecânica dos eritrócitos → esquizócitos no esfregaço",
+      "A plasmaférese substitui o plasma do paciente (rico em anticorpos anti-ADAMTS13 e multímeros de FvW) por plasma fresco congelado (que contém ADAMTS13 funcional) — tratamento de urgência que reduz mortalidade de >90% para <20%",
+      "O pentâmero clássico da PTT (hemólise microangiopática, plaquetopenia, febre, IRA, alteração neurológica) está presente em <30% dos pacientes ao diagnóstico — a tríade hemólise+plaquetopenia+ADAMTS13 <10% já é suficiente para iniciar tratamento",
+      "A SHU (Síndrome Hemolítico-Urêmica) típica por E. coli O157:H7 difere da PTT por ADAMTS13 normal, predomínio de IRA, diarreia hemorrágica precedente e contraindicação a antibióticos"
+    ],
+    "type": "multi",
+    "justification": "A transfusão de plaquetas em PTT é <strong>contraindicada</strong> exceto em sangramento com risco imediato de vida — não apenas 'indicada com ressalva'. Plaquetas transfundidas alimentam os microtrombos existentes, piorando a oclusão microvascular e podendo precipitar AVC e infarto. A restrição é enfática: 'transfundir plaquetas em PTT é como jogar gasolina no fogo'. Exceções extremamente raras e controvertidas."
+  },
+  {
+    "question": "A anemia da doença renal crônica (DRC) é exemplo de anemia hipoproliferativa por déficit hormonal. Sobre sua fisiopatologia e tratamento:",
+    "options": [
+      "A principal causa é a redução da massa de células peritubulares intersticiais produtoras de EPO à medida que o TFG cai — anemia tipicamente normocítica, normocrômica, com reticulócitos baixos e EPO paradoxalmente baixa para o grau de anemia",
+      "Hepcidina elevada na DRC (redução de sua excreção renal + inflamação microinflamatória urêmica) bloqueia a ferroportina → ferro preso em macrófagos → eritropoiese ferropriva funcional apesar de estoques adequados",
+      "A meta de Hb com AEEs (Agentes Estimuladores da Eritropoiese) na DRC deve ser >12 g/dL para maximizar a qualidade de vida e reduzir eventos cardiovasculares, conforme estudos recentes",
+      "Os inibidores de PHD (roxadustat, daprodustat) estabilizam HIF endógeno → aumentam EPO endógena E reduzem hepcidina → dupla vantagem sobre AEEs convencionais na DRC com componente de ACD",
+      "Prematuridade e IRC hepática (cirrose + IR) têm anemia mais refratária que IRC renal isolada porque o rim é responsável por <10% da produção de EPO, enquanto o fígado produz >90%"
+    ],
+    "answer": [
+      "A principal causa é a redução da massa de células peritubulares intersticiais produtoras de EPO à medida que o TFG cai — anemia tipicamente normocítica, normocrômica, com reticulócitos baixos e EPO paradoxalmente baixa para o grau de anemia",
+      "Hepcidina elevada na DRC (redução de sua excreção renal + inflamação microinflamatória urêmica) bloqueia a ferroportina → ferro preso em macrófagos → eritropoiese ferropriva funcional apesar de estoques adequados",
+      "Os inibidores de PHD (roxadustat, daprodustat) estabilizam HIF endógeno → aumentam EPO endógena E reduzem hepcidina → dupla vantagem sobre AEEs convencionais na DRC com componente de ACD"
+    ],
+    "type": "multi",
+    "justification": "Dois erros: (1) A meta de Hb com AEEs na DRC é <strong>10–11 g/dL</strong> (não >12 g/dL). Os trials CHOIR e CREATE demonstraram que alvejar Hb >13 g/dL aumenta eventos cardiovasculares, AVC e mortalidade. (2) No adulto, o rim produz <strong>90%</strong> da EPO (células peritubulares renais); o fígado produz <10%. A afirmação inverteu os percentuais — erro que subverte a fisiopatologia da anemia da DRC."
+  },
+  {
+    "question": "A hemocromatose hereditária é a doença genética mais comum em caucasianos. Sobre seu mecanismo e complicações:",
+    "options": [
+      "A mutação HFE C282Y (homozigose) reduz a sinalização via BMP-SMAD hepática → ↓hepcidina → ferroportina permanentemente ativa → absorção intestinal descontrolada de ferro → sobrecarga progressiva",
+      "O ferro se deposita preferencialmente em fígado (cirrose), coração (cardiomiopatia dilatada), pâncreas endócrino (diabetes 'bronzeado'), articulações (pirofosfato de cálcio, artropatia) e gônadas (hipogonadismo hipogonadotrófico)",
+      "O tratamento de primeira linha é a flebotomia seriada (500 mL/semana inicialmente) removendo ~250 mg Fe/sessão até ferritina <50 µg/L e saturação de transferrina <30%",
+      "A saturação de transferrina >45% em jejum é o marcador mais precoce de hemocromatose, mesmo antes da elevação da ferritina — testa a disponibilidade de ferro livre para dano orgânico",
+      "O deferasirox é o quelante de ferro oral de escolha na hemocromatose hereditária, sendo superior à flebotomia por remover ferro especificamente do miocárdio"
+    ],
+    "answer": [
+      "A mutação HFE C282Y (homozigose) reduz a sinalização via BMP-SMAD hepática → ↓hepcidina → ferroportina permanentemente ativa → absorção intestinal descontrolada de ferro → sobrecarga progressiva",
+      "O ferro se deposita preferencialmente em fígado (cirrose), coração (cardiomiopatia dilatada), pâncreas endócrino (diabetes 'bronzeado'), articulações (pirofosfato de cálcio, artropatia) e gônadas (hipogonadismo hipogonadotrófico)",
+      "O tratamento de primeira linha é a flebotomia seriada (500 mL/semana inicialmente) removendo ~250 mg Fe/sessão até ferritina <50 µg/L e saturação de transferrina <30%",
+      "A saturação de transferrina >45% em jejum é o marcador mais precoce de hemocromatose, mesmo antes da elevação da ferritina — testa a disponibilidade de ferro livre para dano orgânico"
+    ],
+    "type": "multi",
+    "justification": "Na hemocromatose hereditária, a flebotomia é <strong>superior ao deferasirox</strong> e é o tratamento de primeira linha — é mais eficaz, mais segura, mais barata e remove ferro sistematicamente. O deferasirox é reservado para pacientes que não toleram flebotomia (cardiopatia grave, anemia concomitante) ou para hemocromatose secundária a transfusões (talassemia). Afirmar que deferasirox é superior à flebotomia é clinicamente incorreto e poderia levar à escolha terapêutica subótima."
+  },
+  {
+    "question": "A transfusão de concentrado de hemácias (CH) na UTI deve seguir estratégia baseada em evidências:",
+    "options": [
+      "A estratégia restritiva (threshold Hb 7 g/dL) reduz mortalidade em 30 dias e uso de hemocomponentes em comparação com a liberal (Hb 10 g/dL) em pacientes sem cardiopatia isquêmica ativa",
+      "Em cardiopatia isquêmica ativa ou cirurgia cardíaca, o threshold restritivo é Hb 8 g/dL pois o miocárdio isquêmico é mais sensível à hipóxia e a extração de O₂ já está no máximo",
+      "Cada unidade de CH (200-250 mL de eritrócitos concentrados) aumenta a Hb em ~1 g/dL e o Hematócrito em ~3% — fórmula de dose: Unidades = (Hb desejada – Hb atual) × Peso(kg) × 0,25",
+      "A TRALI (Transfusion-Related Acute Lung Injury) é causada por anticorpos anti-HNA (Human Neutrophil Antigen) que ativam neutrófilos pulmonares → SARA em 6h; diferencia-se da TACO (sobrecarga) por não responder a diuréticos e por pressões de enchimento normais",
+      "A hemossiderose transfusional em politransfundidos (talassemia, falciforme) deve ser tratada com deferasirox (VO) ou deferoxamina (SC/IV) para evitar cardiomiopatia e cirrose por depósito de ferro"
+    ],
+    "answer": [
+      "A estratégia restritiva (threshold Hb 7 g/dL) reduz mortalidade em 30 dias e uso de hemocomponentes em comparação com a liberal (Hb 10 g/dL) em pacientes sem cardiopatia isquêmica ativa",
+      "Em cardiopatia isquêmica ativa ou cirurgia cardíaca, o threshold restritivo é Hb 8 g/dL pois o miocárdio isquêmico é mais sensível à hipóxia e a extração de O₂ já está no máximo",
+      "Cada unidade de CH (200-250 mL de eritrócitos concentrados) aumenta a Hb em ~1 g/dL e o Hematócrito em ~3% — fórmula de dose: Unidades = (Hb desejada – Hb atual) × Peso(kg) × 0,25",
+      "A TRALI (Transfusion-Related Acute Lung Injury) é causada por anticorpos anti-HNA (Human Neutrophil Antigen) que ativam neutrófilos pulmonares → SARA em 6h; diferencia-se da TACO (sobrecarga) por não responder a diuréticos e por pressões de enchimento normais",
+      "A hemossiderose transfusional em politransfundidos (talassemia, falciforme) deve ser tratada com deferasirox (VO) ou deferoxamina (SC/IV) para evitar cardiomiopatia e cirrose por depósito de ferro"
+    ],
+    "type": "multi",
+    "justification": "Todas as alternativas são corretas. O ponto mais desafiador é a distinção TRALI versus TACO: ambas causam edema pulmonar pós-transfusão, mas TRALI tem pressões de enchimento normais/baixas (lesão inflamatória, não sobrecarga), não melhora com diuréticos e pode piorar com os mesmos. TACO tem pressões elevadas, responde a diuréticos, ocorre em cardiopatas ou com infusão rápida. Esta distinção muda completamente o manejo."
+  },
+
+  {
+    "question": "O eritrócito maduro possui mitocôndrias funcionais que permitem gerar ATP via fosforilação oxidativa, tornando-o mais eficiente energeticamente que células anucleadas de outros tecidos",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O eritrócito maduro não possui mitocôndrias — elas são eliminadas durante a eritropoiese, junto com o núcleo, na transição do reticulócito para a hemácia madura. O ATP é gerado exclusivamente pela <strong>glicólise anaeróbia</strong> (via Embden-Meyerhof), gerando apenas 2 ATP/glicose vs. ~36 ATP/glicose via fosforilação oxidativa. A ausência mitocondrial é intencional: elimina o consumo de O₂ pela célula transportadora de O₂. Um erro frequente é confundir reticulócitos (que ainda têm mitocôndrias residuais detectadas pelo azul de cresil) com eritrócitos maduros."
+  },
+  {
+    "question": "A forma sigmoide da curva de dissociação do O₂ da hemoglobina confere vantagem fisiológica sobre a curva hiperbólica da mioglobina, pois permite tanto carga eficiente nos alvéolos quanto descarga eficiente nos tecidos dentro de uma faixa fisiológica de PO₂",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Na curva sigmoide da Hb (coeficiente de Hill n≈2,8): no platô (PO₂ 60–100 mmHg, alveolar), a Hb permanece >90% saturada mesmo com quedas de PO₂ — segurança. Na parte íngreme (PO₂ 20–40 mmHg, tecidual), pequenas variações de PO₂ causam grandes variações de saturação → entrega eficiente. A mioglobina (curva hiperbólica, P50≈1-2 mmHg) saturaria completamente já em PO₂ muito baixas e não liberaria O₂ adequadamente nos tecidos em PO₂ fisiológica — excelente para armazenar O₂ no músculo, mas ineficiente para transporte sistêmico."
+  },
+  {
+    "question": "Na intoxicação por CO, a SpO₂ medida pelo oxímetro de pulso de dois comprimentos de onda superestima a saturação real do paciente, pois o aparelho não distingue HbCO de HbO₂",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O oxímetro de pulso convencional usa comprimentos de onda de 660 nm (HbO₂ vs DesoxiHb) e 940 nm. A carboxiHb (HbCO) absorve luz de 660 nm similarmente à HbO₂ → o aparelho a lê como 'oxiHb' → SpO₂ falsamente elevada (pode mostrar 98% quando a saturação funcional real é 50%). O diagnóstico correto exige <strong>co-oximetria</strong> na gasometria arterial, que usa múltiplos comprimentos de onda e distingue HbO₂, HbCO, MetHb e DesoxiHb. Este erro diagnóstico pode ter consequências fatais em incêndios."
+  },
+  {
+    "question": "O estado T da hemoglobina é estabilizado por ligação do 2,3-DPG na interface das cadeias alfa, entre as subunidades α₁ e α₂",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O 2,3-DPG liga-se na <strong>cavidade central</strong> entre as <em>cadeias beta</em> (β₁ e β₂) do tetrâmero no estado T. Os sítios de contato são: His β2 (N-terminal), Lys β82, His β143 de cada cadeia β — totalizando 8 pontes de hidrogênio com as 5 cargas negativas do 2,3-DPG. Na HbF, a cadeia γ tem serina na posição 143 (em vez de histidina) → menor ligação ao 2,3-DPG → P50 menor (maior afinidade). A confusão entre cadeias alfa e beta neste contexto é erro conceitual com implicações diretas para compreender a diferença HbA vs HbF."
+  },
+  {
+    "question": "A alcalose respiratória aguda por hiperventilação pode causar tetania e parestesias apesar de PaO₂ normal, pois o aumento de pH desloca a curva de dissociação para a esquerda, reduzindo a entrega de O₂ aos tecidos periféricos",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O mecanismo é bidirecional: (1) ↓pH → curva à esquerda → menor descarga de O₂ nos tecidos (hipóxia relativa periférica); (2) alcalose → ↑ligação de cálcio às proteínas plasmáticas → ↓Ca²⁺ ionizado → excitabilidade neuromuscular → tetania, espasmo carpopedal, parestesias periorais. Estes sintomas são paradoxais: a pessoa hiperventila para 'respirar mais', mas os tecidos recebem <em>menos</em> O₂ funcionalmente. A compensação crônica (24-48h) inclui aumento renal do 2,3-DPG e retenção de H⁺ para normalizar a entrega de O₂."
+  },
+  {
+    "question": "O Efeito Haldane implica que o sangue venoso (com maior proporção de DesoxiHb) transporta menos CO₂ que o sangue arterial, pois a DesoxiHb é mais rígida e impermeável ao CO₂",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O Efeito Haldane diz o oposto: o sangue venoso (com DesoxiHb) transporta <em>mais</em> CO₂ que o arterial. A DesoxiHb: (1) é melhor tampão de H⁺ (pKa das histidinas maior na desoxiHb) → capta H⁺ gerado da dissociação do H₂CO₃ nos tecidos → facilita produção de HCO₃⁻ (que vai ao plasma); (2) forma mais carbamatos N-terminais com o CO₂. Resultado: sangue venoso carrega ~70 mL CO₂/L vs ~50 mL/L do arterial. Afirmar que DesoxiHb é 'impermeável ao CO₂' contraria toda a fisiologia do transporte de CO₂."
+  },
+  {
+    "question": "Na deficiência de G6PD, a hemólise é crônica e constante, similar à esferocitose hereditária, pois os eritrócitos deficientes são continuamente destruídos no baço independentemente de fatores extrínsecos",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A deficiência de G6PD causa hemólise <em>episódica</em> (aguda), não crônica constante. Em condições basais, a produção basal de NADPH é suficiente para manter a GSH reduzida nos eritrócitos, que sobrevivem normalmente. A hemólise ocorre quando há <strong>estresse oxidativo agudo</strong> (infecções, drogas oxidantes, favas) que supera a capacidade redutora residual. Entre os episódios, os eritrócitos G6PD-deficientes circulam normalmente. A esferocitose hereditária, em contraste, causa hemólise crônica por defeito estrutural permanente independente de fatores extrínsecos."
+  },
+  {
+    "question": "A ferritina sérica é sempre o melhor marcador para avaliar estoques de ferro, e uma ferritina >12 µg/L exclui definitivamente deficiência de ferro em qualquer contexto clínico",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A ferritina é um <strong>reagente de fase aguda positivo</strong> — na presença de inflamação, infecção, neoplasia, hepatopatia ou IRC, os níveis de ferritina podem estar normais ou elevados mesmo com estoques de ferro completamente depletados. A ferritina 'normal' (>12 µg/L) em paciente com PCR elevado pode mascarar ferropriva real. Nestes contextos, utilizar: (1) Ferro sérico + TIBC + saturação de transferrina; (2) Receptor solúvel de transferrina (sTfR); (3) Relação sTfR/log(ferritina) >2 aponta ferropriva; (4) Resposta clínica ao ferro terapêutico. Em paciente saudável sem inflamação, ferritina <12 µg/L é muito sensível para ferropriva."
+  },
+  {
+    "question": "A síndrome de Plummer-Vinson (anemia ferropriva + disfagia por membranas esofágicas + coiloníquia) é considerada condição pré-neoplásica pela associação com carcinoma escamoso de esôfago",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A Síndrome de Plummer-Vinson (também chamada de Patterson-Kelly no Reino Unido) é uma tríade característica de ferropriva severa crônica. As membranas esofágicas (webs) cervicais causam disfagia a sólidos. A associação com carcinoma escamoso de esôfago e faringe é bem estabelecida — risco ~10× aumentado. Mecanismo proposto: deficiência de ferro compromete a renovação do epitélio escamoso, favorecendo transformação neoplásica. O tratamento com ferro pode regredir as membranas e reduzir o risco oncológico. EDA de vigilância é recomendada após o diagnóstico."
+  },
+  {
+    "question": "A β-talassemia minor cursa tipicamente com RDW elevado e anisocitose intensa no esfregaço, permitindo diferenciá-la da anemia ferropriva pelo maior RDW nesta última",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O raciocínio está invertido: na β-talassemia minor, o RDW é tipicamente <strong>normal</strong> (população homogeneamente microcítica). Na anemia ferropriva, o RDW está <em>elevado</em> (anisocitose — eritrócitos de vários tamanhos, pois a síntese vai se deteriorando progressivamente). Esta diferença é o ponto-chave do diagnóstico diferencial: MCV baixo + RDW normal → talassemia minor; MCV baixo + RDW elevado → ferropriva. O índice de Mentzer (MCV/RBC): <13 sugere talassemia; >13 sugere ferropriva — embora de sensibilidade moderada."
+  },
+  {
+    "question": "Na anemia perniciosa, o anticorpo anti-fator intrínseco tipo I (bloqueador) impede que o fator intrínseco se ligue à vitamina B12 luminal, enquanto o tipo II (precipitante) impede a ligação do complexo B12-FI ao receptor cubilina no íleo terminal",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Existem dois tipos de anticorpos anti-FI na anemia perniciosa: (1) <strong>Tipo I (bloqueador)</strong>: presente em ~75% dos casos, liga-se ao sítio de ligação da B12 no FI → impede formação do complexo FI-B12; (2) <strong>Tipo II (precipitante)</strong>: presente em ~50%, liga-se ao complexo FI-B12 já formado → impede sua ligação ao receptor cubilina/amnionless no íleo terminal. Além destes, anticorpos anti-células parietais (presentes em ~90%) atacam a H⁺/K⁺-ATPase das células parietais, reduzindo produção de FI. A combinação desses mecanismos torna a deficiência de B12 progressiva e de difícil reversão sem tratamento parenteral."
+  },
+  {
+    "question": "Na sepse grave com lactato elevado e PaO₂ normal, o problema central é a hipóxia citopática: as células têm O₂ disponível mas não conseguem utilizá-lo por disfunção mitocondrial induzida pelas endotoxinas, justificando por que aumentar a Hb acima de 10 g/dL não melhora o prognóstico nesse contexto",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A <strong>hipóxia citopática</strong> da sepse é causada por inibição do Complexo IV (citocromo c oxidase) mitocondrial por endotoxinas, TNF-α, IL-1β e NO em excesso → as células não podem usar O₂ para gerar ATP → metabolismo anaeróbio → lactato elevado, mesmo com O₂ suficiente no sangue (PaO₂ normal). O estudo TRICC confirmou que estratégia restritiva (Hb 7 g/dL) é equivalente ou superior à liberal (Hb 10 g/dL) em pacientes sépticos sem cardiopatia. O tratamento da sepse é antibioticoterapia, controle do foco, vasopressores — não transfusão."
+  },
+  {
+    "question": "A transferência de O₂ da hemoglobina materna para a fetal na placenta é possível porque a HbF tem maior afinidade por O₂ (P50 menor) que a HbA, criando um gradiente favorável à captação pelo feto mesmo em ambiente de baixa PO₂ relativa",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> No compartimento placentário, a PO₂ materna é ~40–50 mmHg (sangue venoso materno). A HbA materna libera O₂ nessa PO₂ (parte da porção íngreme da curva), enquanto a HbF fetal (P50≈18 mmHg vs P50≈26 mmHg da HbA) ainda está no platô e capta avidamente esse O₂. O gradiente de afinidade HbF>HbA é o mecanismo que permite a transferência eficiente de O₂ da mãe para o feto mesmo em baixa PO₂. Adicionalmente, o efeito Bohr contribui: o CO₂ produzido pelo feto vai para o sangue materno → acidifica o sangue materno → desvia CDO materna à direita → mais O₂ liberado (efeito duplo de Bohr)."
+  },
+  {
+    "question": "A Doença Hemolítica do Recém-Nascido (DHRN) por incompatibilidade Rh é mais grave na primeira gestação, pois a mãe ainda não desenvolveu imunotolerância ao antígeno D paterno",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A DHRN por Rh é tipicamente <em>mais grave nas gestações subsequentes</em>. Na primeira gestação, a mãe Rh-negativa é sensibilizada pelo sangue fetal Rh-positivo (principalmente no parto) → produz IgM inicialmente (não atravessa placenta) → depois IgG (atravessa placenta). Na <em>segunda gestação</em> ou posteriores, a resposta anamnéstica (memória imunológica) produz rapidamente IgG anti-D em titulações muito maiores → IgG atravessa a placenta → destruição massiva das hemácias fetais Rh+ → eritroblastose fetal grave. Por isso a imunoglobulina anti-D (RhoGAM) é administrada na 28ª semana E após o parto/procedimentos para prevenir a sensibilização."
+  },
+  {
+    "question": "O Sinal de Courvoisier-Terrier (vesícula biliar palpável + icterícia indolor e progressiva) é patognomônico de coledocolitíase e deve ser investigado primariamente com CPRE (Colangiopancreatografia Retrógrada Endoscópica)",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O Sinal de Courvoisier-Terrier sugere <strong>obstrução biliar por causa não calculosa</strong> — classicamente neoplasia (câncer de cabeça de pâncreas, colangiocarcinoma distal, ampuloma). A lógica é: na coledocolitíase, a vesícula geralmente tem paredes espessadas/fibrosadas por colecistite crônica prévia e <em>não se distende</em> facilmente. Na neoplasia, a vesícula é previamente saudável → distende-se progressivamente com a obstrução lenta → Sinal de Courvoisier positivo. Portanto, a investigação prioritária é USG abdominal + TC de abdome para pesquisa neoplásica, não CPRE de início. A CPRE pode ser necessária para estadiamento ou paliação, mas não é o primeiro passo."
+  },
+  {
+    "question": "Na anemia falciforme, o traço falciforme (HbAS — heterozigoto) confere proteção seletiva contra malária grave por Plasmodium falciparum, explicando a alta frequência do alelo HbS em populações africanas subsaarianas como exemplo de polimorfismo balanceado",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O polimorfismo balanceado da HbS é um dos exemplos mais icônicos da genética evolutiva: a malária exerce pressão seletiva intensa em regiões endêmicas. Homozigotos HbSS: doença grave, mortalidade precoce sem tratamento (seleção negativa). Homozigotos HbAA: susceptíveis à malária grave. Heterozigotos HbAS: resistentes à malária grave (possivelmente porque eritrócitos falcizados são destruídos mais rapidamente impedindo o ciclo do Plasmodium) + sem doença falciforme. O resultado evolutivo é a manutenção do alelo HbS em frequência de ~8–25% em populações africanas de malária endêmica — frequência muito maior do que mutações deletérias teriam sem vantagem seletiva."
+  },
+  {
+    "question": "A leitura de SpO₂ de 98% por oximetria de pulso em um paciente com MetHb de 40% é confiável e indica boa oxigenação arterial, pois o oxímetro moderno detecta todas as formas de hemoglobina",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Oxímetros de pulso convencionais de 2 comprimentos de onda <em>não detectam MetHb</em> com confiabilidade. Com MetHb elevada, o aparelho tende a exibir SpO₂ próxima de 85% como 'atrator' independente do valor real, ou pode superestimar a saturação. Com MetHb de 40%, a saturação funcional real seria ~60% (apenas 60% da Hb restante disponível para O₂), mas o oxímetro pode mostrar valores falsamente normais ou fixos em ~85%. O diagnóstico correto de MetHb exige <strong>co-oximetria</strong> na gasometria arterial. Oxímetros de 'pulse co-oximetry' (8 comprimentos de onda, ex: Masimo Rad-57) têm melhor acurácia para MetHb."
+  },
+  {
+    "question": "A anemia aplásica adquirida tem mecanismo autoimune como principal etiologia, com linfócitos T CD8+ citotóxicos destruindo células-tronco hematopoiéticas — o que explica por que o transplante de células-tronco alogênico e a imunossupressão com ATG + ciclosporina são tratamentos eficazes",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> Em ~70-80% das aplasias adquiridas, linfócitos T (CD4+ e CD8+) autorreativos secretam IFN-γ e TNF-α que inibem e destroem células-tronco HSC via Fas-FasL e produção de NO. Evidências: (1) linfócitos de pacientes com aplasia inibem colônias hematopoiéticas in vitro; (2) ATG (globulina antitimocítica) destrói linfócitos T autorreativos → resposta em 60-70% dos casos; (3) remissão com ciclosporina; (4) recaída frequente após descontinuar imunossupressão. O transplante alogênico é curativo ao substituir toda a hematopoiese. A proporção de casos idiopáticos vs tóxicos vs virais reflete a predominância autoimune."
+  },
+  {
+    "question": "Na anemia por deficiência de B12, é seguro iniciar apenas ácido fólico enquanto aguardar a dosagem sérica de B12, pois o folato corrige a anemia megaloblástica sem riscos adicionais",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso — e este é um erro clínico grave.</strong> Tratar deficiência de B12 apenas com folato pode: (1) <em>Corrigir a anemia</em> (via 'bypassing' parcial da methylfolate trap com doses suprafisiológicas de folato) sem corrigir a deficiência de B12 — falsa melhora hematológica que mascara a condição. (2) <em>Agravar ou precipitar a neuropatia subaguda combinada</em> (degeneração das colunas posterolaterais): com mais precursores eritroides dividindo-se rapidamente após folato, o consumo de B12 para síntese de DNA aumenta, agravando o déficit de B12 na via da metilmalonil-CoA mutase → mais acúmulo de MMA → mais desmielinização. A neuropatia pode tornar-se irreversível. Sempre dosar B12 E folato antes de suplementar isoladamente."
+  },
+  {
+    "question": "A transfusão de plaquetas é recomendada em PTT (Púrpura Trombocitopênica Trombótica) com plaquetopenia grave (<20.000/µL) para prevenir sangramento intracraniano, que é a principal causa de morte nesta condição",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Transfusão de plaquetas em PTT está <strong>contraindicada</strong> exceto em situações de risco imediato de vida com sangramento ativo incontrolável. As plaquetas transfundidas 'alimentam' os microtrombos de FvW/plaquetas já existentes, podendo precipitar AVC isquêmico, infarto mesentérico e piora da trombocitopenia (por consumo acelerado). A principal causa de morte em PTT não tratada é <em>neurológica</em> (AVC) e cardíaca (microinfarto) — mas estas complicações são da trombose, não do sangramento. O tratamento correto é <strong>plasmaférese urgente</strong>. O aforismo clínico: 'em PTT, plaquetas matam'."
+  },
+  {
+    "question": "A hidroxiureia reduz as crises vasooclusivas na anemia falciforme exclusivamente por seu efeito citotóxico sobre os eritrócitos HbSS, selecionando um clone eritrocitário com menor concentração de HbS",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O mecanismo da hidroxiureia não é citotóxia seletiva, mas sim <strong>reativação da síntese de HbF</strong>. A hidroxiureia: (1) Inibe a ribonucleotídeo redutase → estresse genotóxico → ativa vias de sinalização (NO, cGMP, HSP70, proteína quinase A) → estimula síntese das cadeias γ nos eritroblastos; (2) Cada tetrâmero com ≥1 cadeia γ (HbF) não polimeriza com HbS; (3) Reduz crises em ~50% e mortalidade em ~40%. Além disso, tem efeitos anti-inflamatórios (reduz neutrófilos e moléculas de adesão) que contribuem para reduzir vaso-oclusão. Não há 'seleção clonal' — o mecanismo é farmacológico e epigenético."
+  },
+  {
+    "question": "O 2,3-DPG em eritrócitos de doadores de sangue armazenados por mais de 2 semanas está tão depletado que as hemácias transfundidas se comportam funcionalmente de forma semelhante à HbF — com alta afinidade por O₂ e baixa entrega tecidual — até regeneração do 2,3-DPG em 12–24h após a transfusão",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O 2,3-DPG no sangue estocado decai progressivamente: semana 1 (~normal, P50≈26 mmHg) → semana 2-3 (↓50%, P50 reduzido) → semana 4-6 (quase zero, P50≈15-18 mmHg — similar à HbF). Após transfusão, a glicolise eritrocitária (via Luebering-Rapoport) regenera 2,3-DPG em 12-24 horas. Este fato é relevante em UTI de trauma/cirurgia: transfusão maciça com sangue armazenado pode ter efeito paradoxal de piorar a entrega tecidual de O₂ a curto prazo — razão pela qual alguns protocolos de trauma usam sangue fresco (<7 dias). Em pacientes críticos com margem de reserva estreita, esta janela de 12-24h pode ser clinicamente significativa."
+  },
+  {
+    "question": "A hepcidina é produzida principalmente pelos macrófagos esplênicos em resposta à sobrecarga de ferro local detectada pela ferritina intracelular elevada",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> A hepcidina é produzida pelos <strong>hepatócitos</strong> (fígado), não pelos macrófagos esplênicos. Sua regulação envolve: sinais de ferro (transferrina diférrica → BMP6/BMP2 → SMAD1/5/8 → ↑hepcidina), sinais inflamatórios (IL-6 → JAK2-STAT3 → ↑hepcidina), e sinais eritropoiéticos (eritroferrona dos eritroblastos → antagoniza BMP-SMAD → ↓hepcidina). O erro em atribuir produção aos macrófagos esplênicos é compreensível — eles são o sítio de armazenamento de ferro, mas são o <em>alvo</em> da hepcidina (via ferroportina), não sua fonte."
+  },
+  {
+    "question": "A eritropoiese ineficaz na β-talassemia major é causada principalmente pela destruição das hemácias maduras no baço, não pela morte dos precursores na medula — por isso a esplenectomia corrige completamente a anemia",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Na β-talassemia major, 60-90% dos precursores eritroides são destruídos <em>na própria medula</em> (eritropoiese ineficaz) por precipitação das cadeias α livres → corpos de inclusão → apoptose intramedular (via Fas-FasL e caspases). A esplenectomia remove a hemólise extravascular esplênica das hemácias que conseguiram circular, melhorando moderadamente a anemia, mas <em>não corrige</em> a eritropoiese ineficaz medular, que é o mecanismo predominante. Por isso a anemia persiste (apenas menos grave) após esplenectomia. A única cura é o transplante de células-tronco hematopoiéticas ou terapia gênica."
+  },
+  {
+    "question": "A bilirrubina delta (δ), por estar covalentemente ligada à albumina, tem meia-vida prolongada de ~20 dias e explica porque a icterícia pode persistir por semanas após a resolução completa de uma obstrução biliar tratada cirurgicamente",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> A bilirrubina δ forma-se espontaneamente quando a BC permanece em alta concentração no plasma por tempo prolongado — uma ligação amida estável é formada entre o grupo propionato da BC e o grupo amino da lisina da albumina. Por estar covalentemente ligada: (1) não é filtrada pelo glomérulo (não causa bilirrubinúria); (2) tem meia-vida da albumina (~20 dias) em vez de horas; (3) persiste no soro mesmo após resolução da obstrução e queda da BC livre. Clinicamente: o paciente já resolveu a obstrução (bilirrubina livre caindo, fezes coradas voltando), mas ainda apresenta leve icterícia por semanas pela bilirrubina δ residual — fenômeno que não deve ser confundido com recidiva da obstrução."
+  },
+  {
+    "question": "Na hipóxia citopática da sepse, transfundir hemácias para elevar a Hb de 7 para 10 g/dL melhora significativamente o lactato sérico e o prognóstico, pois o aumento da oferta de O₂ (DO₂) supera a deficiência de extração mitocondrial",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> Na hipóxia citopática da sepse, o problema não é a <em>oferta</em> de O₂, mas a <em>utilização</em>: as mitocôndrias são disfuncionais por inibição do Complexo IV (citocromo c oxidase) por endotoxinas e mediadores inflamatórios. Aumentar a DO₂ (mais Hb) não corrige a falência mitocondrial → o lactato não melhora. Os estudos TRICC e TRISS confirmam que transfusão liberal em sépticos não reduz mortalidade. A abordagem correta é tratar a causa (antibióticos, controle de foco, vasopressores, otimização hemodinâmica). Elevar Hb além do threshold de 7 g/dL em sépticos sem cardiopatia pode até ser deletério (aloimunização, TRALI, TACO, imunossupressão transfusional)."
+  },
+  {
+    "question": "O chumbo (Pb) inibe seletivamente apenas a ferroquelatase na síntese do heme, causando anemia sideroblástica pura sem outros achados laboratoriais",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso.</strong> O chumbo inibe <em>múltiplas</em> enzimas da síntese do heme: (1) <strong>ALA-desidratase</strong> (também chamada porfobilinogênio sintase) → acúmulo de ALA (ácido delta-aminolevulínico) na urina; (2) <strong>Ferroquelatase</strong> → acúmulo de ZPP (Zinco-Protoporfirina) nos eritrócitos; (3) <strong>Coproporfirinogênio oxidase</strong>. Portanto, o diagnóstico laboratorial inclui: ZPP eritrocitária elevada, ALA urinário elevado, coproporfirina urinária elevada, além da própria dosagem de chumbo sérico/sanguíneo. A inibição de múltiplas enzimas (não apenas ferroquelatase) explica o perfil diagnóstico multiparamétrico do saturnismo."
+  },
+  {
+    "question": "O V-A CO₂ gap (diferença venoarterial de CO₂) acima de 6 mmHg sugere baixo débito cardíaco por estase venosa, independentemente dos valores absolutos de lactato",
+    "answer": "V",
+    "type": "tf",
+    "justification": "<strong>Verdadeiro.</strong> O V-A CO₂ gap (PvCO₂ – PaCO₂, normalmente <6 mmHg) reflete o débito cardíaco: com baixo DC, o sangue permanece mais tempo nos tecidos, acumulando mais CO₂ → diferença maior. Um V-A CO₂ gap >6 mmHg sugere que, mesmo que a SvcO₂ (saturação venosa central) pareça satisfatória, há hipoperfusão tecidual por baixo DC. Na prática da UTI, combina-se: SvcO₂ + V-A CO₂ gap + lactato para guiar ressuscitação. Paciente com SvcO₂ >70% mas V-A CO₂ gap >6 mmHg pode ter ainda fluxo inadequado (metabolismo anaeróbio oculto). Este parâmetro usa o Efeito Haldane indiretamente."
+  },
+  {
+    "question": "A HbA₂ acima de 3,5% na eletroforese é diagnóstica de β-talassemia minor mesmo na presença de anemia ferropriva concomitante, pois a deficiência de ferro não altera a síntese das cadeias delta",
+    "answer": "F",
+    "type": "tf",
+    "justification": "<strong>Falso — erro clínico relevante.</strong> A anemia ferropriva <em>reduz</em> a síntese de todas as cadeias de globina, incluindo as cadeias δ. Portanto, em paciente com β-talassemia minor concomitantemente ferropriva, a HbA₂ pode estar <strong>falsamente normal ou limítrofe</strong> (<3,5%), mascarando o diagnóstico de talassemia. A regra: se suspeitar de β-talassemia minor e o paciente estiver ferropriva, tratar primeiro a ferropriva e repetir a eletroforese de Hb após correção. Este erro leva a rastreamento neonatal falsamente negativo e aconselhamento genético incorreto em casais."
+  }
+]
+
+
+
+/* ══════════════ ESTADO DO QUIZ ══════════════ */
+let currentQ = 0;
+let userAnswers  = new Array(quizData.length).fill(null).map(()=>[]);
+let attempted    = new Array(quizData.length).fill(false);
+
+/* ══════════════ ELEMENTOS DOM ══════════════ */
+const content     = document.getElementById('quiz-content');
+const progressFill= document.getElementById('quiz-progress');
+const progressLbl = document.getElementById('progress-label');
+const prevBtn     = document.getElementById('prev-btn');
+const answerBtn   = document.getElementById('answer-btn');
+const nextBtn     = document.getElementById('next-btn');
+const submitBtn   = document.getElementById('submit-btn');
+const resultsDiv  = document.getElementById('results-container');
+const reportDiv   = document.getElementById('report-container');
+const navDiv      = document.getElementById('navigation-buttons');
+const progressWrap= document.querySelector('.progress-wrapper');
+
+/* ══════════════ RENDER ══════════════ */
+function init(){
+  shuffleArray(quizData);
+  renderAll();
+  goTo(0);
+  bindEvents();
+}
+
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+
+function renderAll(){
+  content.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className='question-card';
+    card.id=`q-${i}`;
+
+    const badgeClass = q.type==='tf' ? 'badge-tf' : 'badge-multi';
+    const badgeText  = q.type==='tf' ? '✦ V/F' : '◈ Múltipla escolha';
+
+    let optsHTML='';
+    if(q.type==='tf'){
+      optsHTML=`<div class="tf-options-container">
+        <button class="tf-option tf-v" data-q="${i}" data-o="V"><i class="fas fa-check"></i> Verdadeiro</button>
+        <button class="tf-option tf-f" data-q="${i}" data-o="F"><i class="fas fa-times"></i> Falso</button>
+      </div>`;
+    } else {
+      const letters=['A','B','C','D','E','F'];
+      optsHTML=`<div class="options-container">${q.options.map((opt,oi)=>`
+        <button class="mc-option" data-q="${i}" data-o="${opt.replace(/"/g,'&quot;')}">
+          <span class="option-indicator">${letters[oi]}</span>
+          <span>${opt}</span>
+        </button>`).join('')}</div>`;
+    }
+
+    card.innerHTML=`
+      <div class="q-meta">
+        <span class="q-num">Questão ${i+1} / ${quizData.length}</span>
+        <span class="q-type-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <p class="question-text">${q.question}</p>
+      ${optsHTML}
+      <div class="feedback" id="fb-${i}"></div>`;
+    content.appendChild(card);
+  });
+}
+
+/* ══════════════ NAVIGATION ══════════════ */
+function goTo(idx){
+  if(idx<0||idx>=quizData.length) return;
+  document.querySelector(`#q-${currentQ}`)?.classList.remove('active');
+  currentQ=idx;
+  document.querySelector(`#q-${currentQ}`)?.classList.add('active');
+  updateUI();
+}
+
+function updateUI(){
+  const done = attempted.filter(Boolean).length;
+  progressFill.style.width=`${(done/quizData.length)*100}%`;
+  progressLbl.textContent=`${done} / ${quizData.length}`;
+
+  const isAttempted = attempted[currentQ];
+  const hasSelection= userAnswers[currentQ].length>0;
+  const isLast = currentQ===quizData.length-1;
+
+  setBtn(prevBtn,   currentQ>0);
+  setBtn(answerBtn, !isAttempted);
+  setBtn(nextBtn,   isAttempted && !isLast);
+  setBtn(submitBtn, isAttempted && isLast);
+  if(!isAttempted) answerBtn.disabled=!hasSelection;
+}
+
+function setBtn(btn,show){ btn.classList.toggle('show',show); }
+
+/* ══════════════ SELECTION ══════════════ */
+function bindEvents(){
+  content.addEventListener('click',e=>{
+    const mc=e.target.closest('.mc-option');
+    const tf=e.target.closest('.tf-option');
+    if(mc) handleMC(mc);
+    if(tf) handleTF(tf);
+  });
+  answerBtn.addEventListener('click', validate);
+  nextBtn.addEventListener('click',()=>goTo(currentQ+1));
+  prevBtn.addEventListener('click',()=>goTo(currentQ-1));
+  submitBtn.addEventListener('click', finishQuiz);
+  document.getElementById('show-report-btn').addEventListener('click',()=>{resultsDiv.style.display='none';reportDiv.style.display='flex';});
+  document.getElementById('back-btn').addEventListener('click',()=>{reportDiv.style.display='none';resultsDiv.style.display='flex';});
+  document.getElementById('retry-btn').addEventListener('click',()=>location.reload());
+}
+
+function handleMC(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  const idx=userAnswers[qi].indexOf(opt);
+  if(idx>-1){ userAnswers[qi].splice(idx,1); btn.classList.remove('selected'); }
+  else{ userAnswers[qi].push(opt); btn.classList.add('selected'); }
+  updateUI();
+}
+
+function handleTF(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  userAnswers[qi]=[opt];
+  document.querySelectorAll(`.tf-option[data-q='${qi}']`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateUI();
+}
+
+/* ══════════════ VALIDATE ══════════════ */
+function validate(){
+  if(attempted[currentQ]) return;
+  const q=quizData[currentQ];
+  const fb=document.getElementById(`fb-${currentQ}`);
+  const userAns=userAnswers[currentQ]||[];
+  const correctAns=Array.isArray(q.answer)?q.answer:[q.answer];
+  const isCorrect=JSON.stringify([...userAns].sort())===JSON.stringify([...correctAns].sort());
+
+  // mark options
+  const sel = q.type==='tf' ? `.tf-option[data-q='${currentQ}']` : `.mc-option[data-q='${currentQ}']`;
+  document.querySelectorAll(sel).forEach(opt=>{
+    opt.classList.add('disabled');
+    const ov=opt.dataset.o;
+    if(correctAns.includes(ov)) opt.classList.add('correct');
+    else if(userAns.includes(ov)) opt.classList.add('incorrect');
+  });
+
+  // build feedback
+  const icon = isCorrect ? 'fa-check-circle' : 'fa-times-circle';
+  const title= isCorrect ? 'Correto!' : 'Incorreto';
+  const verdictClass = isCorrect ? 'correct' : 'incorrect';
+
+  let correctListHTML='';
+  if(!isCorrect){
+    correctListHTML=`<div style="margin-top:.5rem;font-size:.82rem;color:var(--muted2);">${correctAns.length>1?'Respostas corretas':'Resposta correta'}:</div>
+    <ul class="correct-list">${correctAns.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+  }
+
+  fb.className=`feedback ${verdictClass}`;
+  fb.innerHTML=`
+    <div class="feedback-verdict"><i class="fas ${icon}"></i>${title}${correctListHTML}</div>
+    <div class="justification">
+      <div class="just-label"><i class="fas fa-flask"></i> Justificativa Clínico-Molecular</div>
+      <div class="just-text">${q.justification}</div>
+    </div>`;
+  fb.style.display='block';
+
+  toast(isCorrect);
+  attempted[currentQ]=true;
+  [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=true);
+
+  setTimeout(()=>{
+    [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=false);
+    const isLast=currentQ===quizData.length-1;
+    if(isLast) finishQuiz(); else goTo(currentQ+1);
+  },2400);
+}
+
+/* ══════════════ RESULTS ══════════════ */
+function finishQuiz(){
+  let score=0;
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    if(JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort())) score++;
+  });
+  const pct=Math.round(score/quizData.length*100);
+
+  document.getElementById('pct-display').textContent=`${pct}%`;
+  document.getElementById('score-display').innerHTML=`Acertos: <strong>${score} de ${quizData.length}</strong>`;
+
+  // Animate ring
+  const circumference=408.4;
+  const ring=document.getElementById('score-ring');
+  setTimeout(()=>{ ring.style.strokeDashoffset=circumference*(1-pct/100); },100);
+
+  const msg=document.getElementById('feedback-message');
+  if(pct>=90) msg.textContent='🎉 Excelente domínio! Você está pronto para a prova.';
+  else if(pct>=70) msg.textContent='👏 Muito bem! Revise os pontos que errou e você chegará lá.';
+  else if(pct>=50) msg.textContent='👍 Bom esforço! Revise as justificativas com atenção.';
+  else msg.textContent='💪 Continue estudando! As justificativas abaixo são seu mapa.';
+
+  buildReport();
+
+  content.style.display='none';
+  navDiv.style.display='none';
+  progressWrap.style.display='none';
+  resultsDiv.style.display='flex';
+}
+
+function buildReport(){
+  const list=document.getElementById('report-list');
+  list.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    const ok=JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort());
+    const item=document.createElement('div');
+    item.className=`report-item ${ok?'correct':'incorrect'}`;
+    item.innerHTML=`<p class="ri-q"><strong>Questão ${i+1}:</strong> ${q.question}</p>
+      <p><strong>Sua resposta:</strong> ${ua.length?ua.join(', '):'<em>Não respondida</em>'}</p>
+      <p><strong>Correta:</strong> ${ca.join(', ')}</p>`;
+    list.appendChild(item);
+  });
+}
+
+/* ══════════════ TOAST ══════════════ */
+function toast(ok){
+  Swal.mixin({
+    toast:true,position:'top-end',
+    showConfirmButton:false,
+    timer:1400,timerProgressBar:true,
+    background: ok ? '#0a2e1f' : '#2e0a14',
+    color: ok ? '#34d399' : '#fb7185',
+  }).fire({icon:ok?'success':'error',title:ok?'✓ Correto!':'✗ Incorreto!'});
+}
+
+init();
+});
+</script>
+</body>
+</html>

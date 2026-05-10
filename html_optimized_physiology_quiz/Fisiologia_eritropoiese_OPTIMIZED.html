@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz · Eritropoiese & Hemoglobina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --surface:   #111827;
+  --card:      #151e2e;
+  --border:    #1e2d42;
+  --border2:   #253044;
+  --primary:   #4f9cf9;
+  --primary2:  #2563eb;
+  --accent:    #f87171;
+  --gold:      #f59e0b;
+  --emerald:   #34d399;
+  --rose:      #fb7185;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --muted2:    #94a3b8;
+  --correct-bg:#0a2e1f;
+  --correct-b: #34d399;
+  --wrong-bg:  #2e0a14;
+  --wrong-b:   #fb7185;
+  --just-bg:   #0d1b2e;
+  --just-b:    #4f9cf9;
+  --radius:    14px;
+  --trans:     all .28s cubic-bezier(.4,0,.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.5rem 1rem 3rem;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND MESH ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(79,156,249,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 90%, rgba(248,113,113,.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 40%, rgba(52,211,153,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  width:100%;max-width:820px;
+  text-align:center;
+  margin-bottom:2rem;
+  position:relative;z-index:1;
+}
+.header-badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  border-radius:50px;
+  padding:.3rem .9rem;
+  font-size:.75rem;font-weight:500;
+  color:var(--primary);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.header h1{
+  font-family:'Crimson Pro',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;
+  line-height:1.2;
+  color:#f1f5f9;
+  letter-spacing:-.02em;
+}
+.header h1 span{color:var(--primary);}
+.header p{
+  color:var(--muted2);
+  font-size:.92rem;
+  margin-top:.5rem;
+}
+
+/* ── QUIZ CONTAINER ── */
+#quiz-container{
+  width:100%;max-width:820px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:2.2rem 2rem;
+  position:relative;z-index:1;
+  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+}
+
+/* top accent line */
+#quiz-container::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary2),var(--primary),var(--accent));
+  border-radius:22px 22px 0 0;
+}
+
+/* ── PROGRESS ── */
+.progress-wrapper{
+  display:flex;align-items:center;gap:.9rem;
+  margin-bottom:1.8rem;
+}
+.progress-track{
+  flex:1;height:6px;
+  background:var(--border2);
+  border-radius:50px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary2),var(--primary));
+  border-radius:50px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 10px rgba(79,156,249,.5);
+}
+.progress-label{
+  font-size:.78rem;font-weight:500;
+  color:var(--muted2);
+  white-space:nowrap;min-width:60px;text-align:right;
+  font-family:'DM Mono',monospace;
+}
+
+/* ── QUESTION CARD ── */
+.question-card{
+  display:none;flex-direction:column;align-items:stretch;
+  animation:slideIn .38s cubic-bezier(.4,0,.2,1);
+}
+.question-card.active{display:flex;}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.q-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.4rem;
+}
+.q-num{
+  font-family:'DM Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  color:var(--muted);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.q-type-badge{
+  font-size:.68rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:50px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-multi{background:rgba(79,156,249,.15);color:var(--primary);border:1px solid rgba(79,156,249,.3);}
+.badge-tf{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+
+.question-text{
+  font-family:'Crimson Pro',serif;
+  font-size:1.28rem;font-weight:400;
+  line-height:1.6;
+  color:#f1f5f9;
+  margin-bottom:1.6rem;
+  padding-bottom:1.4rem;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── OPTIONS ── */
+.options-container{display:flex;flex-direction:column;gap:.65rem;}
+.tf-options-container{display:flex;gap:.75rem;justify-content:center;}
+
+.mc-option{
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  cursor:pointer;
+  transition:var(--trans);
+  color:var(--text);
+  font-size:.95rem;
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.mc-option::after{
+  content:'';position:absolute;inset:0;
+  background:var(--primary);
+  opacity:0;transition:opacity .2s;
+}
+.mc-option:hover:not(.disabled){
+  border-color:var(--primary);
+  transform:translateX(4px);
+  box-shadow:0 4px 16px rgba(79,156,249,.15);
+}
+.mc-option.selected{
+  border-color:var(--primary);
+  background:rgba(79,156,249,.08);
+}
+
+.tf-option{
+  flex:1;max-width:200px;
+  padding:1rem 1.5rem;
+  border-radius:var(--radius);
+  font-size:1rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.tf-option.tf-v{
+  background:rgba(52,211,153,.08);
+  border:1.5px solid rgba(52,211,153,.25);
+  color:var(--emerald);
+}
+.tf-option.tf-f{
+  background:rgba(251,113,133,.08);
+  border:1.5px solid rgba(251,113,133,.25);
+  color:var(--rose);
+}
+.tf-option:hover:not(.disabled){transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+.tf-option.selected{box-shadow:0 0 0 3px rgba(79,156,249,.4);}
+.tf-option.tf-v.selected{background:rgba(52,211,153,.18);border-color:var(--emerald);}
+.tf-option.tf-f.selected{background:rgba(251,113,133,.18);border-color:var(--rose);}
+
+/* correct / incorrect highlights */
+.mc-option.correct,.tf-option.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.mc-option.incorrect,.tf-option.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.mc-option.disabled,.tf-option.disabled{cursor:not-allowed;}
+
+.option-indicator{
+  min-width:28px;height:28px;
+  border-radius:8px;
+  background:var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:.78rem;font-weight:600;
+  color:var(--muted2);
+  flex-shrink:0;
+  transition:var(--trans);
+}
+.mc-option.selected .option-indicator{background:var(--primary);color:#fff;}
+.mc-option.correct  .option-indicator{background:var(--emerald);color:#0a2e1f;}
+.mc-option.incorrect .option-indicator{background:var(--rose);color:#2e0a14;}
+
+/* ── FEEDBACK BOX ── */
+.feedback{
+  margin-top:1.4rem;
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:none;
+  animation:slideIn .35s ease;
+}
+.feedback.correct{display:block;}
+.feedback.incorrect{display:block;}
+
+.feedback-verdict{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.75rem 1.1rem;
+  font-weight:600;font-size:.95rem;
+}
+.feedback.correct .feedback-verdict{
+  background:rgba(52,211,153,.15);
+  color:var(--emerald);
+  border-left:4px solid var(--emerald);
+}
+.feedback.incorrect .feedback-verdict{
+  background:rgba(251,113,133,.15);
+  color:var(--rose);
+  border-left:4px solid var(--rose);
+}
+
+/* ── JUSTIFICATION PANEL ── */
+.justification{
+  background:var(--just-bg);
+  border:1px solid rgba(79,156,249,.18);
+  border-top:none;
+  padding:1.1rem 1.3rem;
+}
+.just-label{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--primary);
+  margin-bottom:.65rem;
+  opacity:.8;
+}
+.just-label i{font-size:.8rem;}
+.just-text{
+  font-size:.9rem;
+  line-height:1.75;
+  color:#b8cce4;
+}
+.just-text strong{color:var(--primary);font-weight:600;}
+.just-text em{color:var(--gold);font-style:normal;}
+.just-text .correct-list{
+  margin-top:.6rem;padding-left:1rem;
+  list-style:none;
+}
+.just-text .correct-list li{
+  padding:.25rem 0;
+  padding-left:1.1rem;
+  position:relative;
+  color:#c7ddf4;
+}
+.just-text .correct-list li::before{
+  content:'✦';
+  position:absolute;left:0;
+  color:var(--emerald);font-size:.7rem;
+  top:.35rem;
+}
+.just-text .tag{
+  display:inline-block;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  color:var(--primary);
+  border-radius:4px;
+  padding:.05rem .35rem;
+  font-family:'DM Mono',monospace;
+  font-size:.8em;
+}
+
+/* ── NAVIGATION BUTTONS ── */
+#navigation-buttons{
+  display:flex;justify-content:center;
+  gap:.75rem;flex-wrap:wrap;
+  margin-top:1.8rem;
+}
+.nav-btn{
+  display:none;align-items:center;gap:.5rem;
+  padding:.7rem 1.5rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+  border:none;
+}
+.nav-btn.show{display:flex;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.nav-btn:hover:not(:disabled){transform:translateY(-2px);}
+
+#prev-btn{
+  background:transparent;
+  color:var(--primary);
+  border:1.5px solid rgba(79,156,249,.4);
+}
+#prev-btn:hover:not(:disabled){background:rgba(79,156,249,.08);}
+#answer-btn{
+  background:linear-gradient(135deg,var(--primary2),var(--primary));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(79,156,249,.35);
+}
+#answer-btn:hover:not(:disabled){box-shadow:0 6px 24px rgba(79,156,249,.5);}
+#next-btn{
+  background:var(--surface);
+  color:var(--text);
+  border:1.5px solid var(--border);
+}
+#next-btn:hover:not(:disabled){border-color:var(--primary);}
+#submit-btn{
+  background:linear-gradient(135deg,#7c3aed,var(--primary2));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(124,58,237,.35);
+}
+
+/* ── RESULTS ── */
+#results-container,#report-container{
+  display:none;flex-direction:column;align-items:center;
+}
+.score-ring-wrap{position:relative;margin:1rem auto 1.5rem;}
+.score-ring-wrap svg{display:block;}
+.score-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.score-pct{
+  font-family:'Crimson Pro',serif;
+  font-size:2.8rem;font-weight:700;
+  color:var(--primary);line-height:1;
+}
+.score-label{font-size:.75rem;color:var(--muted2);margin-top:.15rem;}
+.score-stat{
+  font-size:1.1rem;color:var(--muted2);margin-bottom:.5rem;
+}
+.score-stat strong{color:var(--text);}
+.feedback-msg{
+  font-family:'Crimson Pro',serif;
+  font-size:1.4rem;font-weight:400;
+  color:#e2e8f0;
+  margin-bottom:1.5rem;text-align:center;
+}
+.action-buttons{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;}
+.action-btn{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;border:none;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.action-btn:hover{transform:translateY(-2px);}
+.btn-report{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+.btn-retry{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;box-shadow:0 4px 16px rgba(79,156,249,.3);}
+
+/* ── REPORT ── */
+.report-item{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.1rem 1.3rem;
+  margin-bottom:.8rem;
+  text-align:left;
+  border-left:4px solid;
+}
+.report-item.correct{border-left-color:var(--emerald);}
+.report-item.incorrect{border-left-color:var(--rose);}
+.report-item p{font-size:.88rem;line-height:1.6;color:var(--muted2);}
+.report-item p strong{color:var(--text);}
+.report-item .ri-q{font-size:.95rem;color:var(--text);margin-bottom:.4rem;font-weight:500;}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:2rem;
+  font-size:.75rem;
+  color:var(--muted);
+  text-align:center;
+  position:relative;z-index:1;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #quiz-container{padding:1.4rem 1rem;}
+  .question-text{font-size:1.1rem;}
+  .tf-options-container{flex-direction:column;align-items:stretch;}
+  .tf-option{max-width:none;}
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><i class="fas fa-atom"></i> Medicina Interna · Hematologia</div>
+  <h1>Eritropoiese <span>&</span> Hemoglobina</h1>
+  <p>Quiz de alta performance com justificativas clínico-moleculares</p>
+</div>
+
+<div id="quiz-container">
+  <div class="progress-wrapper">
+    <div class="progress-track"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
+  </div>
+
+  <div id="quiz-content"></div>
+
+  <div id="navigation-buttons">
+    <button id="prev-btn"   class="nav-btn"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <button id="answer-btn" class="nav-btn show">Responder <i class="fas fa-check"></i></button>
+    <button id="next-btn"   class="nav-btn">Próximo <i class="fas fa-arrow-right"></i></button>
+    <button id="submit-btn" class="nav-btn"><i class="fas fa-flag-checkered"></i> Ver Resultados</button>
+  </div>
+
+  <div id="results-container">
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="65" fill="none" stroke="#1e2d42" stroke-width="12"/>
+        <circle id="score-ring" cx="80" cy="80" r="65" fill="none"
+                stroke="url(#ringGrad)" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="408.4"
+                stroke-dashoffset="408.4"
+                transform="rotate(-90 80 80)"
+                style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#4f9cf9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-center">
+        <div class="score-pct" id="pct-display">0%</div>
+        <div class="score-label">acertos</div>
+      </div>
+    </div>
+    <div class="score-stat" id="score-display"></div>
+    <div class="feedback-msg" id="feedback-message"></div>
+    <div class="action-buttons">
+      <button id="show-report-btn" class="action-btn btn-report"><i class="fas fa-list-alt"></i> Ver Correção</button>
+      <button id="retry-btn"       class="action-btn btn-retry"><i class="fas fa-redo"></i> Tentar Novamente</button>
+    </div>
+  </div>
+
+  <div id="report-container">
+    <h3 style="color:var(--primary);margin-bottom:1.2rem;font-family:'Crimson Pro',serif;font-size:1.4rem;">
+      <i class="fas fa-clipboard-list"></i> Correção Detalhada
+    </h3>
+    <div id="report-list" style="width:100%"></div>
+    <div class="action-buttons" style="margin-top:1rem;">
+      <button id="back-btn" class="action-btn btn-report"><i class="fas fa-arrow-left"></i> Voltar ao Resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Fisiologia Médica · Quiz gerado para estudo intensivo</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+/* ══════════════════════════════════════════════
+   BANCO DE QUESTÕES COM JUSTIFICATIVAS
+══════════════════════════════════════════════ */
+const quizData = [
+  {
+    question:"A regulação da eritropoiese em hipóxia crônica depende de um mecanismo molecular que envolve estabilização de HIF-2α. Qual das seguintes afirmações descreve corretamente a consequência celular primária dessa estabilização?",
+    options:["Aumento da degradação proteassomal da eritropoietina","Transcrição aumentada do gene da eritropoietina nas células intersticiais renais","Supressão da síntese de transferrina hepática","Aumento da síntese de hepcidina"],
+    answer:["Transcrição aumentada do gene da eritropoietina nas células intersticiais renais"],
+    type:"multi",
+    justification:`Em normóxia, o <strong>HIF-2α (Hypoxia-Inducible Factor 2-alpha / Fator Induzível por Hipóxia 2-alfa)</strong> é continuamente hidroxilado pelas <strong>PHDs (Prolyl Hydroxylase Domain proteins)</strong>, que utilizam O₂ como co-substrato. Isso recruta a <strong>proteína VHL (Von Hippel-Lindau)</strong>, ubiquitinando o HIF-2α para degradação proteassomal.
+    <br><br>Em <em>hipóxia</em>, as PHDs são inativas → HIF-2α não é degradado → transloca ao núcleo → heterodimeriza com <strong>HIF-1β (ARNT)</strong> → liga-se a HREs (<em>Hypoxia Response Elements</em>) no promotor do gene da EPO → <strong>transcrição aumentada de eritropoietina</strong> nas células intersticiais peritubulares do córtex renal (tipo II).
+    <br><br><em>Clinicamente:</em> mutações ativadoras em HIF-2α ou perda de função em VHL causam eritrocitose familiar (ex.: doença de Chuvash).`
+  },
+  {
+    question:"Em insuficiência renal crônica avançada, a anemia ocorre predominantemente porque",
+    options:["Há falha na produção adequada de eritropoietina","O ferro não é absorvido no intestino","O estado T da hemoglobina é permanentemente estabilizado","Há redução na expressão de receptores de transferrina"],
+    answer:["Há falha na produção adequada de eritropoietina"],
+    type:"multi",
+    justification:`A <strong>IRC (Insuficiência Renal Crônica)</strong> destrói progressivamente as <em>células intersticiais peritubulares</em> do córtex renal — principal fonte de EPO no adulto (90%). Com <strong>perda de néfrons funcionais</strong>, reduz-se a massa de células produtoras de EPO.
+    <br><br>A anemia é tipicamente <em>normocítica, normocrômica</em>, hiporregenerativa (reticulócitos baixos), com EPO sérica paradoxalmente baixa para o grau de anemia. Outros fatores colaboram (hepcidina elevada, microinflamação, uremia), mas o mecanismo principal é a <strong>falência de produção hormonal</strong>.
+    <br><br><em>Terapêutica:</em> uso de <strong>AEEs (Agentes Estimuladores da Eritropoiese)</strong> como epoetina-alfa, darbepoetina, ou os novos inibidores de PHD (<em>roxadustat</em>) que estabilizam HIF endógeno. Meta: Hb 10–12 g/dL para evitar eventos cardiovasculares.`
+  },
+  {
+    question:"Durante a maturação eritroide, a expulsão do núcleo no estágio de normoblasto tardio é essencial para",
+    options:["Maximizar o espaço citoplasmático para hemoglobina","Reduzir consumo metabólico celular","Permitir maior deformabilidade da hemácia","Aumentar a síntese proteica ribossomal"],
+    answer:["Maximizar o espaço citoplasmático para hemoglobina","Reduzir consumo metabólico celular","Permitir maior deformabilidade da hemácia"],
+    type:"multi",
+    justification:`A <strong>enucleação</strong> (expulsão do núcleo) é um processo ativo mediado por actomiosina, que ocorre no <em>normoblasto tardio (ortocromático)</em>. Serve a <strong>três funções fisiológicas simultâneas</strong>:
+    <ul class="correct-list">
+      <li><strong>Maximizar conteúdo de Hb:</strong> o núcleo ocupa ~25% do volume celular; sua remoção permite MCHC (Mean Corpuscular Hemoglobin Concentration) de ~33 g/dL.</li>
+      <li><strong>Reduzir gasto energético:</strong> sem núcleo, não há transcrição de DNA. A hemácia madura usa apenas glicolise anaeróbia (via Embden-Meyerhof) e via da pentose-fosfato, reduzindo demanda de ATP/O₂.</li>
+      <li><strong>Deformabilidade:</strong> a ausência de núcleo rígido permite que a hemácia (8 µm) passe por capilares esplênicos de 2–3 µm sem hemolisar.</li>
+    </ul>
+    <em>A síntese proteica ribossomal AUMENTARIA se o núcleo fosse mantido — portanto é a alternativa errada.</em>`
+  },
+  {
+    question:"A deficiência isolada de vitamina B12, mantendo folato normal, levará a qual alteração nuclear predominante nos precursores eritroides?",
+    options:["Atraso na síntese de DNA com citoplasma relativamente maduro","Falha exclusiva na síntese do grupo heme","Redução da afinidade da hemoglobina pelo O2","Aumento compensatório de 2,3-DPG"],
+    answer:["Atraso na síntese de DNA com citoplasma relativamente maduro"],
+    type:"multi",
+    justification:`A vitamina B12 (<strong>cobalamina</strong>) é cofator da <em>metionina sintase</em>, que regenera o <strong>THF (Tetra-Hidro-Folato / Tetrahydrofolate)</strong> a partir do 5-metil-THF. Sem B12, o THF fica "preso" como 5-metil-THF (<em>methylfolate trap</em>), impedindo a síntese de <strong>5,10-metileno-THF</strong>, necessário para converter dUMP → <strong>dTMP</strong> (timidilato sintase).
+    <br><br>Resultado: falha na síntese de <strong>DNA</strong> (não de RNA/proteína). Os eritroblastos continuam sintetizando hemoglobina (processo citoplástico), mas não conseguem dividir o núcleo → <strong>maturação dissociada</strong>: citoplasma hemoglobinizado + núcleo grande, imaturo, com cromatina frouxa — a célula <em>megaloblástica</em>.
+    <br><br><em>Clinicamente:</em> anemia macrocítica (VCM > 100 fL), leucócitos hipersegmentados (≥ 5 lobos), glossite, neuropatia subaguda combinada (desmielinização de cordões posteriores + laterais).`
+  },
+  {
+    question:"O reticulócito circulante ainda contém RNA ribossomal residual. A persistência aumentada dessas células no sangue periférico indica",
+    options:["Resposta medular aumentada","Estimulação eritropoiética recente","Supressão da eritropoiese","Falência medular"],
+    answer:["Resposta medular aumentada","Estimulação eritropoiética recente"],
+    type:"multi",
+    justification:`O <strong>reticulócito</strong> (do latim <em>rete</em> = rede) contém restos de RNA, ribossomos e mitocôndrias, evidenciados pelo corante supravital <em>azul de cresil brilhante</em>. Em condições normais: <strong>0,5–2%</strong> das hemácias (índice de reticulócitos).
+    <br><br>Quando a medula é estimulada por EPO (anemia, hipóxia, hemorragia), libera reticulócitos precocemente — os <em>reticulócitos estressados</em> passam mais tempo no sangue (2–3 dias ao invés de ~1 dia). <strong>Reticulocitose = resposta medular ativa.</strong>
+    <br><br><em>Atenção clínica:</em> sempre calcular o <strong>IRC (Índice de Reticulócitos Corrigido)</strong> = % reticulócitos × (Hct real / Hct normal 45%) / fator de maturação. IRC > 2–3% = eritropoiese adequada; < 2% em anemia = resposta medular insuficiente (aplasia, déficit nutricional, IRC).
+    <br><br>Supressão da eritropoiese e falência medular cursam com <em>reticulocitopenia</em> — o oposto.`
+  },
+  {
+    question:"A síntese do grupo heme inicia-se na mitocôndria com condensação de succinil-CoA e glicina. A deficiência de vitamina B6 afetará primariamente qual etapa?",
+    options:["Ativação da glicina via fosfato de piridoxal","Inserção de ferro na protoporfirina IX","Transcrição da globina","Formação de 2,3-DPG"],
+    answer:["Ativação da glicina via fosfato de piridoxal"],
+    type:"multi",
+    justification:`A <strong>1ª etapa</strong> da síntese do heme ocorre na <em>matriz mitocondrial</em>: condensação de <strong>succinil-CoA + glicina</strong> pela enzima <strong>ALA-sintase (δ-aminolevulínico sintase)</strong> para formar <strong>ALA (δ-aminolevulinato)</strong>.
+    <br><br>Essa reação requer <strong>PLP (Piridoxal-5-Fosfato / Pyridoxal 5'-phosphate)</strong> — forma ativa da vitamina B6 — como cofator essencial para ativar a glicina (formação de base de Schiff com o grupo amino da glicina).
+    <br><br>Deficiência de B6 → falha nessa 1ª etapa → anemia sideroblástica (ferro acumula na mitocôndria dos eritroblastos → <em>sideroblastos em anel</em> no mielograma → anemia hipocrômica microcítica com ferro elevado).
+    <br><br><em>Clinicamente:</em> anemia sideroblástica adquirida por B6 responde à reposição de piridoxina. Isoniazida (anti-TB) é antagonista de B6 e causa essa síndrome.`
+  },
+  {
+    question:"A introdução do ferro ferroso (Fe2+) na protoporfirina IX é catalisada por enzima específica. Se essa etapa falhar, a consequência fisiológica será",
+    options:["Redução da capacidade de transporte de O2","Acúmulo de protoporfirina livre","Alteração primária no estado T/R","Aumento da síntese de globina como compensação"],
+    answer:["Redução da capacidade de transporte de O2","Acúmulo de protoporfirina livre"],
+    type:"multi",
+    justification:`A etapa final da síntese do heme é catalisada pela <strong>ferroquelatase (FECH)</strong> na membrana interna mitocondrial, inserindo <strong>Fe²⁺</strong> na protoporfirina IX para gerar <strong>heme</strong>.
+    <br><br>Se falha (déficit de ferroquelatase, como na <em>protoporfiria eritropoiética</em>, ou déficit de ferro):
+    <ul class="correct-list">
+      <li>Acúmulo de <strong>protoporfirina livre</strong> nas hemácias (mensurada como ZPP — Zinco-Protoporfirina — quando o zinco substitui o ferro).</li>
+      <li>Sem heme funcional → menos Hb por célula → anemia <em>hipocrômica microcítica</em> → <strong>redução da capacidade de transporte de O₂</strong>.</li>
+    </ul>
+    <em>Diagnóstico:</em> ZPP eritrocitária elevada (> 35 µg/dL em hemácias normais) é marcador precoce de deficiência de ferro e intoxicação por chumbo (Pb inibe ferroquelatase).`
+  },
+  {
+    question:"A hemoglobina atua como tampão porque",
+    options:["Possui resíduos ionizáveis capazes de captar ou liberar H+","Apresenta alta concentração intracelular","Sofre alteração conformacional dependente de pH","Transporta bicarbonato diretamente ligado ao ferro"],
+    answer:["Possui resíduos ionizáveis capazes de captar ou liberar H+","Apresenta alta concentração intracelular","Sofre alteração conformacional dependente de pH"],
+    type:"multi",
+    justification:`A Hb é o <strong>maior tampão não-bicarbonato</strong> do sangue (contribui ~60% da capacidade tamponante total do sangue).
+    <br><br>Três mecanismos simultâneos:
+    <ul class="correct-list">
+      <li><strong>Resíduos ionizáveis:</strong> principalmente <em>histidinas</em> (pKa ~6,0 na Hb oxigenada vs ~7,8 na desoxiHb) captam H⁺ nos tecidos e liberam nos pulmões (efeito Bohr).</li>
+      <li><strong>Alta concentração:</strong> ~33 g/dL intracelular = ~5 mmol/L de Hb tetramérica → enorme capacidade tamponante.</li>
+      <li><strong>Conformação:</strong> a transição R→T (oxigenação→desoxigenação) muda pKa das histidinas, aumentando afinidade por H⁺ nas hemácias venosas.</li>
+    </ul>
+    <em>Nota:</em> O CO₂ liga-se a grupos amino N-terminais das globinas formando carbamatos (<strong>carbaminohemoglobina</strong>) — não ao ferro. O bicarbonato é transportado dissolvido no plasma.`
+  },
+  {
+    question:"A HbA2 se diferencia da HbA por",
+    options:["Substituição das cadeias beta por delta","Diferença discreta na composição de aminoácidos","Participação minoritária no adulto","Maior afinidade por O2 que a HbA"],
+    answer:["Substituição das cadeias beta por delta","Diferença discreta na composição de aminoácidos","Participação minoritária no adulto"],
+    type:"multi",
+    justification:`A <strong>HbA2</strong> (α₂δ₂) compõe <strong>2–3,5%</strong> da Hb adulta. Difere da HbA (α₂β₂) por ter cadeias <strong>delta (δ)</strong> no lugar das beta (β). As cadeias δ e β são similares em estrutura (diferem em apenas 10 aminoácidos dos 146).
+    <br><br>Sua afinidade por O₂ é semelhante à HbA. Sua relevância clínica é que na <em>β-talassemia</em>, com redução das cadeias β, ocorre compensação relativa por aumento de δ → <strong>HbA2 > 3,5%</strong> é critério diagnóstico de β-talassemia minor (trait talassêmico).
+    <br><br><em>Diagnóstico laboratorial:</em> eletroforese de Hb ou HPLC (cromatografia líquida de alta eficiência) permitem quantificar HbA2. Fundamental no rastreamento pré-natal de portadores.`
+  },
+  {
+    question:"A hemoglobina fetal apresenta maior afinidade por O2 porque",
+    options:["Suas cadeias gama interagem menos com 2,3-DPG","Possui maior número de grupos heme","Permanece mais frequentemente no estado R","Tem menor estabilidade estrutural global"],
+    answer:["Suas cadeias gama interagem menos com 2,3-DPG","Permanece mais frequentemente no estado R"],
+    type:"multi",
+    justification:`A <strong>HbF</strong> (α₂γ₂) substitui β por <em>cadeias gamma (γ)</em>. Na posição 143 das cadeias γ há <strong>serina</strong> ao invés de histidina (presente nas cadeias β). Essa histidina beta-143 é o <em>sítio crítico de ligação</em> do <strong>2,3-DPG (2,3-Bisphosphoglycerate / 2,3-Bisfosfoglicerato)</strong> na cavidade central do desoxiHb.
+    <br><br>Com menor ligação ao 2,3-DPG:
+    <ul class="correct-list">
+      <li>O estado T é <em>menos estabilizado</em> → equilíbrio desviado para o <strong>estado R</strong>.</li>
+      <li>P50 da HbF ≈ 18 mmHg vs HbA ≈ 26 mmHg → <em>curva desviada à esquerda</em>.</li>
+    </ul>
+    <em>Fisiologicamente essencial:</em> na placenta, a HbF fetal extrai O₂ da HbA materna graças a esse diferencial de afinidade. A transição HbF→HbA pós-natal (6 meses) é gradual — clinicamente relevante na doença falciforme (HbSS protegida até este período).`
+  },
+  {
+    question:"A metahemoglobina compromete a oxigenação tecidual principalmente porque",
+    options:["Contém ferro no estado férrico (Fe3+)","Não libera o oxigênio ligado","Induz estabilização funcional do estado R nas subunidades restantes","Aumenta a produção de eritropoietina imediatamente"],
+    answer:["Contém ferro no estado férrico (Fe3+)","Não libera o oxigênio ligado","Induz estabilização funcional do estado R nas subunidades restantes"],
+    type:"multi",
+    justification:`A <strong>metahemoglobina (MetHb)</strong> resulta da oxidação do <strong>Fe²⁺ → Fe³⁺</strong> no heme. O Fe³⁺ <em>não liga O₂</em> (perde a capacidade de ligação reversível). Fisiologicamente, 1–3% da Hb está nesse estado e é reduzida pela <strong>MetHb-redutase NADH-dependente</strong> (citocromo b5 redutase).
+    <br><br>Efeito adicional crítico: quando uma subunidade está como Fe³⁺, as demais subunidades ficam <em>presas no estado R</em> (alta afinidade) → a Hb restante <strong>não libera O₂ adequadamente</strong> nos tecidos → hipóxia tecidual com PaO₂ e SatO₂ (por oximetria convencional) aparentemente normais ou elevadas.
+    <br><br><em>Diagnóstico:</em> co-oximetria (não confiar no oxímetro de pulso — lê MetHb falsamente como HbO₂). Cor do sangue: <strong>marrom-chocolate</strong>. <em>Tratamento:</em> azul de metileno 1–2 mg/kg IV (reduz MetHb via NADPH-MetHb redutase).`
+  },
+  {
+    question:"A herança da doença falciforme é autossômica recessiva, embora o traço falciforme seja detectável em heterozigotos",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> A <strong>HbS</strong> resulta da mutação pontual <em>GAG→GTG</em> no códon 6 do gene da globina beta (cromossomo 11), substituindo <em>ácido glutâmico por valina</em>.
+    <br><br>A herança é <strong>autossômica recessiva clássica</strong>: apenas homozigotos (HbSS) expressam a doença falciforme completa. Heterozigotos (HbAS = <em>traço falciforme</em>) têm ~40% HbS + ~60% HbA — normalmente assintomáticos em condições normais, mas podem polimerizar HbS em hipóxia extrema (altitudes > 3000 m, anestesia profunda, voo não-pressurizado).
+    <br><br><em>Clinicamente:</em> heterozigotos têm proteção relativa contra <em>Plasmodium falciparum</em> (malária grave) — explicação da alta frequência do alelo HbS em populações da África subsaariana (vantagem seletiva em heterozigose = polimorfismo balanceado).`
+  },
+  {
+    question:"Na β-talassemia maior, a redução na síntese de cadeias beta leva a excesso relativo de cadeias alfa livres, contribuindo para hemólise",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> Na <strong>β-talassemia maior (β⁰/β⁰)</strong>, há ausência completa de síntese das cadeias β. As cadeias α continuam sendo sintetizadas normalmente → <em>excesso de cadeias α livres</em>.
+    <br><br>Cadeias α livres são <strong>insolúveis e instáveis</strong>: precipitam como corpos de inclusão nos eritroblastos → ativam caspases → <em>eritropoiese ineficaz</em> (apoptose intramedular, destruição de 60–90% dos precursores antes de atingir circulação).
+    <br><br>As hemácias que chegam à circulação com precipitados α são reconhecidas e destruídas no baço → <strong>hemólise extravascular</strong> → esplenomegalia maciça.
+    <br><br><em>Tratamento:</em> transfusões regulares + quelação de ferro (desferasirox, desferoxamina). Transplante de células-tronco hematopoiéticas é a única cura atual. Terapia gênica (betibeglogene, 2022) está revolucionando o manejo.`
+  },
+  {
+    question:"A concentração de hemoglobina no recém-nascido pode atingir valores elevados devido à hemoconcentração e transfusão placentária",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> O RN a termo tem Hb de <strong>14–22 g/dL</strong> (média ~17 g/dL), bem acima dos valores adultos. Dois mecanismos principais:
+    <ul class="correct-list">
+      <li><strong>Transfusão placentária:</strong> clampeamento tardio do cordão umbilical (> 1–3 min) transfere 80–100 mL de sangue placentário ao RN, enriquecendo seu volume sanguíneo.</li>
+      <li><strong>Adaptação à hipóxia intraútero:</strong> PaO₂ fetal ~30 mmHg vs adulto ~95 mmHg → EPO elevada cronicamente → policitemia fisiológica como compensação.</li>
+    </ul>
+    <em>Consequência clínica:</em> a alta proporção de HbF (80–90% ao nascimento) garante boa oferta de O₂ apesar da curva desviada à esquerda. Após o nascimento, a PaO₂ sobe → EPO cai → eritropoiese suprimida → <em>anemia fisiológica do RN</em> (Hb nadir ~11 g/dL às 8–12 semanas).`
+  },
+  {
+    question:"A reticulocitose sempre indica anemia ferropriva ativa",
+    answer:"F",
+    type:"tf",
+    justification:`<strong>Falso.</strong> A reticulocitose é um marcador de <em>aumento da atividade eritropoiética</em>, mas suas causas são diversas:
+    <ul class="correct-list">
+      <li><strong>Anemia hemolítica</strong> (esferocitose, AHAI, HPN)</li>
+      <li><strong>Hemorragia aguda</strong> (resposta à perda de sangue)</li>
+      <li><strong>Resposta ao tratamento:</strong> ferro (ferropriva), B12 (megaloblástica), folato</li>
+      <li><strong>Pós-transplante</strong> de células-tronco com "pega" medular</li>
+      <li><strong>Policitemia vera</strong> em crise</li>
+    </ul>
+    Na anemia ferropriva <em>não tratada</em>, a reticulocitose está <strong>ausente ou baixa</strong> (hiporregenerativa), pois falta substrato para síntese de Hb. A reticulocitose surge <em>após início do tratamento</em> com ferro (pico em 7–10 dias = "crise reticulocitária").`
+  },
+  {
+    question:"Um paciente com acidose metabólica grave apresenta PaO2 normal e saturação arterial preservada. Apesar disso, há hipóxia tecidual relativa. Qual mecanismo molecular explica melhor essa discrepância?",
+    options:["Estabilização do estado R por aumento de H+","Estabilização do estado T por aumento de H+, facilitando liberação periférica de O2","Redução da cooperatividade da hemoglobina","Aumento da ligação do 2,3-DPG ao estado R"],
+    answer:["Estabilização do estado T por aumento de H+, facilitando liberação periférica de O2"],
+    type:"multi",
+    justification:`Este é um ponto de alta complexidade. Em acidose, o H⁺ elevado estabiliza o estado T (<strong>efeito Bohr</strong>) e a curva desloca à direita → <em>P50 aumentado</em> → <strong>maior liberação de O₂ nos tecidos</strong>. Isso é uma <em>resposta adaptativa</em>, não a causa da hipóxia.
+    <br><br>A <em>"hipóxia tecidual relativa"</em> do enunciado refere-se ao fato de que, na acidose láctica grave, a causa subjacente é frequentemente <strong>hipoperfusão</strong> (choque) ou <strong>disfunção mitocondrial</strong> → os tecidos não conseguem utilizar O₂ (falha na cadeia respiratória), não que o O₂ não chegue.
+    <br><br>A estabilização do estado T pelo H⁺ é o mecanismo correto — é um mecanismo <em>compensador</em> que tenta manter oferta de O₂. O paradoxo do caso clínico (PaO₂ normal + lactato alto) é típico de hipóxia citopática (sepse, intoxicação por cianeto).`
+  },
+  {
+    question:"A substituição experimental de resíduos de histidina envolvidos em pontes salinas do estado T tenderia a produzir qual efeito funcional?",
+    options:["Redução da estabilidade do estado T","Deslocamento da curva para a esquerda","Aumento da afinidade basal por O2","Aumento da ligação ao 2,3-DPG"],
+    answer:["Redução da estabilidade do estado T","Deslocamento da curva para a esquerda","Aumento da afinidade basal por O2"],
+    type:"multi",
+    justification:`O <strong>estado T (tenso / desoxigenado)</strong> é estabilizado por uma rede de <em>pontes salinas</em> inter e intrasubunidades, onde resíduos de <strong>histidina</strong> (His HC3-β146, Lys C5-α40) participam ativamente como doadores de próton em ligações com resíduos carregados negativamente.
+    <br><br>Se essas histidinas são substituídas experimentalmente:
+    <ul class="correct-list">
+      <li>Pontes salinas desestabilizadas → <em>estado T menos favorecido</em></li>
+      <li>Equilíbrio T⇌R deslocado para R → <em>afinidade basal por O₂ aumentada</em></li>
+      <li>Curva de dissociação desloca-se para <em>esquerda</em> (P50 menor)</li>
+    </ul>
+    Isso mimetiza molecularmente as <em>hemoglobinas de alta afinidade</em> (ex.: Hb Kempsey, Hb Yakima) — mutações naturais em resíduos da interface α₁β₂ que estabilizam o estado R → eritrocitose familiar.`
+  },
+  {
+    question:"Em termos energéticos, a cooperatividade positiva da hemoglobina implica que a ligação do primeiro O2",
+    options:["Diminui a energia livre necessária para ligação do segundo O2","Aumenta a estabilidade do estado T","Desloca o equilíbrio conformacional em direção ao estado R","Reduz a constante de afinidade subsequente"],
+    answer:["Diminui a energia livre necessária para ligação do segundo O2","Desloca o equilíbrio conformacional em direção ao estado R"],
+    type:"multi",
+    justification:`A <strong>cooperatividade positiva</strong> da Hb explica a curva sigmoide (vs hipérbole da mioglobina). Molecularmente, quando o 1º O₂ se liga ao Fe²⁺, o <em>plano da porfirina</em> sofre leve curvatura → arrasta a <strong>histidina proximal F8</strong> → desloca a hélice F → rompe pontes salinas do estado T → favorece transição para <strong>estado R</strong>.
+    <br><br>Em termos termodinâmicos (modelo de Monod-Wyman-Changeux, MWC): cada ligação de O₂ desloca o equilíbrio T⇌R progressivamente para R → as subunidades seguintes já estão parcialmente na conformação R → <em>menor ΔG para ligação subsequente</em> = cooperatividade.
+    <br><br>Resultado funcional: carga de O₂ nos pulmões (alta PO₂) e descarga nos tecidos (baixa PO₂) ocorrem em faixas estreitas de PO₂ → sistema altamente eficiente. Coeficiente de Hill (n) ≈ 2,8–3,0 para Hb normal (vs 1 para Mb).`
+  },
+  {
+    question:"Um paciente com policitemia secundária por hipoxemia crônica apresenta níveis elevados de 2,3-DPG. Do ponto de vista molecular, isso compensa a hipoxemia porque",
+    options:["Reduz a afinidade da hemoglobina pelo O2","Estabiliza o estado T","Facilita descarga de O2 mesmo em PO2 reduzida","Aumenta a saturação arterial máxima"],
+    answer:["Reduz a afinidade da hemoglobina pelo O2","Estabiliza o estado T","Facilita descarga de O2 mesmo em PO2 reduzida"],
+    type:"multi",
+    justification:`O <strong>2,3-DPG (2,3-Bisfosfoglicerato)</strong> é produzido na via Rapoport-Luebering, um desvio da glicolise anaeróbia exclusiva das hemácias (não há mitocôndrias). Liga-se na <em>cavidade central</em> da desoxiHb (estado T), estabelecendo pontes de hidrogênio com <strong>His β143, Lys β82, His β2 (N-terminal)</strong>.
+    <br><br>Efeitos moleculares:
+    <ul class="correct-list">
+      <li><strong>Estabiliza o estado T</strong> → retarda transição T→R → <em>menor afinidade por O₂</em></li>
+      <li><strong>P50 aumentado</strong> (curva desviada à direita) → mesmo com PaO₂ baixa, uma fração maior da Hb descarrega O₂ nos tecidos</li>
+    </ul>
+    <em>Clinicamente:</em> atletas de altitude, DPOC, ICC crônica → 2,3-DPG elevado como adaptação. No <em>sangue estocado</em> (> 1 semana), 2,3-DPG cai drasticamente → problema para transfusão: hemácias transfundidas têm alta afinidade, entregam menos O₂ inicialmente (normalização em 12–24h).`
+  },
+  {
+    question:"Na intoxicação por monóxido de carbono, além da redução da capacidade total de transporte de O2, ocorre um efeito adicional sobre a hemoglobina que consiste em",
+    options:["Estabilização do estado R nas subunidades remanescentes","Redução da liberação periférica de O2","Deslocamento da curva para a esquerda","Aumento da afinidade pelo CO2"],
+    answer:["Estabilização do estado R nas subunidades remanescentes","Redução da liberação periférica de O2","Deslocamento da curva para a esquerda"],
+    type:"multi",
+    justification:`O <strong>CO</strong> liga-se ao Fe²⁺ com afinidade <em>200–250× maior</em> que o O₂. Dois efeitos simultâneos:
+    <ul class="correct-list">
+      <li><strong>Redução da capacidade de transporte:</strong> cada subunidade ocupada por CO não pode transportar O₂.</li>
+      <li><strong>Efeito alostérico sobre subunidades remanescentes:</strong> CO estabiliza o estado R nas subunidades livres → a HbO₂ remanescente tem dificuldade de liberar O₂ nos tecidos (<em>curva à esquerda</em>).</li>
+    </ul>
+    Esse segundo efeito explica por que a intoxicação por CO é <em>mais grave</em> do que simplesmente perder a mesma quantidade de Hb: se 50% virar carboxiHb, a oferta de O₂ não cai 50% mas sim muito mais.
+    <br><br><em>Tratamento:</em> O₂ a 100% (desloca CO da Hb, meia-vida de 80–90 min vs 5h em ar ambiente) ou O₂ hiperbárico (3 atm) em casos graves.`
+  },
+  {
+    question:"Durante exercício intenso, a combinação de aumento de temperatura, CO2 e H+ desloca o equilíbrio T/R predominantemente por alteração de",
+    options:["Pontes salinas intersubunidades","Interação do ferro com a histidina proximal","Ligação do 2,3-DPG ao estado R","Carbamilação de resíduos da globina"],
+    answer:["Pontes salinas intersubunidades","Carbamilação de resíduos da globina"],
+    type:"multi",
+    justification:`Durante exercício intenso, múltiplos fatores convergem para maximizar a liberação de O₂ muscular:
+    <ul class="correct-list">
+      <li><strong>H⁺ (acidose láctica):</strong> prótons se ligam às <em>histidinas</em> (His HC3-β146) → formam novas <strong>pontes salinas intersubunidades</strong> → estabilizam estado T → efeito Bohr.</li>
+      <li><strong>CO₂:</strong> reage com grupos NH₂ N-terminais da globina → forma <strong>carbamatos (carbaminohemoglobina)</strong> → adiciona cargas negativas que formam novas pontes salinas → estabiliza estado T = efeito Bohr do CO₂.</li>
+      <li><strong>Temperatura:</strong> calor produzido pela contração muscular desloca a curva à direita (maior P50).</li>
+      <li><strong>2,3-DPG elevado</strong> em atletas treinados contribui cronicamente.</li>
+    </ul>
+    <em>A histidina proximal F8</em> interage com o ferro mas não participa das pontes salinas do estado T — essa é a histidina que ancora o ferro ao heme.`
+  },
+  {
+    question:"Em um modelo puramente concertado (MWC), a saturação parcial intermediária da hemoglobina ocorre porque",
+    options:["Há coexistência de populações T e R em equilíbrio","Cada subunidade muda independentemente","O equilíbrio desloca-se progressivamente para R com aumento de PO2","O 2,3-DPG impede a transição estrutural"],
+    answer:["Há coexistência de populações T e R em equilíbrio","O equilíbrio desloca-se progressivamente para R com aumento de PO2"],
+    type:"multi",
+    justification:`O <strong>modelo MWC (Monod-Wyman-Changeux, 1965)</strong> postula que o tetrâmero existe em equilíbrio entre dois estados <em>simétricos</em>:
+    <ul class="correct-list">
+      <li><strong>Estado T (taut/tenso):</strong> baixa afinidade, predomina em ausência de O₂, estabilizado por 2,3-DPG e H⁺</li>
+      <li><strong>Estado R (relaxed/relaxado):</strong> alta afinidade, favorecido pela ligação de O₂</li>
+    </ul>
+    <em>Todas as 4 subunidades mudam simultaneamente (concerted).</em> A saturação intermediária observada na curva sigmoide reflete a <em>coexistência dinâmica</em> de populações T e R em equilíbrio — à medida que a PO₂ sobe, o equilíbrio desloca-se progressivamente para R. Isso contrasta com o modelo de Koshland (KNF) onde subunidades mudam sequencialmente.`
+  },
+  {
+    question:"Um paciente com alcalose respiratória aguda apresentará qual alteração inicial na entrega de oxigênio aos tecidos?",
+    options:["Redução da liberação periférica de O2","Deslocamento da curva para a esquerda","Predomínio do estado R","Aumento da extração tecidual de O2"],
+    answer:["Redução da liberação periférica de O2","Deslocamento da curva para a esquerda","Predomínio do estado R"],
+    type:"multi",
+    justification:`Na <strong>alcalose respiratória aguda</strong> (hiperventilação, ansiedade, altitude), o pH sobe (< H⁺). O efeito Bohr inverte:
+    <ul class="correct-list">
+      <li>Menor H⁺ → menos protonação das histidinas → <em>pontes salinas do estado T desestabilizadas</em> → predomínio do <strong>estado R</strong></li>
+      <li>P50 diminui → <strong>curva à esquerda</strong> → Hb libera menos O₂ na periferia</li>
+    </ul>
+    Paradoxalmente, a PaO₂ pode estar normal ou elevada, mas a entrega real de O₂ é reduzida. Isso explica sintomas como tetania, parestesias e vertigem na hiperventilação.
+    <br><br><em>Compensação:</em> em alcalose crônica, os rins retêm H⁺ e os eritrócitos aumentam produção de 2,3-DPG (compensa à direita), normalizando a entrega de O₂ em 24–48h.`
+  },
+  {
+    question:"Na anemia falciforme, a polimerização da HbS ocorre preferencialmente quando",
+    options:["A hemoglobina está no estado T","A saturação de O2 está reduzida","Há acidose","Predomina estado R"],
+    answer:["A hemoglobina está no estado T","A saturação de O2 está reduzida","Há acidose"],
+    type:"multi",
+    justification:`A <strong>valina β6</strong> da HbS expõe um sítio hidrofóbico que interage com um bolsão hidrofóbico (resíduos Phe β85, Leu β88) em outra molécula de HbS → polímeros de 14 filamentos = <em>falciforma</em>.
+    <br><br>A polimerização ocorre quase exclusivamente no <strong>estado T (desoxigenado)</strong>:
+    <ul class="correct-list">
+      <li><strong>Baixa SatO₂:</strong> converte Hb para estado T → expõe sítio de polimerização</li>
+      <li><strong>Acidose (H⁺ alto):</strong> efeito Bohr estabiliza estado T → favorece polimerização</li>
+      <li><strong>Temperatura elevada, desidratação</strong> (concentra Hb intracelular): aceleram polimerização</li>
+    </ul>
+    No estado R (oxigenado), o sítio hidrofóbico fica ocluído → sem polimerização. <em>Base racional:</em> estratégias que mantêm HbS oxigenada (hidroxiureia → aumenta HbF diluidora, voxelotor → estabiliza estado R diretamente) previnem crises vasooclusivas.`
+  },
+  {
+    question:"A diferença fundamental entre efeito Bohr e efeito Haldane reside no fato de que o primeiro se refere à modulação da afinidade por O2 por H+/CO2, enquanto o segundo descreve a influência da oxigenação da Hb sobre o transporte de CO2",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> São dois aspectos complementares do mesmo fenômeno conformacional, descritos do ponto de vista inverso:
+    <ul class="correct-list">
+      <li><strong>Efeito Bohr</strong> (Christian Bohr, 1904): H⁺ e CO₂ <em>reduzem</em> a afinidade da Hb por O₂ → curva à direita. Favorece liberação de O₂ nos tecidos (onde pH é baixo e PCO₂ alta).</li>
+      <li><strong>Efeito Haldane</strong> (John Scott Haldane, 1914): a desoxigenação da Hb <em>aumenta</em> sua capacidade de transportar CO₂ (como carbamato e carregando mais H⁺). Nos tecidos, DesoxiHb capta CO₂ e H⁺; nos pulmões, OxiHb os libera.</li>
+    </ul>
+    <em>Na prática clínica:</em> o efeito Haldane explica por que sangue venoso consegue "absorver" mais CO₂ do que o arterial — relevante no cálculo da diferença arteriovenosa de CO₂ (V-A CO₂ gap > 6 mmHg sugere baixo débito cardíaco).`
+  },
+  {
+    question:"A redução estrutural da cavidade central da hemoglobina no estado R diminui a ligação ao 2,3-DPG",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> Na transição T→R, os dímeros α₁β₁ e α₂β₂ rodam ~15° um em relação ao outro. A <em>cavidade central</em> (espaço entre as 4 subunidades) torna-se <strong>mais estreita no estado R</strong>. O 2,3-DPG (altamente carregado negativamente: 5 cargas negativas) liga-se na cavidade central por pontes de hidrogênio e interações eletrostáticas com resíduos positivos das cadeias β apenas no estado T.
+    <br><br>No estado R, a cavidade central colapsa → impossibilidade estérica para o 2,3-DPG → <em>afinidade pelo 2,3-DPG ≈ zero no estado R</em>. Isso cria um mecanismo de feedback: mais O₂ → mais estado R → menos 2,3-DPG ligado → não estabiliza estado T → facilita manutenção do estado R.`
+  },
+  {
+    question:"A introdução de mutação que aumente a afinidade da Hb pelo 2,3-DPG tenderá a deslocar a curva de dissociação para a esquerda",
+    answer:"F",
+    type:"tf",
+    justification:`<strong>Falso.</strong> O raciocínio correto é o oposto: maior afinidade pelo 2,3-DPG → mais 2,3-DPG ligado ao estado T → maior estabilização do estado T → <em>menor afinidade por O₂</em> → <strong>curva à direita (P50 aumentado)</strong>.
+    <br><br>Analogia: o 2,3-DPG é um "freio" da oxigenação. Se a Hb tem maior afinidade por esse freio, fica mais "freada" no estado T → libera O₂ mais facilmente nos tecidos.
+    <br><br><em>Erro clássico:</em> confundir "maior afinidade pelo modulador alostérico negativo" com "maior afinidade pelo ligante principal (O₂)". O 2,3-DPG é um <em>efetor heterotrófico negativo</em> — aumentar sua ligação <em>reduz</em> a afinidade por O₂.`
+  },
+  {
+    question:"Em transfusão maciça com sangue armazenado, a normalização da entrega de O2 depende da regeneração intracelular de 2,3-DPG nos eritrócitos transfundidos",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> O 2,3-DPG depleta progressivamente no sangue armazenado:
+    <ul class="correct-list">
+      <li><strong>Semana 1:</strong> 2,3-DPG ≈ normal → P50 normal (26 mmHg)</li>
+      <li><strong>Semana 2–3:</strong> 2,3-DPG cai 50% → P50 reduzido → curva à esquerda → hemácias retêm O₂</li>
+      <li><strong>Semana 4–6:</strong> 2,3-DPG quase zero → P50 ≈ 15 mmHg (similar à HbF!)</li>
+    </ul>
+    Após transfusão, o 2,3-DPG regenera em <strong>12–24h</strong> (via glicolise, pathway Rapoport-Luebering). Em pacientes críticos em choque hemorrágico recebendo grandes volumes de sangue armazenado, a oferta funcional de O₂ pode estar temporariamente comprometida — justifica uso de sangue fresco em protocolos de transfusão maciça de alguns centros.`
+  },
+  {
+    question:"Caso clínico: Paciente séptico com acidose láctica apresenta PaO2 de 98 mmHg e saturação de 99%, porém mantém lactato elevado. A alteração mais provável no nível molecular é",
+    options:["Predomínio sistêmico do estado T","Desacoplamento entre oferta e utilização tecidual de O2","Redução da afinidade por O2","Aumento da estabilidade do estado R"],
+    answer:["Desacoplamento entre oferta e utilização tecidual de O2"],
+    type:"multi",
+    justification:`Este caso descreve a <strong>hipóxia citopática</strong> da sepse grave: PaO₂ e SatO₂ normais indicam que o pulmão está trocando adequadamente e a Hb está carregada — o problema não é na <em>oferta</em>, mas na <em>utilização</em>.
+    <br><br>Na sepse grave, endotoxinas e mediadores inflamatórios (TNF-α, IL-1β, NO em excesso) <strong>inibem a cadeia transportadora de elétrons mitocondrial</strong> (especialmente o Complexo IV — citocromo c oxidase) → células não conseguem usar O₂ para gerar ATP → <em>metabolismo anaeróbio → lactato elevado</em> apesar de O₂ disponível.
+    <br><br><em>Implicação terapêutica:</em> em sepse, otimizar Hb acima de 10 g/dL não melhora outcomes (estudo TRICC/TRISS) pois o problema é mitocondrial. Foco: antibióticos, controle do foco, vasopressores.`
+  },
+  {
+    question:"Caso clínico: Recém-nascido prematuro recebe transfusão de HbA. Comparativamente à HbF, isso pode resultar inicialmente em",
+    options:["Maior dependência de 2,3-DPG para liberação de O2","Redução da afinidade basal por O2","Menor captação placentária de O2","Maior estabilidade do estado T"],
+    answer:["Maior dependência de 2,3-DPG para liberação de O2","Redução da afinidade basal por O2","Maior estabilidade do estado T"],
+    type:"multi",
+    justification:`A <strong>HbA</strong> (α₂β₂) tem cadeias β que se ligam intensamente ao 2,3-DPG (His β143), ao contrário da <strong>HbF</strong> (α₂γ₂) que liga pouco. No prematuro com baixo 2,3-DPG (prematuros produzem menos), a HbA transfundida terá:
+    <ul class="correct-list">
+      <li><strong>Menor afinidade basal por O₂</strong> do que a HbF nativa do prematuro</li>
+      <li><strong>Estado T mais estável</strong> (pontes salinas intactas do adulto vs HbF)</li>
+      <li><strong>Maior dependência do 2,3-DPG</strong> para ajustar a liberação de O₂</li>
+    </ul>
+    <em>Implicação:</em> o prematuros com HbF têm P50 ≈ 19–21 mmHg. Após transfusão de HbA, P50 aumenta para ≈ 26 mmHg → teoricamente melhor entrega de O₂ nos tecidos, mas com risco de hipóxia relativa se o 2,3-DPG do sangue armazenado estiver baixo.`
+  },
+  {
+    question:"Quais fatores estimulantes de colônias atuam sobre precursores granulocíticos",
+    options:["G-CSF","M-CSF","GM-CSF","Eritropoietina","IL-1"],
+    answer:["G-CSF","GM-CSF"],
+    type:"multi",
+    justification:`Os <strong>CSFs (Colony-Stimulating Factors / Fatores Estimulantes de Colônias)</strong> são glicoproteínas que regulam diferenciação das células progenitoras hematopoiéticas:
+    <ul class="correct-list">
+      <li><strong>G-CSF (Granulocyte-CSF / Fator Estimulante de Colônias de Granulócitos):</strong> estimula especificamente a produção e diferenciação de <em>neutrófilos</em>. Liga-se a receptor tirosina-quinase. Uso clínico: filgrastim, lenograstim → mobiliza HSCs, previne neutropenia pós-quimio.</li>
+      <li><strong>GM-CSF (Granulocyte-Macrophage-CSF):</strong> estimula tanto granulócitos quanto monócitos/macrófagos. Mais amplo. Uso: sargramostim.</li>
+    </ul>
+    M-CSF estimula monocytos/macrófagos. EPO estimula a linhagem eritroide (BFU-E e CFU-E). IL-1 é uma citocina pró-inflamatória, não um CSF específico para granulócitos (embora estimule produção de outras citocinas que atuam na hematopoiese).`
+  },
+  {
+    question:"A eritropoietina estimula diretamente a série eritroide a partir das células BFU-E e CFU-E",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> A <strong>EPO (eritropoietina)</strong> atua ligando-se ao seu receptor transmembrana <strong>EPOR</strong> (homodímero de dois domínios fibronectina III). A ligação ativa as <strong>JAKs (Janus Kinases)</strong> 1 e 2 → fosforilam e ativam <strong>STAT5 (Signal Transducer and Activator of Transcription 5)</strong> → transcrição de genes anti-apoptóticos (Bcl-xL) e pró-proliferativos.
+    <br><br>Ação nas progenitoras:
+    <ul class="correct-list">
+      <li><strong>BFU-E (Burst-Forming Unit-Erythroid):</strong> responde a doses menores de EPO + IL-3 + SCF. Forma colônias grandes (burst) em 14 dias.</li>
+      <li><strong>CFU-E (Colony-Forming Unit-Erythroid):</strong> altamente sensível à EPO. Forma colônias menores em 7 dias. Ausência de EPO → apoptose dessas células.</li>
+    </ul>
+    <em>Uso clínico:</em> EPO recombinante (epoetina alfa, darbepoetina com meia-vida prolongada) é a base do tratamento da anemia da IRC, quimioterapia e prematuridade.`
+  },
+  {
+    question:"A produção diária aproximada de eritrócitos é de 10¹² células",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> O ser humano adulto produz aproximadamente <strong>2–3 × 10¹¹ eritrócitos por dia</strong> — alguns textos arredondam para ~10¹¹, mas em condições de demanda aumentada pode atingir 10¹².
+    <br><br>Considerando que:
+    <ul class="correct-list">
+      <li>Volume sanguíneo total ≈ 5L</li>
+      <li>Hematócrito ≈ 45% → volume de eritrócitos ≈ 2,25L</li>
+      <li>Cada eritrócito tem volume ≈ 90 fL (MCV)</li>
+      <li>Total de eritrócitos = 2,5 × 10¹³</li>
+      <li>Vida média = 120 dias → renovação diária = 2,5 × 10¹³ / 120 ≈ <strong>2 × 10¹¹ /dia</strong></li>
+    </ul>
+    Em hemólise grave, a medula pode aumentar produção 6–8× → <em>eritropoiese de estresse</em>, mobilizando progenitores do baço e fígado (hematopoiese extramedular).`
+  },
+  {
+    question:"A sequência correta da eritropoiese inclui",
+    options:["BFU-E","CFU-E","Proeritroblasto","Normoblasto tardio","Reticulócito","Eritrócito"],
+    answer:["BFU-E","CFU-E","Proeritroblasto","Normoblasto tardio","Reticulócito","Eritrócito"],
+    type:"multi",
+    justification:`A sequência completa da eritropoiese medular:
+    <ul class="correct-list">
+      <li><strong>HSC (Hematopoietic Stem Cell)</strong> → MEP (Megakaryocyte-Erythroid Progenitor) → <strong>BFU-E</strong> (15–20 dias, pouco sensível a EPO)</li>
+      <li><strong>CFU-E</strong> (7 dias, altamente sensível a EPO)</li>
+      <li><strong>Proeritroblasto</strong> (Pro-E): célula maior (20µm), basofílica, nucléolos visíveis</li>
+      <li><strong>Eritroblasto basofílico</strong>: inicia síntese de Hb</li>
+      <li><strong>Eritroblasto policromático</strong>: misto de RNA (azul) + Hb (rosa)</li>
+      <li><strong>Normoblasto tardio (ortocromático)</strong>: expulsa núcleo → enucleação</li>
+      <li><strong>Reticulócito</strong>: 1–2 dias na medula + 1 dia no sangue, ainda com RNA residual</li>
+      <li><strong>Eritrócito maduro</strong>: disco bicôncavo, 120 dias de vida</li>
+    </ul>
+    Cada proeritroblasto gera ~16 eritrócitos (4 divisões mitóticas).`
+  },
+  {
+    question:"A eritropoietina é produzida majoritariamente no fígado",
+    answer:"F",
+    type:"tf",
+    justification:`<strong>Falso.</strong> No <em>adulto</em>, a EPO é produzida <strong>90% pelo rim</strong> (células intersticiais peritubulares tipo II, fibroblastos do córtex renal) e apenas <10% pelo fígado (hepatócitos e células de Ito / estelares).
+    <br><br>Durante a vida <em>fetal</em>, contudo, o fígado é a principal fonte de EPO (até a 30ª semana gestacional). Após o nascimento, o rim assume gradualmente a produção.
+    <br><br><em>Relevância clínica:</em> na IRC avançada com destruição do parênquima renal, a produção hepática residual (<10%) é insuficiente → anemia grave. Por isso pacientes com IRC hepática (cirrose + IR) têm anemia ainda mais refratária.`
+  },
+  {
+    question:"A hipóxia tecidual estimula a produção de eritropoietina via ativação do fator induzível por hipóxia (HIF)",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> O eixo <strong>O₂ → PHD → VHL → HIF → EPO</strong> é o mecanismo central:
+    <ul class="correct-list">
+      <li><strong>Normóxia:</strong> PHDs (usam O₂) hidroxilam Pro564 e Pro402 do HIF-1α/2α → VHL ubiquitina → proteassoma degrada</li>
+      <li><strong>Hipóxia:</strong> PHDs inativas → HIF acumula → transloca ao núcleo → heterodimeriza com ARNT (HIF-1β) → liga a HREs do gene EPO → <em>transcrição de EPO</em></li>
+    </ul>
+    O <strong>HIF-2α</strong> é o principal mediador da produção de EPO renal (> HIF-1α). Também regula VEGF, LDHA, GLUT1.
+    <br><br><em>Aplicação farmacológica:</em> os <em>inibidores de PHD</em> (roxadustat, daprodustat, molidustat) estabilizam HIF → aumentam EPO endógena → aprovados para anemia da IRC. Vantagem: via oral, não requerem injeção como epoetina.`
+  },
+  {
+    question:"Fatores que aumentam a secreção de eritropoietina incluem",
+    options:["Andrógenos","Hipóxia","Hemólise","Estrogênio","Tiroxina"],
+    answer:["Andrógenos","Hipóxia","Hemólise","Tiroxina"],
+    type:"multi",
+    justification:`Reguladores da produção de EPO:
+    <ul class="correct-list">
+      <li><strong>Hipóxia:</strong> mecanismo principal via HIF-2α (descrito acima)</li>
+      <li><strong>Andrógenos (testosterona):</strong> estimulam diretamente a produção de EPO nas células renais E aumentam sensibilidade dos precursores eritroides à EPO → explica hematócrito maior em homens (Hb homens ≈ 15,5 vs mulheres ≈ 13,5 g/dL)</li>
+      <li><strong>Hemólise:</strong> anemia resultante → hipóxia → EPO elevada</li>
+      <li><strong>Tiroxina (T4/T3):</strong> aumenta metabolismo basal → maior consumo de O₂ → hipóxia relativa → mais EPO. Hipertireoidismo causa eritrocitose discreta.</li>
+      <li><strong>Estrogênio:</strong> ao contrário, <em>inibe</em> ligeiramente a eritropoiese (mecanismo da menor Hb feminina)</li>
+    </ul>
+    <em>Uso clínico dos andrógenos:</em> danazol, testosterona e oximetolona foram usados historicamente para estimular eritropoiese em anemias aplásicas e talassemia antes da EPO recombinante.`
+  },
+  {
+    question:"A vitamina B12 é essencial para síntese de DNA e maturação nuclear dos eritrócitos",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> A vitamina B12 (<strong>cobalamina</strong>, do grego <em>kobaltos</em> = cobalto, o metal central de seu anel porfirínico) age como cofator em duas reações humanas:
+    <ul class="correct-list">
+      <li><strong>Metionina sintase:</strong> converte 5-metil-THF → THF (reativa o folato) + homocisteína → metionina. Sem B12 → <em>methylfolate trap</em> → falha na síntese de dTMP → DNA não replica.</li>
+      <li><strong>L-metilmalonil-CoA mutase:</strong> converte L-metilmalonil-CoA → succinil-CoA (ciclo de Krebs). Déficit → acúmulo de ácido metilmalônico → neurotoxicidade.</li>
+    </ul>
+    Fontes: exclusivamente animal (carne, peixe, laticínios). Absorção depende do <strong>fator intrínseco de Castle</strong> (produzido pelas células parietais gástricas). Estoques hepáticos duram 3–5 anos → deficiência insidiosa (vegetarianos estritos, gastrectomia, gastrite atrófica/anemia perniciosa).`
+  },
+  {
+    question:"A deficiência de ácido fólico pode causar anemia megaloblástica",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> O <strong>ácido fólico (vitamina B9)</strong> — do latim <em>folium</em> (folha, pois foi descoberto em folhas de espinafre em 1941) — é essencial como transportador de grupos monocarbonados para a síntese de purinas e pirimidinas.
+    <br><br>Deficiência → ↓ THF → ↓ timidilato → falha na síntese de DNA → <strong>megaloblastose</strong> (mesma morfologia que déficit de B12), mas <em>sem neuropatia</em> (a neuropatia subaguda combinada é exclusiva do déficit de B12).
+    <br><br><em>Causas:</em> dieta pobre (alcoolismo), má absorção (doença celíaca, espru tropical), aumento de demanda (gestação, anemia hemolítica crônica), drogas (metotrexato, sulfasalazina, fenitoína).
+    <br><br><em>Profilaxia:</em> suplementação periconcepcional de folato (400 µg/dia) reduz defeitos do tubo neural em 70%.`
+  },
+  {
+    question:"O metotrexato inibe a dihidrofolato redutase",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> O <strong>MTX (metotrexato)</strong> é um antimetabólito análogo do folato que inibe competitivamente e com altíssima afinidade a <strong>DHFR (Dihidrofolato Redutase / Dihydrofolate Reductase)</strong> — enzima que reduz dihidrofolato (DHF) → THF.
+    <br><br>Sem THF funcional → sem 5,10-metileno-THF → sem timidilato sintase ativa → <em>falha na síntese de DNA</em> → citotoxicidade, especialmente em células rapidamente divisoras (células tumorais, epitélio GI, precursores hematopoiéticos).
+    <br><br><em>Resgate:</em> ácido folínico (leucovorin = 5-formil-THF) é administrado após MTX em altas doses para "salvar" células normais sem comprometer o efeito anti-tumoral (células cancerosas acumulam MTX intracelularmente de forma diferente).
+    <br><br>Outros inibidores de DHFR: trimetoprima (antibiótico), pirimetamina (antiprotozoário).`
+  },
+  {
+    question:"A hemoglobina é composta por",
+    options:["Quatro cadeias polipeptídicas","Quatro grupos heme","Ferro no estado Fe2+","Três cadeias alfa e uma beta"],
+    answer:["Quatro cadeias polipeptídicas","Quatro grupos heme","Ferro no estado Fe2+"],
+    type:"multi",
+    justification:`A <strong>hemoglobina A</strong> do adulto é uma proteína <em>tetramérica</em> (MW ≈ 64.500 Da):
+    <ul class="correct-list">
+      <li><strong>4 cadeias polipeptídicas:</strong> 2 α (141 aa) + 2 β (146 aa)</li>
+      <li><strong>4 grupos heme:</strong> um por subunidade — porfirina IX + Fe²⁺ coordenado com 4 N dos pirróis + histidina proximal (F8) + 6ª posição livre para O₂</li>
+      <li><strong>Fe²⁺ (ferroso):</strong> o O₂ liga-se ao Fe²⁺ sem oxidá-lo (é oxigenação, não oxidação). Quando ocorre oxidação para Fe³⁺ → metahemoglobina</li>
+    </ul>
+    "Três cadeias alfa e uma beta" descreve um tetrâmero anormal — não existe essa composição. A <strong>HbH</strong> (hemoglobinopatia H) é composta de <em>4 cadeias β</em> (β4), não de 3α+1β.`
+  },
+  {
+    question:"Cada molécula de hemoglobina pode transportar quatro moléculas de oxigênio",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> Cada tetrâmero de Hb tem <strong>4 subunidades</strong>, cada uma com <strong>1 grupo heme</strong>, cada heme com <strong>1 átomo de Fe²⁺</strong> capaz de ligar <strong>1 molécula de O₂</strong>.
+    <br><br>Capacidade de transporte: <strong>1,34 mL O₂/g Hb</strong> (constante de Hüfner). Portanto:
+    <br>Conteúdo arterial de O₂ (CaO₂) = (Hb × 1,34 × SatO₂) + (PaO₂ × 0,0031)
+    <br>= (15 × 1,34 × 0,98) + (100 × 0,0031) ≈ 19,7 + 0,31 ≈ <strong>20 mL O₂/dL</strong>
+    <br><br><em>Exercício clínico:</em> paciente com Hb = 7 g/dL e SatO₂ = 98%:
+    CaO₂ = (7 × 1,34 × 0,98) + 0,31 ≈ 9,2 mL/dL. Com Débito Cardíaco (DC) = 5 L/min → DO₂ (oferta) = 9,2 × 50 = 460 mL/min (normal ≈ 1000 mL/min) → necessário compensar com aumento de DC.`
+  },
+  {
+    question:"O estado T da hemoglobina apresenta",
+    options:["Baixa afinidade por O2","Alta afinidade por O2","Maior ligação ao 2,3-DPG","Maior número de pontes salinas"],
+    answer:["Baixa afinidade por O2","Maior ligação ao 2,3-DPG","Maior número de pontes salinas"],
+    type:"multi",
+    justification:`O <strong>estado T (Tense/Tenso = desoxigenado)</strong> é caracterizado por:
+    <ul class="correct-list">
+      <li><strong>Baixa afinidade por O₂:</strong> o sítio ativo (heme) está distorcido, com histidina distal (E7) em posição menos favorável para estabilização do O₂ ligado</li>
+      <li><strong>Pontes salinas:</strong> 8 pontes salinas inter e intrasubunidades (ex.: Arg α141 com Asp β94; His β146 com Asp β94) que "trancam" a conformação T</li>
+      <li><strong>Ligação ao 2,3-DPG:</strong> cavidade central aberta permite encaixe do 2,3-DPG entre as cadeias β, estabilizando ainda mais o estado T</li>
+    </ul>
+    <em>Resultado funcional:</em> a Hb no estado T nos capilares teciduais (onde pH baixo e PCO₂ alta predominam) libera O₂ com eficiência para os tecidos.`
+  },
+  {
+    question:"O estado R da hemoglobina é estabilizado por alta pressão parcial de oxigênio",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> No estado <strong>R (Relaxed/Relaxado = oxigenado)</strong>, a ligação do O₂ ao Fe²⁺ traciona a histidina proximal F8 → desloca hélice F → rompe pontes salinas → a proteína "abre" ligeiramente.
+    <br><br>Alta PO₂ (como nos capilares alveolares, PO₂ ≈ 100 mmHg) favorece a ligação de O₂ em todas as 4 subunidades → estado R dominante → hemácia carregada de O₂ para os tecidos.
+    <br><br><em>Características do estado R:</em> pontes salinas quebradas; cavidade central estreita (menor ligação ao 2,3-DPG); histidina distal E7 estabiliza O₂ via ponte de hidrogênio; maior constante de afinidade (Kd menor para O₂).`
+  },
+  {
+    question:"O aumento de 2,3-DPG desloca a curva de dissociação da hemoglobina para a direita",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> O <strong>2,3-DPG</strong> (produzido na via de Rapoport-Luebering, desvio da glicolise entre as etapas de 1,3-BPG → 3-fosfoglicerato) liga-se ao estado T → estabiliza-o → <em>reduz a afinidade por O₂</em> → P50 aumenta → curva à direita.
+    <br><br>Situações com 2,3-DPG elevado (curva à direita): altitude, anemia crônica, DPOC, ICC, hipertireoidismo.
+    <br>Situações com 2,3-DPG reduzido (curva à esquerda): sangue armazenado, transfusão maciça, hipotireoidismo, policitemia vera (tratada).
+    <br><br><em>Fórmula da P50:</em> P50 normal ≈ 26 mmHg. Deslocamento à direita: entrega mais O₂ nos tecidos (maior DO₂). Deslocamento à esquerda: pulmão capta melhor O₂, mas tecidos recebem menos.`
+  },
+  {
+    question:"Fatores que desviam a curva de dissociação para a direita incluem",
+    options:["Aumento de H+","Aumento de CO2","Aumento de 2,3-DPG","Redução de temperatura"],
+    answer:["Aumento de H+","Aumento de CO2","Aumento de 2,3-DPG"],
+    type:"multi",
+    justification:`Desvio à <strong>direita</strong> (P50 aumentado, menor afinidade, maior liberação de O₂ periférica):
+    <ul class="correct-list">
+      <li><strong>↑ H⁺ (acidose):</strong> efeito Bohr — protona histidinas, estabiliza estado T</li>
+      <li><strong>↑ CO₂:</strong> forma carbamatos N-terminais + efeito Bohr indireto (CO₂ + H₂O → H⁺ + HCO₃⁻)</li>
+      <li><strong>↑ 2,3-DPG:</strong> estabiliza estado T diretamente</li>
+      <li><strong>↑ Temperatura:</strong> desnaturação parcial favorece liberação de O₂ (músculos quentes durante exercício)</li>
+    </ul>
+    <strong>Redução de temperatura</strong> desloca à ESQUERDA (maior afinidade, menor entrega) — por isso hipotermia profunda (cirurgia cardíaca) pode causar hipóxia periférica.
+    <br><br><em>Mnemônico CADET:</em> CO₂, Acidose (H⁺), DPG, Exercício (temperatura), Temperature → todos → direita.`
+  },
+  {
+    question:"A cooperatividade da hemoglobina explica a forma sigmoide da curva de dissociação",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> A <strong>cooperatividade positiva</strong> diferencia a Hb da mioglobina:
+    <ul class="correct-list">
+      <li><strong>Mioglobina</strong> (monômero, 1 heme): curva hiperbólica, P50 ≈ 1–2 mmHg, não cooperativa</li>
+      <li><strong>Hemoglobina</strong> (tetrâmero, 4 hemes): curva <em>sigmoide</em>, P50 ≈ 26 mmHg, altamente cooperativa</li>
+    </ul>
+    A sigmoidicidade surge porque a ligação do 1º O₂ facilita o 2º, que facilita o 3º, etc. — cada ligação torna o sítio seguinte mais acessível. Quantificado pelo <strong>coeficiente de Hill (n)</strong>:
+    <br>n = 1 → sem cooperatividade (Mb)
+    <br>n = 2,8 → Hb normal
+    <br>n = 4 → cooperatividade máxima teórica
+    <br><br><em>Vantagem fisiológica da sigmoidicidade:</em> carga eficiente nos pulmões (PO₂ alta) E descarga eficiente nos tecidos (PO₂ baixa) com grande variação de saturação em faixa estreita de PO₂.`
+  },
+  {
+    question:"A HbF apresenta maior afinidade por oxigênio devido à menor ligação ao 2,3-DPG",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> Este é o mecanismo central da maior afinidade da HbF. A posição 143 das cadeias γ contém <strong>serina</strong> (sem carga) ao invés da <strong>histidina 143</strong> das cadeias β — resíduo fundamental para as 5 pontes de hidrogênio que o 2,3-DPG forma na cavidade central da HbA.
+    <br><br>Sem His β143 → 2,3-DPG liga-se fracamente à HbF → estado T menos estabilizado → P50 HbF ≈ 18 mmHg vs P50 HbA ≈ 26 mmHg.
+    <br><br><em>Importância clínica dupla:</em>
+    <ul class="correct-list">
+      <li>Permite captação de O₂ pela placenta fetal (gradiente HbF > HbA)</li>
+      <li>Na doença falciforme, HbF dilui HbS e <em>previne polimerização</em> (cada tetrâmero com ≥1 cadeia γ não polimeriza)</li>
+    </ul>
+    A hidroxiureia funciona aumentando HbF via ativação de HSP70 e sinalização de óxido nítrico.`
+  },
+  {
+    question:"Variedades fisiológicas de hemoglobina incluem",
+    options:["HbA","HbA2","HbF","HbS"],
+    answer:["HbA","HbA2","HbF"],
+    type:"multi",
+    justification:`As <strong>hemoglobinas fisiológicas</strong> normais do ser humano:
+    <ul class="correct-list">
+      <li><strong>HbA</strong> (α₂β₂): 96–97% no adulto — principal transportador de O₂</li>
+      <li><strong>HbA2</strong> (α₂δ₂): 2–3,5% no adulto — marcador de β-talassemia minor quando > 3,5%</li>
+      <li><strong>HbF</strong> (α₂γ₂): < 1% no adulto (predominante no feto até 6 meses pós-natal)</li>
+      <li><em>HbEmbrionárias:</em> Hb Gower 1 (ζ₂ε₂), Gower 2 (α₂ε₂), Portland (ζ₂γ₂) — presentes apenas nas primeiras semanas embrionárias</li>
+    </ul>
+    <strong>HbS</strong> (α₂β₂S) é uma <em>hemoglobina patológica</em> (variante estrutural por mutação pontual) — não é fisiológica. O mesmo se aplica à HbC, HbE, HbH, etc.`
+  },
+  {
+    question:"Na anemia falciforme ocorre substituição do ácido glutâmico por valina na posição 6 da cadeia beta",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> A mutação da anemia falciforme é a mais bem caracterizada da medicina molecular:
+    <br><br><em>Gene:</em> HBB (cromossomo 11p15.5)
+    <br><em>Mutação nucleotídica:</em> GAG → GTG (adenina → timina no 2º nucleotídeo do códon 6)
+    <br><em>Troca aminoacídica:</em> Ácido Glutâmico (Glu, E) → Valina (Val, V) na posição β6
+    <br><br>Consequência: a Glu é polar/carregada negativamente (hidrófila) → na superfície da Hb, exposta ao solvente. A Val é apolar (hidrofóbica) → cria um sítio "pegajoso" que se encaixa em um bolsão hidrofóbico de outra HbS desoxigenada (Phe β85, Leu β88) → <strong>polimerização</strong>.
+    <br><br><em>Fascinante:</em> apenas 1 mudança de nucleotídeo em ~3 bilhões de pares de base transforma uma proteína funcional em patogênica — modelo clássico de doença molecular.`
+  },
+  {
+    question:"A talassemia resulta da síntese anormal do grupo heme",
+    answer:"F",
+    type:"tf",
+    justification:`<strong>Falso.</strong> As talassemias resultam de <em>redução quantitativa</em> na síntese das <strong>cadeias globínicas</strong>, não do heme.
+    <ul class="correct-list">
+      <li><strong>α-talassemia:</strong> deleção de 1–4 genes HBA (cromossomo 16p) → menos cadeias α</li>
+      <li><strong>β-talassemia:</strong> mutações pontuais no gene HBB → menos ou nenhuma cadeia β (β⁺ ou β⁰)</li>
+    </ul>
+    A síntese de heme está <em>preservada</em> — por isso o ferro fica disponível mas não é incorporado a hemoglobina funcional → acúmulo de ferro intracelular e cadeias globínicas livres em desequilíbrio → precipitam → hemólise intravascular e extravascular.
+    <br><br><em>Diagnóstico diferencial importante:</em> anemia sideroblástica → problema na síntese do <em>heme</em> (não da globina). Anemia ferropriva → falta de ferro para incorporar no heme. Talassemia → cadeia globínica ausente.`
+  },
+  {
+    question:"Derivados da hemoglobina incluem",
+    options:["Oxihemoglobina","Carboxihemoglobina","Metahemoglobina","Carbaminohemoglobina"],
+    answer:["Oxihemoglobina","Carboxihemoglobina","Metahemoglobina","Carbaminohemoglobina"],
+    type:"multi",
+    justification:`Os principais derivados funcionais e patológicos da Hb:
+    <ul class="correct-list">
+      <li><strong>OxiHb (HbO₂):</strong> Fe²⁺ + O₂ → ligação reversível, estado R. Normal nos pulmões.</li>
+      <li><strong>DesoxiHb:</strong> Fe²⁺ sem O₂, estado T. Normal nos tecidos.</li>
+      <li><strong>CarboximHb (HbCO):</strong> Fe²⁺ + CO → ligação irreversível funcional, afinidade 250× > O₂. Tóxico.</li>
+      <li><strong>MetaHb (HbFe³⁺):</strong> Fe³⁺ oxidado, não liga O₂. Tratamento: azul de metileno.</li>
+      <li><strong>CarbaminoHb:</strong> CO₂ ligado aos grupos NH₂ N-terminais das cadeias globínicas (não ao heme). Responsável por ~20% do transporte de CO₂.</li>
+      <li><strong>SulfoHb (HbS):</strong> Fe²⁺ + H₂S → irreversível, cor verde-escura. Raro (metoclopramida, fenazopiridina).</li>
+      <li><strong>GlicaHb (HbA1c):</strong> Hb glicosilada não-enzimaticamente → marcador de glicemia dos últimos 3 meses.</li>
+    </ul>`
+  },
+  {
+    question:"A carboxihemoglobina possui afinidade pelo CO cerca de 200 vezes maior que pelo oxigênio",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> A constante de afinidade do CO pela Hb é <strong>210–250× maior</strong> que a do O₂ (valores variam conforme a fonte; o clássico citado é ~200×). Isso significa que mesmo concentrações muito baixas de CO no ar (0,1% = 1000 ppm) podem formar grandes quantidades de HbCO.
+    <br><br><em>Cálculo:</em> Se PO₂ alveolar = 100 mmHg e PCO = 1 mmHg (concentração 100× menor):
+    <br>CO "ganha" a competição porque 1 × 200 = 200 > 100 mmHg de pressão efetiva.
+    <br><br><em>Fontes de CO:</em> combustão incompleta (motores, churrasqueiras em ambientes fechados, incêndios). Intoxicação endógena leve (hemólise libera CO via heme-oxigenase — CO = molécula sinalizadora fisiológica).
+    <br><br><em>Oximetria de pulso:</em> não detecta HbCO — lê como HbO₂ → diagnóstico requer <strong>co-oximetria direta</strong> na gasometria.`
+  },
+  {
+    question:"A metahemoglobina contém ferro no estado Fe3+",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> A <strong>MetHb</strong> resulta da oxidação espontânea (1–3%/dia fisiologicamente) ou por agentes oxidantes:
+    <br>Fe²⁺ → Fe³⁺ (perde 1 elétron)
+    <br><br><em>Agentes causadores:</em> nitritos (nitrato de amil, nitroglicerina), dapsona, primaquina, benzocaína, metoclopramida, anilinas industriais.
+    <br><br><em>Redução fisiológica:</em> <strong>Citocromo b5 redutase (MetHb redutase NADH-dependente)</strong> mantem MetHb < 1%. Em déficit congênito desta enzima → cianose congênita com MetHb elevada.
+    <br><br><em>Sinais:</em> cianose que não melhora com O₂, sangue cor chocolate. SpO₂ por oximetria de pulso ≈ 85% (falso, independente da MetHb real). <em>Tratamento:</em> azul de metileno 1–2 mg/kg IV (ativa MetHb redutase NADPH-dependente) ou ácido ascórbico em déficit de G6PD.`
+  },
+  {
+    question:"A hemoglobina atua como importante sistema tampão ácido-base do sangue",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> Os <strong>sistemas tampão do sangue</strong> em ordem de importância:
+    <ul class="correct-list">
+      <li><strong>1° Bicarbonato/CO₂:</strong> pKa 6,1 — principal tamponamento do plasma</li>
+      <li><strong>2° Hemoglobina:</strong> pKa ≈ 6,8 (desoxiHb) a 7,2 (oxiHb) — principal tampão intracelular das hemácias e o maior tampão não-bicarbonato do sangue total</li>
+      <li><strong>3° Fosfatos orgânicos e inorgânicos</strong></li>
+      <li><strong>4° Proteínas plasmáticas</strong></li>
+    </ul>
+    A Hb tamponan ~60% do CO₂ produzido nos tecidos: absorve H⁺ gerado quando HCO₃⁻ difunde para o plasma (mecanismo de "troca de cloro" — Cl-shift ou troca de Hamburger), mantendo a eletroneutralidade intracelular.
+    <br><br><em>Exemplo numérico:</em> 1 g de Hb tamponan ~0,85 mmol de H⁺.`
+  },
+  {
+    question:"A concentração média normal de hemoglobina em homens adultos é aproximadamente 15,5 g/dL",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> Valores de referência de <strong>hemoglobina</strong>:
+    <ul class="correct-list">
+      <li><strong>Homens adultos:</strong> 13,5–17,5 g/dL (média ≈ 15,5 g/dL)</li>
+      <li><strong>Mulheres adultas:</strong> 12,0–16,0 g/dL (média ≈ 14 g/dL)</li>
+      <li><strong>Gestantes:</strong> ≥ 11 g/dL (OMS) — hemodiluição fisiológica</li>
+      <li><strong>RN a termo:</strong> 14–22 g/dL</li>
+      <li><strong>Criança 6m–6a:</strong> ≥ 11 g/dL</li>
+    </ul>
+    A diferença homem/mulher (≈ 1,5 g/dL) é explicada principalmente pelos <em>andrógenos</em> (maior EPO e estímulo eritropoiético direto) e menor perda menstrual de ferro nos homens.
+    <br><br><em>Diagnóstico de anemia (OMS):</em> Hb < 13 g/dL em homens, < 12 g/dL em mulheres não-grávidas, < 11 g/dL em grávidas.`
+  },
+  {
+    question:"O reticulócito permanece cerca de 1 a 2 dias na medula óssea antes de entrar na circulação",
+    answer:"V",
+    type:"tf",
+    justification:`<strong>Verdadeiro.</strong> Após a enucleação, o reticulócito permanece na medula óssea por <strong>1–2 dias</strong> completando a maturação (eliminação de ribossomos, mitocôndrias e RNA residual via autofagia), depois entra na circulação onde persiste por <strong>~1 dia</strong> antes de se tornar eritrócito maduro.
+    <br><br>Em eritropoiese estimulada (<em>reticulócitos de estresse</em>), a liberação é precoce → reticulócitos entram na circulação com mais RNA → ficam até <strong>2–3 dias</strong> no sangue periférico. Esses são os "shift reticulocytes" ou reticulócitos policromatófilos na coloração de Wright (células cinza-azuladas maiores).
+    <br><br><em>Índice de Produção de Reticulócitos (IPR / RPI):</em>
+    <br>RPI = (% reticulócitos × Hct paciente / 45) / fator de maturação (1,0 a 3,0)
+    <br>RPI > 2 = medula respondendo adequadamente (anemia hemolítica/hemorrágica)
+    <br>RPI < 2 = resposta inadequada (anemia hipoproliferativa)`
+  },
+  {
+    question:"O estado T é favorecido por",
+    options:["Baixo pH","Alta temperatura","Alta pressão de O2","Alta concentração de CO2"],
+    answer:["Baixo pH","Alta temperatura","Alta concentração de CO2"],
+    type:"multi",
+    justification:`O <strong>estado T</strong> é favorecido por todas as condições presentes nos tecidos em metabolismo ativo — mecanismo adaptativo que maximiza a liberação de O₂ onde é mais necessário:
+    <ul class="correct-list">
+      <li><strong>Baixo pH (H⁺ elevado):</strong> protona histidinas → novas pontes salinas → estabiliza T (efeito Bohr clássico)</li>
+      <li><strong>Alta temperatura:</strong> músculos em atividade produzem calor → enfraquece interações hidrofóbicas do estado R → favorece estado T</li>
+      <li><strong>Alta PCO₂:</strong> forma carbamatos N-terminais + acidifica via H₂CO₃ → dupla ação estabilizadora do estado T</li>
+      <li><strong>2,3-DPG elevado:</strong> liga-se na cavidade central do estado T, estabilizando-o</li>
+    </ul>
+    <strong>Alta pressão de O₂</strong> é o principal fator que FAVORECE o estado R (não o T) — nos alvéolos pulmonares, PO₂ ≈ 100 mmHg desloca o equilíbrio T→R, carregando a Hb.`
+  }
+];
+
+/* ══════════════ ESTADO DO QUIZ ══════════════ */
+let currentQ = 0;
+let userAnswers  = new Array(quizData.length).fill(null).map(()=>[]);
+let attempted    = new Array(quizData.length).fill(false);
+
+/* ══════════════ ELEMENTOS DOM ══════════════ */
+const content     = document.getElementById('quiz-content');
+const progressFill= document.getElementById('quiz-progress');
+const progressLbl = document.getElementById('progress-label');
+const prevBtn     = document.getElementById('prev-btn');
+const answerBtn   = document.getElementById('answer-btn');
+const nextBtn     = document.getElementById('next-btn');
+const submitBtn   = document.getElementById('submit-btn');
+const resultsDiv  = document.getElementById('results-container');
+const reportDiv   = document.getElementById('report-container');
+const navDiv      = document.getElementById('navigation-buttons');
+const progressWrap= document.querySelector('.progress-wrapper');
+
+/* ══════════════ RENDER ══════════════ */
+function init(){
+  shuffleArray(quizData);
+  renderAll();
+  goTo(0);
+  bindEvents();
+}
+
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+
+function renderAll(){
+  content.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className='question-card';
+    card.id=`q-${i}`;
+
+    const badgeClass = q.type==='tf' ? 'badge-tf' : 'badge-multi';
+    const badgeText  = q.type==='tf' ? '✦ V/F' : '◈ Múltipla escolha';
+
+    let optsHTML='';
+    if(q.type==='tf'){
+      optsHTML=`<div class="tf-options-container">
+        <button class="tf-option tf-v" data-q="${i}" data-o="V"><i class="fas fa-check"></i> Verdadeiro</button>
+        <button class="tf-option tf-f" data-q="${i}" data-o="F"><i class="fas fa-times"></i> Falso</button>
+      </div>`;
+    } else {
+      const letters=['A','B','C','D','E','F'];
+      optsHTML=`<div class="options-container">${q.options.map((opt,oi)=>`
+        <button class="mc-option" data-q="${i}" data-o="${opt.replace(/"/g,'&quot;')}">
+          <span class="option-indicator">${letters[oi]}</span>
+          <span>${opt}</span>
+        </button>`).join('')}</div>`;
+    }
+
+    card.innerHTML=`
+      <div class="q-meta">
+        <span class="q-num">Questão ${i+1} / ${quizData.length}</span>
+        <span class="q-type-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <p class="question-text">${q.question}</p>
+      ${optsHTML}
+      <div class="feedback" id="fb-${i}"></div>`;
+    content.appendChild(card);
+  });
+}
+
+/* ══════════════ NAVIGATION ══════════════ */
+function goTo(idx){
+  if(idx<0||idx>=quizData.length) return;
+  document.querySelector(`#q-${currentQ}`)?.classList.remove('active');
+  currentQ=idx;
+  document.querySelector(`#q-${currentQ}`)?.classList.add('active');
+  updateUI();
+}
+
+function updateUI(){
+  const done = attempted.filter(Boolean).length;
+  progressFill.style.width=`${(done/quizData.length)*100}%`;
+  progressLbl.textContent=`${done} / ${quizData.length}`;
+
+  const isAttempted = attempted[currentQ];
+  const hasSelection= userAnswers[currentQ].length>0;
+  const isLast = currentQ===quizData.length-1;
+
+  setBtn(prevBtn,   currentQ>0);
+  setBtn(answerBtn, !isAttempted);
+  setBtn(nextBtn,   isAttempted && !isLast);
+  setBtn(submitBtn, isAttempted && isLast);
+  if(!isAttempted) answerBtn.disabled=!hasSelection;
+}
+
+function setBtn(btn,show){ btn.classList.toggle('show',show); }
+
+/* ══════════════ SELECTION ══════════════ */
+function bindEvents(){
+  content.addEventListener('click',e=>{
+    const mc=e.target.closest('.mc-option');
+    const tf=e.target.closest('.tf-option');
+    if(mc) handleMC(mc);
+    if(tf) handleTF(tf);
+  });
+  answerBtn.addEventListener('click', validate);
+  nextBtn.addEventListener('click',()=>goTo(currentQ+1));
+  prevBtn.addEventListener('click',()=>goTo(currentQ-1));
+  submitBtn.addEventListener('click', finishQuiz);
+  document.getElementById('show-report-btn').addEventListener('click',()=>{resultsDiv.style.display='none';reportDiv.style.display='flex';});
+  document.getElementById('back-btn').addEventListener('click',()=>{reportDiv.style.display='none';resultsDiv.style.display='flex';});
+  document.getElementById('retry-btn').addEventListener('click',()=>location.reload());
+}
+
+function handleMC(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  const idx=userAnswers[qi].indexOf(opt);
+  if(idx>-1){ userAnswers[qi].splice(idx,1); btn.classList.remove('selected'); }
+  else{ userAnswers[qi].push(opt); btn.classList.add('selected'); }
+  updateUI();
+}
+
+function handleTF(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  userAnswers[qi]=[opt];
+  document.querySelectorAll(`.tf-option[data-q='${qi}']`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateUI();
+}
+
+/* ══════════════ VALIDATE ══════════════ */
+function validate(){
+  if(attempted[currentQ]) return;
+  const q=quizData[currentQ];
+  const fb=document.getElementById(`fb-${currentQ}`);
+  const userAns=userAnswers[currentQ]||[];
+  const correctAns=Array.isArray(q.answer)?q.answer:[q.answer];
+  const isCorrect=JSON.stringify([...userAns].sort())===JSON.stringify([...correctAns].sort());
+
+  // mark options
+  const sel = q.type==='tf' ? `.tf-option[data-q='${currentQ}']` : `.mc-option[data-q='${currentQ}']`;
+  document.querySelectorAll(sel).forEach(opt=>{
+    opt.classList.add('disabled');
+    const ov=opt.dataset.o;
+    if(correctAns.includes(ov)) opt.classList.add('correct');
+    else if(userAns.includes(ov)) opt.classList.add('incorrect');
+  });
+
+  // build feedback
+  const icon = isCorrect ? 'fa-check-circle' : 'fa-times-circle';
+  const title= isCorrect ? 'Correto!' : 'Incorreto';
+  const verdictClass = isCorrect ? 'correct' : 'incorrect';
+
+  let correctListHTML='';
+  if(!isCorrect){
+    correctListHTML=`<div style="margin-top:.5rem;font-size:.82rem;color:var(--muted2);">${correctAns.length>1?'Respostas corretas':'Resposta correta'}:</div>
+    <ul class="correct-list">${correctAns.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+  }
+
+  fb.className=`feedback ${verdictClass}`;
+  fb.innerHTML=`
+    <div class="feedback-verdict"><i class="fas ${icon}"></i>${title}${correctListHTML}</div>
+    <div class="justification">
+      <div class="just-label"><i class="fas fa-flask"></i> Justificativa Clínico-Molecular</div>
+      <div class="just-text">${q.justification}</div>
+    </div>`;
+  fb.style.display='block';
+
+  toast(isCorrect);
+  attempted[currentQ]=true;
+  [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=true);
+
+  setTimeout(()=>{
+    [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=false);
+    const isLast=currentQ===quizData.length-1;
+    if(isLast) finishQuiz(); else goTo(currentQ+1);
+  },2400);
+}
+
+/* ══════════════ RESULTS ══════════════ */
+function finishQuiz(){
+  let score=0;
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    if(JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort())) score++;
+  });
+  const pct=Math.round(score/quizData.length*100);
+
+  document.getElementById('pct-display').textContent=`${pct}%`;
+  document.getElementById('score-display').innerHTML=`Acertos: <strong>${score} de ${quizData.length}</strong>`;
+
+  // Animate ring
+  const circumference=408.4;
+  const ring=document.getElementById('score-ring');
+  setTimeout(()=>{ ring.style.strokeDashoffset=circumference*(1-pct/100); },100);
+
+  const msg=document.getElementById('feedback-message');
+  if(pct>=90) msg.textContent='🎉 Excelente domínio! Você está pronto para a prova.';
+  else if(pct>=70) msg.textContent='👏 Muito bem! Revise os pontos que errou e você chegará lá.';
+  else if(pct>=50) msg.textContent='👍 Bom esforço! Revise as justificativas com atenção.';
+  else msg.textContent='💪 Continue estudando! As justificativas abaixo são seu mapa.';
+
+  buildReport();
+
+  content.style.display='none';
+  navDiv.style.display='none';
+  progressWrap.style.display='none';
+  resultsDiv.style.display='flex';
+}
+
+function buildReport(){
+  const list=document.getElementById('report-list');
+  list.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    const ok=JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort());
+    const item=document.createElement('div');
+    item.className=`report-item ${ok?'correct':'incorrect'}`;
+    item.innerHTML=`<p class="ri-q"><strong>Questão ${i+1}:</strong> ${q.question}</p>
+      <p><strong>Sua resposta:</strong> ${ua.length?ua.join(', '):'<em>Não respondida</em>'}</p>
+      <p><strong>Correta:</strong> ${ca.join(', ')}</p>`;
+    list.appendChild(item);
+  });
+}
+
+/* ══════════════ TOAST ══════════════ */
+function toast(ok){
+  Swal.mixin({
+    toast:true,position:'top-end',
+    showConfirmButton:false,
+    timer:1400,timerProgressBar:true,
+    background: ok ? '#0a2e1f' : '#2e0a14',
+    color: ok ? '#34d399' : '#fb7185',
+  }).fire({icon:ok?'success':'error',title:ok?'✓ Correto!':'✗ Incorreto!'});
+}
+
+init();
+});
+</script>
+</body>
+</html>
