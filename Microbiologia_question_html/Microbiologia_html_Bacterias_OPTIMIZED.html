@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz · Microbiologia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --surface:   #111827;
+  --card:      #151e2e;
+  --border:    #1e2d42;
+  --border2:   #253044;
+  --primary:   #4f9cf9;
+  --primary2:  #2563eb;
+  --accent:    #f87171;
+  --gold:      #f59e0b;
+  --emerald:   #34d399;
+  --rose:      #fb7185;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --muted2:    #94a3b8;
+  --correct-bg:#0a2e1f;
+  --correct-b: #34d399;
+  --wrong-bg:  #2e0a14;
+  --wrong-b:   #fb7185;
+  --just-bg:   #0d1b2e;
+  --just-b:    #4f9cf9;
+  --radius:    14px;
+  --trans:     all .28s cubic-bezier(.4,0,.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.5rem 1rem 3rem;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND MESH ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(79,156,249,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 90%, rgba(248,113,113,.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 40%, rgba(52,211,153,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  width:100%;max-width:820px;
+  text-align:center;
+  margin-bottom:2rem;
+  position:relative;z-index:1;
+}
+.header-badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  border-radius:50px;
+  padding:.3rem .9rem;
+  font-size:.75rem;font-weight:500;
+  color:var(--primary);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.header h1{
+  font-family:'Crimson Pro',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;
+  line-height:1.2;
+  color:#f1f5f9;
+  letter-spacing:-.02em;
+}
+.header h1 span{color:var(--primary);}
+.header p{
+  color:var(--muted2);
+  font-size:.92rem;
+  margin-top:.5rem;
+}
+
+/* ── QUIZ CONTAINER ── */
+#quiz-container{
+  width:100%;max-width:820px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:2.2rem 2rem;
+  position:relative;z-index:1;
+  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+}
+
+/* top accent line */
+#quiz-container::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary2),var(--primary),var(--accent));
+  border-radius:22px 22px 0 0;
+}
+
+/* ── PROGRESS ── */
+.progress-wrapper{
+  display:flex;align-items:center;gap:.9rem;
+  margin-bottom:1.8rem;
+}
+.progress-track{
+  flex:1;height:6px;
+  background:var(--border2);
+  border-radius:50px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary2),var(--primary));
+  border-radius:50px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 10px rgba(79,156,249,.5);
+}
+.progress-label{
+  font-size:.78rem;font-weight:500;
+  color:var(--muted2);
+  white-space:nowrap;min-width:60px;text-align:right;
+  font-family:'DM Mono',monospace;
+}
+
+/* ── QUESTION CARD ── */
+.question-card{
+  display:none;flex-direction:column;align-items:stretch;
+  animation:slideIn .38s cubic-bezier(.4,0,.2,1);
+}
+.question-card.active{display:flex;}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.q-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.4rem;
+}
+.q-num{
+  font-family:'DM Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  color:var(--muted);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.q-type-badge{
+  font-size:.68rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:50px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-multi{background:rgba(79,156,249,.15);color:var(--primary);border:1px solid rgba(79,156,249,.3);}
+.badge-tf{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+.badge-fill{background:rgba(52,211,153,.12);color:var(--emerald);border:1px solid rgba(52,211,153,.3);}
+
+.question-text{
+  font-family:'Crimson Pro',serif;
+  font-size:1.28rem;font-weight:400;
+  line-height:1.6;
+  color:#f1f5f9;
+  margin-bottom:1.6rem;
+  padding-bottom:1.4rem;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── OPTIONS ── */
+.options-container{display:flex;flex-direction:column;gap:.65rem;}
+.tf-options-container{display:flex;gap:.75rem;justify-content:center;}
+.fill-input-container{
+  display:flex;flex-direction:column;gap:.5rem;
+  margin-bottom:1rem;
+}
+.fill-input{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  color:var(--text);
+  font-size:.95rem;
+  font-family:'DM Sans',sans-serif;
+  width:100%;
+  transition:var(--trans);
+}
+.fill-input:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(79,156,249,.15);
+}
+.fill-input.disabled{
+  background:rgba(30,45,66,.5);
+  border-color:var(--border2);
+  color:var(--muted2);
+  cursor:not-allowed;
+}
+
+.mc-option{
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  cursor:pointer;
+  transition:var(--trans);
+  color:var(--text);
+  font-size:.95rem;
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.mc-option::after{
+  content:'';position:absolute;inset:0;
+  background:var(--primary);
+  opacity:0;transition:opacity .2s;
+}
+.mc-option:hover:not(.disabled){
+  border-color:var(--primary);
+  transform:translateX(4px);
+  box-shadow:0 4px 16px rgba(79,156,249,.15);
+}
+.mc-option.selected{
+  border-color:var(--primary);
+  background:rgba(79,156,249,.08);
+}
+
+.tf-option{
+  flex:1;max-width:200px;
+  padding:1rem 1.5rem;
+  border-radius:var(--radius);
+  font-size:1rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.tf-option.tf-v{
+  background:rgba(52,211,153,.08);
+  border:1.5px solid rgba(52,211,153,.25);
+  color:var(--emerald);
+}
+.tf-option.tf-f{
+  background:rgba(251,113,133,.08);
+  border:1.5px solid rgba(251,113,133,.25);
+  color:var(--rose);
+}
+.tf-option:hover:not(.disabled){transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+.tf-option.selected{box-shadow:0 0 0 3px rgba(79,156,249,.4);}
+.tf-option.tf-v.selected{background:rgba(52,211,153,.18);border-color:var(--emerald);}
+.tf-option.tf-f.selected{background:rgba(251,113,133,.18);border-color:var(--rose);}
+
+/* correct / incorrect highlights */
+.mc-option.correct,.tf-option.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.mc-option.incorrect,.tf-option.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.fill-input.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.fill-input.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.mc-option.disabled,.tf-option.disabled,.fill-input.disabled{cursor:not-allowed;}
+
+.option-indicator{
+  min-width:28px;height:28px;
+  border-radius:8px;
+  background:var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:.78rem;font-weight:600;
+  color:var(--muted2);
+  flex-shrink:0;
+  transition:var(--trans);
+}
+.mc-option.selected .option-indicator{background:var(--primary);color:#fff;}
+.mc-option.correct  .option-indicator{background:var(--emerald);color:#0a2e1f;}
+.mc-option.incorrect .option-indicator{background:var(--rose);color:#2e0a14;}
+
+/* ── FEEDBACK BOX ── */
+.feedback{
+  margin-top:1.4rem;
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:none;
+  animation:slideIn .35s ease;
+}
+.feedback.correct{display:block;}
+.feedback.incorrect{display:block;}
+
+.feedback-verdict{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.75rem 1.1rem;
+  font-weight:600;font-size:.95rem;
+}
+.feedback.correct .feedback-verdict{
+  background:rgba(52,211,153,.15);
+  color:var(--emerald);
+  border-left:4px solid var(--emerald);
+}
+.feedback.incorrect .feedback-verdict{
+  background:rgba(251,113,133,.15);
+  color:var(--rose);
+  border-left:4px solid var(--rose);
+}
+
+/* ── JUSTIFICATION PANEL ── */
+.justification{
+  background:var(--just-bg);
+  border:1px solid rgba(79,156,249,.18);
+  border-top:none;
+  padding:1.1rem 1.3rem;
+}
+.just-label{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--primary);
+  margin-bottom:.65rem;
+  opacity:.8;
+}
+.just-label i{font-size:.8rem;}
+.just-text{
+  font-size:.9rem;
+  line-height:1.75;
+  color:#b8cce4;
+}
+.just-text strong{color:var(--primary);font-weight:600;}
+.just-text em{color:var(--gold);font-style:normal;}
+.just-text .correct-list{
+  margin-top:.6rem;padding-left:1rem;
+  list-style:none;
+}
+.just-text .correct-list li{
+  padding:.25rem 0;
+  padding-left:1.1rem;
+  position:relative;
+  color:#c7ddf4;
+}
+.just-text .correct-list li::before{
+  content:'✦';
+  position:absolute;left:0;
+  color:var(--emerald);font-size:.7rem;
+  top:.35rem;
+}
+.just-text .tag{
+  display:inline-block;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  color:var(--primary);
+  border-radius:4px;
+  padding:.05rem .35rem;
+  font-family:'DM Mono',monospace;
+  font-size:.8em;
+}
+
+/* ── NAVIGATION BUTTONS ── */
+#navigation-buttons{
+  display:flex;justify-content:center;
+  gap:.75rem;flex-wrap:wrap;
+  margin-top:1.8rem;
+}
+.nav-btn{
+  display:none;align-items:center;gap:.5rem;
+  padding:.7rem 1.5rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+  border:none;
+}
+.nav-btn.show{display:flex;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.nav-btn:hover:not(:disabled){transform:translateY(-2px);}
+
+#prev-btn{
+  background:transparent;
+  color:var(--primary);
+  border:1.5px solid rgba(79,156,249,.4);
+}
+#prev-btn:hover:not(:disabled){background:rgba(79,156,249,.08);}
+#answer-btn{
+  background:linear-gradient(135deg,var(--primary2),var(--primary));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(79,156,249,.35);
+}
+#answer-btn:hover:not(:disabled){box-shadow:0 6px 24px rgba(79,156,249,.5);}
+#next-btn{
+  background:var(--surface);
+  color:var(--text);
+  border:1.5px solid var(--border);
+}
+#next-btn:hover:not(:disabled){border-color:var(--primary);}
+#submit-btn{
+  background:linear-gradient(135deg,#7c3aed,var(--primary2));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(124,58,237,.35);
+}
+
+/* ── RESULTS ── */
+#results-container,#report-container{
+  display:none;flex-direction:column;align-items:center;
+}
+.score-ring-wrap{position:relative;margin:1rem auto 1.5rem;}
+.score-ring-wrap svg{display:block;}
+.score-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.score-pct{
+  font-family:'Crimson Pro',serif;
+  font-size:2.8rem;font-weight:700;
+  color:var(--primary);line-height:1;
+}
+.score-label{font-size:.75rem;color:var(--muted2);margin-top:.15rem;}
+.score-stat{
+  font-size:1.1rem;color:var(--muted2);margin-bottom:.5rem;
+}
+.score-stat strong{color:var(--text);}
+.feedback-msg{
+  font-family:'Crimson Pro',serif;
+  font-size:1.4rem;font-weight:400;
+  color:#e2e8f0;
+  margin-bottom:1.5rem;text-align:center;
+}
+.action-buttons{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;}
+.action-btn{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;border:none;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.action-btn:hover{transform:translateY(-2px);}
+.btn-report{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+.btn-retry{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;box-shadow:0 4px 16px rgba(79,156,249,.3);}
+
+/* ── REPORT ── */
+.report-item{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.1rem 1.3rem;
+  margin-bottom:.8rem;
+  text-align:left;
+  border-left:4px solid;
+}
+.report-item.correct{border-left-color:var(--emerald);}
+.report-item.incorrect{border-left-color:var(--rose);}
+.report-item p{font-size:.88rem;line-height:1.6;color:var(--muted2);}
+.report-item p strong{color:var(--text);}
+.report-item .ri-q{font-size:.95rem;color:var(--text);margin-bottom:.4rem;font-weight:500;}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:2rem;
+  font-size:.75rem;
+  color:var(--muted);
+  text-align:center;
+  position:relative;z-index:1;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #quiz-container{padding:1.4rem 1rem;}
+  .question-text{font-size:1.1rem;}
+  .tf-options-container{flex-direction:column;align-items:stretch;}
+  .tf-option{max-width:none;}
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><i class="fas fa-atom"></i> Medicina · Microbiologia</div>
+  <h1>Bactérias e Vírus</h1>
+  <p>Quiz de alta performance com justificativas</p>
+</div>
+
+<div id="quiz-container">
+  <div class="progress-wrapper">
+    <div class="progress-track"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
+  </div>
+
+  <div id="quiz-content"></div>
+
+  <div id="navigation-buttons">
+    <button id="prev-btn"   class="nav-btn"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <button id="answer-btn" class="nav-btn show">Responder <i class="fas fa-check"></i></button>
+    <button id="next-btn"   class="nav-btn">Próximo <i class="fas fa-arrow-right"></i></button>
+    <button id="submit-btn" class="nav-btn"><i class="fas fa-flag-checkered"></i> Ver Resultados</button>
+  </div>
+
+  <div id="results-container">
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="65" fill="none" stroke="#1e2d42" stroke-width="12"/>
+        <circle id="score-ring" cx="80" cy="80" r="65" fill="none"
+                stroke="url(#ringGrad)" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="408.4"
+                stroke-dashoffset="408.4"
+                transform="rotate(-90 80 80)"
+                style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#4f9cf9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-center">
+        <div class="score-pct" id="pct-display">0%</div>
+        <div class="score-label">acertos</div>
+      </div>
+    </div>
+    <div class="score-stat" id="score-display"></div>
+    <div class="feedback-msg" id="feedback-message"></div>
+    <div class="action-buttons">
+      <button id="show-report-btn" class="action-btn btn-report"><i class="fas fa-list-alt"></i> Ver Correção</button>
+      <button id="retry-btn"       class="action-btn btn-retry"><i class="fas fa-redo"></i> Tentar Novamente</button>
+    </div>
+  </div>
+
+  <div id="report-container">
+    <h3 style="color:var(--primary);margin-bottom:1.2rem;font-family:'Crimson Pro',serif;font-size:1.4rem;">
+      <i class="fas fa-clipboard-list"></i> Correção Detalhada
+    </h3>
+    <div id="report-list" style="width:100%"></div>
+    <div class="action-buttons" style="margin-top:1rem;">
+      <button id="back-btn" class="action-btn btn-report"><i class="fas fa-arrow-left"></i> Voltar ao Resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Microbiologia Médica · Quiz gerado para estudo intensivo</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+/* ══════════════════════════════════════════════
+   BANCO DE QUESTÕES COM JUSTIFICATIVAS (coloque aqui seu JSON)
+══════════════════════════════════════════════ */
+const quizData = [
+    {
+      "question": "Antibióticos são recomendados no tratamento de infecções por E. coli O157:H7 para eliminar rapidamente a bactéria e reduzir a carga da toxina de Shiga, diminuindo o risco de progressão para síndrome hemolítico-urêmica (SHU)",
+      "answer": "F",
+      "type": "tf",
+      "justification": "Esta é uma das <strong>contraindicações mais importantes da bacteriologia clínica</strong> — antibióticos em EHEC são <em>CONTRAINDICADOS</em>:<br><br>\n<strong>Mecanismo da piora:</strong>\n<ol>\n<li>O gene <em>stx</em> (toxina de Shiga) está localizado em um <strong>profago</strong> (fago integrado no cromossomo bacteriano)</li>\n<li>Antibióticos — especialmente quinolonas e beta-lactâmicos — induzem a resposta SOS bacteriana (dano ao DNA)</li>\n<li>A resposta SOS ativa a excisão do profago → replicação do fago → lise bacteriana → <strong>liberação massiva de toxina de Shiga</strong></li>\n<li>Toxina de Shiga: subunidade B liga-se ao Gb3 em células endoteliais renais → subunidade A cliva rRNA 28S → morte celular → microangiopatia trombótica → <strong>SHU</strong></li>\n</ol>\n<em>Dados clínicos:</em> metanálises mostram que antibióticos em EHEC aumentam o risco de SHU em 2–5×.<br><br>\n<em>Tratamento adequado:</em> suporte + hidratação + monitoramento renal. Eculizumab (anti-C5) em SHU grave."
+    },
+    {
+      "question": "A toxina botulínica do tipo A cliva VAMP/sinaptobrevina na junção neuromuscular, impedindo a fusão de vesículas com a membrana pré-sináptica; é por isso que clinicamente causa paralisia espástica ascendente com reflexos osteotendinosos hiperativos",
+      "answer": "F",
+      "type": "tf",
+      "justification": "<strong>Dois erros graves:</strong><br><br>\n<strong>Erro 1 — alvo molecular:</strong><br>\nA toxina botulínica <strong>tipo A</strong> cliva <strong>SNAP-25</strong>, não VAMP/sinaptobrevina.<br>\n<ul>\n<li>Tipos <strong>A e E:</strong> clivam SNAP-25</li>\n<li>Tipos <strong>B, D, F, G:</strong> clivam VAMP/sinaptobrevina</li>\n<li>Tipo <strong>C:</strong> cliva sintaxina + SNAP-25</li>\n</ul>\nTodos impedem a fusão de vesículas (as três proteínas SNARE são necessárias) → bloqueio de liberação de ACh.<br><br>\n<strong>Erro 2 — tipo de paralisia:</strong><br>\nO botulismo causa <strong>paralisia FLÁCIDA DESCENDENTE</strong> (ptose → diplopia → disfagia → dispneia → membros), com:\n<ul>\n<li>Reflexos osteotendinosos <em>hipoativos ou ausentes</em></li>\n<li>Sem déficit sensitivo</li>\n<li>Consciência preservada</li>\n<li>Padrão DESCENDENTE (começa na cabeça)</li>\n</ul>\n<em>Paralisia espástica hiperrrefléxica</em> indica lesão do neurônio motor superior (AVE, esclerose múltipla) — oposto do botulismo."
+    },
+    {
+      "question": "M. tuberculosis sobrevive dentro de macrófagos alveolares inibindo a fusão fagossoma-lisossoma via bloqueio da sinalização por PI3K, e a resposta imune forma granulomas com necrose caseosa central causada pela morte de macrófagos infectados e ação de linfócitos Th1",
+      "answer": "V",
+      "type": "tf",
+      "justification": "O ciclo de sobrevivência intracelular de <em>M. tuberculosis</em> (MTB) é um dos mais sofisticados da microbiologia:<br><br>\n<strong>1. Inibição da maturação do fagossoma:</strong> MTB secreta a fosfatase SapM e a cinase PknG → bloqueiam a via PI3K-Vps34 → impedem a produção de PI3P → o fagossoma não recruta EEA1 e Rab7 → <em>não matura para fagolisossoma</em> → MTB permanece em vacúolo com pH ~6,4 (vs pH 4,5–5,0 do lisossoma ativo).<br><br>\n<strong>2. Formação do granuloma:</strong> macrófagos infectados secretam IL-12 → ativam células NK e Th1 → Th1 produz IFN-γ → ativa macrófagos que tentam matar MTB → células epitelióides + células gigantes multinucleadas de Langerhans + linfócitos formam o granuloma. Necrose caseosa central = morte de macrófagos com conteúdo lipídico liberado.<br><br>\n<em>Clinicamente:</em> 90% dos infectados permanecem em ILTB (infecção latente) — o granuloma contém mas não elimina MTB. Imunossupressão (HIV, anti-TNF, corticoides) → falha do granuloma → reativação."
+    },
+    {
+      "question": "A taxa de mutação bacteriana de ~10⁻⁷ mutações por par de base por replicação implica que, com o tempo de geração de 20 minutos de E. coli, surgem virtualmente todas as mutações pontuais possíveis em poucas horas, justificando a poliquimioterapia em infecções por M. tuberculosis para evitar seleção de mutantes resistentes",
+      "answer": "V",
+      "type": "tf",
+      "justification": "O cálculo é direto: com taxa de mutação de 10<sup>-7</sup>/pb e genoma de ~4,6 × 10<sup>6</sup> pb:<br><br>\n<strong>Mutações/replicação = 10<sup>-7</sup> × 4,6 × 10<sup>6</sup> ≈ 0,46</strong> → a cada 2 divisões, nasce 1 mutação em algum gene.<br><br>\nCom E. coli duplicando a cada 20 min, em 24h surgem ~10<sup>21</sup> células. Toda mutação pontual possível já existiu incontáveis vezes. Para <strong>M. tuberculosis</strong>, a taxa de mutação espontânea conferindo resistência a cada droga é ~10<sup>-7</sup>–10<sup>-8</sup>. Com população bacteriana de 10<sup>8</sup>–10<sup>9</sup> no pulmão:<br><br>\n<ul>\n<li>Probabilidade de mutante resistente a <em>uma</em> droga: ~1 célula/10<sup>7</sup> → praticamente certo</li>\n<li>Probabilidade de mutante resistente a <em>duas</em> drogas simultaneamente: ~10<sup>-14</sup> → improvável</li>\n<li>Probabilidade com <em>quatro</em> drogas (RHZE): ~10<sup>-28</sup> → matematicamente impossível</li>\n</ul>\n<em>Base racional da poliquimioterapia anti-TB:</em> não é sinergismo farmacológico, é probabilidade matemática de mutação simultânea em múltiplos alvos."
+    },
+    {
+      "question": "Sobre as propriedades dos endósporos bacterianos e sua relevância médica, quais afirmativas estão corretas?",
+      "options": [
+        "O ácido dipicolínico (DPA) quelado com Ca²⁺ representa 10–15% do peso seco do endósporo e estabiliza termicamente o DNA e as proteínas esporizadas",
+        "Álcool isopropílico a 70% aplicado por 60 segundos é esporicida e suficiente para descontaminar superfícies hospitalares contaminadas com C. difficile",
+        "A autoclave a 121°C, 15 PSI por 20 minutos (calor úmido sob pressão) é suficiente para destruir todos os endósporos conhecidos, incluindo B. anthracis e C. botulinum",
+        "SASPs (Small Acid-Soluble Proteins) compactam o DNA do esporo, protegendo-o contra danos por radiação UV, calor seco e agentes químicos oxidantes",
+        "Peróxido de hidrogênio vaporizado (VHP) e formaldeído gasoso são agentes esporicidas eficazes para esterilização de equipamentos termossensíveis"
+      ],
+      "answer": [
+        "O ácido dipicolínico (DPA) quelado com Ca²⁺ representa 10–15% do peso seco do endósporo e estabiliza termicamente o DNA e as proteínas esporizadas",
+        "A autoclave a 121°C, 15 PSI por 20 minutos (calor úmido sob pressão) é suficiente para destruir todos os endósporos conhecidos, incluindo B. anthracis e C. botulinum",
+        "SASPs (Small Acid-Soluble Proteins) compactam o DNA do esporo, protegendo-o contra danos por radiação UV, calor seco e agentes químicos oxidantes",
+        "Peróxido de hidrogênio vaporizado (VHP) e formaldeído gasoso são agentes esporicidas eficazes para esterilização de equipamentos termossensíveis"
+      ],
+      "type": "multi",
+      "justification": "<strong>Endósporos: a forma de vida mais resistente conhecida</strong><br><br>\n<strong>Proteções múltiplas e sinérgicas:</strong>\n<ul>\n<li><strong>DPA-Ca²⁺:</strong> quelato que ocupa o \"espaço de água livre\" → estabilização térmica (análogo ao glicerol no congelamento)</li>\n<li><strong>SASPs (alfa e beta):</strong> proteínas básicas que se ligam ao DNA no modo B→ convertendo para forma A → protege contra UV (absorção diferente) e radicais livres</li>\n<li><strong>Córtex de peptidoglicano modificado:</strong> espesso (diferente da célula vegetativa) → impede entrada de agentes químicos</li>\n<li><strong>Mantos proteicos:</strong> impermeáveis a muitos compostos</li>\n</ul>\n<strong>Autoclave = método de referência:</strong> 121°C + 15 PSI + 20 min = vapor saturado sob pressão → desnaturação proteica irreversível → morte de TODOS os endósporos<br><br>\n<em>Erro crítico:</em> álcool NÃO mata endósporos. Para C. difficile: hipoclorito de sódio 0,1–0,5% (esporicida) em superfícies + água e sabão nas mãos (atrito físico remove esporos)"
+    },
+    {
+      "question": "Um paciente de 55 anos em pós-operatório de colectomia parcial desenvolve febre 38,9°C, dor abdominal difusa e peritonismo 48h após cirurgia. Cultura do líquido peritoneal revela Bacteroides fragilis. Quais afirmativas sobre este agente e seu manejo são corretas?",
+      "options": [
+        "A fragilisina (BFT — B. fragilis Toxin), uma metaloprotease, cliva a E-caderina das junções epiteliais, contribuindo para a patogenicidade intestinal",
+        "B. fragilis cresce em presença de O₂ atmosférico normal pois, ao contrário de outros anaeróbios, possui catalase e SOD (superóxido dismutase) eficientes",
+        "Piperacilina-tazobactam e carbapenêmicos são alternativas válidas para o tratamento de infecções por B. fragilis em peritonite pós-operatória",
+        "B. fragilis é intrinsecamente resistente à penicilina G por produção de beta-lactamase AmpC cromossômica — o tratamento com ampicilina seria inadequado",
+        "Metronidazol é ativado exclusivamente em ambiente de baixo potencial de oxi-redução (Eh negativo), formando radicais nitro que causam dano letal ao DNA bacteriano"
+      ],
+      "answer": [
+        "A fragilisina (BFT — B. fragilis Toxin), uma metaloprotease, cliva a E-caderina das junções epiteliais, contribuindo para a patogenicidade intestinal",
+        "Piperacilina-tazobactam e carbapenêmicos são alternativas válidas para o tratamento de infecções por B. fragilis em peritonite pós-operatória",
+        "B. fragilis é intrinsecamente resistente à penicilina G por produção de beta-lactamase AmpC cromossômica — o tratamento com ampicilina seria inadequado",
+        "Metronidazol é ativado exclusivamente em ambiente de baixo potencial de oxi-redução (Eh negativo), formando radicais nitro que causam dano letal ao DNA bacteriano"
+      ],
+      "type": "multi",
+      "justification": "<strong>Bacteroides fragilis: o anaeróbio gram-negativo mais prevalente em infecções humanas</strong><br><br>\n<strong>Resistência intrínseca:</strong> B. fragilis produz beta-lactamase AmpC (também OXA-tipo) → resistente a penicilinas não protegidas e cefalosporinas. Não tratar com penicilina G, ampicilina, ou cefalosporinas de 1ª/2ª geração.<br><br>\n<strong>Metronidazol — mecanismo de pro-fármaco:</strong>\n<ol>\n<li>Metronidazol entra passivamente na célula anaeróbia</li>\n<li>Em ambiente de Eh muito negativo (anaeróbios estritos), flavoproteínas reduzem o grupo nitro → radical nitro anião</li>\n<li>Radicais nitro → quebras no DNA de fita simples e dupla → morte bacteriana</li>\n<li>Em células aeróbicas (humanas): O₂ \"seqüestra\" os elétrons → não forma radical → sem toxicidade</li>\n</ol>\n<strong>Erro na alternativa sobre aerotolerância:</strong> B. fragilis é anaeróbio ESTRITO — morre em O₂ atmosférico. A presença de catalase e SOD não confere aerotolerância real; são insuficientes para o nível de ROS gerado pela exposição ao O₂."
+    },
+    {
+      "question": "Sobre o sistema de efluxo MexAB-OprM de Pseudomonas aeruginosa e seu impacto na resistência, qual(is) afirmativa(s) descrevem corretamente sua estrutura e funcionamento?",
+      "options": [
+        "Tem espectro estreito, expulsando apenas fluoroquinolonas e tetraciclinas, sem afetar beta-lactâmicos ou carbapenêmicos",
+        "É uma bomba da família MFS (Major Facilitator Superfamily) que usa ATP diretamente para expulsar antibióticos do citoplasma para o periplasma",
+        "É um complexo tripartite da família RND: MexB (transportador de membrana interna usando PMF), MexA (linker periplasmático) e OprM (canal de membrana externa), expelindo antibióticos diretamente para o meio externo",
+        "A superexpressão de MexAB-OprM em combinação com a perda da porina OprD cria resistência a carbapenêmicos por mecanismo sinérgico (menor entrada + maior saída)",
+        "O avibactam inibe diretamente o canal OprM, bloqueando a exportação de beta-lactâmicos pelas bombas de efluxo em P. aeruginosa"
+      ],
+      "answer": [
+        "É um complexo tripartite da família RND: MexB (transportador de membrana interna usando PMF), MexA (linker periplasmático) e OprM (canal de membrana externa), expelindo antibióticos diretamente para o meio externo",
+        "A superexpressão de MexAB-OprM em combinação com a perda da porina OprD cria resistência a carbapenêmicos por mecanismo sinérgico (menor entrada + maior saída)"
+      ],
+      "type": "multi",
+      "justification": "<strong>Sistema de efluxo MexAB-OprM: arquitetura molecular</strong><br><br>\n<strong>Família RND (Resistance-Nodulation-Division):</strong> único grupo que faz efluxo do citoplasma diretamente para o exterior (sem acúmulo no periplasma):\n<ul>\n<li><strong>MexB:</strong> transportador de membrana interna (12 segmentos transmembrana). Usa gradiente de prótons (PMF) para realizar transporte ativo. Hélice TM4 e regiões periplasmaticas reconhecem substratos</li>\n<li><strong>MexA:</strong> proteína periplasmática de fusão (linker). Conecta MexB a OprM formando o túnel contínuo através do periplasma</li>\n<li><strong>OprM:</strong> proteína de membrana externa (barrel de 12 fitas beta). Canal de saída para o exterior</li>\n</ul>\n<strong>Substratos de MexAB-OprM:</strong> beta-lactâmicos (incluindo carbapenem imipenem), fluoroquinolonas, tetraciclinas, macrolídeos, cloranfenicol, trimethoprim — espectro amplíssimo<br><br>\n<em>Resistência sinérgica a carbapenem:</em> perda OprD (↓ entrada de imipenem) + superexpressão MexAB-OprM (↑ saída) → MIC imipenem &gt;16 µg/mL"
+    },
+    {
+      "question": "Os aminoglicosídeos têm efeito bactericida tempo-dependente, devendo ser administrados em múltiplas doses menores ao longo do dia para manter concentrações acima do MIC por todo o intervalo, maximizando o efeito bactericida e minimizando a nefrotoxicidade",
+      "answer": "F",
+      "type": "tf",
+      "justification": "Os aminoglicosídeos são o paradigma do efeito <strong>CONCENTRAÇÃO-DEPENDENTE</strong>, o oposto do descrito:<br><br>\n<strong>Parâmetro PK/PD relevante: Cmax/MIC</strong>\n<ul>\n<li>Meta: Cmax/MIC ≥ 8–10 para bactericídio efetivo</li>\n<li>Atingido com <strong>dose ÚNICA DIÁRIA elevada</strong> — não múltiplas doses pequenas</li>\n</ul>\n<strong>Por que dose única reduz nefrotoxicidade?</strong><br>\nO uptake renal de aminoglicosídeos é feito por transportadores nas células tubulares proximais que se <em>saturam</em>. Com dose única alta:<br>\n<ul>\n<li>Transportadores saturados → menor acumulação renal proporcionalmente</li>\n<li>Longo período sem droga (concentração zero) → células renais se recuperam</li>\n</ul>\nCom múltiplas doses baixas: transportadores nunca saturam → acumulação progressiva → nefrotoxicidade cumulativa maior.<br><br>\n<em>Monitoramento:</em> medir nível de pico (Cmax, 30 min após infusão) e vale (nível mínimo, pré-dose). Nivel de vale elevado = sinal de acumulação = ajustar intervalo."
+    },
+    {
+      "question": "Sobre a transdução bacteriana como mecanismo de transferência horizontal de genes e sua relevância na emergência de resistência, quais afirmativas estão corretas?",
+      "options": [
+        "Na transdução especializada, apenas genes ADJACENTES ao sítio de integração do profago são transferidos — mecanismo pelo qual C. diphtheriae adquire o gene tox da toxina diftérica via fago β",
+        "Genes de resistência a antibióticos podem ser transferidos entre cepas bacterianas hospitalares por transdução especializada via profagos que integram próximos a ilhas de resistência",
+        "O fago CTXφ usa o pili tipo IV de V. cholerae como receptor para infectar a bactéria e integra o gene ctxAB (toxina colérica) no cromossomo — sem o fago, V. cholerae não produz toxina",
+        "O gene stx da toxina de Shiga em E. coli O157:H7 é um gene cromossômico ancestral presente em todas as cepas selvagens de E. coli, não um gene adquirido por transdução",
+        "Na transdução generalizada, fagos empacotar acidentalmente DNA bacteriano aleatório no capsídeo viral durante a montagem, transferindo-o para outra bactéria receptora"
+      ],
+      "answer": [
+        "Na transdução especializada, apenas genes ADJACENTES ao sítio de integração do profago são transferidos — mecanismo pelo qual C. diphtheriae adquire o gene tox da toxina diftérica via fago β",
+        "Genes de resistência a antibióticos podem ser transferidos entre cepas bacterianas hospitalares por transdução especializada via profagos que integram próximos a ilhas de resistência",
+        "O fago CTXφ usa o pili tipo IV de V. cholerae como receptor para infectar a bactéria e integra o gene ctxAB (toxina colérica) no cromossomo — sem o fago, V. cholerae não produz toxina",
+        "Na transdução generalizada, fagos empacotar acidentalmente DNA bacteriano aleatório no capsídeo viral durante a montagem, transferindo-o para outra bactéria receptora"
+      ],
+      "type": "multi",
+      "justification": "<strong>Transdução: fagos como veículos de evolução bacteriana</strong><br><br>\n<strong>Transdução generalizada — acidente de empacotamento:</strong>\n<ul>\n<li>Durante a lise do hospedeiro, a protease da cabeça do fago degrada o DNA bacteriano em fragmentos</li>\n<li>Raramente (1 em 10⁷), a maquinaria de empacotamento encapsula DNA bacteriano em vez de DNA viral</li>\n<li>Fago defectivo resultante pode injetar DNA bacteriano em nova bactéria → recombinação homóloga ou integração</li>\n</ul>\n<strong>Erro na alternativa sobre stx:</strong> O gene stx1 e stx2 de E. coli O157:H7 estão em PROFAGOS integrados ao cromossomo, adquiridos por transdução especializada. E. coli \"selvagem\" sem esses profagos NÃO produz toxina de Shiga. A indução do profago por resposta SOS (ex.: antibióticos) → liberação massiva de toxina → SHU.<br><br>\n<strong>CTXφ de V. cholerae:</strong> esse fago usa TCP (Toxin-Coregulated Pilus = pili tipo IV) como receptor → infecção de V. cholerae O1/O139 → integração de ctxAB → produção de CT. Cepas sem o fago CTXφ são avirulentas."
+    },
+    {
+      "question": "Sobre os patótipos de E. coli diarreogênica e seus mecanismos moleculares de patogênese, quais associações estão corretas?",
+      "options": [
+        "ETEC (Enterotoxigênica) — produz LT (heat-labile toxin, ativa adenilil ciclase via ADP-ribosilação de Gsα) e ST (heat-stable toxin, ativa guanilil ciclase C) → diarreia secretora",
+        "EIEC (Enteroinvasiva) — invade células epiteliais intestinais por mecanismo de actina-polimerização idêntico ao de Shigella, causando disenteria com fezes mucossanguinolentas",
+        "UPEC — utiliza fímbrias tipo 1 (ligam manose) e fímbrias P (ligam globosídeos do uroepitélio) para adesão, sendo a principal causa de ITU não complicada em mulheres jovens",
+        "EHEC — toxina de Shiga via profago induzível: subunidade B liga Gb3 em células endoteliais renais → A cliva rRNA 28S → inibe síntese proteica → necrose endotelial renal → SHU",
+        "EPEC — produz toxinas LT e ST como ETEC, mas com mecanismo adicional de invasão celular via T3SS que provoca a diarreia inflamatória característica"
+      ],
+      "answer": [
+        "ETEC (Enterotoxigênica) — produz LT (heat-labile toxin, ativa adenilil ciclase via ADP-ribosilação de Gsα) e ST (heat-stable toxin, ativa guanilil ciclase C) → diarreia secretora",
+        "EIEC (Enteroinvasiva) — invade células epiteliais intestinais por mecanismo de actina-polimerização idêntico ao de Shigella, causando disenteria com fezes mucossanguinolentas",
+        "UPEC — utiliza fímbrias tipo 1 (ligam manose) e fímbrias P (ligam globosídeos do uroepitélio) para adesão, sendo a principal causa de ITU não complicada em mulheres jovens",
+        "EHEC — toxina de Shiga via profago induzível: subunidade B liga Gb3 em células endoteliais renais → A cliva rRNA 28S → inibe síntese proteica → necrose endotelial renal → SHU"
+      ],
+      "type": "multi",
+      "justification": "<strong>Patótipos de E. coli — mecanismos patogênicos distintos:</strong><br><br>\n<strong>ETEC (diarreia do viajante):</strong>\n<ul>\n<li>LT: estrutura semelhante à toxina colérica (AB₅). ADP-ribosilação de Gsα → AMPc → CFTR → Cl⁻ secretado</li>\n<li>ST (STa): peptídeo resistente ao calor → liga GC-C → GMPc → CFTR ativado → mesmo resultado</li>\n</ul>\n<strong>Erro na alternativa EPEC:</strong> EPEC NÃO produz LT ou ST. EPEC usa T3SS para injetar Tir (receptor de intimina) na célula hospedeira → a própria bacteria se ancora via intimina + Tir → pedestais de actina → lesão A/E (attaching-effacing) sem invasão e sem toxinas secretoras<br><br>\n<strong>EIEC ≈ Shigella:</strong> invasão por endocitose → lise do vacúolo → citoplasma → polimerização de actina (IcsA → Arp2/3) → \"comet tails\" → propulsão célula a célula<br><br>\n<strong>UPEC — dois tipos de fímbrias para nicho distinto:</strong> fímbrias tipo 1 para bexiga; fímbrias P para rim (pielonefrite)"
+    },
+    {
+      "question": "Sobre o ciclo de vida de Chlamydia trachomatis e suas manifestações clínicas, quais afirmativas estão corretas?",
+      "options": [
+        "O tratamento de IST por C. trachomatis com azitromicina 1g dose única tem eficácia comparável a doxiciclina 100 mg 2×/dia por 7 dias, com vantagem de adesão à dose única",
+        "Os sorovarientes D-K de C. trachomatis causam tracoma oculocongiuntival, sendo a principal causa infecciosa de cegueira no mundo",
+        "O diagnóstico padrão-ouro de infecção por Chlamydia é o NAAT (Nucleic Acid Amplification Test/PCR), com sensibilidade 90–98% e especificidade >99%, superior à cultura celular",
+        "O Corpo Reticular (RB) é a forma metabolicamente ativa e replicativa que reside no incluso (vacúolo intracelular), enquanto o Corpo Elementar (EB) é a forma infectante extracelular resistente",
+        "Chlamydia não sintetiza ATP e depende totalmente de transportadores para roubar ATP da célula hospedeira — por isso é chamado de 'parasita energético'"
+      ],
+      "answer": [
+        "O tratamento de IST por C. trachomatis com azitromicina 1g dose única tem eficácia comparável a doxiciclina 100 mg 2×/dia por 7 dias, com vantagem de adesão à dose única",
+        "O diagnóstico padrão-ouro de infecção por Chlamydia é o NAAT (Nucleic Acid Amplification Test/PCR), com sensibilidade 90–98% e especificidade >99%, superior à cultura celular",
+        "O Corpo Reticular (RB) é a forma metabolicamente ativa e replicativa que reside no incluso (vacúolo intracelular), enquanto o Corpo Elementar (EB) é a forma infectante extracelular resistente",
+        "Chlamydia não sintetiza ATP e depende totalmente de transportadores para roubar ATP da célula hospedeira — por isso é chamado de 'parasita energético'"
+      ],
+      "type": "multi",
+      "justification": "<strong>Chlamydia: parasita intracelular obrigatório com ciclo bimórfico único</strong><br><br>\n<strong>Ciclo de vida (48–72h):</strong>\n<ol>\n<li><strong>EB (Elementary Body):</strong> extracelular, metabolicamente inativo, resistente (proteínas de superfície rigidamente ligadas por pontes dissulfeto), liga receptores → endocitado</li>\n<li>EB → RB em 6–8h dentro do <em>incluso</em> (vacúolo que não funde com lisossoma)</li>\n<li><strong>RB (Reticulate Body):</strong> intracelular, metabolicamente ativo, replicação binária, usa ATP do hospedeiro, não resistente</li>\n<li>RB → EB em 18–24h → lise celular ou exocitose → novos EB</li>\n</ol>\n<strong>Sorovarientes — erro na alternativa:</strong><br>\n<ul>\n<li>A, B, Ba, C → TRACOMA (cegueira)</li>\n<li><strong>D-K → ISTs</strong> (uretrite, cervicite, DIP, conjuntivite neonatal)</li>\n<li>L1, L2, L3 → LGV (Lymphogranuloma Venereum)</li>\n</ul>"
+    },
+    {
+      "question": "Sobre a prevenção de Pneumonia Associada à Ventilação Mecânica (VAP/PAV) em UTI, quais medidas do bundle têm evidência e estão corretas?",
+      "options": [
+        "Manter cabeceira elevada a 30–45° reduz a microaspiração de conteúdo orofaríngeo ao redor do cuff do tubo orotraqueal para os pulmões",
+        "Higiene oral com clorexidina 0,12% duas vezes ao dia descoloniza a orofaringe e reduz a carga bacteriana disponível para microaspiração",
+        "Manter pressão do cuff entre 20–30 cmH₂O equilibra a prevenção de microaspiração (>20) com a prevenção de isquemia traqueal (<30)",
+        "Tubos orotraqueais com sistema de aspiração de secreção subglótica contínua (SSD) reduzem a incidência de VAP em aproximadamente 50%",
+        "Profilaxia antibiótica oral (SDD — Selective Digestive Decontamination) com polimixina E + tobramicina + anfotericina é recomendada universalmente em todos os centros de UTI no Brasil e Europa"
+      ],
+      "answer": [
+        "Manter cabeceira elevada a 30–45° reduz a microaspiração de conteúdo orofaríngeo ao redor do cuff do tubo orotraqueal para os pulmões",
+        "Higiene oral com clorexidina 0,12% duas vezes ao dia descoloniza a orofaringe e reduz a carga bacteriana disponível para microaspiração",
+        "Manter pressão do cuff entre 20–30 cmH₂O equilibra a prevenção de microaspiração (>20) com a prevenção de isquemia traqueal (<30)",
+        "Tubos orotraqueais com sistema de aspiração de secreção subglótica contínua (SSD) reduzem a incidência de VAP em aproximadamente 50%"
+      ],
+      "type": "multi",
+      "justification": "<strong>Bundle de VAP — evidências por medida:</strong><br><br>\n<table>\n<tr><th>Medida</th><th>Redução VAP</th><th>Evidência</th></tr>\n<tr><td>Cabeceira 30–45°</td><td>~50%</td><td>Meta-análises</td></tr>\n<tr><td>Higiene oral clorexidina</td><td>25–40%</td><td>Meta-análises</td></tr>\n<tr><td>Cuff 20–30 cmH₂O</td><td>15–25%</td><td>Consenso</td></tr>\n<tr><td>Aspiração subglótica (SSD)</td><td>~50%</td><td>RCTs</td></tr>\n<tr><td>SBT diário + desmame precoce</td><td>Reduz dias VM</td><td>RCTs fortes</td></tr>\n</table>\n<strong>SDD (Selective Digestive Decontamination) — controvérsia:</strong><br>\nEficaz em estudos europeus (países com baixa resistência antimicrobiana), mas NÃO recomendado universalmente no Brasil e países com alta prevalência de gram-negativos MDR — risco de seleção de resistência. Ausente das diretrizes brasileiras como medida padrão."
+    },
+    {
+      "question": "Sobre o mecanismo de ação dos beta-lactâmicos e os parâmetros farmacodinâmicos que otimizam sua eficácia clínica, quais afirmações estão corretas?",
+      "options": [
+        "Infusão prolongada de meropenem (3–4 horas) aumenta o %T>MIC e melhora desfechos em gram-negativos com MIC elevado",
+        "Beta-lactâmicos inibem as PBPs (Penicillin-Binding Proteins), transpeptidases responsáveis pelas pontes cruzadas do peptidoglicano",
+        "O parâmetro farmacodinâmico relevante é o %T>MIC (percentual do intervalo com concentração acima do MIC), com meta de 40–70%",
+        "Beta-lactâmicos têm efeito bactericida concentração-dependente, sendo otimizados por doses únicas elevadas tipo pulse-therapy",
+        "Em MRSA, os beta-lactâmicos falham porque a PBP2a codificada por mecA tem altíssima afinidade pelo anel beta-lactâmico, sequestrando-o antes de chegar às PBPs normais"
+      ],
+      "answer": [
+        "Infusão prolongada de meropenem (3–4 horas) aumenta o %T>MIC e melhora desfechos em gram-negativos com MIC elevado",
+        "Beta-lactâmicos inibem as PBPs (Penicillin-Binding Proteins), transpeptidases responsáveis pelas pontes cruzadas do peptidoglicano",
+        "O parâmetro farmacodinâmico relevante é o %T>MIC (percentual do intervalo com concentração acima do MIC), com meta de 40–70%"
+      ],
+      "type": "multi",
+      "justification": "<strong>Beta-lactâmicos: farmacodinâmica tempo-dependente</strong><br><br>\nOs beta-lactâmicos são o exemplo canônico de antibióticos com efeito <strong>TEMPO-dependente</strong>, não concentração-dependente:\n<ul>\n<li><strong>Mecanismo:</strong> inibem as PBPs (transpeptidases) que fazem as pontes cruzadas do peptidoglicano → parede enfraquece → lise osmótica</li>\n<li><strong>%T>MIC:</strong> concentrações acima do MIC por 40–70% do intervalo são suficientes para bactericídio máximo — aumentar além não agrega benefício adicional significativo</li>\n<li><strong>Infusão prolongada:</strong> meropenem em infusão de 3–4h (vs 30 min convencional) aumenta %T>MIC especialmente para patógenos com MIC borderline → usado em gram-negativos MDR de UTI</li>\n</ul>\n<strong>Erros nas alternativas incorretas:</strong><br>\n<ul>\n<li>Efeito tempo-dependente (não concentração-dependente) → dose única não é ideal</li>\n<li>PBP2a tem BAIXÍSSIMA afinidade por beta-lactâmicos (não alta) — é por isso que não são inibidas pelo antibiótico, não porque o sequestram</li>\n</ul>"
+    },
+    {
+      "question": "Sobre a microbiota intestinal e seu papel no sistema imunológico do hospedeiro, quais afirmativas estão corretas?",
+      "options": [
+        "A disbiose por antibióticos favorece C. difficile porque os antibióticos destroem os esporos de C. diff juntamente com a microbiota protetora, e a forma vegetativa que sobrevive causa a colite",
+        "O butirato é a principal fonte de energia dos colonócitos (70% do ATP celular), e sua depleção na disbiose contribui para a instabilidade da barreira epitelial",
+        "Firmicutes e Bacteroidetes juntos representam mais de 90% da microbiota colônica em adultos saudáveis, com equilíbrio entre eles associado à saúde metabólica",
+        "O butirato produzido pela microbiota inibe histona deacetilases (HDAC) nos linfócitos T reguladores (Treg), promovendo expressão de Foxp3 e indução de tolerância imune",
+        "A IgA secretória (sIgA) produzida nas placas de Peyer e linfonodos mesentéricos, estimulada pela microbiota comensal, reveste as bactérias intestinais limitando invasão epitelial"
+      ],
+      "answer": [
+        "O butirato é a principal fonte de energia dos colonócitos (70% do ATP celular), e sua depleção na disbiose contribui para a instabilidade da barreira epitelial",
+        "Firmicutes e Bacteroidetes juntos representam mais de 90% da microbiota colônica em adultos saudáveis, com equilíbrio entre eles associado à saúde metabólica",
+        "O butirato produzido pela microbiota inibe histona deacetilases (HDAC) nos linfócitos T reguladores (Treg), promovendo expressão de Foxp3 e indução de tolerância imune",
+        "A IgA secretória (sIgA) produzida nas placas de Peyer e linfonodos mesentéricos, estimulada pela microbiota comensal, reveste as bactérias intestinais limitando invasão epitelial"
+      ],
+      "type": "multi",
+      "justification": "<strong>Microbioma intestinal: 38 trilhões de bactérias, 3,3 milhões de genes</strong><br><br>\n<strong>Butirato — efeitos pleiotrópicos:</strong>\n<ul>\n<li>Colonócitos: principal combustível energético (70% ATP via beta-oxidação mitocondrial)</li>\n<li>Treg: inibe HDAC → hiperacetilaçao de histonas no locus Foxp3 → estabiliza expressão → tolerância imune → menor inflamação crônica</li>\n<li>Barreira epitelial: estimula expressão de claudinas e ocludinas (tight junctions)</li>\n<li>Anticâncer: induz apoptose em células tumorais colônicas</li>\n</ul>\n<strong>Erro na alternativa incorreta sobre C. difficile:</strong><br>\nAntibióticos NÃO destroem esporos de C. diff (que são extremamente resistentes). O que acontece:\n<ol>\n<li>Antibióticos eliminam a microbiota protetora (Bacteroides, Lachnospiraceae, etc.)</li>\n<li>Esporos de C. diff (presentes no ambiente ou já colonizando o paciente) sobrevivem</li>\n<li>Com nicho ecológico vazio → germinam → forma vegetativa prolifera → toxinas</li>\n</ol>"
+    },
+    {
+      "question": "Um homem de 45 anos, diabético com mau controle glicêmico, apresenta otalgia intensa, secreção purulenta verde-azulada no conduto auditivo externo há 3 semanas, febre 38,8°C e paralisia facial periférica súbita. TC: erosão do osso temporal e base do crânio. Quais afirmativas são corretas?",
+      "options": [
+        "A cor verde-azulada da secreção purulenta é causada pela piocianina, pigmento produzido pelo metabolismo de P. aeruginosa",
+        "O tratamento é amoxicilina-clavulanato por 14 dias, pois cobre P. aeruginosa com excelente penetração óssea",
+        "A paralisia facial indica extensão da infecção ao nervo facial no forame estilomastoideo, sendo indicação de intervenção cirúrgica associada ao antibiótico",
+        "Otite externa maligna é geralmente autolimitada em imunocompetentes e raramente requer antibioticoterapia sistêmica",
+        "O diagnóstico é otite externa maligna (necrotizante) por Pseudomonas aeruginosa — a diabetes compromete a quimiotaxia e função neutrofílica, predispondo a infecções por este organismo"
+      ],
+      "answer": [
+        "A cor verde-azulada da secreção purulenta é causada pela piocianina, pigmento produzido pelo metabolismo de P. aeruginosa",
+        "A paralisia facial indica extensão da infecção ao nervo facial no forame estilomastoideo, sendo indicação de intervenção cirúrgica associada ao antibiótico",
+        "O diagnóstico é otite externa maligna (necrotizante) por Pseudomonas aeruginosa — a diabetes compromete a quimiotaxia e função neutrofílica, predispondo a infecções por este organismo"
+      ],
+      "type": "multi",
+      "justification": "<strong>Otite externa maligna (necrotizante): emergência infecciosa em diabéticos</strong><br><br>\n<strong>Epidemiologia:</strong> 90% em diabéticos (hiperglicemia → comprometimento funcional de neutrófilos: menor quimiotaxia, menor burst oxidativo, menor adesão endotelial)<br><br>\n<strong>Piocianina de P. aeruginosa:</strong> pigmento azul-verde produzido pelo pathway fenazina. Funções:<br>\n<ul>\n<li>Gera radicais superóxido → dano tecidual direto</li>\n<li>Inibe cílios do epitélio respiratório e auditivo</li>\n<li>Sinalização no quorum sensing</li>\n</ul>\n<strong>Progressão da infecção:</strong> conduto auditivo → cartilagem/osso (osteoíte base do crânio) → forames cranianos → nervos cranianos (VII mais comum, mas IX, X, XI possíveis) → base do crânio → meningite/trombose seio cavernoso<br><br>\n<strong>Tratamento:</strong>\n<ul>\n<li>Ciprofloxacino oral (único beta-lactâmico ORAL com boa atividade anti-pseudomonas) por 6–8 semanas</li>\n<li>Desbridamento cirúrgico do tecido necrótico</li>\n<li>Amoxicilina-clavulanato NÃO tem atividade adequada contra P. aeruginosa</li>\n</ul>"
+    },
+    {
+      "question": "Sobre os critérios de Duke para endocardite bacteriana e o manejo de endocardite por MRSA associada a cateter de hemodiálise, quais afirmativas estão corretas?",
+      "options": [
+        "Vancomicina IV por 6 semanas com meta de AUC/MIC de 400–600 µg·h/mL é o tratamento-padrão para endocardite por MRSA em valvas nativas",
+        "S. aureus em 3 de 4 frascos de hemocultura + vegetação valvar ao ecocardiograma transesofágico = 2 critérios maiores de Duke → endocardite DEFINIDA",
+        "Indicações cirúrgicas absolutas incluem: IC refratária, bacteremia persistente >7 dias com antibiótico eficaz, vegetação >10mm com evento embólico, e abscesso perianular",
+        "Daptomicina é a primeira escolha para endocardite por MRSA com êmbolos sépticos pulmonares confirmados por TC de tórax",
+        "A remoção imediata do cateter de HD infectado é mandatória, pois biofilme bacteriano no cateter impede esterilização por antibióticos sistêmicos"
+      ],
+      "answer": [
+        "Vancomicina IV por 6 semanas com meta de AUC/MIC de 400–600 µg·h/mL é o tratamento-padrão para endocardite por MRSA em valvas nativas",
+        "S. aureus em 3 de 4 frascos de hemocultura + vegetação valvar ao ecocardiograma transesofágico = 2 critérios maiores de Duke → endocardite DEFINIDA",
+        "Indicações cirúrgicas absolutas incluem: IC refratária, bacteremia persistente >7 dias com antibiótico eficaz, vegetação >10mm com evento embólico, e abscesso perianular",
+        "A remoção imediata do cateter de HD infectado é mandatória, pois biofilme bacteriano no cateter impede esterilização por antibióticos sistêmicos"
+      ],
+      "type": "multi",
+      "justification": "<strong>Endocardite bacteriana por MRSA: diagnóstico e tratamento</strong><br><br>\n<strong>Critérios de Duke (modificados):</strong>\n<ul>\n<li><em>Maiores:</em> hemoculturas com patógeno típico ≥2 amostras OU persistência ≥12h; ecocardiograma com vegetação/abscesso/deiscência valvar</li>\n<li><em>Menores:</em> febre, UDVI, fator predisponente, fenômenos vasculares, imunológicos, ecocardiograma sugestivo não-major</li>\n<li>Endocardite definida: 2 maiores OU 1 maior + 3 menores</li>\n</ul>\n<strong>Monitoramento de vancomicina AUC-guided:</strong> preferível ao monitoramento de nível de vale (vale isolado) — diretriz ASHP/IDSA/SIDP 2020. Ferramentas Bayesianas (software) permitem cálculo de AUC individualizado.<br><br>\n<strong>Daptomicina em êmbolos pulmonares — ERRO:</strong> daptomicina é inativada pelo surfactante pulmonar → contraindicada quando há envolvimento pulmonar. Para endocardite direita com êmbolos pulmonares: vancomicina IV é a escolha correta."
+    },
+    {
+      "question": "Sobre os mecanismos moleculares de patogenicidade de Helicobacter pylori, quais afirmativas estão corretas?",
+      "options": [
+        "A urease de H. pylori — representando 10–15% de todas as proteínas bacterianas — hidrolisa ureia em CO₂ e NH₃, sendo o NH₃ responsável pela neutralização ácida local",
+        "H. pylori produz uma toxina colérica-like que causa a diarreia associada a essa infecção, atuando via AMPc na mesma via da toxina de Vibrio cholerae",
+        "VacA (toxina vacuolizante) forma canais aniônicos na membrana das células hospedeiras, causando vacuolização citoplasmática, apoptose e imunomodulação via mitocôndria",
+        "CagA é injetada nas células epiteliais gástricas via T4SS (Sistema de Secreção Tipo IV), onde é fosforilada por quinases SFK e ativa vias oncogênicas via SHP2 e RAS/ERK",
+        "Cepas cagA-positivas de H. pylori têm risco 3–5× maior de causar adenocarcinoma gástrico e linfoma MALT comparado a cepas cagA-negativas"
+      ],
+      "answer": [
+        "A urease de H. pylori — representando 10–15% de todas as proteínas bacterianas — hidrolisa ureia em CO₂ e NH₃, sendo o NH₃ responsável pela neutralização ácida local",
+        "VacA (toxina vacuolizante) forma canais aniônicos na membrana das células hospedeiras, causando vacuolização citoplasmática, apoptose e imunomodulação via mitocôndria",
+        "CagA é injetada nas células epiteliais gástricas via T4SS (Sistema de Secreção Tipo IV), onde é fosforilada por quinases SFK e ativa vias oncogênicas via SHP2 e RAS/ERK",
+        "Cepas cagA-positivas de H. pylori têm risco 3–5× maior de causar adenocarcinoma gástrico e linfoma MALT comparado a cepas cagA-negativas"
+      ],
+      "type": "multi",
+      "justification": "<strong>H. pylori: a bactéria que ganhou o Nobel (Barry Marshall e Robin Warren, 2005)</strong><br><br>\n<strong>CagA — oncoproteína bacteriana:</strong>\n<ol>\n<li>T4SS forma poro na membrana do enterócito → CagA entra</li>\n<li>SFK (Src Family Kinases) fosforilam motivos EPIYA de CagA</li>\n<li>CagA fosforilado → liga SHP2 (tirosina fosfatase) → desregulação de RAS/ERK → proliferação, perda de polaridade epitelial</li>\n<li>CagA não fosforilado → liga E-caderina → dissolve complexos de junção → phenótipo \"hummingbird\" (alongamento celular)</li>\n</ol>\n<strong>VacA (vacuolating cytotoxin):</strong> liga receptores na membrana → endocitada → canais aniônicos em membranas de endossomas e mitocôndrias → apoptose, imunossupressão (bloqueia proliferação de células T via IL-2)<br><br>\n<em>H. pylori NÃO produz toxina colérica</em> — a \"diarreia\" associada é geralmente leve e relacionada a dismotilidade gástrica ou colite associada."
+    },
+    {
+      "question": "As ilhas de patogenicidade (PAIs) bacterianas são identificadas por apresentarem conteúdo G+C idêntico ao restante do cromossomo, indicando evolução concomitante com o genoma hospedeiro desde o ancestral comum da espécie",
+      "answer": "F",
+      "type": "tf",
+      "justification": "O conteúdo G+C é precisamente o <strong>oposto</strong> do descrito — é um critério de identificação porque é <strong>DIFERENTE</strong> do restante do genoma:<br><br>\n<strong>Critérios que definem uma PAI:</strong>\n<ul>\n<li>Tamanho grande (10–200 kb)</li>\n<li>Conteúdo G+C <em>diferente</em> do genoma hospedeiro (indica origem xenóloga — HGT de outra espécie)</li>\n<li>Flanqueada por sequências repetidas diretas e genes de integrase/transposase</li>\n<li>Frequentemente associada a genes de tRNA (sítios de integração preferencial)</li>\n<li>Pode ser excisada e transferida (instabilidade genética)</li>\n<li>Codifica fatores de virulência em bloco (sistemas de secreção, toxinas, adesinas)</li>\n</ul>\n<em>Exemplos paradigmáticos:</em>\n<ul>\n<li>SPI-1 e SPI-2 de Salmonella: sistemas T3SS para invasão e sobrevivência intracelular</li>\n<li>LEE de E. coli EPEC: lesão attaching/effacing</li>\n<li>cag PAI de H. pylori: T4SS + CagA oncogênica</li>\n</ul>"
+    },
+    {
+      "question": "O quorum sensing bacteriano coordena a virulência de forma densidade-dependente: autoinduores (HSLs em gram-negativos, CSPs em gram-positivos) acumulam-se proporcionalmente à densidade celular, e ao atingir um limiar ativam genes que regulam formação de biofilme, produção de toxinas e esporulação",
+      "answer": "V",
+      "type": "tf",
+      "justification": "O <strong>Quorum Sensing (QS)</strong> é o sistema de comunicação bacteriana mais estudado na microbiologia moderna. Princípio:<br><br>\nCada bactéria secreta continuamente pequenas moléculas <em>autoinduoras</em>:\n<ul>\n<li><strong>HSLs</strong> (N-acil Homoserina Lactonas): específicas de espécie, gram-negativos. Ex.: <em>P. aeruginosa</em> usa C4-HSL (sistema rhl) e 3-oxo-C12-HSL (sistema las)</li>\n<li><strong>AI-2</strong> (Furanosil borato): universal, comunicação entre espécies</li>\n<li><strong>CSPs</strong> (Competence-Stimulating Peptides): gram-positivos modificados</li>\n</ul>\nQuando a concentração de autoindutor atinge o <em>limiar de quórum</em>, o sinal se liga a receptores regulatórios → cascata transcricional ativa → expressão coordenada de:<br>\nBiofilme | Toxinas | Enzimas de virulência | Esporulação | Bioluminescência<br><br>\n<em>Relevância terapêutica:</em> anti-QS como estratégia anti-virulência (sem pressão de seleção de resistência) — lactonases e lactonases são objeto de pesquisa intensa. <em>P. aeruginosa</em> em fibrose cística usa QS para manter biofilme mucóide intratável."
+    },
+    {
+      "question": "O peptidoglicano bacteriano utiliza aminoácidos L-isômeros nas pontes peptídicas cruzadas, exatamente como nas proteínas humanas, o que explica por que os antibióticos beta-lactâmicos são tóxicos tanto para bactérias quanto para células humanas",
+      "answer": "F",
+      "type": "tf",
+      "justification": "<strong>Dois erros críticos:</strong><br><br>\n<strong>1. Isomeria dos aminoácidos:</strong> As pontes peptídicas do peptidoglicano usam <strong>aminoácidos D-isômeros</strong> (D-alanina, D-glutamato), não L-isômeros. As enzimas do metabolismo humano não reconhecem aminoácidos D → a parede bacteriana é uma estrutura bioquímica completamente diferente das proteínas humanas.<br><br>\n<strong>2. Toxicidade dos beta-lactâmicos:</strong> Beta-lactâmicos são seletivos precisamente porque:<br>\n<ul>\n<li>Seu alvo (PBPs/transpeptidases) existe APENAS em bactérias</li>\n<li>Células humanas não têm parede de peptidoglicano nem PBPs</li>\n<li>São entre os antibióticos mais seguros — índice terapêutico amplíssimo</li>\n</ul>\nA analogia estrutural entre o anel beta-lactâmico e o estado de transição D-Ala-D-Ala é o que explica a <em>seletividade</em>, não a toxicidade. Os principais efeitos adversos dos beta-lactâmicos são imunológicos (hipersensibilidade), não de toxicidade direta."
+    },
+    {
+      "question": "Sobre as vias de ativação do sistema complemento e sua relevância na defesa contra bactérias encapsuladas em pacientes asplênicos, selecione as afirmativas corretas:",
+      "options": [
+        "A via da lectina reconhece manose/N-acetilglicosamina na superfície bacteriana pela MBL (Mannan-Binding Lectin), ativando MASP-1 e MASP-2 sem necessidade de anticorpos",
+        "Em pacientes asplênicos, bactérias encapsuladas escapam porque a cápsula bloqueia a deposição de C3b pela via alternativa, e sem macrófagos esplênicos não há opsonofagocitose eficiente",
+        "A via alternativa é ativada exclusivamente por LPS de gram-negativos, sendo ineficaz contra gram-positivas encapsuladas como S. pneumoniae",
+        "A via clássica é a única capaz de formar o MAC (Complexo de Ataque à Membrana C5b-9), sendo as vias da lectina e alternativa incapazes de atingir C5",
+        "C3b atua como opsonina reconhecida pelos receptores CR1 e CR3 nos fagócitos, facilitando a fagocitose de bactérias opsonizadas"
+      ],
+      "answer": [
+        "A via da lectina reconhece manose/N-acetilglicosamina na superfície bacteriana pela MBL (Mannan-Binding Lectin), ativando MASP-1 e MASP-2 sem necessidade de anticorpos",
+        "Em pacientes asplênicos, bactérias encapsuladas escapam porque a cápsula bloqueia a deposição de C3b pela via alternativa, e sem macrófagos esplênicos não há opsonofagocitose eficiente",
+        "C3b atua como opsonina reconhecida pelos receptores CR1 e CR3 nos fagócitos, facilitando a fagocitose de bactérias opsonizadas"
+      ],
+      "type": "multi",
+      "justification": "<strong>Sistema complemento: três vias, uma convergência</strong><br><br>\nAs três vias convergem na formação de C3b (opsonina central) e do MAC (C5b-9):<br><br>\n<strong>Via da Lectina:</strong> independente de anticorpos → especialmente importante em crianças &lt;2 anos (sem memória humoral ainda). MBL reconhece padrões de carboidratos → MASP-2 cliva C4 e C2 → C3 convertase.<br><br>\n<strong>Asplenia e bactérias encapsuladas (S. pneumoniae, N. meningitidis, H. influenzae):</strong>\n<ul>\n<li>Cápsula = barreira física que impede C3b de se depositar na superfície bacteriana (via alternativa bloqueada)</li>\n<li>Necessário: anticorpos anti-cápsula (IgM) → via clássica → C3b eficiente</li>\n<li>Sem baço: faltam macrófagos esplênicos (principais células de clearance de bactérias opsonizadas) → OPSI com mortalidade ~50%</li>\n</ul>\n<em>Erros das alternativas incorretas:</em> Todas as três vias formam C3 convertases que geram C3b, que pode ativar a via terminal e formar o MAC. A via alternativa também é ativada por polissacarídeos capsulares e peptidoglicano de gram-positivas (não só LPS)."
+    },
+    {
+      "question": "A resistência à vancomicina pelo fenótipo VanA substitui o dipeptídeo terminal D-Ala-D-Ala por D-Ala-D-Lac, reduzindo em ~1.000 vezes a afinidade da vancomicina pelo alvo e conferindo resistência tanto à vancomicina quanto à teicoplanina",
+      "answer": "V",
+      "type": "tf",
+      "justification": "A <strong>vancomicina</strong> age ligando-se ao dipeptídeo terminal <strong>D-Ala-D-Ala</strong> dos precursores do peptidoglicano, bloqueando a transpeptidação. O gene <em>vanA</em> (em plasmídeo Tn1546, transferível) codifica:<br><br>\n<ul>\n<li><strong>VanA:</strong> D-Ala-D-Lac ligase (substitui D-Ala terminal por D-Lac)</li>\n<li><strong>VanH:</strong> redutase que produz D-Lac a partir de piruvato</li>\n<li><strong>VanX:</strong> dipeptidase que degrada D-Ala-D-Ala remanescente</li>\n</ul>\n<strong>D-Ala-D-Lac</strong> tem 1.000× menor afinidade pela vancomicina (perda de uma ponte de hidrogênio crítica no grupo amida do D-Ala). VanA confere resistência <em>tanto à vancomicina quanto à teicoplanina</em> (ambos glicopeptídeos). O fenótipo <strong>VanB</strong> confere resistência apenas à vancomicina (sensível à teicoplanina — distinção clinicamente relevante).<br><br>\n<em>Tratamento de VRE:</em> linezolida, daptomicina, quinupristina-dalfopristina (apenas <em>E. faecium</em>)."
+    },
+    {
+      "question": "Um jovem de 20 anos, universitário, retorna de acampamento em área rural e apresenta febre 39,8°C, cefaleia intensa, mialgia e exantema maculopapular que começou nos pulsos e tornozelos, progressivo para tronco, tornando-se petequial. Quais afirmativas sobre o diagnóstico e tratamento são corretas?",
+      "options": [
+        "Aguardar confirmação sorológica (IgG anti-Rickettsia ≥1:64 por imunofluorescência indireta) antes de iniciar tratamento para maximizar especificidade diagnóstica",
+        "R. rickettsii replica no citoplasma de células endoteliais, polimeriza actina para motilidade intracelular (mecanismo identical ao de Listeria e Shigella), e causa vasculite sistêmica hemorrágica",
+        "O padrão centrípeto do exantema (extremidades → tronco) é patognomônico de RMSF e contrasta com a maioria dos exantemas virais que surgem centrifugamente (tronco → extremidades)",
+        "Cloranfenicol é a alternativa aceitável de primeira linha para RMSF quando há contraindicação absoluta à doxiciclina, embora com menor eficácia e maior risco de toxicidade hematológica",
+        "Doxiciclina 100 mg VO 2×/dia deve ser iniciada IMEDIATAMENTE, pois cada dia de atraso após o 5º dia de doença aumenta a mortalidade de ~5% para ~50%"
+      ],
+      "answer": [
+        "R. rickettsii replica no citoplasma de células endoteliais, polimeriza actina para motilidade intracelular (mecanismo identical ao de Listeria e Shigella), e causa vasculite sistêmica hemorrágica",
+        "O padrão centrípeto do exantema (extremidades → tronco) é patognomônico de RMSF e contrasta com a maioria dos exantemas virais que surgem centrifugamente (tronco → extremidades)",
+        "Cloranfenicol é a alternativa aceitável de primeira linha para RMSF quando há contraindicação absoluta à doxiciclina, embora com menor eficácia e maior risco de toxicidade hematológica",
+        "Doxiciclina 100 mg VO 2×/dia deve ser iniciada IMEDIATAMENTE, pois cada dia de atraso após o 5º dia de doença aumenta a mortalidade de ~5% para ~50%"
+      ],
+      "type": "multi",
+      "justification": "<strong>Febre Maculosa das Montanhas Rochosas (RMSF) — máxima urgência diagnóstico-terapêutica</strong><br><br>\n<strong>Epidemiologia no Brasil:</strong> foco principal no estado de São Paulo, MG, RJ — carrapato Amblyomma sculptum (ex-A. cajennense). Sazonalidade: março–setembro (período de atividade de carrapatos)<br><br>\n<strong>Janela terapêutica crítica:</strong>\n<ul>\n<li>Início de doxiciclina nos primeiros 4–5 dias → mortalidade ~5%</li>\n<li>Início após 5º dia → mortalidade ~50–70%</li>\n<li>Razão: vasculite progressiva → trombose de vasos → falência orgânica (SNC, rins, pulmões)</li>\n</ul>\n<strong>Diagnóstico laboratorial — limitações:</strong> IgG positiva só a partir de D7–D10. Diagnóstico inicial é CLÍNICO-EPIDEMIOLÓGICO → iniciar doxiciclina imediatamente sem aguardar sorologia<br><br>\n<strong>Motilidade intracelular por actina:</strong> R. rickettsii expressa proteína RickA → recruta complexo Arp2/3 → polimerização de actina em uma extremidade → \"propulsão\" → evasão de lisossomas → disseminação célula a célula (igual a Listeria monocytogenes e Shigella flexneri)"
+    },
+    {
+      "question": "O MIC (Minimum Inhibitory Concentration) de antibióticos em bactérias organizadas em biofilme pode ser 100 a 1.000 vezes maior que nas células planctônicas da mesma espécie, principalmente pela penetração limitada do antibiótico na matriz de EPS e pela existência de células persisters em estado metabólico dormente",
+      "answer": "V",
+      "type": "tf",
+      "justification": "O <strong>biofilme</strong> representa a forma de vida predominante das bactérias na natureza e é o principal mecanismo de resistência em infecções de dispositivos implantados. Três mecanismos de proteção se somam:<br><br>\n<ul>\n<li><strong>Barreira física da matriz EPS</strong> (Extracellular Polymeric Substances): polissacarídeos, proteínas e DNA extracelular criam uma malha que retarda difusão de antibióticos, especialmente os hidrofílicos</li>\n<li><strong>Células persisters:</strong> subpopulação (~0,01–1%) em estado de dormência metabólica profunda. Antibióticos bactericidas que atuam em células em divisão (beta-lactâmicos, fluoroquinolonas) são <em>ineficazes</em> contra persisters. Quando o antibiótico é retirado, elas \"reativam\" e repopulam o biofilme → recidiva</li>\n<li><strong>Microambiente anóxico:</strong> células no centro do biofilme estão em hipóxia, pH ácido, nutrição escassa → metabolismo alterado → menor atividade de enzimas-alvo dos antibióticos</li>\n</ul>\n<em>Implicação clínica crítica:</em> infecções em próteses ortopédicas, valvas cardíacas, cateteres vasculares e marca-passos raramente são curadas apenas com antibióticos — a remoção do dispositivo é frequentemente necessária."
+    },
+    {
+      "question": "A NOD2 (Nucleotide-binding Oligomerization Domain 2) reconhece o MDP (muramil dipeptídeo) presente em todas as bactérias, e mutações com perda de função em NOD2 estão associadas à Doença de Crohn por reconhecimento prejudicado da microbiota intestinal, resultando em inflamação crônica inadequada da mucosa",
+      "answer": "V",
+      "type": "tf",
+      "justification": "<strong>NOD2</strong> é um receptor intracelular da família NLR (Nucleotide-binding Leucine-rich Repeat) que reconhece o <strong>MDP (muramil dipeptídeo)</strong> — o menor fragmento imunologicamente ativo do peptidoglicano bacteriano, presente em gram-positivas e gram-negativas.<br><br>\nSinalização: MDP → NOD2 oligomeriza → recruta RIP2 → ativa NF-κB e MAPK → citocinas inflamatórias + defensinas antimicrobianas.<br><br>\n<strong>Doença de Crohn:</strong> mutações em NOD2 (ex.: Arg702Trp, Gly908Arg, Leu1007fsinsC) foram as primeiras variantes de suscetibilidade identificadas por GWAS (2001). Possíveis mecanismos:<br>\n<ul>\n<li>Falha no reconhecimento de bactérias comensais → clearance reduzido → invasão epitélio → inflamação crônica</li>\n<li>Redução de produção de defensinas pelas células de Paneth → microbiota disbiótica</li>\n</ul>\n<em>Nota:</em> NOD1 reconhece especificamente o DAP (ácido diaminopimélico) de gram-negativos. NOD2 tem espectro mais amplo (gram-positivos e negativos)."
+    },
+    {
+      "question": "O LPS bacteriano ativa os macrófagos exclusivamente via sinalização pelo receptor TLR-4 e a via MyD88, produzindo apenas citocinas pró-inflamatórias (TNF-α, IL-1β, IL-6), sem ativar produção de interferons tipo I",
+      "answer": "F",
+      "type": "tf",
+      "justification": "O TLR-4 ativa <strong>DUAS</strong> vias sinalizadoras distintas:<br><br>\n<strong>Via MyD88-dependente (canônica):</strong><br>\nTLR-4 → MyD88 → IRAK4 → TRAF6 → IKK → NF-κB → TNF-α, IL-1β, IL-6, IL-8, IL-12<br><br>\n<strong>Via TRIF/TRAM-dependente (não-canônica):</strong><br>\nTLR-4 → TRAM → TRIF → IRF3 → <strong>IFN-β</strong> (Interferon tipo I)<br><br>\nTLR-4 é o <em>único TLR</em> que ativa ambas as vias. O IFN-β produzido tem funções antivirais, imunomoduladores e ativa células NK. Esta dualidade é clinicamente relevante:<br>\n<ul>\n<li>Explica por que LPS tem efeitos pleiotrópicos além da simples inflamação</li>\n<li>MPLA (Monophosphoryl Lipid A) é um agonista parcial que ativa TRIF>MyD88 → adjuvante vacinal com menor toxicidade (usado em vacinas HPV, hepatite B)</li>\n</ul>"
+    },
+    {
+      "question": "A daptomicina é o antibiótico de primeira escolha para pneumonia por MRSA em pacientes com ventilação mecânica, por sua excelente penetração no parênquima pulmonar e potente atividade bactericida contra gram-positivos",
+      "answer": "F",
+      "type": "tf",
+      "justification": "Esta é uma das armadilhas clínicas mais importantes da infectologia — a daptomicina é <strong>CONTRAINDICADA</strong> para pneumonia:<br><br>\n<strong>Mecanismo de inativação pulmonar:</strong><br>\nA daptomicina é um lipopeptídeo cíclico que age inserindo-se na membrana plasmática bacteriana (mecanismo cálcio-dependente) e depolarizando-a. O <strong>surfactante pulmonar</strong> (fosfatidilglicerol) se liga à daptomicina e a inativa irreversivelmente — a droga literalmente \"se perde\" no surfactante antes de atingir as bactérias.<br><br>\n<strong>Tratamento correto para pneumonia por MRSA:</strong>\n<ul>\n<li><strong>Vancomicina IV:</strong> primeira linha; meta AUC/MIC 400–600 µg·h/mL</li>\n<li><strong>Linezolida:</strong> alternativa; boa penetração pulmonar; bacteriostática; sem necessidade de monitoramento de nível sérico</li>\n<li><strong>Ceftarolina:</strong> cefalosporina de 5ª geração com atividade anti-MRSA</li>\n</ul>\n<em>Daptomicina SIM é usada:</em> bacteremia por MRSA, endocardite direita por MRSA, infecções de pele e partes moles por MRSA, VRE."
+    },
+    {
+      "question": "Na Doença Granulomatosa Crônica (CGD), os neutrófilos são incapazes de matar qualquer microrganismo fagocitado porque a ausência de NADPH oxidase elimina completamente o arsenal microbicida oxidativo e não-oxidativo da célula",
+      "answer": "F",
+      "type": "tf",
+      "justification": "A CGD elimina o <em>burst oxidativo</em>, mas os neutrófilos mantêm arsenal microbicida não-oxidativo <strong>completamente preservado</strong>:<br><br>\n<strong>Mecanismos não-oxidativos intactos na CGD:</strong>\n<ul>\n<li>Grânulos azurofílicos: <strong>elastase, catepsina G, defensinas, BPI</strong> (Bactericidal/Permeability-Increasing protein), lisozima</li>\n<li>Grânulos específicos: lactoferrina (quelação de ferro), lisozima</li>\n<li>Proteínas da matriz extracelular: fibronectina, vitronectina</li>\n</ul>\n<strong>Por que apenas catalase-POSITIVOS causam problemas?</strong><br>\n<ul>\n<li>Bactérias catalase-NEGATIVAS (Streptococcus, Pneumococcus, H. influenzae): produzem H₂O₂ como produto metabólico → fornecem substrato para a MPO (mieloperoxidase) do neutrófilo → HOCl formado → bactericida → células MORTAS mesmo sem NADPH oxidase</li>\n<li>Bactérias catalase-POSITIVAS (S. aureus, Aspergillus, Serratia, Nocardia): destroem o H₂O₂ que elas próprias ou as células produzem → escapam</li>\n</ul>\n<em>Diagnóstico:</em> teste DHR (Dihydrorhodamine) por citometria de fluxo — neutrófilos CGD não fluorescentes."
+    },
+    {
+      "question": "A fasciite necrotizante por Streptococcus pyogenes (GAS) tem como tratamento o esquema cirúrgico emergencial associado a penicilina G + clindamicina, sendo a clindamicina adicionada especificamente porque inibe a síntese de toxinas em nível ribossômico (50S) mesmo em bactérias não se dividindo ativamente, com efeito pós-antibiótico superior ao da penicilina",
+      "answer": "V",
+      "type": "tf",
+      "justification": "A <strong>fasciite necrotizante</strong> por GAS tem mortalidade de 20–50% sem tratamento cirúrgico precoce. A combinação penicilina + clindamicina é sinérgica por mecanismos complementares:<br><br>\n<strong>Penicilina G:</strong> inibe PBPs → falha na síntese de peptidoglicano → lise bacteriana. Eficaz apenas em células em <em>fase de divisão ativa</em> (fase exponencial). Na fasciite, com grandes inóculos em fase estacionária, muitas bactérias são menos sensíveis.<br><br>\n<strong>Clindamicina:</strong>\n<ul>\n<li>Inibe a subunidade <strong>50S</strong> do ribossomo → bloqueia síntese proteica independente da fase de crescimento</li>\n<li>Suprime produção de <strong>exotoxinas pirogênicas (SpeA, SpeB, SpeC)</strong> e <strong>M-proteína</strong> — os principais mediadores da toxicidade sistêmica</li>\n<li><em>Efeito pós-antibiótico</em> longo: as bactérias permanecem suprimidas horas após a concentração cair abaixo do MIC</li>\n</ul>\n<em>LRINEC score</em> (Laboratory Risk Indicator for Necrotizing Fasciitis) usa PCR, leucócitos, Hb, Na<sup>+</sup>, creatinina e glicose para triagem — mas diagnóstico e tratamento são CLÍNICOS e cirúrgicos, não laboratoriais."
+    },
+    {
+      "question": "Uma paciente de 28 anos, previamente saudável, apresenta diarreia sanguinolenta após consumo de carne mal passada. Hemograma: Hb 8,2 g/dL, plaquetas 42.000/mm³, creatinina 4,1 mg/dL. Quais afirmativas sobre o agente e a conduta são corretas?",
+      "options": [
+        "Shigella dysenteriae tipo 1 — sulfametoxazol-trimetoprima é o tratamento de escolha de primeira linha",
+        "E. coli O157:H7 — o quadro é compatível com SHU (anemia hemolítica microangiopática + trombocitopenia + insuficiência renal aguda)",
+        "Salmonella enterica sorotipo Typhimurium — iniciar ciprofloxacino 500 mg 12/12h imediatamente para prevenir bacteremia",
+        "E. coli O157:H7 (EHEC) — antibióticos são contraindicados por induzirem o profago portador de stx, com liberação massiva de toxina de Shiga",
+        "Vibrio cholerae O1 — reidratação oral e doxiciclina são suficientes para tratamento completo desta tríade clínica"
+      ],
+      "answer": [
+        "E. coli O157:H7 — o quadro é compatível com SHU (anemia hemolítica microangiopática + trombocitopenia + insuficiência renal aguda)",
+        "E. coli O157:H7 (EHEC) — antibióticos são contraindicados por induzirem o profago portador de stx, com liberação massiva de toxina de Shiga"
+      ],
+      "type": "multi",
+      "justification": "<strong>Síndrome Hemolítico-Urêmica (SHU) por EHEC — diagnóstico e armadilha terapêutica</strong><br><br>\nA tríade <em>MAHA + trombocitopenia + IRA</em> após diarreia hemorrágica por carne mal passada = SHU típica por E. coli O157:H7 (EHEC):<br><br>\n<strong>Fisiopatologia:</strong>\n<ol>\n<li>EHEC coloniza cólon → toxina de Shiga (Stx2) via profago induzível</li>\n<li>Stx: subunidade B → liga Gb3 em células endoteliais renais → subunidade A → ribosome killing (cliva rRNA 28S) → morte endotelial renal</li>\n<li>Microangiopatia trombótica: trombos de plaquetas em microcirculação renal → IRA + anemia hemolítica mecânica + consumo de plaquetas</li>\n</ol>\n<strong>Por que antibióticos são contraindicados:</strong><br>\nAntibióticos (especialmente quinolonas, beta-lactâmicos) induzem resposta SOS bacteriana → excisão e replicação do profago → liberação de 100–1.000× mais toxina → piora da SHU<br><br>\n<em>Tratamento: suporte (hidratação criteriosa), diálise se necessário, eculizumab (anti-C5) em casos graves</em>"
+    },
+    {
+      "question": "Sobre os mecanismos de ação dos antibióticos, quais associações estão CORRETAMENTE descritas do ponto de vista molecular?",
+      "options": [
+        "Daptomicina — insere-se na membrana plasmática de gram-positivos em processo cálcio-dependente, formando poros que colapsam o potencial de membrana",
+        "Polimixina B — intercala-se no DNA bacteriano impedindo a separação das fitas durante a replicação",
+        "Vancomicina — inibe a DNA girase (topoisomerase II) impedindo o superenrolamento negativo do DNA bacteriano",
+        "Rifampicina — inibe a RNA polimerase bacteriana (subunidade beta, RpoB), bloqueando a transcrição sem afetar a RNA polimerase eucariótica",
+        "Linezolida — inibe a subunidade ribossômica 50S bloqueando a formação do complexo de iniciação da tradução; é bacteriostática"
+      ],
+      "answer": [
+        "Daptomicina — insere-se na membrana plasmática de gram-positivos em processo cálcio-dependente, formando poros que colapsam o potencial de membrana",
+        "Rifampicina — inibe a RNA polimerase bacteriana (subunidade beta, RpoB), bloqueando a transcrição sem afetar a RNA polimerase eucariótica",
+        "Linezolida — inibe a subunidade ribossômica 50S bloqueando a formação do complexo de iniciação da tradução; é bacteriostática"
+      ],
+      "type": "multi",
+      "justification": "<strong>Mecanismos moleculares dos antibióticos — distinções críticas:</strong><br><br>\n<ul>\n<li><strong>Linezolida:</strong> liga-se ao sítio P da 50S → impede que o tRNA-Met iniciador se posicione → bloqueia formação do complexo 70S → sem peptídeo. Bacteriostática (não bactericida) em maioria dos organismos. Interações com MAO inibidores (evitar alimentos ricos em tiramina)</li>\n<li><strong>Daptomicina:</strong> mecanismo único. Necessita Ca²⁺ para inserção na bicamada de gram-positivos. Forma oligômeros na membrana → canais de K⁺ → despolarização → morte. INATIVADA por surfactante pulmonar → contraindicada em pneumonia</li>\n<li><strong>Rifampicina:</strong> se liga na bolsa de ligação do iniciador da subunidade β da RNA polimerase bacteriana. RNA polimerase eucariótica estruturalmente diferente → seletiva. Indutor potente do CYP450 → múltiplas interações medicamentosas</li>\n</ul>\n<em>Erros:</em> Vancomicina age no peptidoglicano (D-Ala-D-Ala), não na DNA girase (alvo das fluoroquinolonas). Polimixinas desestabilizam a membrana externa (LPS), não o DNA."
+    },
+    {
+      "question": "A S. aureus em hemoculturas deve ser considerada contaminante quando apenas 1 de 4 frascos é positivo, pois hemoculturas falsamente positivas são comuns com este organismo devido à sua prevalência como colonizador da pele",
+      "answer": "F",
+      "type": "tf",
+      "justification": "<strong>S. aureus NUNCA deve ser considerado contaminante em hemocultura</strong> — ao contrário do S. epidermidis:<br><br>\n<strong>Regra fundamental:</strong>\n<ul>\n<li><em>Staphylococcus epidermidis</em> (SCN) em 1/4 frascos: provavelmente contaminante de pele</li>\n<li><em>Staphylococcus aureus</em> em QUALQUER frasco positivo: <strong>sempre patógeno até prova em contrário</strong></li>\n</ul>\n<strong>Razões:</strong>\n<ul>\n<li>S. aureus raramente coloniza o sangue sem doença — toda bacteremia por S. aureus é potencialmente fatal</li>\n<li>Bacteremia por S. aureus complica em 10–30% dos casos com endocardite, osteomielite, artrite séptica, abcesso hematogênico</li>\n<li>Requer investigação ativa: ecocardiograma transesofágico, exame de fundo de olho, TC em busca de metástases sépticas</li>\n</ul>\n<em>Diferencial prático:</em> duração da bacteremia &gt;72h após retirada do foco e antibiótico adequado = endocardite ou foco não controlado até prova em contrário. Mínimo 4–6 semanas de tratamento."
+    },
+    {
+      "question": "Sobre os critérios de Sepsis-3 (2016) e o bundle de 1 hora da SSCG, quais afirmativas estão corretas?",
+      "options": [
+        "O qSOFA (≥2 critérios: FR≥22, Glasgow<15, PAS≤100) confirma diagnóstico de sepse com sensibilidade suficiente para substituir o SOFA score na UTI",
+        "Choque séptico = sepse + hipotensão refratária a reposição volêmica + vasopressores para manter PAM ≥65 mmHg + lactato sérico >2 mmol/L após ressuscitação",
+        "O SOFA score deve aumentar ≥2 pontos em relação ao baseline para caracterizar disfunção orgânica associada à sepse (mortalidade hospitalar >10%)",
+        "Sepse é definida como SIRS (≥2 critérios de SIRS: febre, FC, FR, leucócitos) com suspeita de infecção, sem necessidade de disfunção orgânica",
+        "Lactato ≥4 mmol/L indica choque séptico e demanda ressuscitação volêmica com 30 mL/kg de cristaloide nas primeiras horas, independente da pressão arterial"
+      ],
+      "answer": [
+        "Choque séptico = sepse + hipotensão refratária a reposição volêmica + vasopressores para manter PAM ≥65 mmHg + lactato sérico >2 mmol/L após ressuscitação",
+        "O SOFA score deve aumentar ≥2 pontos em relação ao baseline para caracterizar disfunção orgânica associada à sepse (mortalidade hospitalar >10%)",
+        "Lactato ≥4 mmol/L indica choque séptico e demanda ressuscitação volêmica com 30 mL/kg de cristaloide nas primeiras horas, independente da pressão arterial"
+      ],
+      "type": "multi",
+      "justification": "<strong>Sepsis-3 (Singer M et al. JAMA 2016) — mudança de paradigma:</strong><br><br>\n<strong>SIRS foi abandonado como definição de sepse</strong> porque é inespecífico (presente em trauma, pancreatite, queimados sem infecção). Sepsis-3 foca em <em>disfunção orgânica</em>:<br><br>\n<strong>Sepse:</strong> disfunção orgânica ameaçadora à vida (SOFA ≥+2) causada por resposta desregulada à infecção<br>\n<strong>Choque séptico:</strong> sepse + vasopressor + lactato >2 mmol/L (mortalidade >40%)<br><br>\n<strong>Lactato ≥4 mmol/L:</strong> define choque séptico mesmo SEM hipotensão → \"choque oculto\" → ressuscitação volêmica obrigatória (bundle de 1h: 30 mL/kg de cristaloide)<br><br>\n<em>qSOFA NÃO substitui SOFA:</em> qSOFA foi proposto como ferramenta de triagem extra-UTI (baixa sensibilidade, alta especificidade). Para UTI, o SOFA é obrigatório. Críticas ao qSOFA levaram a sua não adoção como critério diagnóstico formal."
+    },
+    {
+      "question": "O HIV predispõe à reativação de tuberculose latente porque destrói primariamente linfócitos T CD8+ citotóxicos, que são as células efetoras responsáveis pela manutenção do granuloma e controle de M. tuberculosis intracelular",
+      "answer": "F",
+      "type": "tf",
+      "justification": "O alvo primário do HIV é os linfócitos <strong>T CD4+ (células Th1/helper)</strong>, não os CD8+:<br><br>\n<strong>Por que CD4+ Th1 são críticos para o controle de MTB?</strong>\n<ul>\n<li>Macrófagos infectados por MTB secretam IL-12 → ativam CD4+ Th1</li>\n<li>CD4+ Th1 produzem <strong>IFN-γ</strong> → ativa macrófagos para produção de ROIs (reactive oxygen intermediates) e espécies reativas de nitrogênio → morte de MTB intracelular</li>\n<li>CD4+ também produzem TNF-α → essencial para manutenção estrutural do granuloma</li>\n</ul>\n<strong>Sequência na co-infecção HIV/TB:</strong>\n<ul>\n<li>CD4+ caem abaixo de 200 cél/µL → granuloma perde integridade estrutural → MTB escapa → TB ativa</li>\n<li>Risco de TB aumenta 20–37× em HIV positivos vs negativos</li>\n<li>TB é a causa mais comum de morte em PVHIV globalmente</li>\n</ul>\n<em>CD8+ também têm papel no controle de MTB, mas são o alvo SECUNDÁRIO do HIV e não o mecanismo principal de predisposição.</em>"
+    },
+    {
+      "question": "Sobre a febre maculosa das Montanhas Rochosas (RMSF) por Rickettsia rickettsii, qual afirmativa é INCORRETA e representa uma armadilha diagnóstico-terapêutica de alto impacto?",
+      "options": [
+        "A tríade clássica febre + cefaleia + exantema está presente em apenas 60–70% dos casos na apresentação inicial, sendo a sua ausência um fator de atraso diagnóstico e mortalidade",
+        "Doxiciclina é contraindicada em crianças menores de 8 anos com RMSF, devendo ser substituída por cloranfenicol para evitar coloração permanente dos dentes",
+        "Rickettsia rickettsii invade células endoteliais, polimeriza actina para motilidade intracelular (comet tails), e causa vasculite sistêmica pela destruição do endotélio",
+        "Doxiciclina deve ser iniciada imediatamente ao suspeitar de RMSF sem aguardar confirmação laboratorial, pois o atraso >5 dias aumenta a mortalidade de 5% para 50%",
+        "O exantema tipicamente começa nas palmas e plantas (padrão centrípeto — extremidades → tronco), contrastando com a maioria dos exantemas virais que surgem no tronco"
+      ],
+      "answer": [
+        "Doxiciclina é contraindicada em crianças menores de 8 anos com RMSF, devendo ser substituída por cloranfenicol para evitar coloração permanente dos dentes"
+      ],
+      "type": "multi",
+      "justification": "<strong>RMSF — a alternativa INCORRETA é a B (sobre contraindicação de doxiciclina em crianças)</strong><br><br>\nEsta é uma das armadilhas mais perigosas da medicina:<br><br>\n<strong>Doxiciclina é o tratamento de ESCOLHA em TODAS as faixas etárias, incluindo crianças:</strong>\n<ul>\n<li>CDC, IDSA, AAP: doxiciclina em crianças com suspeita de RMSF — sem exceção de idade</li>\n<li>O risco de coloração dentária com <em>cursos curtos</em> de doxiciclina é mínimo e não comprovado clinicamente</li>\n<li>Risco de MORTE por RMSF não tratada (ou tratada com cloranfenicol inadequado) é real e documentado</li>\n<li>Cloranfenicol: menor eficácia, risco de anemia aplástica, não mais disponível em muitos países</li>\n</ul>\n<strong>As demais afirmativas estão CORRETAS:</strong> tríade em 60–70%, padrão centrípeto (único), iniciar sem confirmar, mecanismo de actina-polimerização para motilidade intracelular."
+    },
+    {
+      "question": "A pressão osmótica interna de bactérias gram-positivas pode atingir ~20 atm, sendo contida exclusivamente pela parede de peptidoglicano, o que explica a lise celular imediata quando esta parede é destruída por antibióticos beta-lactâmicos em ambiente isosmótico",
+      "answer": "V",
+      "type": "tf",
+      "justification": "O mecanismo de morte bacteriana pelos <strong>beta-lactâmicos</strong> é elegantemente físico-químico:<br><br>\nBactérias gram-positivas mantêm concentrações intracelulares de solutos muito superiores ao meio externo → <strong>pressão osmótica interna ~20 atm</strong> (equivalente a um pneu de caminhão). A parede de peptidoglicano é a única estrutura que resiste a essa pressão.<br><br>\nBeta-lactâmicos inibem as <strong>PBPs</strong> (transpeptidases) → pontes cruzadas do peptidoglicano não se formam → parede fica quimicamente fraca → a bactéria continua crescendo/sintetizando mas sem reforçar a parede → pressão osmótica rompe a membrana plasmática → <strong>lise osmótica</strong>.<br><br>\n<em>Por que isso não ocorre em gram-negativas com mesma facilidade?</em> Membrana externa + menor pressão osmótica interna → mais resistentes à lise. Por isso, gram-negativos muitas vezes requerem concentrações maiores de beta-lactâmicos e combinações com outros agentes para morte eficiente.<br><br>\n<em>Nota clínica:</em> isso também explica por que beta-lactâmicos são mais eficazes em bactérias em crescimento ativo (fase exponencial) do que em dormência."
+    },
+    {
+      "question": "Sobre o mecanismo de ação da toxina diftérica e a produção de C. diphtheriae, quais afirmativas estão corretas?",
+      "options": [
+        "A subunidade B liga-se ao receptor HB-EGF (Heparin-Binding EGF receptor) expresso em células cardíacas e neurônios — explicando o tropismo cardíaco e neurológico da difteria",
+        "O gene tox da toxina diftérica está localizado em um PROFAGO (fago β) integrado no cromossomo de algumas cepas de C. diphtheriae — cepas sem o fago são avirulentas",
+        "A subunidade A da toxina diftérica realiza ADP-ribosilação do EF-2 (Elongation Factor 2), inativando-o permanentemente e bloqueando toda síntese proteica da célula hospedeira",
+        "Uma única molécula da subunidade A pode matar uma célula eucariótica, pois catalisa a ADP-ribosilação de TODAS as moléculas de EF-2 disponíveis (ação catalítica)",
+        "O toxoide diftérico da vacina DTP é a toxina nativa purificada diretamente de culturas de C. diphtheriae, sem qualquer modificação química, mantendo toxicidade e antigenicidade"
+      ],
+      "answer": [
+        "A subunidade B liga-se ao receptor HB-EGF (Heparin-Binding EGF receptor) expresso em células cardíacas e neurônios — explicando o tropismo cardíaco e neurológico da difteria",
+        "O gene tox da toxina diftérica está localizado em um PROFAGO (fago β) integrado no cromossomo de algumas cepas de C. diphtheriae — cepas sem o fago são avirulentas",
+        "A subunidade A da toxina diftérica realiza ADP-ribosilação do EF-2 (Elongation Factor 2), inativando-o permanentemente e bloqueando toda síntese proteica da célula hospedeira",
+        "Uma única molécula da subunidade A pode matar uma célula eucariótica, pois catalisa a ADP-ribosilação de TODAS as moléculas de EF-2 disponíveis (ação catalítica)"
+      ],
+      "type": "multi",
+      "justification": "<strong>Toxina diftérica: modelo paradigmático das AB toxinas</strong><br><br>\n<strong>Produção e regulação:</strong>\n<ul>\n<li>Gene tox em profago β → C. diphtheriae lisogenizado produz toxina</li>\n<li>Regulação: baixo Fe²⁺ → inativa repressor DtxR → gene tox expresso. Alta demanda metabólica de ferro → mais toxina (por que em tecidos pobres em ferro a difteria é mais grave?)</li>\n</ul>\n<strong>Mecanismo:</strong>\n<ol>\n<li>Subunidade B → liga HB-EGF → endocitose em endossoma</li>\n<li>pH ácido do endossoma → B insere fragmento A na membrana → A escapa para citoplasma</li>\n<li>A: NAD⁺ + EF-2 → ADP-ribosil-EF-2 (inativo) + nicotinamida. EF-2 inativo → ribossomo trava → zero síntese proteica</li>\n<li>Ação catalítica: 1 molécula A → ADP-ribosilação de milhares de EF-2 → morte celular</li>\n</ol>\n<strong>Erro — toxoide:</strong> toxoide = toxina INATIVADA por formaldeído (0,3–0,4%, 4 semanas a 37°C). Perde toxicidade mas mantém antigenicidade (epítopos conformacionais preservados). É o princípio das vacinas DTP/DTPa/DT."
+    },
+    {
+      "question": "A toxina colérica ativa permanentemente a proteína Gsα por fosforilação direta de sua subunidade A, resultando em produção constitutiva de AMPc e abertura do canal CFTR com perda massiva de Cl⁻ para o lúmen intestinal",
+      "answer": "F",
+      "type": "tf",
+      "justification": "O mecanismo de ativação está descrito com o <strong>tipo de modificação errado</strong>:<br><br>\nA subunidade A da toxina colérica realiza <strong>ADP-RIBOSILAÇÃO</strong> — não fosforilação:<br><br>\n<ol>\n<li>Subunidade B (pentâmero) liga-se ao gangliósido <strong>GM1</strong> na membrana apical dos enterócitos</li>\n<li>Subunidade A é endocitada e ativada no espaço periplasmático</li>\n<li>Subunidade A₁ catalisa a <em>transferência do grupo ADP-ribose</em> (do NAD⁺) para a <strong>Arg201 da Gsα</strong></li>\n<li>ADP-ribosilação da Arg201 <em>impede a atividade GTPásica intrínseca</em> da Gsα → Gsα permanece \"presa\" na conformação ativa ligada ao GTP</li>\n<li>Gsα ativa constitutivamente a adenilil ciclase → AMPc↑↑ → PKA → fosforilação e abertura de <strong>CFTR</strong> → Cl⁻ para o lúmen → Na⁺ e H₂O seguem</li>\n</ol>\n<em>Distinguir:</em> ADP-ribosilação (toxina colérica na Gsα), ADP-ribosilação (toxina pertussis na Giα, efeito oposto), fosforilação (cascata de sinalização normal)."
+    },
+    {
+      "question": "O motor flagelar bacteriano usa ATP como fonte primária de energia para gerar a rotação, de forma análoga às ATPases musculares, atingindo velocidades de até 100.000 rpm em condições ótimas",
+      "answer": "F",
+      "type": "tf",
+      "justification": "A velocidade de rotação é correta (até 100.000 rpm em algumas espécies como <em>V. alginolyticus</em>), mas a fonte de energia está <strong>completamente errada</strong>.<br><br>\nO motor flagelar bacteriano usa <strong>GRADIENTE ELETROQUÍMICO DE PRÓTONS</strong> (Força Próton-Motriz — PMF), não ATP:<br><br>\n<strong>PMF = ΔΨ + ΔpH</strong><br>\n(ΔΨ ≈ −130 a −150 mV + ΔpH ≈ −1 unidade)<br><br>\nMecanismo: proteínas estatoriais <strong>MotA/MotB</strong> formam canais que deixam prótons fluir através da membrana plasmática (de fora, mais ácido, para dentro) → cada fluxo de próton gera força que rota o anel em C (rotor) → rotação transmitida via gancho ao filamento.<br><br>\n<em>Por que isso importa clinicamente?</em><br>\n<ul>\n<li>Antibióticos que dissipam o gradiente de prótons (ex.: ionóforos) inibem a motilidade flagelar</li>\n<li>Bactérias em anaerobiose sem ATP ainda movem flagelos (usam PMF da fermentação)</li>\n<li><em>Helicobacter pylori</em> usa PMF flagelar para nadar contra o gradiente do muco gástrico e colonizar o antro</li>\n</ul>"
+    },
+    {
+      "question": "As metalo-beta-lactamases (MBL: NDM, VIM, IMP), por utilizarem zinco no sítio ativo em vez de serina, são intrinsecamente resistentes ao avibactam e ao tazobactam, requerendo agentes específicos como cefiderocol ou aztreonam-avibactam para o tratamento de infecções por produtoras dessas enzimas",
+      "answer": "V",
+      "type": "tf",
+      "justification": "A distinção entre classes de carbapenemases é fundamental para a escolha terapêutica:<br><br>\n<strong>Classificação de Ambler por mecanismo catalítico:</strong>\n<table>\n<tr><th>Classe</th><th>Sítio ativo</th><th>Exemplos</th><th>Inibidas por</th></tr>\n<tr><td>A</td><td>Serina</td><td>KPC, CTX-M</td><td>Avibactam, tazobactam, clavulanato</td></tr>\n<tr><td>B (MBL)</td><td><strong>Zinco</strong></td><td>NDM, VIM, IMP</td><td><em>NÃO inibidas</em> por avibactam/tazobactam</td></tr>\n<tr><td>C</td><td>Serina</td><td>AmpC</td><td>Avibactam (não clavulanato)</td></tr>\n<tr><td>D</td><td>Serina</td><td>OXA-48</td><td>Avibactam</td></tr>\n</table>\n<strong>Opções para MBL-produtoras:</strong>\n<ul>\n<li><strong>Cefiderocol:</strong> sideróforo cefalosporina, penetra via receptores de ferro, estável a todas as beta-lactamases</li>\n<li><strong>Aztreonam-avibactam:</strong> aztreonam (estável a MBL) + avibactam (inibe serina-BL co-produzidas) — para produtores de NDM co-expressando KPC</li>\n<li><strong>Polimixinas (colistina):</strong> último recurso com alta toxicidade</li>\n</ul>"
+    },
+    {
+      "question": "Sobre os patógenos ESKAPE e a crise global de resistência antimicrobiana, quais afirmativas refletem corretamente a situação epidemiológica e as opções terapêuticas disponíveis?",
+      "options": [
+        "NDM-1 (New Delhi Metallo-beta-lactamase) é inibida por tazobactam e clavulanato, tornando piperacilina-tazobactam uma opção válida para infecções por produtores de NDM isolados",
+        "VRE fenótipo VanA confere resistência à vancomicina E à teicoplanina; VanB confere resistência apenas à vancomicina, mantendo sensibilidade à teicoplanina",
+        "Ceftazidima-avibactam (avibactam inibe serina-beta-lactamases: KPC, OXA-48, AmpC) é ativa contra enterobactérias produtoras de KPC, mas NÃO contra produtoras de NDM e outros MBL",
+        "Acinetobacter baumannii carbapenem-resistente está na categoria de PRIORIDADE CRÍTICA da OMS, com mortalidade de 40–70% em pacientes de UTI na maioria das séries",
+        "A OMS estima ~700.000 mortes anuais por infecções por bactérias resistentes (2019), com projeção de 10 milhões de mortes/ano até 2050 sem intervenção global (O'Neill Report, 2016)"
+      ],
+      "answer": [
+        "VRE fenótipo VanA confere resistência à vancomicina E à teicoplanina; VanB confere resistência apenas à vancomicina, mantendo sensibilidade à teicoplanina",
+        "Ceftazidima-avibactam (avibactam inibe serina-beta-lactamases: KPC, OXA-48, AmpC) é ativa contra enterobactérias produtoras de KPC, mas NÃO contra produtoras de NDM e outros MBL",
+        "Acinetobacter baumannii carbapenem-resistente está na categoria de PRIORIDADE CRÍTICA da OMS, com mortalidade de 40–70% em pacientes de UTI na maioria das séries",
+        "A OMS estima ~700.000 mortes anuais por infecções por bactérias resistentes (2019), com projeção de 10 milhões de mortes/ano até 2050 sem intervenção global (O'Neill Report, 2016)"
+      ],
+      "type": "multi",
+      "justification": "<strong>Resistência antimicrobiana: a pandemia silenciosa</strong><br><br>\n<strong>ESKAPE — lista de prioridade crítica OMS 2017:</strong>\n<ul>\n<li>A. baumannii carbapenem-resistente</li>\n<li>P. aeruginosa carbapenem-resistente</li>\n<li>Enterobacteriaceae resistentes a carbapenêmicos ou cefalosporinas 3ª geração (ESBL)</li>\n</ul>\n<strong>VanA vs VanB — distinção clinicamente relevante:</strong>\n<ul>\n<li>VanA: resistência de alto nível à vancomicina E teicoplanina (substitui D-Ala-D-Ala por D-Ala-D-Lac com alta eficiência)</li>\n<li>VanB: resistência variável à vancomicina, sensível à teicoplanina (D-Ala-D-Lac, mas com menor expressão ou subtipo molecular diferente)</li>\n</ul>\n<strong>NDM e inibidores — erro crítico:</strong><br>\nNDM é uma METALO-beta-lactamase (zinco no sítio ativo) → NÃO inibida por inibidores de serina (tazobactam, clavulanato, avibactam). Para NDM: cefiderocol, aztreonam-avibactam (aztreonam não é substrato de MBL), polimixinas + carbapenem (efeito sinérgico discutível)."
+    },
+    {
+      "question": "A relação superfície/volume de uma bactéria esférica é inversamente proporcional ao raio (S/V = 3/r), o que significa que bactérias menores têm maior eficiência metabólica de troca com o meio, explicando em parte a capacidade de duplicação a cada 20 minutos em E. coli em condições ótimas",
+      "answer": "V",
+      "type": "tf",
+      "justification": "Esta é uma consequência direta da geometria esférica:<br><br>\n<strong>Para uma esfera:</strong><br>\nSuperfície = 4πr² | Volume = (4/3)πr³<br>\n<strong>S/V = 3/r</strong><br><br>\nConsequências biológicas diretas:\n<ul>\n<li>Uma bactéria com r = 0,5 µm tem S/V = 6 µm⁻¹</li>\n<li>Se o raio dobrar para r = 1,0 µm, S/V cai para 3 µm⁻¹ → metade da eficiência</li>\n<li>Uma célula humana com r = 10 µm tem S/V = 0,3 µm⁻¹ → 20× menor que a bacteria acima</li>\n</ul>\nAlta relação S/V em bactérias significa:\n<ul>\n<li>Cada parte do citoplasma está próxima da membrana → troca de nutrientes e metabólitos ultrarrápida</li>\n<li>Sem necessidade de organelas de transporte intracelular (vesículas, retículo)</li>\n<li>Geração de ATP distribuída diretamente pela membrana plasmática (sem mitocôndrias)</li>\n</ul>\n<em>E. coli</em> em meio LB rico: geração a cada 20 min → 10²¹ bactérias em 24h (matematicamente — limitado por nutrientes na prática)."
+    },
+    {
+      "question": "Qual estrutura bacteriana é ao mesmo tempo o principal fator de resistência à fagocitose mediada pelo complemento e o antígeno-alvo das vacinas pneumocócicas conjugadas (PCV)?",
+      "options": [
+        "Flagelina do filamento flagelar — principal ativador de TLR-5 nos macrófagos",
+        "Porinas da membrana externa — canais proteicos que regulam a permeabilidade",
+        "Lipopolissacarídeo (LPS) — componente do antígeno O da membrana externa",
+        "Ácido teicoico da parede de peptidoglicano — polímero ribitol-fosfato exclusivo de gram-positivas",
+        "Cápsula polissacarídica — camada gelatinosa extracelular específica por sorotipo"
+      ],
+      "answer": [
+        "Cápsula polissacarídica — camada gelatinosa extracelular específica por sorotipo"
+      ],
+      "type": "multi",
+      "justification": "A <strong>cápsula polissacarídica</strong> é a estrutura dual mais relevante:<br><br>\n<strong>Como fator de virulência antifagocítico:</strong>\n<ul>\n<li>Hidrófila e negativamente carregada → repele a superfície dos fagócitos</li>\n<li>Impede a deposição de C3b pela via alternativa do complemento → sem opsonização eficiente</li>\n<li>Inibe diretamente o reconhecimento pelos receptores de manose dos macrófagos</li>\n<li>Apenas anticorpos específicos anti-cápsula (IgM anti-polissacarídeo) ativam a via clássica → C3b → fagocitose eficiente</li>\n</ul>\n<strong>Como antígeno vacinal (PCV13/PCV15/PCV20):</strong>\n<ul>\n<li>Polissacarídeo capsular conjugado a proteína carreadora (CRM197 ou toxoide) → resposta T-dependente → memória imunológica em &lt;2 anos</li>\n<li>91 sorotipos identificados em pneumococo — vacinas cobrem os mais prevalentes</li>\n<li>Vacinação → anticorpos anti-cápsula → opsonização eficiente → clearance esplênico</li>\n</ul>"
+    },
+    {
+      "question": "Uma mulher de 70 anos, esplenectomizada há 5 anos após trauma, apresenta febre súbita 40,2°C, calafrio intenso, confusão mental e hipotensão PA 80/50 mmHg. Quais condutas são prioritárias e corretas?",
+      "options": [
+        "Iniciar vancomicina + piperacilina-tazobactam como cobertura de largo espectro para P. aeruginosa e MRSA, pois são os agentes mais comuns na OPSI",
+        "A mortalidade de OPSI (Overwhelming Post-Splenectomy Infection) é de aproximadamente 50% mesmo com tratamento adequado iniciado precocemente, justificando antibiótico ANTES dos exames",
+        "Iniciar ceftriaxona 2g IV imediatamente — cobertura prioritária para S. pneumoniae, N. meningitidis e H. influenzae (OPSI por bactérias encapsuladas)",
+        "Vacinação atualizada com PCV20, meningocócica ACWY+B e anti-Hib teria sido a prevenção mais eficaz; no momento agudo, o foco é tratamento, não vacinação",
+        "Aguardar resultado das hemoculturas e do hemograma antes de iniciar antibioticoterapia para evitar cobertura empírica desnecessária em paciente imunocompetente"
+      ],
+      "answer": [
+        "A mortalidade de OPSI (Overwhelming Post-Splenectomy Infection) é de aproximadamente 50% mesmo com tratamento adequado iniciado precocemente, justificando antibiótico ANTES dos exames",
+        "Iniciar ceftriaxona 2g IV imediatamente — cobertura prioritária para S. pneumoniae, N. meningitidis e H. influenzae (OPSI por bactérias encapsuladas)",
+        "Vacinação atualizada com PCV20, meningocócica ACWY+B e anti-Hib teria sido a prevenção mais eficaz; no momento agudo, o foco é tratamento, não vacinação"
+      ],
+      "type": "multi",
+      "justification": "<strong>OPSI (Overwhelming Post-Splenectomy Infection): emergência com mortalidade de 50–70% em 24–48h</strong><br><br>\n<strong>Por que asplênicos são vulneráveis a bactérias encapsuladas?</strong>\n<ul>\n<li>Baço: principal órgão de clearance de bactérias opsonizadas por C3b/anticorpos</li>\n<li>Macrófagos esplênicos eliminam bactérias com baixo nível de opsoninas (IgM)</li>\n<li>S. pneumoniae, N. meningitidis, H. influenzae: cápsula bloqueia C3b via alternativa → precisam de IgM específica → sem baço, não são removidas</li>\n</ul>\n<strong>OPSI — característica temporal:</strong> risco maior nos primeiros 2 anos pós-esplenectomia, mas persiste por toda vida<br><br>\n<strong>Tratamento emergencial:</strong> ceftriaxona 2g IV imediato (cobre os três agentes principais). Não esperar exames — cada hora sem antibiótico = aumento de mortalidade<br><br>\n<em>Erros das incorretas:</em> Na OPSI, os agentes são bactérias encapsuladas comunitárias (S. pneumoniae >> N. meningitidis > H. influenzae), não MRSA ou P. aeruginosa (que são patógenos hospitalares/oportunistas)."
+    },
+    {
+      "question": "A identificação bacteriana por MALDI-TOF MS (Matrix-Assisted Laser Desorption/Ionization Time-of-Flight Mass Spectrometry) baseia-se no perfil único de proteínas ribossômicas de cada espécie, reduzindo o tempo de identificação para menos de 2 horas comparado às 24–48 horas dos métodos bioquímicos convencionais",
+      "answer": "V",
+      "type": "tf",
+      "justification": "O <strong>MALDI-TOF MS</strong> revolucionou a microbiologia diagnóstica. Princípio físico-molecular:<br><br>\n<ol>\n<li>Colônia bacteriana é depositada em placa-alvo com matriz orgânica (ácido α-ciano-4-hidroxicinâmico)</li>\n<li>Laser UV ioniza suavemente as proteínas (<em>soft ionization</em>) — sem fragmentá-las</li>\n<li>Proteínas ionizadas são aceleradas por campo elétrico em câmara de vácuo</li>\n<li>Tempo de voo até o detector depende da <strong>massa/carga (m/z)</strong></li>\n<li>Gera espectro característico de picos — dominados pelas <strong>proteínas ribossômicas</strong> (altamente abundantes, 4–20 kDa, conservadas por espécie)</li>\n</ol>\nO espectro é comparado com banco de dados de >10.000 espécies → identificação em <strong>&lt;10 minutos</strong> após cultivo (total ~2h vs 24–48h de métodos bioquímicos). Custo por teste: ~€0,50 após amortização do equipamento.<br><br>\n<em>Limitação:</em> não detecta resistência antimicrobiana diretamente (exceto em protocolos específicos para carbapenemases)."
+    },
+    {
+      "question": "A coloração de Gram retém o complexo violeta-iodo nas bactérias gram-positivas porque a espessa camada de peptidoglicano (20-80 nm) impede o escape do corante após lavagem com álcool-acetona, ao contrário das gram-negativas que perdem o corante por dissolução lipídica de sua membrana externa",
+      "answer": "V",
+      "type": "tf",
+      "justification": "A <strong>coloração de Gram</strong> (Hans Christian Gram, 1884) é o exame microbiológico mais utilizado na história da medicina. O princípio é físico-químico:<br><br>\n<ul>\n<li><strong>Gram-positivas:</strong> parede de peptidoglicano <em>espessa (20–80 nm)</em>. Após aplicação do complexo violeta-iodo (Lugol como mordente), o álcool-acetona <em>desidrata</em> o peptidoglicano, fechando os poros → complexo fica preso → célula permanece <strong>púrpura/violeta</strong>.</li>\n<li><strong>Gram-negativas:</strong> peptidoglicano <em>fino (2–7 nm)</em> + membrana externa rica em fosfolipídeos. O álcool <em>dissolve os lipídeos</em> da membrana externa → poros se abrem → complexo violeta-iodo escapa → célula descorada → cora com safranina → <strong>rosa/vermelha</strong>.</li>\n</ul>\n<em>Aplicação clínica imediata:</em> o Gram do líquor em meningite, do escarro na pneumonia, ou da secreção purulenta orienta a cobertura empírica <em>antes</em> da cultura. Diplococos gram-positivos → pneumococo; diplococos gram-negativos → meningococo; bastonetes gram-negativos → cobertura ampla."
+    },
+    {
+      "question": "Sobre a fisiopatologia molecular da sepse bacteriana e o choque séptico, quais afirmativas estão corretas?",
+      "options": [
+        "A disfunção mitocondrial (hipóxia citopática) contribui para a elevação do lactato sérico na sepse grave mesmo com oferta adequada de oxigênio pelos pulmões",
+        "O choque séptico se diferencia da sepse pela presença de hipotensão responsiva à reposição volêmica, sem necessidade de vasopressores para manter PAM ≥65 mmHg",
+        "O LPS de gram-negativos ativa TLR-4 em macrófagos, resultando em ativação de NF-κB via MyD88 e produção de TNF-α, IL-1β e IL-6 que mediam o choque séptico",
+        "A CIVD (Coagulação Intravascular Disseminada) na sepse é iniciada pela expressão de Fator Tecidual (TF/FIII) no endotélio ativado por citocinas inflamatórias",
+        "A norepinefrina é o vasopressor de primeira escolha por ser agonista α1 (vasoconstricção sistêmica) e β1 (efeito inotrópico leve), com menor incidência de arritmias que a dopamina"
+      ],
+      "answer": [
+        "A disfunção mitocondrial (hipóxia citopática) contribui para a elevação do lactato sérico na sepse grave mesmo com oferta adequada de oxigênio pelos pulmões",
+        "O LPS de gram-negativos ativa TLR-4 em macrófagos, resultando em ativação de NF-κB via MyD88 e produção de TNF-α, IL-1β e IL-6 que mediam o choque séptico",
+        "A CIVD (Coagulação Intravascular Disseminada) na sepse é iniciada pela expressão de Fator Tecidual (TF/FIII) no endotélio ativado por citocinas inflamatórias",
+        "A norepinefrina é o vasopressor de primeira escolha por ser agonista α1 (vasoconstricção sistêmica) e β1 (efeito inotrópico leve), com menor incidência de arritmias que a dopamina"
+      ],
+      "type": "multi",
+      "justification": "<strong>Sepsis-3: definições e fisiopatologia</strong><br><br>\n<strong>Cascata molecular:</strong> PAMPs (LPS, peptidoglicano, flagelina) → PRRs (TLR-4, TLR-2, TLR-5, NOD1/2) → NF-κB → \"tempestade de citocinas\" → vasodilatação sistêmica, ativação endotelial, disfunção orgânica<br><br>\n<strong>Hipóxia citopática na sepse:</strong> endotoxinas + NO em excesso + TNF-α inibem a cadeia respiratória mitocondrial (especialmente Complexo I e Complexo IV) → células não conseguem usar O₂ → metabolismo anaeróbio → lactato elevado apesar de SatO₂ normal. Explica por que aumentar Hb/DC não sempre melhora o lactato na sepse grave.<br><br>\n<strong>Erro na alternativa incorreta:</strong><br>\nChoque séptico = sepse + <em>hipotensão REFRATÁRIA à reposição volêmica</em> + necessidade de vasopressores + lactato &gt;2 mmol/L (Sepsis-3, Singer et al. JAMA 2016). Se hipotensão responde aos fluidos, é sepse sem choque.<br><br>\n<em>De Backer et al. NEJM 2010:</em> norepinefrina &gt; dopamina em choque séptico (menor mortalidade e arritmias)."
+    },
+    {
+      "question": "Na conjugação bacteriana, o plasmídeo F é transferido integralmente como molécula de DNA de dupla fita através do pilo sexual, e a célula receptora imediatamente expressa todos os fenótipos codificados pelo plasmídeo logo após receber o DNA",
+      "answer": "F",
+      "type": "tf",
+      "justification": "<strong>Dois erros moleculares distintos:</strong><br><br>\n<strong>Erro 1 — fita de DNA transferida:</strong><br>\nA transferência NÃO é de dsDNA. Durante a conjugação:<br>\n<ol>\n<li>A <strong>Relaxase (TraI)</strong> faz um corte na <em>origem de transferência (oriT)</em> do plasmídeo</li>\n<li>Uma <em>única fita</em> (ssDNA) é transferida no sentido 5'→3' para a célula receptora</li>\n<li>Cada célula (doadora e receptora) sintetiza a fita complementar <em>após</em> a transferência</li>\n</ol>\n<strong>Erro 2 — expressão imediata:</strong><br>\nA expressão de fenótipos de resistência NÃO ocorre imediatamente. Requer:<br>\n<ul>\n<li>Completar síntese da fita complementar</li>\n<li>Circularização do plasmídeo</li>\n<li>Transcrição dos genes de resistência</li>\n<li>Tradução das proteínas de resistência (bombas de efluxo, beta-lactamases)</li>\n<li>Às vezes: indução por substrato (ex.: beta-lactamases induzíveis)</li>\n</ul>\nEste processo pode levar de minutos a horas — relevante em ensaios de susceptibilidade precoces."
+    },
+    {
+      "question": "O Transplante de Microbiota Fecal (TMF/FMT) para C. difficile recorrente apresenta taxas de cura de 80–90%, superiores à vancomicina oral (~30%), sendo seu mecanismo principal a restauração da diversidade microbiana com recolonização de nichos ecológicos que competitivamente excluem C. difficile",
+      "answer": "V",
+      "type": "tf",
+      "justification": "O <strong>TMF</strong> representa um dos maiores avanços da infectologia clínica recente. Os dados de eficácia são contundentes:<br><br>\n<ul>\n<li>Van Nood et al. (NEJM 2013): TMF por infusão duodenal → 81% cura vs 31% vancomicina em C. difficile recorrente (ensaio interrompido precocemente por superioridade evidente)</li>\n<li>Meta-análises: eficácia ~80–92% para C. difficile recorrente</li>\n</ul>\n<strong>Mecanismos:</strong>\n<ol>\n<li><em>Exclusão competitiva:</em> microbiota diversa reocupa nichos intestinais → C. difficile não encontra espaço ecológico</li>\n<li><em>Produção de SCFAs</em> (butirato, propionato) → inibe germinação de esporos de C. diff</li>\n<li><em>Produção de ácidos biliares secundários</em> por microbiota restabelecida → inibe germinação de esporos</li>\n<li><em>Restauração da barreira mucosa:</em> microbiota estimula produção de muco e defensinas</li>\n</ul>\n<em>FDA aprovou em 2023:</em> <strong>Rebyota® (RBX2660)</strong> — enema de microbiota fecal processada; <strong>Vowst® (SER-109)</strong> — cápsulas orais de esporos purificados de microbiota."
+    },
+    {
+      "question": "Sobre os mecanismos de ação e resistência dos tuberculostáticos do esquema RHZE, quais afirmativas estão corretas?",
+      "options": [
+        "Etambutol (E) inibe a arabinosil transferase (codificada por embB) bloqueando a síntese de arabinogalactano, componente essencial da parede de micobactérias que ancora os ácidos micólicos",
+        "Pirazinamida (Z) é especialmente bactericida em pH ácido do granuloma caseoso, sendo convertida em ácido pirazinóico que interfere com o transporte de membrana e a síntese de ácidos graxos",
+        "A monoterapia com isoniazida por 6 meses é o esquema padrão recomendado para tratamento de TB ativa pulmonar confirmada em adultos imunocompetentes não previamente tratados",
+        "Isoniazida (H) é um pró-fármaco ativado pela catalase-peroxidase KatG da micobactéria → inibe InhA (enoil-ACP redutase) → bloqueia síntese de ácidos micólicos da parede de MTB",
+        "Rifampicina (R) inibe a subunidade beta (RpoB) da RNA polimerase bacteriana → mutações em rpoB conferem resistência e são detectadas diretamente pelo GeneXpert MTB/RIF em menos de 2 horas"
+      ],
+      "answer": [
+        "Etambutol (E) inibe a arabinosil transferase (codificada por embB) bloqueando a síntese de arabinogalactano, componente essencial da parede de micobactérias que ancora os ácidos micólicos",
+        "Pirazinamida (Z) é especialmente bactericida em pH ácido do granuloma caseoso, sendo convertida em ácido pirazinóico que interfere com o transporte de membrana e a síntese de ácidos graxos",
+        "Isoniazida (H) é um pró-fármaco ativado pela catalase-peroxidase KatG da micobactéria → inibe InhA (enoil-ACP redutase) → bloqueia síntese de ácidos micólicos da parede de MTB",
+        "Rifampicina (R) inibe a subunidade beta (RpoB) da RNA polimerase bacteriana → mutações em rpoB conferem resistência e são detectadas diretamente pelo GeneXpert MTB/RIF em menos de 2 horas"
+      ],
+      "type": "multi",
+      "justification": "<strong>Tuberculose: poliquimioterapia como princípio matemático (não apenas farmacológico)</strong><br><br>\n<strong>Fase intensiva (2 meses RHZE) + Fase de manutenção (4 meses RH):</strong><br><br>\n<table>\n<tr><th>Droga</th><th>Alvo</th><th>Gene mutação resistência</th></tr>\n<tr><td>Isoniazida (H)</td><td>InhA (pró-fármaco via KatG)</td><td>katG, inhA, ahpC</td></tr>\n<tr><td>Rifampicina (R)</td><td>RNA polimerase β (RpoB)</td><td>rpoB (81pb hotspot)</td></tr>\n<tr><td>Pirazinamida (Z)</td><td>Múltiplos (pH-dependente via ácido pirazinóico)</td><td>pncA</td></tr>\n<tr><td>Etambutol (E)</td><td>Arabinosil transferase (EmbB)</td><td>embB</td></tr>\n</table>\n<strong>GeneXpert MTB/RIF:</strong> detecta MTB e resistência à rifampicina (mutações no hotspot de 81pb do rpoB) em ~90 minutos. Sensibilidade 88% e especificidade 98%. Resistência à rifampicina = proxy para TBMR (Multi-Drug Resistant TB) em 90% dos casos.<br><br>\n<em>Erro crítico na alternativa incorreta:</em> monoterapia = resistência garantida matematicamente. O esquema padrão DOTS é sempre RHZE/RH (4 drogas na intensiva, 2 na manutenção)."
+    },
+    {
+      "question": "Considerando a equação de crescimento bacteriano N(t) = N₀ × 2^(t/g), uma cultura inicia com N₀ = 500 bactérias e tempo de geração g = 20 minutos. Após 2 horas, qual a população esperada e em qual fase do crescimento os antibióticos beta-lactâmicos seriam mais eficazes?",
+      "options": [
+        "N = 16.000 bactérias; fase lag — maior metabolismo de adaptação torna as PBPs mais sensíveis ao antibiótico",
+        "N = 32.000 bactérias; qualquer fase — beta-lactâmicos têm eficácia independente da fase de crescimento bacteriano",
+        "N = 32.000 bactérias; fase exponencial — as células sintetizam ativamente peptidoglicano, sendo o alvo das PBPs mais acessível",
+        "N = 64.000 bactérias; fase exponencial — maior síntese de parede celular ativa é o momento ótimo para a ação dos beta-lactâmicos",
+        "N = 32.000 bactérias; fase estacionária — maior concentração celular maximiza o contato com o antibiótico"
+      ],
+      "answer": [
+        "N = 32.000 bactérias; fase exponencial — as células sintetizam ativamente peptidoglicano, sendo o alvo das PBPs mais acessível"
+      ],
+      "type": "multi",
+      "justification": "<strong>Cálculo e fundamento farmacológico:</strong><br><br>\n<strong>Cálculo:</strong><br>\nt = 120 min; g = 20 min; t/g = 6 gerações<br>\nN(120) = 500 × 2⁶ = 500 × 64 = <strong>32.000 bactérias</strong><br><br>\n<strong>Por que a fase exponencial é ótima para beta-lactâmicos?</strong>\n<ul>\n<li>Na fase exponencial, as bactérias estão em divisão máxima → síntese ativa de peptidoglicano → PBPs (transpeptidases) altamente ativas e acessíveis</li>\n<li>Beta-lactâmicos inibem PBPs → a parede nova não se forma → lise osmótica</li>\n<li>Na fase estacionária: divisão mínima → pouca síntese de PG → beta-lactâmicos ineficazes (bactérias \"dormentes\")</li>\n<li>Esta é a base do fenômeno das \"células persisters\" — resistência não-genética em biofilmes</li>\n</ul>\n<em>Erro na alternativa \"64.000\":</em> 500 × 2⁶ = 32.000, não 64.000. 64.000 seria 500 × 2⁷ = 7 gerações (140 min)."
+    }
+]
+
+
+
+
+
+
+/* ══════════════ ESTADO DO QUIZ ══════════════ */
+let currentQ = 0;
+let userAnswers  = new Array(quizData.length).fill(null).map(()=>[]); // para fill será string dentro do array
+let attempted    = new Array(quizData.length).fill(false);
+
+/* ══════════════ ELEMENTOS DOM ══════════════ */
+const content     = document.getElementById('quiz-content');
+const progressFill= document.getElementById('quiz-progress');
+const progressLbl = document.getElementById('progress-label');
+const prevBtn     = document.getElementById('prev-btn');
+const answerBtn   = document.getElementById('answer-btn');
+const nextBtn     = document.getElementById('next-btn');
+const submitBtn   = document.getElementById('submit-btn');
+const resultsDiv  = document.getElementById('results-container');
+const reportDiv   = document.getElementById('report-container');
+const navDiv      = document.getElementById('navigation-buttons');
+const progressWrap= document.querySelector('.progress-wrapper');
+
+/* ══════════════ RENDER ══════════════ */
+function init(){
+  shuffleArray(quizData);
+  renderAll();
+  goTo(0);
+  bindEvents();
+}
+
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+
+function renderAll(){
+  content.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className='question-card';
+    card.id=`q-${i}`;
+
+    let badgeClass = 'badge-multi';
+    let badgeText  = '◈ Múltipla escolha';
+    if(q.type==='tf') { badgeClass='badge-tf'; badgeText='✦ V/F'; }
+    else if(q.type==='fill') { badgeClass='badge-fill'; badgeText='⸻ Preenchimento'; }
+
+    let optsHTML='';
+    if(q.type==='tf'){
+      optsHTML=`<div class="tf-options-container">
+        <button class="tf-option tf-v" data-q="${i}" data-o="V"><i class="fas fa-check"></i> Verdadeiro</button>
+        <button class="tf-option tf-f" data-q="${i}" data-o="F"><i class="fas fa-times"></i> Falso</button>
+      </div>`;
+    } else if(q.type==='fill'){
+      optsHTML=`<div class="fill-input-container">
+        <input type="text" class="fill-input" id="fill-${i}" placeholder="Digite sua resposta..." data-q="${i}" value="${userAnswers[i][0]||''}">
+      </div>`;
+    } else {
+      const letters=['A','B','C','D','E','F'];
+      optsHTML=`<div class="options-container">${q.options.map((opt,oi)=>`
+        <button class="mc-option" data-q="${i}" data-o="${opt.replace(/"/g,'&quot;')}">
+          <span class="option-indicator">${letters[oi]}</span>
+          <span>${opt}</span>
+        </button>`).join('')}</div>`;
+    }
+
+    card.innerHTML=`
+      <div class="q-meta">
+        <span class="q-num">Questão ${i+1} / ${quizData.length}</span>
+        <span class="q-type-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <p class="question-text">${q.question}</p>
+      ${optsHTML}
+      <div class="feedback" id="fb-${i}"></div>`;
+    content.appendChild(card);
+  });
+}
+
+/* ══════════════ NAVIGATION ══════════════ */
+function goTo(idx){
+  if(idx<0||idx>=quizData.length) return;
+  document.querySelector(`#q-${currentQ}`)?.classList.remove('active');
+  currentQ=idx;
+  document.querySelector(`#q-${currentQ}`)?.classList.add('active');
+  updateUI();
+}
+
+function updateUI(){
+  const done = attempted.filter(Boolean).length;
+  progressFill.style.width=`${(done/quizData.length)*100}%`;
+  progressLbl.textContent=`${done} / ${quizData.length}`;
+
+  const isAttempted = attempted[currentQ];
+  const q = quizData[currentQ];
+  let hasSelection = false;
+  if(q.type==='fill'){
+    hasSelection = userAnswers[currentQ][0] && userAnswers[currentQ][0].trim() !== '';
+  } else {
+    hasSelection = userAnswers[currentQ].length>0;
+  }
+
+  setBtn(prevBtn,   currentQ>0);
+  setBtn(answerBtn, !isAttempted);
+  setBtn(nextBtn,   isAttempted && currentQ<quizData.length-1);
+  setBtn(submitBtn, isAttempted && currentQ===quizData.length-1);
+  if(!isAttempted) answerBtn.disabled=!hasSelection;
+}
+
+function setBtn(btn,show){ btn.classList.toggle('show',show); }
+
+/* ══════════════ SELECTION HANDLERS ══════════════ */
+function bindEvents(){
+  content.addEventListener('click',e=>{
+    const mc=e.target.closest('.mc-option');
+    const tf=e.target.closest('.tf-option');
+    if(mc) handleMC(mc);
+    if(tf) handleTF(tf);
+  });
+  content.addEventListener('input',e=>{
+    const inp=e.target.closest('.fill-input');
+    if(inp) handleFill(inp);
+  });
+  answerBtn.addEventListener('click', validate);
+  nextBtn.addEventListener('click',()=>goTo(currentQ+1));
+  prevBtn.addEventListener('click',()=>goTo(currentQ-1));
+  submitBtn.addEventListener('click', finishQuiz);
+  document.getElementById('show-report-btn').addEventListener('click',()=>{resultsDiv.style.display='none';reportDiv.style.display='flex';});
+  document.getElementById('back-btn').addEventListener('click',()=>{reportDiv.style.display='none';resultsDiv.style.display='flex';});
+  document.getElementById('retry-btn').addEventListener('click',()=>location.reload());
+}
+
+function handleMC(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  const idx=userAnswers[qi].indexOf(opt);
+  if(idx>-1){ userAnswers[qi].splice(idx,1); btn.classList.remove('selected'); }
+  else{ userAnswers[qi].push(opt); btn.classList.add('selected'); }
+  updateUI();
+}
+
+function handleTF(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  userAnswers[qi]=[opt];
+  document.querySelectorAll(`.tf-option[data-q='${qi}']`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateUI();
+}
+
+function handleFill(inp){
+  if(inp.classList.contains('disabled')) return;
+  const qi=parseInt(inp.dataset.q);
+  userAnswers[qi]=[inp.value]; // armazena como array com um elemento string
+  updateUI();
+}
+
+/* ══════════════ VALIDATE ══════════════ */
+function validate(){
+  if(attempted[currentQ]) return;
+  const q=quizData[currentQ];
+  const fb=document.getElementById(`fb-${currentQ}`);
+  const userAns=userAnswers[currentQ]||[];
+  const correctAns=Array.isArray(q.answer)?q.answer:[q.answer];
+
+  let isCorrect = false;
+  if(q.type==='fill'){
+    // comparação case-insensitive e trim
+    const userStr = (userAns[0]||'').trim().toLowerCase();
+    const correctStr = correctAns[0].trim().toLowerCase();
+    isCorrect = userStr === correctStr;
+  } else {
+    isCorrect = JSON.stringify([...userAns].sort())===JSON.stringify([...correctAns].sort());
+  }
+
+  // desabilitar opções / input
+  if(q.type==='tf'){
+    document.querySelectorAll(`.tf-option[data-q='${currentQ}']`).forEach(opt=>{
+      opt.classList.add('disabled');
+      const ov=opt.dataset.o;
+      if(correctAns.includes(ov)) opt.classList.add('correct');
+      else if(userAns.includes(ov)) opt.classList.add('incorrect');
+    });
+  } else if(q.type==='fill'){
+    const inp = document.getElementById(`fill-${currentQ}`);
+    inp.classList.add('disabled');
+    if(isCorrect) inp.classList.add('correct');
+    else inp.classList.add('incorrect');
+  } else {
+    document.querySelectorAll(`.mc-option[data-q='${currentQ}']`).forEach(opt=>{
+      opt.classList.add('disabled');
+      const ov=opt.dataset.o;
+      if(correctAns.includes(ov)) opt.classList.add('correct');
+      else if(userAns.includes(ov)) opt.classList.add('incorrect');
+    });
+  }
+
+  // feedback
+  const icon = isCorrect ? 'fa-check-circle' : 'fa-times-circle';
+  const title= isCorrect ? 'Correto!' : 'Incorreto';
+  const verdictClass = isCorrect ? 'correct' : 'incorrect';
+
+  let correctListHTML='';
+  if(!isCorrect){
+    correctListHTML=`<div style="margin-top:.5rem;font-size:.82rem;color:var(--muted2);">${correctAns.length>1?'Respostas corretas':'Resposta correta'}:</div>
+    <ul class="correct-list">${correctAns.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+  }
+
+  fb.className=`feedback ${verdictClass}`;
+  fb.innerHTML=`
+    <div class="feedback-verdict"><i class="fas ${icon}"></i>${title}${correctListHTML}</div>
+    <div class="justification">
+      <div class="just-label"><i class="fas fa-flask"></i> Justificativa Clínico-Molecular</div>
+      <div class="just-text">${q.justification}</div>
+    </div>`;
+  fb.style.display='block';
+
+  toast(isCorrect);
+  attempted[currentQ]=true;
+  [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=true);
+
+  setTimeout(()=>{
+    [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=false);
+    if(currentQ===quizData.length-1) finishQuiz();
+    else goTo(currentQ+1);
+  },2400);
+}
+
+/* ══════════════ RESULTS ══════════════ */
+function finishQuiz(){
+  let score=0;
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    if(q.type==='fill'){
+      const userStr = (ua[0]||'').trim().toLowerCase();
+      const correctStr = ca[0].trim().toLowerCase();
+      if(userStr === correctStr) score++;
+    } else {
+      if(JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort())) score++;
+    }
+  });
+  const pct=Math.round(score/quizData.length*100);
+
+  document.getElementById('pct-display').textContent=`${pct}%`;
+  document.getElementById('score-display').innerHTML=`Acertos: <strong>${score} de ${quizData.length}</strong>`;
+
+  const circumference=408.4;
+  const ring=document.getElementById('score-ring');
+  setTimeout(()=>{ ring.style.strokeDashoffset=circumference*(1-pct/100); },100);
+
+  const msg=document.getElementById('feedback-message');
+  if(pct>=90) msg.textContent='🎉 Excelente domínio! Você está pronto para a prova.';
+  else if(pct>=70) msg.textContent='👏 Muito bem! Revise os pontos que errou e você chegará lá.';
+  else if(pct>=50) msg.textContent='👍 Bom esforço! Revise as justificativas com atenção.';
+  else msg.textContent='💪 Continue estudando! As justificativas abaixo são seu mapa.';
+
+  buildReport();
+
+  content.style.display='none';
+  navDiv.style.display='none';
+  progressWrap.style.display='none';
+  resultsDiv.style.display='flex';
+}
+
+function buildReport(){
+  const list=document.getElementById('report-list');
+  list.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    let ok = false;
+    if(q.type==='fill'){
+      const userStr = (ua[0]||'').trim().toLowerCase();
+      const correctStr = ca[0].trim().toLowerCase();
+      ok = userStr === correctStr;
+    } else {
+      ok = JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort());
+    }
+    const item=document.createElement('div');
+    item.className=`report-item ${ok?'correct':'incorrect'}`;
+    item.innerHTML=`<p class="ri-q"><strong>Questão ${i+1}:</strong> ${q.question}</p>
+      <p><strong>Sua resposta:</strong> ${ua.length?ua.join(', '):'<em>Não respondida</em>'}</p>
+      <p><strong>Correta:</strong> ${ca.join(', ')}</p>`;
+    list.appendChild(item);
+  });
+}
+
+/* ══════════════ TOAST ══════════════ */
+function toast(ok){
+  Swal.mixin({
+    toast:true,position:'top-end',
+    showConfirmButton:false,
+    timer:1400,timerProgressBar:true,
+    background: ok ? '#0a2e1f' : '#2e0a14',
+    color: ok ? '#34d399' : '#fb7185',
+  }).fire({icon:ok?'success':'error',title:ok?'✓ Correto!':'✗ Incorreto!'});
+}
+
+init();
+});
+</script>
+</body>
+</html>

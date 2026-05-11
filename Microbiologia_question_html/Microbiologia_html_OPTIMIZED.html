@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz · Microbiologia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --surface:   #111827;
+  --card:      #151e2e;
+  --border:    #1e2d42;
+  --border2:   #253044;
+  --primary:   #4f9cf9;
+  --primary2:  #2563eb;
+  --accent:    #f87171;
+  --gold:      #f59e0b;
+  --emerald:   #34d399;
+  --rose:      #fb7185;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --muted2:    #94a3b8;
+  --correct-bg:#0a2e1f;
+  --correct-b: #34d399;
+  --wrong-bg:  #2e0a14;
+  --wrong-b:   #fb7185;
+  --just-bg:   #0d1b2e;
+  --just-b:    #4f9cf9;
+  --radius:    14px;
+  --trans:     all .28s cubic-bezier(.4,0,.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.5rem 1rem 3rem;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND MESH ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(79,156,249,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 90%, rgba(248,113,113,.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 40%, rgba(52,211,153,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  width:100%;max-width:820px;
+  text-align:center;
+  margin-bottom:2rem;
+  position:relative;z-index:1;
+}
+.header-badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  border-radius:50px;
+  padding:.3rem .9rem;
+  font-size:.75rem;font-weight:500;
+  color:var(--primary);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.header h1{
+  font-family:'Crimson Pro',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;
+  line-height:1.2;
+  color:#f1f5f9;
+  letter-spacing:-.02em;
+}
+.header h1 span{color:var(--primary);}
+.header p{
+  color:var(--muted2);
+  font-size:.92rem;
+  margin-top:.5rem;
+}
+
+/* ── QUIZ CONTAINER ── */
+#quiz-container{
+  width:100%;max-width:820px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:2.2rem 2rem;
+  position:relative;z-index:1;
+  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+}
+
+/* top accent line */
+#quiz-container::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary2),var(--primary),var(--accent));
+  border-radius:22px 22px 0 0;
+}
+
+/* ── PROGRESS ── */
+.progress-wrapper{
+  display:flex;align-items:center;gap:.9rem;
+  margin-bottom:1.8rem;
+}
+.progress-track{
+  flex:1;height:6px;
+  background:var(--border2);
+  border-radius:50px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary2),var(--primary));
+  border-radius:50px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 10px rgba(79,156,249,.5);
+}
+.progress-label{
+  font-size:.78rem;font-weight:500;
+  color:var(--muted2);
+  white-space:nowrap;min-width:60px;text-align:right;
+  font-family:'DM Mono',monospace;
+}
+
+/* ── QUESTION CARD ── */
+.question-card{
+  display:none;flex-direction:column;align-items:stretch;
+  animation:slideIn .38s cubic-bezier(.4,0,.2,1);
+}
+.question-card.active{display:flex;}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.q-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.4rem;
+}
+.q-num{
+  font-family:'DM Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  color:var(--muted);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.q-type-badge{
+  font-size:.68rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:50px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-multi{background:rgba(79,156,249,.15);color:var(--primary);border:1px solid rgba(79,156,249,.3);}
+.badge-tf{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+.badge-fill{background:rgba(52,211,153,.12);color:var(--emerald);border:1px solid rgba(52,211,153,.3);}
+
+.question-text{
+  font-family:'Crimson Pro',serif;
+  font-size:1.28rem;font-weight:400;
+  line-height:1.6;
+  color:#f1f5f9;
+  margin-bottom:1.6rem;
+  padding-bottom:1.4rem;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── OPTIONS ── */
+.options-container{display:flex;flex-direction:column;gap:.65rem;}
+.tf-options-container{display:flex;gap:.75rem;justify-content:center;}
+.fill-input-container{
+  display:flex;flex-direction:column;gap:.5rem;
+  margin-bottom:1rem;
+}
+.fill-input{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  color:var(--text);
+  font-size:.95rem;
+  font-family:'DM Sans',sans-serif;
+  width:100%;
+  transition:var(--trans);
+}
+.fill-input:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(79,156,249,.15);
+}
+.fill-input.disabled{
+  background:rgba(30,45,66,.5);
+  border-color:var(--border2);
+  color:var(--muted2);
+  cursor:not-allowed;
+}
+
+.mc-option{
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  cursor:pointer;
+  transition:var(--trans);
+  color:var(--text);
+  font-size:.95rem;
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.mc-option::after{
+  content:'';position:absolute;inset:0;
+  background:var(--primary);
+  opacity:0;transition:opacity .2s;
+}
+.mc-option:hover:not(.disabled){
+  border-color:var(--primary);
+  transform:translateX(4px);
+  box-shadow:0 4px 16px rgba(79,156,249,.15);
+}
+.mc-option.selected{
+  border-color:var(--primary);
+  background:rgba(79,156,249,.08);
+}
+
+.tf-option{
+  flex:1;max-width:200px;
+  padding:1rem 1.5rem;
+  border-radius:var(--radius);
+  font-size:1rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.tf-option.tf-v{
+  background:rgba(52,211,153,.08);
+  border:1.5px solid rgba(52,211,153,.25);
+  color:var(--emerald);
+}
+.tf-option.tf-f{
+  background:rgba(251,113,133,.08);
+  border:1.5px solid rgba(251,113,133,.25);
+  color:var(--rose);
+}
+.tf-option:hover:not(.disabled){transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+.tf-option.selected{box-shadow:0 0 0 3px rgba(79,156,249,.4);}
+.tf-option.tf-v.selected{background:rgba(52,211,153,.18);border-color:var(--emerald);}
+.tf-option.tf-f.selected{background:rgba(251,113,133,.18);border-color:var(--rose);}
+
+/* correct / incorrect highlights */
+.mc-option.correct,.tf-option.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.mc-option.incorrect,.tf-option.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.fill-input.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.fill-input.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.mc-option.disabled,.tf-option.disabled,.fill-input.disabled{cursor:not-allowed;}
+
+.option-indicator{
+  min-width:28px;height:28px;
+  border-radius:8px;
+  background:var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:.78rem;font-weight:600;
+  color:var(--muted2);
+  flex-shrink:0;
+  transition:var(--trans);
+}
+.mc-option.selected .option-indicator{background:var(--primary);color:#fff;}
+.mc-option.correct  .option-indicator{background:var(--emerald);color:#0a2e1f;}
+.mc-option.incorrect .option-indicator{background:var(--rose);color:#2e0a14;}
+
+/* ── FEEDBACK BOX ── */
+.feedback{
+  margin-top:1.4rem;
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:none;
+  animation:slideIn .35s ease;
+}
+.feedback.correct{display:block;}
+.feedback.incorrect{display:block;}
+
+.feedback-verdict{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.75rem 1.1rem;
+  font-weight:600;font-size:.95rem;
+}
+.feedback.correct .feedback-verdict{
+  background:rgba(52,211,153,.15);
+  color:var(--emerald);
+  border-left:4px solid var(--emerald);
+}
+.feedback.incorrect .feedback-verdict{
+  background:rgba(251,113,133,.15);
+  color:var(--rose);
+  border-left:4px solid var(--rose);
+}
+
+/* ── JUSTIFICATION PANEL ── */
+.justification{
+  background:var(--just-bg);
+  border:1px solid rgba(79,156,249,.18);
+  border-top:none;
+  padding:1.1rem 1.3rem;
+}
+.just-label{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--primary);
+  margin-bottom:.65rem;
+  opacity:.8;
+}
+.just-label i{font-size:.8rem;}
+.just-text{
+  font-size:.9rem;
+  line-height:1.75;
+  color:#b8cce4;
+}
+.just-text strong{color:var(--primary);font-weight:600;}
+.just-text em{color:var(--gold);font-style:normal;}
+.just-text .correct-list{
+  margin-top:.6rem;padding-left:1rem;
+  list-style:none;
+}
+.just-text .correct-list li{
+  padding:.25rem 0;
+  padding-left:1.1rem;
+  position:relative;
+  color:#c7ddf4;
+}
+.just-text .correct-list li::before{
+  content:'✦';
+  position:absolute;left:0;
+  color:var(--emerald);font-size:.7rem;
+  top:.35rem;
+}
+.just-text .tag{
+  display:inline-block;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  color:var(--primary);
+  border-radius:4px;
+  padding:.05rem .35rem;
+  font-family:'DM Mono',monospace;
+  font-size:.8em;
+}
+
+/* ── NAVIGATION BUTTONS ── */
+#navigation-buttons{
+  display:flex;justify-content:center;
+  gap:.75rem;flex-wrap:wrap;
+  margin-top:1.8rem;
+}
+.nav-btn{
+  display:none;align-items:center;gap:.5rem;
+  padding:.7rem 1.5rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+  border:none;
+}
+.nav-btn.show{display:flex;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.nav-btn:hover:not(:disabled){transform:translateY(-2px);}
+
+#prev-btn{
+  background:transparent;
+  color:var(--primary);
+  border:1.5px solid rgba(79,156,249,.4);
+}
+#prev-btn:hover:not(:disabled){background:rgba(79,156,249,.08);}
+#answer-btn{
+  background:linear-gradient(135deg,var(--primary2),var(--primary));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(79,156,249,.35);
+}
+#answer-btn:hover:not(:disabled){box-shadow:0 6px 24px rgba(79,156,249,.5);}
+#next-btn{
+  background:var(--surface);
+  color:var(--text);
+  border:1.5px solid var(--border);
+}
+#next-btn:hover:not(:disabled){border-color:var(--primary);}
+#submit-btn{
+  background:linear-gradient(135deg,#7c3aed,var(--primary2));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(124,58,237,.35);
+}
+
+/* ── RESULTS ── */
+#results-container,#report-container{
+  display:none;flex-direction:column;align-items:center;
+}
+.score-ring-wrap{position:relative;margin:1rem auto 1.5rem;}
+.score-ring-wrap svg{display:block;}
+.score-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.score-pct{
+  font-family:'Crimson Pro',serif;
+  font-size:2.8rem;font-weight:700;
+  color:var(--primary);line-height:1;
+}
+.score-label{font-size:.75rem;color:var(--muted2);margin-top:.15rem;}
+.score-stat{
+  font-size:1.1rem;color:var(--muted2);margin-bottom:.5rem;
+}
+.score-stat strong{color:var(--text);}
+.feedback-msg{
+  font-family:'Crimson Pro',serif;
+  font-size:1.4rem;font-weight:400;
+  color:#e2e8f0;
+  margin-bottom:1.5rem;text-align:center;
+}
+.action-buttons{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;}
+.action-btn{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;border:none;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.action-btn:hover{transform:translateY(-2px);}
+.btn-report{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+.btn-retry{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;box-shadow:0 4px 16px rgba(79,156,249,.3);}
+
+/* ── REPORT ── */
+.report-item{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.1rem 1.3rem;
+  margin-bottom:.8rem;
+  text-align:left;
+  border-left:4px solid;
+}
+.report-item.correct{border-left-color:var(--emerald);}
+.report-item.incorrect{border-left-color:var(--rose);}
+.report-item p{font-size:.88rem;line-height:1.6;color:var(--muted2);}
+.report-item p strong{color:var(--text);}
+.report-item .ri-q{font-size:.95rem;color:var(--text);margin-bottom:.4rem;font-weight:500;}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:2rem;
+  font-size:.75rem;
+  color:var(--muted);
+  text-align:center;
+  position:relative;z-index:1;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #quiz-container{padding:1.4rem 1rem;}
+  .question-text{font-size:1.1rem;}
+  .tf-options-container{flex-direction:column;align-items:stretch;}
+  .tf-option{max-width:none;}
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><i class="fas fa-atom"></i> Medicina · Microbiologia</div>
+  <h1>Bactérias e Vírus</h1>
+  <p>Quiz de alta performance com justificativas</p>
+</div>
+
+<div id="quiz-container">
+  <div class="progress-wrapper">
+    <div class="progress-track"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
+  </div>
+
+  <div id="quiz-content"></div>
+
+  <div id="navigation-buttons">
+    <button id="prev-btn"   class="nav-btn"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <button id="answer-btn" class="nav-btn show">Responder <i class="fas fa-check"></i></button>
+    <button id="next-btn"   class="nav-btn">Próximo <i class="fas fa-arrow-right"></i></button>
+    <button id="submit-btn" class="nav-btn"><i class="fas fa-flag-checkered"></i> Ver Resultados</button>
+  </div>
+
+  <div id="results-container">
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="65" fill="none" stroke="#1e2d42" stroke-width="12"/>
+        <circle id="score-ring" cx="80" cy="80" r="65" fill="none"
+                stroke="url(#ringGrad)" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="408.4"
+                stroke-dashoffset="408.4"
+                transform="rotate(-90 80 80)"
+                style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#4f9cf9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-center">
+        <div class="score-pct" id="pct-display">0%</div>
+        <div class="score-label">acertos</div>
+      </div>
+    </div>
+    <div class="score-stat" id="score-display"></div>
+    <div class="feedback-msg" id="feedback-message"></div>
+    <div class="action-buttons">
+      <button id="show-report-btn" class="action-btn btn-report"><i class="fas fa-list-alt"></i> Ver Correção</button>
+      <button id="retry-btn"       class="action-btn btn-retry"><i class="fas fa-redo"></i> Tentar Novamente</button>
+    </div>
+  </div>
+
+  <div id="report-container">
+    <h3 style="color:var(--primary);margin-bottom:1.2rem;font-family:'Crimson Pro',serif;font-size:1.4rem;">
+      <i class="fas fa-clipboard-list"></i> Correção Detalhada
+    </h3>
+    <div id="report-list" style="width:100%"></div>
+    <div class="action-buttons" style="margin-top:1rem;">
+      <button id="back-btn" class="action-btn btn-report"><i class="fas fa-arrow-left"></i> Voltar ao Resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Microbiologia Médica · Quiz gerado para estudo intensivo</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+/* ══════════════════════════════════════════════
+   BANCO DE QUESTÕES COM JUSTIFICATIVAS (coloque aqui seu JSON)
+══════════════════════════════════════════════ */
+const quizData = [
+  {
+    "question": "Quais experimentos Louis Pasteur realizou para refutar a teoria da geração espontânea?",
+    "options": [
+      "A) Utilizou frascos com pescoço de cisne, demonstrando que o caldo fervido permanecia estéril mesmo em contato com o ar, a menos que o gargalo fosse quebrado.",
+      "B) Aqueceu caldos nutritivos em frascos hermeticamente fechados e observou que nunca surgiam microrganismos.",
+      "C) Colocou carne em frascos abertos e cobertos com gaze, observando que só surgiam larvas nos abertos.",
+      "D) Ferveu caldos e os manteve em frascos selados, concluindo que o aquecimento prolongado impedia a vida."
+    ],
+    "answer": [
+      "A) Utilizou frascos com pescoço de cisne, demonstrando que o caldo fervido permanecia estéril mesmo em contato com o ar, a menos que o gargalo fosse quebrado."
+    ],
+    "type": "multi",
+    "justification": "<p>Os <strong>frascos de pescoço de cisne</strong> de Pasteur permitiam a entrada de ar, mas as partículas e microrganismos ficavam retidos nas curvas. O caldo fervido permanecia estéril até que o gargalo fosse partido, permitindo a contaminação. Isso refutou a geração espontânea e estabeleceu a biogénese.</p>"
+  },
+  {
+    "question": "Como os experimentos de Pasteur influenciaram a microbiologia moderna?",
+    "options": [
+      "A) Levaram ao desenvolvimento da teoria microbiana das doenças e das técnicas de esterilização.",
+      "B) Provocaram o abandono imediato da teoria da geração espontânea por toda a comunidade científica.",
+      "C) Permitiriam a descoberta dos antibióticos e das vacinas.",
+      "D) Estabeleceram a relação causal entre um microrganismo e uma doença específica."
+    ],
+    "answer": [
+      "A) Levaram ao desenvolvimento da teoria microbiana das doenças e das técnicas de esterilização."
+    ],
+    "type": "multi",
+    "justification": "<p>Pasteur fundamentou a <strong>biogénese</strong>, abrindo caminho para a <strong>teoria microbiana das doenças</strong> (postulados de Koch) e para métodos de <strong>esterilização</strong> (pasteurização, técnicas assépticas), bases da microbiologia médica e industrial.</p>"
+  },
+  {
+    "question": "Quais são os postulados de Koch?",
+    "options": [
+      "A) 1. O microrganismo deve estar presente em todos os doentes, mas não nos saudáveis. 2. Deve ser isolado em cultura pura. 3. Deve reproduzir a doença em hospedeiro saudável. 4. Deve ser reisolado do hospedeiro inoculado.",
+      "B) 1. O agente deve ser visto ao microscópio. 2. Deve ser cultivado em meio artificial. 3. Deve causar doença em animais de laboratório. 4. Deve ser neutralizado por anticorpos.",
+      "C) 1. A doença deve ser transmissível por contato. 2. O agente deve ser filtrado. 3. Não deve crescer em meios inertes. 4. Deve ser observado em células infectadas.",
+      "D) 1. O microrganismo deve ser encontrado em todos os tecidos. 2. Deve ser patogénico para humanos. 3. Deve ser sensível a antibióticos. 4. Deve produzir toxinas."
+    ],
+    "answer": [
+      "A) 1. O microrganismo deve estar presente em todos os doentes, mas não nos saudáveis. 2. Deve ser isolado em cultura pura. 3. Deve reproduzir a doença em hospedeiro saudável. 4. Deve ser reisolado do hospedeiro inoculado."
+    ],
+    "type": "multi",
+    "justification": "<p>Os <strong>postulados de Koch</strong> são critérios para estabelecer causalidade entre um microrganismo e uma doença. A alternativa A descreve corretamente os quatro postulados clássicos.</p>"
+  },
+  {
+    "question": "Quais são as fases do crescimento bacteriano em cultura?",
+    "options": [
+      "A) Fase log, fase estacionária, fase de declínio, fase de latência.",
+      "B) Fase lag, fase log, fase estacionária, fase de morte.",
+      "C) Fase exponencial, fase de aceleração, fase de platô, fase de declínio.",
+      "D) Fase de adaptação, fase de crescimento linear, fase de saturação, fase de lise."
+    ],
+    "answer": [
+      "B) Fase lag, fase log, fase estacionária, fase de morte."
+    ],
+    "type": "multi",
+    "justification": "<p>Em cultura fechada, as bactérias apresentam: <strong>fase lag</strong> (adaptação), <strong>fase log</strong> (crescimento exponencial), <strong>fase estacionária</strong> (equilíbrio) e <strong>fase de morte</strong> (declínio). A ordem correta é a descrita na opção B.</p>"
+  },
+  {
+    "question": "O que é sistemática bacteriana e por que ela é importante na microbiologia?",
+    "options": [
+      "A) É a ciência que estuda a fisiologia bacteriana; importante para desenvolver novos antibióticos.",
+      "B) É a classificação e nomenclatura das bactérias com base apenas na morfologia; essencial para identificação visual.",
+      "C) É a ciência que classifica e nomeia as bactérias, integrando dados fenotípicos e genéticos; fundamental para identificar patógenos, compreender relações evolutivas e aplicar em diagnósticos.",
+      "D) É o estudo da diversidade bacteriana em ecossistemas; importante para a ecologia microbiana."
+    ],
+    "answer": [
+      "C) É a ciência que classifica e nomeia as bactérias, integrando dados fenotípicos e genéticos; fundamental para identificar patógenos, compreender relações evolutivas e aplicar em diagnósticos."
+    ],
+    "type": "multi",
+    "justification": "<p>A <strong>sistemática</strong> engloba taxonomia e filogenia, usando características morfológicas, fisiológicas e genéticas (como 16S rRNA). Permite identificar agentes patogénicos, compreender sua evolução e direcionar terapias.</p>"
+  },
+  {
+    "question": "Quais são os principais níveis taxonômicos utilizados para classificar bactérias (em ordem sequencial)?",
+    "options": [
+      "A) Reino, Filo, Classe, Ordem, Família, Gênero, Espécie.",
+      "B) Domínio, Filo, Classe, Ordem, Família, Gênero, Espécie.",
+      "C) Domínio, Divisão, Classe, Ordem, Família, Gênero, Espécie.",
+      "D) Filo, Classe, Ordem, Família, Gênero, Espécie, Subespécie."
+    ],
+    "answer": [
+      "B) Domínio, Filo, Classe, Ordem, Família, Gênero, Espécie."
+    ],
+    "type": "multi",
+    "justification": "<p>A hierarquia taxonómica atual inicia-se com <strong>Domínio</strong> (Bacteria, Archaea, Eukarya), seguido de Filo, Classe, Ordem, Família, Gênero e Espécie. A opção B está correta.</p>"
+  },
+  {
+    "question": "Com base em quais critérios as bactérias são classificadas na taxonomia moderna?",
+    "options": [
+      "A) Exclusivamente pela morfologia e coloração de Gram.",
+      "B) Apenas por características bioquímicas e metabólicas.",
+      "C) Por características morfológicas, fisiológicas, bioquímicas, ecológicas e genéticas (como sequência do 16S rRNA).",
+      "D) Somente por análise genômica completa."
+    ],
+    "answer": [
+      "C) Por características morfológicas, fisiológicas, bioquímicas, ecológicas e genéticas (como sequência do 16S rRNA)."
+    ],
+    "type": "multi",
+    "justification": "<p>A taxonomia moderna é <strong>polifásica</strong>, integrando dados fenotípicos (morfologia, metabolismo) e genotípicos (16S rRNA, hibridização DNA-DNA). A opção C contempla todos esses critérios.</p>"
+  },
+  {
+    "question": "Quais são os filos mais importantes do domínio Bacteria com relevância médica? (Exemplos corretos)",
+    "options": [
+      "A) Proteobacteria (Escherichia), Firmicutes (Staphylococcus), Actinobacteria (Mycobacterium), Bacteroidetes (Bacteroides), Spirochaetes (Treponema), Chlamydiae (Chlamydia).",
+      "B) Proteobacteria (E. coli), Firmicutes (Bacillus), Actinobacteria (Streptomyces), Fusobacteria (Fusobacterium), Tenericutes (Mycoplasma).",
+      "C) Cyanobacteria (Anabaena), Deinococcus-Thermus (Deinococcus), Chlorobi (Chlorobium), Planctomycetes (Planctomyces).",
+      "D) Firmicutes (Lactobacillus), Actinobacteria (Bifidobacterium), Bacteroidetes (Prevotella), Proteobacteria (Neisseria)."
+    ],
+    "answer": [
+      "A) Proteobacteria (Escherichia), Firmicutes (Staphylococcus), Actinobacteria (Mycobacterium), Bacteroidetes (Bacteroides), Spirochaetes (Treponema), Chlamydiae (Chlamydia)."
+    ],
+    "type": "multi",
+    "justification": "<p>Os filos com maior relevância médica incluem <strong>Proteobacteria</strong> (enterobactérias), <strong>Firmicutes</strong> (Gram-positivos de baixo GC), <strong>Actinobacteria</strong> (alto GC), <strong>Bacteroidetes</strong> (anaeróbios), <strong>Spirochaetes</strong> (espiroquetas) e <strong>Chlamydiae</strong> (intracelulares). A opção A lista corretamente cada filo com um exemplo típico.</p>"
+  },
+  {
+    "question": "Quais são os critérios usados para classificar os vírus?",
+    "options": [
+      "A) Tipo de ácido nucleico, simetria do capsídeo, presença de envelope, modo de replicação, gama de hospedeiros.",
+      "B) Apenas o tipo de ácido nucleico e a morfologia.",
+      "C) Exclusivamente a doença que causam e o hospedeiro.",
+      "D) Tamanho, forma e resistência a desinfetantes."
+    ],
+    "answer": [
+      "A) Tipo de ácido nucleico, simetria do capsídeo, presença de envelope, modo de replicação, gama de hospedeiros."
+    ],
+    "type": "multi",
+    "justification": "<p>A classificação viral considera a natureza do genoma (DNA/RNA, fita simples/dupla, polaridade), a simetria do <strong>capsídeo</strong>, a presença de <strong>envelope</strong>, o modo de replicação e o hospedeiro. A opção A abrange esses critérios.</p>"
+  },
+  {
+    "question": "Qual a diferença entre vírus de DNA e vírus de RNA no ciclo de replicação?",
+    "options": [
+      "A) Vírus de DNA replicam-se no citoplasma usando enzimas virais; vírus de RNA replicam-se no núcleo usando enzimas celulares.",
+      "B) Vírus de DNA geralmente replicam-se no núcleo e usam a maquinaria celular; vírus de RNA replicam-se no citoplasma e frequentemente trazem suas próprias enzimas.",
+      "C) Vírus de DNA têm genoma sempre de cadeia dupla; vírus de RNA sempre de cadeia simples.",
+      "D) Vírus de DNA causam doenças crônicas; vírus de RNA causam doenças agudas."
+    ],
+    "answer": [
+      "B) Vírus de DNA geralmente replicam-se no núcleo e usam a maquinaria celular; vírus de RNA replicam-se no citoplasma e frequentemente trazem suas próprias enzimas."
+    ],
+    "type": "multi",
+    "justification": "<p>A maioria dos vírus de DNA (exceto poxvírus) replica-se no <strong>núcleo</strong>, utilizando polimerases celulares. Vírus de RNA replicam-se no <strong>citoplasma</strong> e codificam a sua própria RNA polimerase (dependente de RNA). A opção B descreve corretamente essa diferença.</p>"
+  },
+  {
+    "question": "Durante as aulas, quando abordamos sobre os bacteriófagos, falamos da transdução generalizada e transdução especializada. Qual é a diferença entre elas?",
+    "options": [
+      "A) Na generalizada, qualquer gene bacteriano pode ser transferido; na especializada, apenas genes próximos ao sítio de integração do profago.",
+      "B) Na generalizada, o fago só transfere genes específicos; na especializada, pode transferir qualquer gene.",
+      "C) A generalizada ocorre com fagos temperados; a especializada com fagos virulentos.",
+      "D) Não há diferença; são sinónimos."
+    ],
+    "answer": [
+      "A) Na generalizada, qualquer gene bacteriano pode ser transferido; na especializada, apenas genes próximos ao sítio de integração do profago."
+    ],
+    "type": "multi",
+    "justification": "<p>Na <strong>transdução generalizada</strong>, fragmentos aleatórios de DNA bacteriano são empacotados em novos fagos. Na <strong>especializada</strong>, a excisão imprecisa de um profago leva à transferência apenas de genes adjacentes ao seu genoma. A opção A está correta.</p>"
+  },
+  {
+    "question": "12a. Em 1675, Antonie van Leeuwenhoek foi o primeiro a observar e descrever bactérias.",
+    "answer": ["F"],
+    "type": "tf",
+    "justification": "<p><strong>Falso.</strong> Leeuwenhoek observou microrganismos ('animalículos') na década de 1670, mas a data exata da primeira observação de bactérias é incerta; além disso, ele não as descreveu em 1675 especificamente.</p>"
+  },
+  {
+    "question": "12b. A teoria da geração espontânea postulava que organismos vivos podiam surgir de matéria não viva.",
+    "answer": ["V"],
+    "type": "tf",
+    "justification": "<p><strong>Verdadeiro.</strong> A abiogénese defendia que a vida podia originar-se de matéria inanimada, ideia refutada por Pasteur e outros.</p>"
+  },
+  {
+    "question": "12c. Francesco Redi demonstrou que vermes em carne em decomposição eram originados de ovos de moscas.",
+    "answer": ["V"],
+    "type": "tf",
+    "justification": "<p><strong>Verdadeiro.</strong> Redi usou frascos com carne, cobertos ou abertos, mostrando que larvas surgiam apenas onde moscas podiam depositar ovos.</p>"
+  },
+  {
+    "question": "12d. John Needham observou crescimento de micro-organismos em caldos nutritivos aquecidos e selados, sugerindo geração espontânea.",
+    "answer": ["V"],
+    "type": "tf",
+    "justification": "<p><strong>Verdadeiro.</strong> Needham aqueceu caldos e os selou, observando crescimento, que atribuiu à geração espontânea; hoje sabe-se que o aquecimento foi insuficiente para eliminar esporos.</p>"
+  },
+  {
+    "question": "12e. Esporos bacterianos servem como forma de reprodução.",
+    "answer": ["F"],
+    "type": "tf",
+    "justification": "<p><strong>Falso.</strong> Esporos (endósporos) são estruturas de resistência e dormência, não reprodutivas. Cada esporo origina uma única célula vegetativa.</p>"
+  },
+  {
+    "question": "12f. Bactérias podem realizar fotossíntese.",
+    "answer": ["V"],
+    "type": "tf",
+    "justification": "<p><strong>Verdadeiro.</strong> Cianobactérias realizam fotossíntese oxigénica; bactérias púrpuras e verdes realizam fotossíntese anoxigénica.</p>"
+  },
+  {
+    "question": "12g. A coloração de Gram diferencia bactérias com base na composição da parede celular.",
+    "answer": ["V"],
+    "type": "tf",
+    "justification": "<p><strong>Verdadeiro.</strong> Bactérias Gram-positivas retêm o cristal violeta devido à espessa camada de peptidoglicano; Gram-negativas não, e adquirem a fucsina.</p>"
+  },
+  {
+    "question": "12h. O Manual de Bergey é baseado apenas em características morfológicas.",
+    "answer": ["F"],
+    "type": "tf",
+    "justification": "<p><strong>Falso.</strong> O Bergey's Manual utiliza características fenotípicas e filogenéticas (incluindo sequências de rRNA), sendo uma abordagem polifásica.</p>"
+  },
+  {
+    "question": "12i. As Actinobacteria possuem alto teor de G+C em seu DNA.",
+    "answer": ["V"],
+    "type": "tf",
+    "justification": "<p><strong>Verdadeiro.</strong> Actinobacteria caracterizam-se por alto conteúdo GC (>55%), distinguindo-as dos Firmicutes (baixo GC).</p>"
+  },
+  {
+    "question": "12j. Carl Woese propôs os três domínios da vida com base em características celulares e moleculares.",
+    "answer": ["V"],
+    "type": "tf",
+    "justification": "<p><strong>Verdadeiro.</strong> Woese usou sequências do RNA ribossomal 16S para dividir os seres vivos em Bacteria, Archaea e Eukarya.</p>"
+  },
+  {
+    "question": "12k. O domínio Archaea inclui muitas bactérias causadoras de doenças humanas.",
+    "answer": ["F"],
+    "type": "tf",
+    "justification": "<p><strong>Falso.</strong> Archaea não são patogénicas para humanos; habitam ambientes extremos e não causam doenças.</p>"
+  },
+  {
+    "question": "12l. A filogenia é baseada na análise visual da morfologia das bactérias.",
+    "answer": ["F"],
+    "type": "tf",
+    "justification": "<p><strong>Falso.</strong> A filogenia moderna baseia-se em dados moleculares (sequências de DNA/RNA), não apenas na morfologia.</p>"
+  },
+  {
+    "question": "12m. Vírus envelopados são geralmente mais resistentes a desinfetantes.",
+    "answer": ["F"],
+    "type": "tf",
+    "justification": "<p><strong>Falso.</strong> Vírus envelopados são mais sensíveis a desinfetantes e ao ambiente, pois o envelope lipídico é facilmente danificado.</p>"
+  },
+  {
+    "question": "12n. A transcrição reversa ocorre em todos os vírus.",
+    "answer": ["F"],
+    "type": "tf",
+    "justification": "<p><strong>Falso.</strong> A transcrição reversa é exclusiva dos retrovírus e de alguns outros vírus que utilizam transcriptase reversa; a maioria dos vírus não possui essa enzima.</p>"
+  },
+  {
+    "question": "13a. Complete: A teoria da geração espontânea postulava que organismos vivos podiam surgir de ______.",
+    "answer": ["matéria não viva"],
+    "type": "fill",
+    "justification": "<p>A abiogénese defendia a origem da vida a partir de matéria inanimada.</p>"
+  },
+  {
+    "question": "13b. Complete: ________ são moléculas extracromossômicas de DNA circular.",
+    "answer": ["Plasmídeos"],
+    "type": "fill",
+    "justification": "<p>Plasmídeos são DNA circular independente do cromossoma, comuns em bactérias e frequentemente carregam genes de resistência.</p>"
+  },
+  {
+    "question": "13c. Complete: As bactérias Gram-negativas possuem uma _______ rica em lipopolissacarídeos.",
+    "answer": ["membrana externa"],
+    "type": "fill",
+    "justification": "<p>A parede das Gram-negativas inclui uma membrana externa com lipopolissacarídeo (LPS), responsável pela endotoxicidade.</p>"
+  },
+  {
+    "question": "13d. Complete: A sequência de _______ é usada para estudar a filogenia bacteriana.",
+    "answer": ["RNA ribossomal 16S"],
+    "type": "fill",
+    "justification": "<p>O gene do 16S rRNA é universal, conservado e variável, sendo o marcador padrão para filogenia bacteriana.</p>"
+  },
+  {
+    "question": "13e. Complete: As bactérias Gram-positivas com alto teor de G+C pertencem ao filo _______.",
+    "answer": ["Actinobacteria"],
+    "type": "fill",
+    "justification": "<p>Actinobacteria são Gram-positivas com alto GC, como Mycobacterium e Streptomyces.</p>"
+  },
+  {
+    "question": "13f. Complete: As principais características usadas na classificação bacteriana moderna são ______.",
+    "answer": ["morfológicas, bioquímicas e genéticas"],
+    "type": "fill",
+    "justification": "<p>A classificação polifásica combina dados morfológicos, bioquímicos, ecológicos e genéticos.</p>"
+  },
+  {
+    "question": "13g. Complete: O capsídeo é formado por subunidades chamadas ______.",
+    "answer": ["capsômeros"],
+    "type": "fill",
+    "justification": "<p>O capsídeo viral é composto por capsômeros, que se organizam em simetria icosaédrica, helicoidal ou complexa.</p>"
+  },
+  {
+    "question": "13h. Complete: O ciclo de replicação viral geralmente termina com a ______.",
+    "answer": ["liberação de novas partículas virais"],
+    "type": "fill",
+    "justification": "<p>A última etapa é a libertação dos novos viriões, por lise ou exocitose.</p>"
+  },
+  {
+    "question": "13i. Complete: A enzima que converte RNA viral em DNA é chamada de ______.",
+    "answer": ["transcriptase reversa"],
+    "type": "fill",
+    "justification": "<p>A transcriptase reversa é característica dos retrovírus, convertendo RNA em DNA.</p>"
+  },
+  {
+    "question": "13j. Complete: A natureza particulada dos vírus reflete duas grandes propriedades: ______.",
+    "answer": ["Especificidade e Plasticidade"],
+    "type": "fill",
+    "justification": "<p>Os vírus possuem especificidade (reconhecimento do hospedeiro) e plasticidade (capacidade de mutação e adaptação).</p>"
+  },
+  {
+    "question": "13k. Complete: O envelope protege o vírion da ação do sistema imunitário por ter _______.",
+    "answer": ["composição semelhante às membranas celulares do hospedeiro"],
+    "type": "fill",
+    "justification": "<p>O envelope é derivado da membrana celular, dificultando o reconhecimento imunitário.</p>"
+  },
+  {
+    "question": "13l. Complete: A presença ou ausência de envelope nos vírus está associada a aspectos epidemiológicos relacionados com a ______.",
+    "answer": ["transmissão dos vírus"],
+    "type": "fill",
+    "justification": "<p>Vírus envelopados são menos resistentes no ambiente, dependendo de transmissão direta; não envelopados são mais resistentes e transmitidos por vias como fecal-oral.</p>"
+  },
+  {
+    "question": "13m. Complete: Um RNA genômico de cadeia simples positiva tem uma sequência de nucleotídios _______.",
+    "answer": ["idêntica àquela do RNA mensageiro viral"],
+    "type": "fill",
+    "justification": "<p>O RNA de sentido positivo pode funcionar diretamente como mRNA, sendo traduzido pela célula.</p>"
+  },
+  {
+    "question": "14. Na figura abaixo, descreva cada etapa e indique a separação da fase lítica e da fase lisogênica. (Considere a descrição correta das etapas)",
+    "options": [
+      "A) Fase lítica: adsorção, replicação, montagem e lise; fase lisogênica: adsorção, integração, replicação do hospedeiro, e eventual indução para o ciclo lítico.",
+      "B) Fase lítica: integração, replicação do hospedeiro, excisão; fase lisogênica: adsorção, injeção, montagem e lise.",
+      "C) Ambas as fases são idênticas, diferindo apenas na velocidade de replicação.",
+      "D) A fase lítica ocorre apenas em fagos temperados; a lisogênica em fagos virulentos."
+    ],
+    "answer": [
+      "A) Fase lítica: adsorção, replicação, montagem e lise; fase lisogênica: adsorção, integração, replicação do hospedeiro, e eventual indução para o ciclo lítico."
+    ],
+    "type": "multi",
+    "justification": "<p>No ciclo lítico, o fago replica-se e lisa a célula. No lisogénico, o DNA viral integra-se como profago e replica-se com o genoma bacteriano, podendo ser induzido ao ciclo lítico. A opção A descreve corretamente as etapas de cada fase.</p>"
+  },
+  {
+    "question": "15. Enumere as etapas da replicação viral na ordem correta.",
+    "options": [
+      "A) Adsorção, penetração, desnudamento, transcrição, replicação do genoma, tradução, montagem, liberação.",
+      "B) Penetração, adsorção, desnudamento, tradução, transcrição, replicação, montagem, liberação.",
+      "C) Adsorção, desnudamento, penetração, transcrição, tradução, replicação, montagem, liberação.",
+      "D) Adsorção, penetração, transcrição, replicação, desnudamento, tradução, montagem, liberação."
+    ],
+    "answer": [
+      "A) Adsorção, penetração, desnudamento, transcrição, replicação do genoma, tradução, montagem, liberação."
+    ],
+    "type": "multi",
+    "justification": "<p>A ordem típica da replicação viral é: <strong>adsorção</strong> (ligação ao receptor), <strong>penetração</strong> (entrada), <strong>desnudamento</strong> (libertação do genoma), <strong>transcrição</strong> (produção de mRNA), <strong>replicação do genoma</strong>, <strong>tradução</strong> (síntese de proteínas), <strong>montagem</strong> dos novos viriões e <strong>liberação</strong>. A opção A está correta.</p>"
+  }
+]
+
+/* ══════════════ ESTADO DO QUIZ ══════════════ */
+let currentQ = 0;
+let userAnswers  = new Array(quizData.length).fill(null).map(()=>[]); // para fill será string dentro do array
+let attempted    = new Array(quizData.length).fill(false);
+
+/* ══════════════ ELEMENTOS DOM ══════════════ */
+const content     = document.getElementById('quiz-content');
+const progressFill= document.getElementById('quiz-progress');
+const progressLbl = document.getElementById('progress-label');
+const prevBtn     = document.getElementById('prev-btn');
+const answerBtn   = document.getElementById('answer-btn');
+const nextBtn     = document.getElementById('next-btn');
+const submitBtn   = document.getElementById('submit-btn');
+const resultsDiv  = document.getElementById('results-container');
+const reportDiv   = document.getElementById('report-container');
+const navDiv      = document.getElementById('navigation-buttons');
+const progressWrap= document.querySelector('.progress-wrapper');
+
+/* ══════════════ RENDER ══════════════ */
+function init(){
+  shuffleArray(quizData);
+  renderAll();
+  goTo(0);
+  bindEvents();
+}
+
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+
+function renderAll(){
+  content.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className='question-card';
+    card.id=`q-${i}`;
+
+    let badgeClass = 'badge-multi';
+    let badgeText  = '◈ Múltipla escolha';
+    if(q.type==='tf') { badgeClass='badge-tf'; badgeText='✦ V/F'; }
+    else if(q.type==='fill') { badgeClass='badge-fill'; badgeText='⸻ Preenchimento'; }
+
+    let optsHTML='';
+    if(q.type==='tf'){
+      optsHTML=`<div class="tf-options-container">
+        <button class="tf-option tf-v" data-q="${i}" data-o="V"><i class="fas fa-check"></i> Verdadeiro</button>
+        <button class="tf-option tf-f" data-q="${i}" data-o="F"><i class="fas fa-times"></i> Falso</button>
+      </div>`;
+    } else if(q.type==='fill'){
+      optsHTML=`<div class="fill-input-container">
+        <input type="text" class="fill-input" id="fill-${i}" placeholder="Digite sua resposta..." data-q="${i}" value="${userAnswers[i][0]||''}">
+      </div>`;
+    } else {
+      const letters=['A','B','C','D','E','F'];
+      optsHTML=`<div class="options-container">${q.options.map((opt,oi)=>`
+        <button class="mc-option" data-q="${i}" data-o="${opt.replace(/"/g,'&quot;')}">
+          <span class="option-indicator">${letters[oi]}</span>
+          <span>${opt}</span>
+        </button>`).join('')}</div>`;
+    }
+
+    card.innerHTML=`
+      <div class="q-meta">
+        <span class="q-num">Questão ${i+1} / ${quizData.length}</span>
+        <span class="q-type-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <p class="question-text">${q.question}</p>
+      ${optsHTML}
+      <div class="feedback" id="fb-${i}"></div>`;
+    content.appendChild(card);
+  });
+}
+
+/* ══════════════ NAVIGATION ══════════════ */
+function goTo(idx){
+  if(idx<0||idx>=quizData.length) return;
+  document.querySelector(`#q-${currentQ}`)?.classList.remove('active');
+  currentQ=idx;
+  document.querySelector(`#q-${currentQ}`)?.classList.add('active');
+  updateUI();
+}
+
+function updateUI(){
+  const done = attempted.filter(Boolean).length;
+  progressFill.style.width=`${(done/quizData.length)*100}%`;
+  progressLbl.textContent=`${done} / ${quizData.length}`;
+
+  const isAttempted = attempted[currentQ];
+  const q = quizData[currentQ];
+  let hasSelection = false;
+  if(q.type==='fill'){
+    hasSelection = userAnswers[currentQ][0] && userAnswers[currentQ][0].trim() !== '';
+  } else {
+    hasSelection = userAnswers[currentQ].length>0;
+  }
+
+  setBtn(prevBtn,   currentQ>0);
+  setBtn(answerBtn, !isAttempted);
+  setBtn(nextBtn,   isAttempted && currentQ<quizData.length-1);
+  setBtn(submitBtn, isAttempted && currentQ===quizData.length-1);
+  if(!isAttempted) answerBtn.disabled=!hasSelection;
+}
+
+function setBtn(btn,show){ btn.classList.toggle('show',show); }
+
+/* ══════════════ SELECTION HANDLERS ══════════════ */
+function bindEvents(){
+  content.addEventListener('click',e=>{
+    const mc=e.target.closest('.mc-option');
+    const tf=e.target.closest('.tf-option');
+    if(mc) handleMC(mc);
+    if(tf) handleTF(tf);
+  });
+  content.addEventListener('input',e=>{
+    const inp=e.target.closest('.fill-input');
+    if(inp) handleFill(inp);
+  });
+  answerBtn.addEventListener('click', validate);
+  nextBtn.addEventListener('click',()=>goTo(currentQ+1));
+  prevBtn.addEventListener('click',()=>goTo(currentQ-1));
+  submitBtn.addEventListener('click', finishQuiz);
+  document.getElementById('show-report-btn').addEventListener('click',()=>{resultsDiv.style.display='none';reportDiv.style.display='flex';});
+  document.getElementById('back-btn').addEventListener('click',()=>{reportDiv.style.display='none';resultsDiv.style.display='flex';});
+  document.getElementById('retry-btn').addEventListener('click',()=>location.reload());
+}
+
+function handleMC(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  const idx=userAnswers[qi].indexOf(opt);
+  if(idx>-1){ userAnswers[qi].splice(idx,1); btn.classList.remove('selected'); }
+  else{ userAnswers[qi].push(opt); btn.classList.add('selected'); }
+  updateUI();
+}
+
+function handleTF(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  userAnswers[qi]=[opt];
+  document.querySelectorAll(`.tf-option[data-q='${qi}']`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateUI();
+}
+
+function handleFill(inp){
+  if(inp.classList.contains('disabled')) return;
+  const qi=parseInt(inp.dataset.q);
+  userAnswers[qi]=[inp.value]; // armazena como array com um elemento string
+  updateUI();
+}
+
+/* ══════════════ VALIDATE ══════════════ */
+function validate(){
+  if(attempted[currentQ]) return;
+  const q=quizData[currentQ];
+  const fb=document.getElementById(`fb-${currentQ}`);
+  const userAns=userAnswers[currentQ]||[];
+  const correctAns=Array.isArray(q.answer)?q.answer:[q.answer];
+
+  let isCorrect = false;
+  if(q.type==='fill'){
+    // comparação case-insensitive e trim
+    const userStr = (userAns[0]||'').trim().toLowerCase();
+    const correctStr = correctAns[0].trim().toLowerCase();
+    isCorrect = userStr === correctStr;
+  } else {
+    isCorrect = JSON.stringify([...userAns].sort())===JSON.stringify([...correctAns].sort());
+  }
+
+  // desabilitar opções / input
+  if(q.type==='tf'){
+    document.querySelectorAll(`.tf-option[data-q='${currentQ}']`).forEach(opt=>{
+      opt.classList.add('disabled');
+      const ov=opt.dataset.o;
+      if(correctAns.includes(ov)) opt.classList.add('correct');
+      else if(userAns.includes(ov)) opt.classList.add('incorrect');
+    });
+  } else if(q.type==='fill'){
+    const inp = document.getElementById(`fill-${currentQ}`);
+    inp.classList.add('disabled');
+    if(isCorrect) inp.classList.add('correct');
+    else inp.classList.add('incorrect');
+  } else {
+    document.querySelectorAll(`.mc-option[data-q='${currentQ}']`).forEach(opt=>{
+      opt.classList.add('disabled');
+      const ov=opt.dataset.o;
+      if(correctAns.includes(ov)) opt.classList.add('correct');
+      else if(userAns.includes(ov)) opt.classList.add('incorrect');
+    });
+  }
+
+  // feedback
+  const icon = isCorrect ? 'fa-check-circle' : 'fa-times-circle';
+  const title= isCorrect ? 'Correto!' : 'Incorreto';
+  const verdictClass = isCorrect ? 'correct' : 'incorrect';
+
+  let correctListHTML='';
+  if(!isCorrect){
+    correctListHTML=`<div style="margin-top:.5rem;font-size:.82rem;color:var(--muted2);">${correctAns.length>1?'Respostas corretas':'Resposta correta'}:</div>
+    <ul class="correct-list">${correctAns.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+  }
+
+  fb.className=`feedback ${verdictClass}`;
+  fb.innerHTML=`
+    <div class="feedback-verdict"><i class="fas ${icon}"></i>${title}${correctListHTML}</div>
+    <div class="justification">
+      <div class="just-label"><i class="fas fa-flask"></i> Justificativa Clínico-Molecular</div>
+      <div class="just-text">${q.justification}</div>
+    </div>`;
+  fb.style.display='block';
+
+  toast(isCorrect);
+  attempted[currentQ]=true;
+  [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=true);
+
+  setTimeout(()=>{
+    [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=false);
+    if(currentQ===quizData.length-1) finishQuiz();
+    else goTo(currentQ+1);
+  },2400);
+}
+
+/* ══════════════ RESULTS ══════════════ */
+function finishQuiz(){
+  let score=0;
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    if(q.type==='fill'){
+      const userStr = (ua[0]||'').trim().toLowerCase();
+      const correctStr = ca[0].trim().toLowerCase();
+      if(userStr === correctStr) score++;
+    } else {
+      if(JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort())) score++;
+    }
+  });
+  const pct=Math.round(score/quizData.length*100);
+
+  document.getElementById('pct-display').textContent=`${pct}%`;
+  document.getElementById('score-display').innerHTML=`Acertos: <strong>${score} de ${quizData.length}</strong>`;
+
+  const circumference=408.4;
+  const ring=document.getElementById('score-ring');
+  setTimeout(()=>{ ring.style.strokeDashoffset=circumference*(1-pct/100); },100);
+
+  const msg=document.getElementById('feedback-message');
+  if(pct>=90) msg.textContent='🎉 Excelente domínio! Você está pronto para a prova.';
+  else if(pct>=70) msg.textContent='👏 Muito bem! Revise os pontos que errou e você chegará lá.';
+  else if(pct>=50) msg.textContent='👍 Bom esforço! Revise as justificativas com atenção.';
+  else msg.textContent='💪 Continue estudando! As justificativas abaixo são seu mapa.';
+
+  buildReport();
+
+  content.style.display='none';
+  navDiv.style.display='none';
+  progressWrap.style.display='none';
+  resultsDiv.style.display='flex';
+}
+
+function buildReport(){
+  const list=document.getElementById('report-list');
+  list.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    let ok = false;
+    if(q.type==='fill'){
+      const userStr = (ua[0]||'').trim().toLowerCase();
+      const correctStr = ca[0].trim().toLowerCase();
+      ok = userStr === correctStr;
+    } else {
+      ok = JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort());
+    }
+    const item=document.createElement('div');
+    item.className=`report-item ${ok?'correct':'incorrect'}`;
+    item.innerHTML=`<p class="ri-q"><strong>Questão ${i+1}:</strong> ${q.question}</p>
+      <p><strong>Sua resposta:</strong> ${ua.length?ua.join(', '):'<em>Não respondida</em>'}</p>
+      <p><strong>Correta:</strong> ${ca.join(', ')}</p>`;
+    list.appendChild(item);
+  });
+}
+
+/* ══════════════ TOAST ══════════════ */
+function toast(ok){
+  Swal.mixin({
+    toast:true,position:'top-end',
+    showConfirmButton:false,
+    timer:1400,timerProgressBar:true,
+    background: ok ? '#0a2e1f' : '#2e0a14',
+    color: ok ? '#34d399' : '#fb7185',
+  }).fire({icon:ok?'success':'error',title:ok?'✓ Correto!':'✗ Incorreto!'});
+}
+
+init();
+});
+</script>
+</body>
+</html>
