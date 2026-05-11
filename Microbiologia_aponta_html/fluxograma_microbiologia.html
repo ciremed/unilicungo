@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluxograma de Identificação Bacteriana — Microbiologia Clínica</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;800&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: #0d1420;
+    --surface2: #131d2e;
+    --border: #1e2d44;
+    --accent-blue: #2d9cff;
+    --accent-cyan: #00e5c8;
+    --accent-green: #39e07a;
+    --accent-yellow: #ffd166;
+    --accent-orange: #ff8c42;
+    --accent-red: #ff4d6d;
+    --accent-purple: #b57bee;
+    --text: #e8f0fe;
+    --text-dim: #7a8fa8;
+    --gram-pos: #ff6b9d;
+    --gram-neg: #4ecdc4;
+    --connector: #2d9cff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(45,156,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(45,156,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .header-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    border: 1px solid rgba(0,229,200,0.3);
+    padding: 5px 16px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--accent-blue) 60%, var(--accent-cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 50px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* SAMPLE SELECTOR */
+  .sample-section {
+    margin-bottom: 50px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  .sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .sample-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .sample-btn:hover, .sample-btn.active {
+    border-color: var(--accent-blue);
+    background: rgba(45,156,255,0.08);
+    color: var(--text);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(45,156,255,0.15);
+  }
+
+  .sample-btn.active {
+    border-color: var(--accent-cyan);
+    background: rgba(0,229,200,0.08);
+  }
+
+  .sample-icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .sample-name {
+    font-weight: 600;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* FLOWCHART MAIN */
+  .flow-container {
+    position: relative;
+  }
+
+  /* STEP CARD */
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 12px;
+    position: relative;
+    transition: all 0.3s ease;
+    animation: fadeSlide 0.4s ease both;
+  }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  .step-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 40px;
+    position: relative;
+  }
+
+  .step-connector::before {
+    content: '';
+    width: 2px;
+    flex: 1;
+    background: linear-gradient(to bottom, var(--border), var(--accent-blue));
+  }
+
+  .arrow-down {
+    color: var(--accent-blue);
+    font-size: 18px;
+    margin-top: 2px;
+  }
+
+  /* BRANCH LAYOUT */
+  .branches {
+    display: grid;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .branches.two { grid-template-columns: 1fr 1fr; }
+  .branches.three { grid-template-columns: 1fr 1fr 1fr; }
+  .branches.four { grid-template-columns: repeat(4, 1fr); }
+
+  @media (max-width: 900px) {
+    .branches.two, .branches.three, .branches.four {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .branches.two, .branches.three, .branches.four {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* BRANCH CARD */
+  .branch {
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .branch::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .branch:hover { transform: translateY(-3px); }
+
+  .branch-gram-pos {
+    background: rgba(255,107,157,0.06);
+    border-color: rgba(255,107,157,0.3);
+  }
+  .branch-gram-pos::before { background: var(--gram-pos); }
+
+  .branch-gram-neg {
+    background: rgba(78,205,196,0.06);
+    border-color: rgba(78,205,196,0.3);
+  }
+  .branch-gram-neg::before { background: var(--gram-neg); }
+
+  .branch-positive {
+    background: rgba(57,224,122,0.06);
+    border-color: rgba(57,224,122,0.3);
+  }
+  .branch-positive::before { background: var(--accent-green); }
+
+  .branch-negative {
+    background: rgba(255,77,109,0.06);
+    border-color: rgba(255,77,109,0.3);
+  }
+  .branch-negative::before { background: var(--accent-red); }
+
+  .branch-alpha {
+    background: rgba(181,123,238,0.06);
+    border-color: rgba(181,123,238,0.3);
+  }
+  .branch-alpha::before { background: var(--accent-purple); }
+
+  .branch-beta {
+    background: rgba(255,140,66,0.06);
+    border-color: rgba(255,140,66,0.3);
+  }
+  .branch-beta::before { background: var(--accent-orange); }
+
+  .branch-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .branch-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .branch-result {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* PATHOGEN CARDS */
+  .pathogen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .pathogen-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pathogen-card:hover {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 30px rgba(45,156,255,0.1);
+    transform: translateY(-2px);
+  }
+
+  .pathogen-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--accent-cyan);
+    margin-bottom: 6px;
+  }
+
+  .pathogen-disease {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .pathogen-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+
+  .tag-gpos { color: var(--gram-pos); border-color: rgba(255,107,157,0.4); background: rgba(255,107,157,0.08); }
+  .tag-gneg { color: var(--gram-neg); border-color: rgba(78,205,196,0.4); background: rgba(78,205,196,0.08); }
+  .tag-aer { color: var(--accent-green); border-color: rgba(57,224,122,0.4); background: rgba(57,224,122,0.08); }
+  .tag-an { color: var(--accent-red); border-color: rgba(255,77,109,0.4); background: rgba(255,77,109,0.08); }
+  .tag-fac { color: var(--accent-yellow); border-color: rgba(255,209,102,0.4); background: rgba(255,209,102,0.08); }
+  .tag-spore { color: var(--accent-orange); border-color: rgba(255,140,66,0.4); background: rgba(255,140,66,0.08); }
+  .tag-res { color: var(--accent-purple); border-color: rgba(181,123,238,0.4); background: rgba(181,123,238,0.08); }
+
+  .pathogen-detail {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+
+  .pathogen-detail strong {
+    color: var(--accent-yellow);
+    font-weight: 600;
+  }
+
+  /* EXPAND DETAIL PANEL */
+  .detail-panel {
+    display: none;
+    background: var(--surface2);
+    border: 1px solid var(--accent-blue);
+    border-radius: 12px;
+    padding: 28px;
+    margin-top: 16px;
+    animation: fadeSlide 0.3s ease;
+  }
+
+  .detail-panel.open { display: block; }
+
+  .detail-panel h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    margin-bottom: 4px;
+    font-style: italic;
+  }
+
+  .detail-panel h4 {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .detail-item {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .detail-item-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .detail-item-val {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .tests-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .tests-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: rgba(45,156,255,0.1);
+    color: var(--accent-blue);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .tests-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .tests-table tr:hover td { background: rgba(255,255,255,0.02); color: var(--text); }
+
+  .pos { color: var(--accent-green) !important; font-weight: 700; }
+  .neg { color: var(--accent-red) !important; font-weight: 700; }
+  .var { color: var(--accent-yellow) !important; font-weight: 700; }
+
+  .treatment-box {
+    background: rgba(57,224,122,0.06);
+    border: 1px solid rgba(57,224,122,0.25);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 16px;
+  }
+
+  .treatment-box h5 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-green);
+    margin-bottom: 8px;
+  }
+
+  .treatment-box p {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .close-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-top: 16px;
+    transition: all 0.2s;
+  }
+
+  .close-btn:hover { color: var(--text); border-color: var(--accent-blue); }
+
+  /* BIOCHEM SUMMARY */
+  .biochem-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-top: 50px;
+  }
+
+  .biochem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .biochem-card {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+
+  .biochem-card:hover { border-color: var(--accent-cyan); }
+
+  .biochem-test {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    margin-bottom: 6px;
+  }
+
+  .biochem-principle {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .biochem-result {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent-yellow);
+    padding: 4px 8px;
+    background: rgba(255,209,102,0.08);
+    border-radius: 4px;
+    border: 1px solid rgba(255,209,102,0.2);
+  }
+
+  /* ACTIVE PATHOGEN HIGHLIGHT */
+  .pathogen-card.selected {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 1px var(--accent-cyan), 0 12px 40px rgba(0,229,200,0.15);
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    text-align: center;
+    margin-top: 60px;
+    padding: 20px;
+    color: var(--text-dim);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* STEP BADGE */
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  /* SAMPLE INFO BANNER */
+  .sample-banner {
+    background: linear-gradient(135deg, rgba(0,229,200,0.08), rgba(45,156,255,0.04));
+    border: 1px solid rgba(0,229,200,0.2);
+    border-radius: 12px;
+    padding: 20px 28px;
+    margin-bottom: 32px;
+    display: none;
+    animation: fadeSlide 0.4s ease;
+  }
+
+  .sample-banner.show { display: block; }
+
+  .sample-banner-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    margin-bottom: 6px;
+  }
+
+  .sample-banner-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .detail-grid { grid-template-columns: 1fr 1fr; }
+    .biochem-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-tag">Microbiologia Clínica</div>
+    <h1>Fluxograma de Identificação Bacteriana</h1>
+    <p class="subtitle">Identificação sistemática de patógenos por amostra clínica, coloração de Gram, testes bioquímicos e perfil de resistência antimicrobiana.</p>
+  </header>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gram-pos)"></div> Gram-Positiva</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gram-neg)"></div> Gram-Negativa</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-green)"></div> Resultado Positivo</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-red)"></div> Resultado Negativo</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-yellow)"></div> Variável / Dependente</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-purple)"></div> Alpha-hemólise</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-orange)"></div> Beta-hemólise</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-blue)"></div> Etapa do Fluxo</div>
+  </div>
+
+  <!-- SAMPLE SELECTOR -->
+  <div class="sample-section">
+    <div class="section-title">01 — Selecione a Amostra Clínica</div>
+    <div class="sample-grid" id="sampleGrid"></div>
+  </div>
+
+  <!-- SAMPLE BANNER -->
+  <div class="sample-banner" id="sampleBanner">
+    <div class="sample-banner-title" id="bannerTitle"></div>
+    <div class="sample-banner-desc" id="bannerDesc"></div>
+  </div>
+
+  <!-- FLOWCHART -->
+  <div class="flow-container" id="flowContainer" style="display:none">
+
+    <!-- STEP 1: GRAM -->
+    <div class="step" style="animation-delay:0.05s">
+      <div class="step-header">
+        <span class="step-badge">1</span>
+        <div>
+          <div class="step-number">Passo 01 · Coloração de Gram</div>
+          <div class="step-title">Coloração de Gram — Primeiro Divisor</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:16px">
+        O corante cristal violeta penetra a parede de peptidoglicano. O iodo (lugol) fixa o complexo. A descoloração com álcool/acetona remove o corante das gram-negativas (parede fina). A safranina cora de vermelho/rosa as gram-negativas. Gram-positivas = roxo. Gram-negativas = rosa/vermelho.
+      </p>
+      <div class="branches two">
+        <div class="branch branch-gram-pos">
+          <div class="branch-label" style="color:var(--gram-pos)">Coloração Roxa →</div>
+          <div class="branch-title" style="color:var(--gram-pos)">Gram-Positiva</div>
+          <div class="branch-result">Parede espessa de peptidoglicano (15–50% do peso seco). Sem membrana externa. Produz exotoxinas. → Passo 2</div>
+        </div>
+        <div class="branch branch-gram-neg">
+          <div class="branch-label" style="color:var(--gram-neg)">Coloração Rosa →</div>
+          <div class="branch-title" style="color:var(--gram-neg)">Gram-Negativa</div>
+          <div class="branch-result">Parede fina (~5% do peso seco). Membrana externa com LPS (lipopolissacarídeo). Endotoxina. → Passo 5</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-connector"><div class="arrow-down">▼</div></div>
+
+    <!-- STEP 2: FORMA (GRAM+) -->
+    <div class="step" style="animation-delay:0.1s">
+      <div class="step-header">
+        <span class="step-badge">2</span>
+        <div>
+          <div class="step-number">Passo 02 · Forma Celular (Gram-Positivas)</div>
+          <div class="step-title">Morfologia Microscópica das Gram-Positivas</div>
+        </div>
+      </div>
+      <div class="branches two">
+        <div class="branch branch-gram-pos">
+          <div class="branch-label" style="color:var(--gram-pos)">Forma Esférica →</div>
+          <div class="branch-title">Cocos Gram-Positivos</div>
+          <div class="branch-result">Agrupamento em cachos (Staphylococcus), cadeias (Streptococcus), pares (Enterococcus/Pneumococcus). → Passo 3</div>
+        </div>
+        <div class="branch branch-gram-pos">
+          <div class="branch-label" style="color:var(--accent-yellow)">Forma Cilíndrica →</div>
+          <div class="branch-title">Bacilos Gram-Positivos</div>
+          <div class="branch-result">Bacilos isolados, diplobilos, estreptobacilos. Verificar catalase, esporos, motilidade, H2S. → Passo 4</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-connector"><div class="arrow-down">▼</div></div>
+
+    <!-- STEP 3: CATALASE (COCOS G+) -->
+    <div class="step" style="animation-delay:0.15s">
+      <div class="step-header">
+        <span class="step-badge">3</span>
+        <div>
+          <div class="step-number">Passo 03 · Teste da Catalase (Cocos G+)</div>
+          <div class="step-title">Catalase — 2H₂O₂ → 2H₂O + O₂</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:16px">
+        A enzima catalase decompõe o peróxido de hidrogênio (H₂O₂) em água e oxigênio molecular. O borbulhamento imediato de O₂ = resultado positivo. Sem bolhas = negativo. Bactérias catalase+ possuem sistemas de proteção contra o stress oxidativo gerado durante o metabolismo aeróbico.
+      </p>
+      <div class="branches two">
+        <div class="branch branch-positive">
+          <div class="branch-label" style="color:var(--accent-green)">Catalase + (bolhas)</div>
+          <div class="branch-title">→ Staphylococcus spp.</div>
+          <div class="branch-result">Proceder ao Teste da Coagulase (Passo 3.1). Cocos em cachos. Aeróbio/anaeróbio facultativo. Fermentador de manitol.</div>
+        </div>
+        <div class="branch branch-negative">
+          <div class="branch-label" style="color:var(--accent-red)">Catalase − (sem bolhas)</div>
+          <div class="branch-title">→ Streptococcus ou Enterococcus</div>
+          <div class="branch-result">Proceder ao teste de Hemólise em Ágar Sangue (Passo 3.2). Cocos em cadeias ou pares. Anaeróbio facultativo.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-connector"><div class="arrow-down">▼</div></div>
+
+    <!-- STEP 3.1: COAGULASE -->
+    <div class="step" style="animation-delay:0.2s">
+      <div class="step-header">
+        <span class="step-badge">3.1</span>
+        <div>
+          <div class="step-number">Passo 3.1 · Teste da Coagulase (Staphylococcus)</div>
+          <div class="step-title">Coagulase — Converte Fibrinogênio em Fibrina</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:16px">
+        A coagulase livre reage com o fator de reatividade coagulase (CRF) do plasma formando um complexo que converte fibrinogênio em fibrina, criando um coágulo. Isso funciona como mecanismo de evasão imunológica — S. aureus envolve-se em fibrina para escapar dos fagócitos.
+      </p>
+      <div class="branches two">
+        <div class="branch branch-positive">
+          <div class="branch-label" style="color:var(--accent-green)">Coagulase + (coágulo)</div>
+          <div class="branch-title">→ Staphylococcus aureus</div>
+          <div class="branch-result">Patógeno de alta virulência. MRSA — resistente à meticilina. Produz toxinas: TSST-1, enterotoxinas, leucocidina de Panton-Valentine.</div>
+        </div>
+        <div class="branch branch-negative">
+          <div class="branch-label" style="color:var(--accent-red)">Coagulase − (sem coágulo)</div>
+          <div class="branch-title">→ CNS (Staphylococcus coagulase negativos)</div>
+          <div class="branch-result">S. epidermidis, S. saprophyticus, S. haemolyticus. Importância em infecções nosocomiais (cateteres, próteses). S. saprophyticus: ITU em jovens.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-connector"><div class="arrow-down">▼</div></div>
+
+    <!-- STEP 3.2: HEMOLISE -->
+    <div class="step" style="animation-delay:0.25s">
+      <div class="step-header">
+        <span class="step-badge">3.2</span>
+        <div>
+          <div class="step-number">Passo 3.2 · Hemólise em Ágar Sangue (Strep/Entero)</div>
+          <div class="step-title">Padrão de Hemólise — Classificação de Streptococcus</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:16px">
+        As hemolisinas são toxinas que destroem hemácias. Em ágar sangue (sangue de carneiro 5%), observa-se o halo ao redor da colônia. Beta-hemólise = destruição completa (zona clara). Alpha = oxidação parcial da hemoglobina (zona verde). Gamma = sem hemólise.
+      </p>
+      <div class="branches three">
+        <div class="branch branch-beta">
+          <div class="branch-label" style="color:var(--accent-orange)">Beta-hemólise (zona clara)</div>
+          <div class="branch-title" style="color:var(--accent-orange)">→ S. pyogenes / GAS</div>
+          <div class="branch-result">Teste sensibilidade à bacitracina (sensível = S. pyogenes). Grupo A de Lancefield. Faringite, escarlatina, febre reumática, síndrome do choque tóxico estreptocócico.</div>
+        </div>
+        <div class="branch branch-alpha">
+          <div class="branch-label" style="color:var(--accent-purple)">Alpha-hemólise (zona verde)</div>
+          <div class="branch-title" style="color:var(--accent-purple)">→ S. pneumoniae / Viridans</div>
+          <div class="branch-result">Teste com optoquina (sensível = S. pneumoniae). Bile-esculina diferencia de Enterococcus. Pneumonia, meningite, otite, sinusite.</div>
+        </div>
+        <div class="branch branch-negative">
+          <div class="branch-label" style="color:var(--text-dim)">Gamma-hemólise (sem halo)</div>
+          <div class="branch-title">→ Enterococcus spp.</div>
+          <div class="branch-result">Bile-esculina positivo. Crescimento em NaCl 6,5%. E. faecalis, E. faecium. Resistência intrínseca a cefalosporinas. VRE (resistente à vancomicina) — emergência.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-connector"><div class="arrow-down">▼</div></div>
+
+    <!-- STEP 4: BACILOS G+ -->
+    <div class="step" style="animation-delay:0.28s">
+      <div class="step-header">
+        <span class="step-badge">4</span>
+        <div>
+          <div class="step-number">Passo 04 · Bacilos Gram-Positivos</div>
+          <div class="step-title">Catalase + Esporos + Motilidade + H₂S</div>
+        </div>
+      </div>
+      <div class="branches two">
+        <div class="branch branch-positive">
+          <div class="branch-label" style="color:var(--accent-green)">Catalase + (aeróbico)</div>
+          <div class="branch-title">→ Bacillus spp.</div>
+          <div class="branch-result">Formadores de endosporos aeróbios. B. anthracis (antraz — bioterrorismo). B. cereus (intoxicação alimentar). Esporos resistem a calor, dessecação, radiação UV e desinfetantes.</div>
+        </div>
+        <div class="branch branch-negative">
+          <div class="branch-label" style="color:var(--accent-red)">Catalase − (anaeróbico)</div>
+          <div class="branch-title">→ Listeria / Erysipelothrix / Lactobacillus / Clostridium</div>
+          <div class="branch-result">Listeria: motilidade positiva, 4°C. Erysipelothrix: H2S+ em TSI. Clostridium: esporos anaeróbios. Botulismo, tétano, gangrena gasosa, C. difficile.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-connector"><div class="arrow-down">▼</div></div>
+
+    <!-- STEP 5: GRAM NEGATIVAS -->
+    <div class="step" style="animation-delay:0.3s">
+      <div class="step-header">
+        <span class="step-badge">5</span>
+        <div>
+          <div class="step-number">Passo 05 · Gram-Negativas — Teste da Oxidase</div>
+          <div class="step-title">Oxidase — Citocromo c Oxidase → Cor Azul/Roxa</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:16px">
+        O reagente TMPD (N,N,N',N'-tetrametil-p-fenilenediamino) é oxidado pela citocromo c oxidase (complexo IV da cadeia respiratória) formando um composto de cor azul ou púrpura em segundos. Resultado positivo em &lt;10 seg. Bactérias da família Enterobacteriaceae NÃO possuem citocromo c oxidase — oxidase negativas.
+      </p>
+      <div class="branches two">
+        <div class="branch branch-gram-neg">
+          <div class="branch-label" style="color:var(--gram-neg)">Oxidase + (azul/roxo)</div>
+          <div class="branch-title" style="color:var(--gram-neg)">→ Pseudomonas, Neisseria, Vibrio, Campylobacter, Acinetobacter</div>
+          <div class="branch-result">Fazer testes específicos adicionais por gênero. Pseudomonas aeruginosa: mucoid, piocianina azul, resistência múltipla. Neisseria: diplococo intraleucocitário.</div>
+        </div>
+        <div class="branch branch-negative">
+          <div class="branch-label" style="color:var(--accent-red)">Oxidase − (sem cor)</div>
+          <div class="branch-title">→ Enterobacteriaceae e outros</div>
+          <div class="branch-result">Família mais relevante clinicamente. E. coli, Klebsiella, Salmonella, Shigella, Proteus, Enterobacter. → Painel bioquímico completo (Passo 6).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-connector"><div class="arrow-down">▼</div></div>
+
+    <!-- STEP 6: PAINEL BIOQUIMICO -->
+    <div class="step" style="animation-delay:0.35s">
+      <div class="step-header">
+        <span class="step-badge">6</span>
+        <div>
+          <div class="step-number">Passo 06 · Painel Bioquímico — Enterobacteriaceae</div>
+          <div class="step-title">TSI · Indol · Citrato · Urease · Motilidade · Descarboxilação</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:16px">
+        O painel bioquímico clássico permite diferenciar membros da família Enterobacteriaceae com base em suas capacidades metabólicas: fermentação de açúcares, produção de gases, utilização de substratos específicos e expressão de enzimas. O TSI (Triple Sugar Iron / Ágar de Três Açúcares e Ferro) é o teste mais abrangente inicialmente.
+      </p>
+
+      <!-- TSI PATTERNS TABLE -->
+      <div style="overflow-x:auto">
+        <table class="tests-table">
+          <thead>
+            <tr>
+              <th>Organismo</th>
+              <th>TSI — Rampa/Fundo</th>
+              <th>H₂S</th>
+              <th>Gás</th>
+              <th>Indol</th>
+              <th>Citrato</th>
+              <th>Urease</th>
+              <th>Motilidade</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><em>E. coli</em></td><td>Ácido/Ácido (A/A)</td><td class="neg">−</td><td class="pos">+</td><td class="pos">+</td><td class="neg">−</td><td class="neg">−</td><td class="pos">+</td></tr>
+            <tr><td><em>Klebsiella pneumoniae</em></td><td>Ácido/Ácido (A/A)</td><td class="neg">−</td><td class="pos">+</td><td class="neg">−</td><td class="pos">+</td><td class="pos">+</td><td class="neg">−</td></tr>
+            <tr><td><em>Salmonella typhi</em></td><td>Alcalino/Ácido (K/A)</td><td class="pos">+</td><td class="neg">−</td><td class="neg">−</td><td class="neg">−</td><td class="neg">−</td><td class="pos">+</td></tr>
+            <tr><td><em>Salmonella spp. (não tifoide)</em></td><td>K/A</td><td class="pos">+</td><td class="pos">+</td><td class="neg">−</td><td class="pos">+</td><td class="neg">−</td><td class="pos">+</td></tr>
+            <tr><td><em>Shigella spp.</em></td><td>K/A</td><td class="neg">−</td><td class="neg">−</td><td class="var">V</td><td class="neg">−</td><td class="neg">−</td><td class="neg">−</td></tr>
+            <tr><td><em>Proteus mirabilis</em></td><td>K/A</td><td class="pos">+</td><td class="pos">+</td><td class="neg">−</td><td class="var">V</td><td class="pos">+</td><td class="pos">+</td></tr>
+            <tr><td><em>Pseudomonas aeruginosa</em></td><td>K/K ou K/NC</td><td class="neg">−</td><td class="neg">−</td><td class="neg">−</td><td class="pos">+</td><td class="neg">−</td><td class="pos">+</td></tr>
+            <tr><td><em>Enterobacter cloacae</em></td><td>A/A</td><td class="neg">−</td><td class="pos">+</td><td class="neg">−</td><td class="pos">+</td><td class="neg">−</td><td class="pos">+</td></tr>
+            <tr><td><em>Yersinia pestis</em></td><td>K/A</td><td class="neg">−</td><td class="neg">−</td><td class="neg">−</td><td class="neg">−</td><td class="neg">−</td><td class="neg">−</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:11px;color:var(--text-dim);margin-top:8px">K = Alcalino (Alkaline) · A = Ácido · NC = Sem alteração · V = Variável · + = Positivo · − = Negativo</p>
+    </div>
+
+    <!-- PATHOGEN SECTION BY SAMPLE -->
+    <div style="margin-top:50px">
+      <div class="section-title">07 — Patógenos por Amostra e Síndrome Clínica</div>
+      <div class="pathogen-grid" id="pathogenGrid"></div>
+      <div class="detail-panel" id="detailPanel"></div>
+    </div>
+
+  </div><!-- end flow-container -->
+
+  <!-- BIOCHEM SUMMARY -->
+  <div class="biochem-banner">
+    <div class="section-title">Resumo dos Testes Bioquímicos — Princípios e Interpretação</div>
+    <div class="biochem-grid" id="biochemGrid"></div>
+  </div>
+
+  <div class="scroll-hint">Prof. Dr. Aly Salimo Muadica · Microbiologia Clínica 2025 · Fluxograma Interativo</div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const samples = [
+  { id:'sangue', icon:'🩸', name:'Sangue / Hemocultura', desc:'Coleta asséptica de 2–3 hemoculturas (10 mL cada) antes de antibióticos. Intervalo mínimo de 30–60 min entre coletas em sítios diferentes. Essencial em sepse, endocardite, febre persistente. Incubação a 37°C por 5–7 dias. Flagged automático por turbidez, CO₂ ou pH.' },
+  { id:'urina', icon:'🟡', name:'Urina — Urocultura', desc:'Jato médio, cateter ou punção suprapúbica. >10⁵ UFC/mL = bacteriúria significativa. Coleta de manhã (urina concentrada). Manter refrigerada se atraso > 30 min. EAS (Exame de urina tipo 1) orienta: leucocitúria, nitritos, bacteriúria.' },
+  { id:'escarro', icon:'🫁', name:'Escarro / LBA', desc:'Escarro ideal: >25 PMN e <10 células epiteliais por campo (10x). LBA (Lavado Broncoalveolar) para suspeita de PAH (Pneumonia Associada ao Hospital) ou imunossuprimidos. Coleta antes de antibióticos.' },
+  { id:'liqor', icon:'🧠', name:'LCR — Líquor', desc:'Punção lombar asséptica L3–L4 ou L4–L5. Coleta em 3 tubos: 1° para bioquímica/química, 2° para microbiologia, 3° para celularidade. Analisar turbidez, pressão de abertura, células, proteínas, glicose (comparar com glicemia). Urgent — não refrigerar.' },
+  { id:'fezes', icon:'🟫', name:'Fezes / Coprocultura', desc:'Frasco estéril sem conservante para cultura. Com conservante (Cary-Blair) se transporte > 2h. Pesquisa de toxinas (C. difficile), parasitológico e coprocultura para enterobactérias patogênicas. Mínimo 2g ou 2 mL de material líquido.' },
+  { id:'swab', icon:'🦷', name:'Swab Orofaringe / Nasal', desc:'Swab vigoroso de tonsilas e parede posterior. Evitar úvula, língua e bochechas. Meios de transporte: Stuart ou Amies. Para investigação de S. pyogenes, S. aureus nasal (portadores), N. meningitidis.' },
+  { id:'ferida', icon:'🩹', name:'Secreção / Ferida', desc:'Preferir aspirado profundo com seringa ao swab superficial. Swab superficial captura flora colonizadora, não o agente etiológico real. Coleta do fundo da lesão. Amostras múltiplas para aeróbio e anaeróbio (meio de transporte sem O₂).' },
+  { id:'liquido', icon:'💧', name:'Líquidos Cavitários', desc:'Líquido pleural, peritoneal, sinovial, pericárdico. Coleta por punção (toracocentese, paracentese, artrocentese). Enviar imediatamente ao laboratório. Analisar aspecto, células, proteínas, DHL, glicose e cultura aeróbia/anaeróbia/fúngica.' },
+];
+
+const pathogens = {
+  sangue: [
+    { name:'Staphylococcus aureus', disease:'Bacteremia · Endocardite · Sepse', gram:'G+', shape:'Coco', tags:['gpos','aer'], morpho:'Cocos em cachos (staphylé = cacho de uvas). Catalase+. Coagulase+. β-hemólise em ágar sangue.', tests:{ Catalase:'Positivo', Coagulase:'Positivo', Hemólise:'Beta', TSI:'—', Indol:'—' }, virulence:'Toxinas: TSST-1 (síndrome do choque tóxico), leucocidina PVL (Panton-Valentine), enterotoxinas (A–E), esfingomielinase, hialuronidase. Biofilme em superfícies. Proteína A (evasão imune). Hemolisinas α, β, γ, δ.', resistance:'MRSA (Methicillin-Resistant S. aureus): resistência mediada por gene mecA que codifica PBP2a (proteína de ligação à penicilina modificada). VISA/VRSA emergentes. Sensível à vancomicina (1ª linha MRSA). Testagem por CIM (Concentração Inibitória Mínima).', treatment:'MSSA: oxacilina/nafcilina. MRSA: vancomicina ± daptomicina + rifampicina em endocardite. Linezolida para MRSA pneumonia. Ceftarolina (nova cefalosporina ativa em MRSA).', clinical:'Hemoculturas positivas para S. aureus NUNCA devem ser ignoradas — não é contaminante. Ecocardiograma obrigatório. Bacteremia persistente (>72h) = endocardite ou foco metastático. Remover foco (cateter, prótese, abscesso).' },
+    { name:'Streptococcus pneumoniae', disease:'Bacteremia · Pneumonia · Meningite', gram:'G+', shape:'Diplococo', tags:['gpos','fac'], morpho:'Diplococos lanceolados (forma de chama de vela). Cápsula polissacarídea espessa — principal fator de virulência. α-hemólise. Optoquina sensível.', tests:{ Catalase:'Negativo', Optoquina:'Sensível', Hemólise:'Alpha', BileEsculina:'Positivo', Solubilidade:'Solúvel em bile' }, virulence:'Cápsula: 90+ sorotipos — inibe fagocitose. Pneumolisina (toxina poro-formadora). Autolisina (lise bacteriana libera componentes inflamatórios). IgA protease. Adesinas (PspC, PsaA).', resistance:'PRP (Penicillin-Resistant Pneumococcus): alteração nas PBPs 1a, 2b, 2x. Resistência à eritromicina (metilação do ribossomo — ermB, efflux — mefA). Testes CLSI para CIM obrigatórios.', treatment:'Meningite: ceftriaxona + vancomicina (até antibiograma). Pneumonia: amoxicilina ou penicilina se sensível. Macrolídeos para atípica. Vacinação: PCV13 (conjugada 13-valente) e PPV23 (polissacarídea 23-valente).', clinical:'Principal causa de meningite bacteriana adquirida na comunidade em adultos. Antígeno urinário (sensibilidade 80%+) para diagnóstico rápido. PAC (Pneumonia Adquirida na Comunidade) grave: escore CURB-65 ou PSI para internação.' },
+    { name:'Escherichia coli', disease:'Bacteremia · Sepse de foco urinário / abdominal', gram:'G−', shape:'Bacilo', tags:['gneg','fac'], morpho:'Bacilo curto, gram-negativo. Móvel (flagelos peritríquios). Fermentador lactose. Indol+.', tests:{ Oxidase:'Negativo', Indol:'Positivo', Lactose:'Positivo', TSI:'A/A + gás', Citrato:'Negativo', Motilidade:'Positivo' }, virulence:'Fímbrias tipo 1 e tipo P (adesão uroepitélio). Fator necrosante citotóxico (CNF). Hemolisina alpha (HlyA). Aerobactina (sideróforo — captura ferro). Cápsula K (anti-fagocítica). Antígeno O (LPS — endotoxina).', resistance:'ESBL (Extended Spectrum Beta-Lactamase / Beta-Lactamase de Espectro Estendido): enzimas TEM, SHV, CTX-M que hidrolisam cefalosporinas de 3ª geração. KPC (Klebsiella pneumoniae Carbapenemase) em algumas cepas. MCR (resistência a polimixina — plasmídeo).', treatment:'ITU não complicada: nitrofurantoína, fosfomicina. ESBL: carbapenêmicos (ertapeném, meropeném). ESBL urinária: ertapeném 1g/dia. Bacteremia por ESBL: carbapenêmico 7–14 dias.', clinical:'Principal causa de bacteremia gram-negativa (foco abdominal e urinário). Porta de entrada mais comum: trato urinário > abdominal > biliar. ESBL crescendo mundialmente. Terapia dirigida por antibiograma em 48–72h reduz mortalidade.' },
+    { name:'Klebsiella pneumoniae', disease:'Pneumonia Aspirativa · Bacteremia · Sepse Hospitalar', gram:'G−', shape:'Bacilo', tags:['gneg','fac','res'], morpho:'Bacilo gram-negativo encapsulado (cápsula mucóide). Imóvel. Indol negativo. Fermentador de lactose. Colônias mucóides em ágar.', tests:{ Oxidase:'Negativo', Indol:'Negativo', Citrato:'Positivo', Urease:'Positivo', Motilidade:'Negativo', TSI:'A/A + gás' }, virulence:'Cápsula polissacarídea (tipos K1, K2 = hipervirulentos). Sideróforos (aerobactina, enterobactina, salmoquelina). LPS. Fímbrias tipo 1 e tipo 3. Hipermucoviscosidade (string test positivo — cápsula forma fio > 5 mm).', resistance:'CRKP (Carbapenem-Resistant K. pneumoniae): KPC (Klebsiella pneumoniae Carbapenemase), NDM (New Delhi Metallo-beta-lactamase), OXA-48. Panresistência emergente — opcões: ceftazidima-avibactam, meropeném-vaborbactam, cefiderocol.', treatment:'Infecções sensíveis: cefalosporinas 3ª geração. ESBL: carbapenêmico. KPC/NDM: combinações de novos beta-lactâmicos + inibidores. Mortalidade CRKP: 40–60%.', clinical:'Principal causa de pneumonia nosocomial por gram-negativo. "Currant jelly sputum" clássico (escarro com sangue). Abscesso hepático primário (K. pneumoniae hipervirulenta — síndrome de Rôo). Monitorar resistência — culturas de vigilância em UTI.' },
+    { name:'Staphylococcus epidermidis', disease:'Bacteremia nosocomial · Infecção de cateter · Endocardite em prótese', gram:'G+', shape:'Coco', tags:['gpos','fac','res'], morpho:'Cocos em cachos. Catalase+. Coagulase−. Branco/creme em ágar. Não hemolítico (gamma). Novobiocina sensível.', tests:{ Catalase:'Positivo', Coagulase:'Negativo', Novobiocina:'Sensível', Hemólise:'Gamma', Manitol:'Negativo' }, virulence:'Biofilme em superfícies plásticas (PIA — Polissacarídeo Intracelular Adesivo — codificado pelo operon ica). PNAG (Poly-N-acetylglucosamine). Exoproteínas. Evasão de biofilme ao sistema imune.', resistance:'Frequentemente MRSE (Methicillin-Resistant S. epidermidis). Plasmídeos transferíveis. Vancomicina: terapêutica padrão. Daptomicina, linezolida alternativas.', treatment:'Remoção do dispositivo sempre que possível. Vancomicina IV 15 mg/kg/dose 12/12h. Rifampicina em combinação (biofilme). Duração: 14 dias (sem endocardite) a 6 semanas (endocardite valva nativa ou protética).', clinical:'Isolamento em hemocultura de CNS: CRITÉRIO de contaminação vs infecção real. Regra: 2+ hemoculturas positivas do mesmo CNS = infecção real. 1 positiva isolada = provável contaminante. Contexto clínico (cateter, febre, PCR elevada) é fundamental.' },
+  ],
+  urina: [
+    { name:'Escherichia coli (UPEC)', disease:'Cistite · Pielonefrite · ITU recorrente', gram:'G−', shape:'Bacilo', tags:['gneg','fac'], morpho:'UPEC (Uropatogenic E. coli): fímbrias tipo P (se ligam ao antígeno P dos eritrócitos e células uroteliais). Produção de hemolisina alfa (HlyA) que liisa células do hospedeiro. Aerobactina para captura de ferro. Indol+. Nitritos + no EAS.', tests:{ Oxidase:'Negativo', Indol:'Positivo', TSI:'A/A + gás', Nitrito:'Positivo (EAS)', Motilidade:'Positivo' }, virulence:'PAI (Pathogenicity Islands / Ilhas de Patogenicidade): clusters genômicos com múltiplos genes de virulência. Dr fímbrias, S fímbrias, tipo 1. CNF-1 (citotoxina necrotizante). Antígeno capsular K. Autotransportadores (Sat, Pic, Vat — toxinas).', resistance:'Resistência a fluoroquinolonas crescente (>20% em muitos países). ESBL em ITU complicadas. Nitrofurantoína: excelente para cistite (não funciona em pielonefrite — não atinge parênquima renal adequadamente). Fosfomicina: boa opção oral para ESBL.', treatment:'Cistite não complicada: nitrofurantoína 100mg 12/12h x 5 dias, ou fosfomicina 3g dose única, ou TMP-SMX (se resistência local <20%). Pielonefrite: ceftriaxona IV → oral fluoroquinolona (se sensível) 7–14 dias. ESBL: ertapeném IM/IV.', clinical:'EAS com >5 leucócitos/campo + nitritos + bacteriúria = ITU provável. Cultura obrigatória em gestantes, homens, crianças, ITU complicada, pielonefrite, recorrência. Cistite não complicada em mulher jovem pode ser tratada sem cultura.' },
+    { name:'Klebsiella pneumoniae', disease:'ITU Complicada · Pielonefrite · Urosepse', gram:'G−', shape:'Bacilo', tags:['gneg','fac','res'], morpho:'Bacilo encapsulado. Imóvel. Cápsula antibactericida. Colônias mucóides. Urease positiva — produz amônia, alcalinizando urina. Nitritos + no EAS.', tests:{ Oxidase:'Negativo', Indol:'Negativo', Urease:'Positivo', Citrato:'Positivo', Motilidade:'Negativo' }, virulence:'Cápsula K polissacarídea. Sideróforos. LPS. Resistência intrínseca a ampicilina (beta-lactamase cromossomial). Hipermucoviscosidade.', resistance:'ESBL comum em ITU nosocomial. KPC emergente. Testes de ESBL obrigatórios em qualquer isolado de K. pneumoniae em infecção grave.', treatment:'ITU simples sensível: cefalosporinas 1ª geração (cefalexina VO). ITU complicada/hospitalar: ceftriaxona → resultado de cultura. ESBL: ertapeném ou meropeném. KPC: ceftazidima-avibactam.', clinical:'Em idosos, cateterismo vesical e internamento são os principais fatores de risco. Síndromes obstrutivas (litíase, HBP) predispõem à urosepse por Klebsiella. Sempre solicitar TSA (Teste de Sensibilidade a Antimicrobianos).' },
+    { name:'Proteus mirabilis', disease:'ITU · Pielonefrite · Cálculos de estruvita', gram:'G−', shape:'Bacilo', tags:['gneg','fac'], morpho:'Bacilo altamente móvel — "swarming" (migração em onda) em ágar. H2S positivo. TSI K/A. Urease fortemente positiva — principal característica diagnóstica. Indol negativo. Odor de "peixe" em cultura.', tests:{ Urease:'Fortemente Positivo', H2S:'Positivo', Motilidade:'Positivo (swarming)', Indol:'Negativo', TSI:'K/A' }, virulence:'Urease: hidrolisa ureia em amônia + CO₂ → urina alcalina → precipita fosfato de amônio magnesiano (estruvita) = cálculos em ferradura. Flagelos (locomoção e invasão de ureter). Hemolisinas. Fímbrias MR/P.', resistance:'Resistência intrínseca às polimixinas (LPS modificado). Resistência adquirida a fluoroquinolonas. Ampicilina frequentemente eficaz (mas testar). Cefalosporinas geralmente ativas.', treatment:'ITU não complicada: ampicilina-sulbactam ou cefalosporinas 1ª geração. Pielonefrite: ceftriaxona. Nefrolitíase por estruvita: tratamento cirúrgico + antibióticos (não erradica sem remover cálculo). Acidificação da urina adjuvante.', clinical:'Clássico em ITU de repetição com cálculos "em ferradura" (staghorn calculi). Urina com pH > 7.5 + cristais de estruvita no EAS = suspeitar Proteus. Endoscopia urológica necessária para remoção do cálculo.' },
+    { name:'Staphylococcus saprophyticus', disease:'Cistite em Mulheres Jovens (Pós-coital)', gram:'G+', shape:'Coco', tags:['gpos','fac'], morpho:'Coco gram-positivo. Catalase+. Coagulase−. Novobiocina resistente — característica diagnóstica diferencial de S. epidermidis. Gamma-hemólise.', tests:{ Catalase:'Positivo', Coagulase:'Negativo', Novobiocina:'Resistente', Hemólise:'Gamma' }, virulence:'Adesina de superfície SdrI (se liga à fibronectina). Urease. Lipase. Capacidade de aderência ao uroepitélio feminino.', resistance:'Geralmente sensível. Resistência a meticilina rara. Sensível a nitrofurantoína, fluoroquinolonas, cefalosporinas.', treatment:'Nitrofurantoína 100mg 12/12h × 5 dias. Ou TMP-SMX × 3 dias. Geralmente resolve facilmente. Sem necessidade de cultura em jovem sem complicações.', clinical:'2ª causa mais comum de ITU em mulheres entre 16–35 anos (após E. coli). Tipicamente pós-relação sexual — "ITU de lua de mel". Novobiocina resistência: chave diagnóstica no laboratório. Não requer internamento.' },
+    { name:'Enterococcus faecalis', disease:'ITU Nosocomial · Endocardite · Bacteremia', gram:'G+', shape:'Coco', tags:['gpos','fac','res'], morpho:'Cocos ovoides em pares ou cadeias curtas. Catalase−. Gamma-hemólise (ou alfa). Cresce em NaCl 6,5% e a 45°C — características diferenciadoras do Streptococcus. Bile-esculina positivo.', tests:{ Catalase:'Negativo', BileEsculina:'Positivo', NaCl65:'Positivo', Hemólise:'Gamma', PYR:'Positivo' }, virulence:'Gelatinase. Hialuroniase. Citolisina (β-hemólise em algumas cepas). Feromonas — facilitam conjugação plasmidial e transferência de genes de resistência. Capacidade de aderir a subendotélio cardíaco.', resistance:'VRE (Vancomycin-Resistant Enterococcus): genes vanA (alta resistência) e vanB (moderada). Resistência intrínseca a cefalosporinas, aztreonam, clindamicina, aminoglicosídeos (nível baixo). Linezolida e daptomicina: tratamento de VRE.', treatment:'ITU simples: ampicilina ou nitrofurantoína (se E. faecalis). Infecção grave/endocardite: ampicilina + gentamicina (sinergia) ou ampicilina + ceftriaxona (alternativa). VRE grave: linezolida ou daptomicina.', clinical:'VRE é problema grave em UTI — controle de infecção rigoroso (isolamento de contato, higiene de mãos). E. faecium é mais resistente que E. faecalis. Endocardite: ATB por 4–6 semanas mínimo.' },
+  ],
+  escarro: [
+    { name:'Streptococcus pneumoniae', disease:'PAC · Pneumonia Lobar · Meningite · Empiema', gram:'G+', shape:'Diplococo', tags:['gpos','fac'], morpho:'Diplococos lanceolados (pares em forma de chama de vela). Cápsula polissacarídea espessa (visualizada pela coloração de quellung / reação de Neufeld). α-hemólise. Optoquina sensível. Solúvel em bile.', tests:{ Catalase:'Negativo', Hemólise:'Alpha', Optoquina:'Sensível', BileSolubilidade:'Positivo', AgUrinario:'Positivo' }, virulence:'Cápsula: 90+ sorotipos. Inibe fagocitose por neutrófilos e macrófagos alveolares. Pneumolisina (toxina poro-formadora — ativa complemento, induz apoptose, ativa TLR4). Autolisina LytA. IgA1 protease (supera muco). PspA e PspC (adesinas).', resistance:'PRP (Penicillin-Resistant Pneumococcus): CIM ≥ 2 mg/L (alta resistência), 0.1–1 mg/L (intermediária). Resistência por alteração de PBPs. Resistência macrólidos: ermB e mefA.', treatment:'PAC leve/moderada: amoxicilina 1g 8/8h. Pneumonia grave: ceftriaxona 2g/dia + azitromicina. Meningite: ceftriaxona 4g/dia + vancomicina (hasta antibiograma). Dexametasona antes do ATB na meningite pneumocócica reduz sequelas. Vacinas PCV13 e PPSV23.', clinical:'RX tórax: consolidação lobar com broncograma aéreo. Derrame pleural em ~40%. Agente urinário positivo até 5 dias após início ATB. Indicações de UCI: CURB-65 ≥3, SaO2 <90%, pressão arterial baixa. Mortalidade meningite pneumocócica: 20–30% em adultos.' },
+    { name:'Klebsiella pneumoniae', disease:'Pneumonia Nosocomial · Aspirativa · Pneumonia Necrotizante', gram:'G−', shape:'Bacilo', tags:['gneg','fac','res'], morpho:'Bacilo gram-negativo. Encapsulado — cápsula mucóide (hipermucoviscosidade = string test +). Imóvel. Colonies mucóides amareladas. Odor característico. Urease+. Indol−.', tests:{ Oxidase:'Negativo', Indol:'Negativo', Urease:'Positivo', Citrato:'Positivo', TSI:'A/A + gás' }, virulence:'Cápsula K1/K2 (hvKP — Klebsiella hipervirulenta). Sideróforos: aerobactina, salmoquelina, yersiniabactina. Genes de virulência rmpA (regulador de mucoviscosidade). Endotoxina LPS.', resistance:'CRKP com KPC, NDM, OXA-48. Opções limitadas: ceftazidima-avibactam, meropeném-vaborbactam, imipenem-cilastatin-relebactam, cefiderocol.', treatment:'Sensível: ceftriaxona ou piperacilina-tazobactam. ESBL: carbapenêmico. CRKP: novos beta-lactâmicos/inibidores de beta-lactamase. Duração: 7–21 dias conforme gravidade. Drenagem de coleções.', clinical:'RX: consolidação bilateral lobares superiores com necrose e cavitação ("currant jelly sputum" — escarro com sangue e muco). Pneumonia em alcoólicos, diabéticos, aspiração. Alta mortalidade (30–50% se bacteremia associada). Culturas de vigilância em ventilados.' },
+    { name:'Pseudomonas aeruginosa', disease:'PAH/PAV · Pneumonia em Fibrose Cística · Infecção em Imunocomprometidos', gram:'G−', shape:'Bacilo', tags:['gneg','aer','res'], morpho:'Bacilo gram-negativo não fermentador. Oxidase+. Piocianina (pigmento azul-verde fluorescente). Odor adocicado (de jasmim). Cresce a 42°C. Colônias beta-hemolíticas com brilho metálico. Altamente móvel (flagelo polar).', tests:{ Oxidase:'Positivo', Piocianina:'Positivo (azul-verde)', TSI:'K/K ou sem mudança', Citrato:'Positivo', Motilidade:'Positivo', Temp42:'Crescimento' }, virulence:'Exotoxina A (inibe síntese proteica — mesmo mecanismo que toxina diftérica). Protease alcalina e LasB elastase (destroem tecido e matriz). Ramnolipídeos (destroem surfactante pulmonar). Biofilme + alginato (fundamental na fibrose cística — mucóide). Pili tipo IV (adesão). Sistemas de secreção tipo III (T3SS) — injeta proteínas citotóxicas.', resistance:'Intrínseca a muitos antibióticos. CRPA (Carbapenem-Resistant P. aeruginosa): perda de OprD (porina), bombas de efflux MexAB-OprM, AmpC beta-lactamase. ESBL. MDR (Multi-Drug Resistant). XDR (eXtensively Drug Resistant). PDR (Pan-Drug Resistant).', treatment:'Pseudomonas: SEMPRE 2 fármacos com mecanismos diferentes (evitar emergência de resistência). Beta-lactâmico antipseudomonas (pip/tazo, ceftazidima, cefepima, meropeném) + aminoglicosídeo ou ciprofloxacina. MDR: combinações avançadas, colistina + outro agente.', clinical:'PAV (Pneumonia Associada à Ventilação Mecânica): suspeitar em paciente ventilado > 48h com febre, infiltrado novo e secreção purulenta. MINI-BAL ou aspirado endotraqueal para diagnóstico quantitativo (≥10⁶ UFC/mL). Desescalona em 48–72h com antibiograma.' },
+    { name:'Mycobacterium tuberculosis', disease:'Tuberculose Pulmonar · TB Miliar · TB Extrapulmonar', gram:'G+', shape:'Bacilo (BAAR)', tags:['gpos','aer'], morpho:'BAAR (Bacilo Álcool-Ácido Resistente): parece Gram+ mas sua parede é única — rica em ácidos micólicos, arabinogalactana, peptidoglicano. NÃO cora pelo Gram convencional — Ziehl-Neelsen (ZN) ou Auramina-Rodamina. Lento crescimento (16–20h). Colônias rugosas amarelas (Löwenstein-Jensen — 4–8 semanas).', tests:{ ZiehlNeelsen:'Positivo (BAAR vermelho em fundo azul)', Cultura:'Löwenstein-Jensen 4–8 sem', IGRA:'Positivo', TST:'Mantoux (+)', GeneXpert:'Detecta MTB + resistência rifampicina em 2h' }, virulence:'Evasão fagolisossomal: bloqueia fusão fagossomo-lisossomo (via LAM — lipoarabinomanana). Survives inside macrófagos. Granuloma: resposta imune que contém mas não elimina. Latência: pode reativar após anos. ESAT-6, CFP-10 (antígenos diagnósticos). ESX-1 (sistema de secreção).', resistance:'Resistência primária (nunca tratou) e adquirida (tratamento inadequado). MDR-TB: resistente a isoniazida + rifampicina. XDR-TB: MDR + resistente a fluoroquinolonas + injetáveis de 2ª linha. Teste de sensibilidade molecular (GeneXpert MTB/RIF, Truenat) e cultura com TSA.', treatment:'RIPE por 6 meses: Rifampicina + Isoniazida + Pirazinamida + Etambutol (2 meses intensivos) → RI (4 meses manutenção). MDR-TB: 18–24 meses com bedaquilina, linezolida, clofazimina, levofloxacina. Observação direta da toma (DOT — Directly Observed Therapy).', clinical:'Triada clássica: tosse >2–3 semanas + suores noturnos + perda de peso. BAAR no escarro x3 (coleta em dias consecutivos). RX: infiltrado apical, cavitações, imagens em "árvore em brotamento" (broncopneumonia). Contatos: quimioprofilaxia com isoniazida 9 meses.' },
+    { name:'Haemophilus influenzae', disease:'Pneumonia · Otite Média · Sinusite · Meningite (crianças)', gram:'G−', shape:'Cocobacilo', tags:['gneg','fac'], morpho:'Coco-bacilo gram-negativo muito pequeno. Satélite de Staphylococcus (necessita fator X — hemina e fator V — NAD do ágar sangue aquecido = chocolate). Encapsulado (tipo B = mais virulento) ou não encapsulado (NTHI = non-typeable).', tests:{ Satelitismo:'Positivo (S. aureus)', FatorX:'Necessita', FatorV:'Necessita', Capsula:'Sorotipo B (mais virulento)' }, virulence:'Cápsula tipo b (polirribitol fosfato) — principal fator de virulência de Hib. IgA1 protease. LOS (Lipooligossacarídeo — endotoxina). Fímbrias. NTHI: biofilme em otite média crónica.', resistance:'Beta-lactamase plasmidial (TEM-1): ampicilina-resistente. BLNAR (Beta-Lactamase Negative Ampicillin Resistant): alteração PBP3 — preocupante. Cefotaxima/ceftriaxona ainda eficazes na maioria.', treatment:'Otite/sinusite: amoxicilina-clavulanato. Pneumonia: amoxicilina-clavulanato ou ceftriaxona. Meningite por Hib: ceftriaxona 4g/dia + dexametasona (reduz sequelas neurológicas). Profilaxia: vacina Hib conjugada (Hib é raro onde vacinação universal).', clinical:'Em adultos: DPOC exacerbada (NTHI). Em crianças não vacinadas: epiglotite aguda (Hib tipo B) = emergência — estridor, posição em tripé, babando, febre alta. Não examinar garganta sem intubação pronta. Vacinação Hib reduziu meningite pediátrica >90%.' },
+  ],
+  liqor: [
+    { name:'Neisseria meningitidis', disease:'Meningite Meningocócica · Meningococcemia · Síndrome de Waterhouse-Friderichsen', gram:'G−', shape:'Diplococo', tags:['gneg','fac'], morpho:'Diplococo gram-negativo (em forma de "grão de café" / rineforme). Intracelular nos PMN do LCR. Oxidase+. Capsula polissacarídea (sorogrupos A, B, C, W, Y, X). Temperatura 37°C. Fastidioso — meio enriquecido (Mueller-Hinton, Thayer-Martin).', tests:{ Oxidase:'Positivo', Capsula:'Sorogrupo A/B/C/W/Y', Glicose:'Positivo (fermentação)', Maltose:'Positivo', IntracelularPMN:'Positivo no LCR', PCR16S:'Diagnóstico rápido' }, virulence:'Cápsula (anti-fagocítica). LOS (endotoxina — causa choque séptico fulminante). Fímbrias tipo IV (colonização nasofaringe). IgA1 protease. Prot A/B (proteínas de membrana externa — alvo vacinal). PorA, PorB.', resistance:'Resistência à penicilina: alteração das PBPs (redução de afinidade). Rifampicina usada na profilaxia (testar resistência). Ciprofloxacina: profilaxia em adultos.', treatment:'EMERGÊNCIA: penicilina G 4 MUI/4h IV ou ceftriaxona 4g/dia. Dexametasona pré-ATB na meningite (reduz edema cerebral, perda auditiva). Profilaxia de contatos íntimos (<1m por >8h): rifampicina 600mg 12/12h x 2 dias ou ciprofloxacina 500mg dose única. Vacinas: MenC, MenACWY, MenB (Bexsero, Trumenba).', clinical:'Meningite de início hiperagudo: febre + rigidez nucal + fotofobia + petéquias/púrpura = CEFTRIAXONA IMEDIATA sem esperar PL. Sinal de Kernig e Brudzinski. LCR turvo: proteínas↑, glicose↓, >1000 células PMN. Síndrome de Waterhouse-Friderichsen: hemorragia adrenal bilateral, insuficiência adrenal aguda, choque.' },
+    { name:'Streptococcus pneumoniae', disease:'Meningite Bacteriana Adulto · Pneumonia + Meningite', gram:'G+', shape:'Diplococo', tags:['gpos','fac'], morpho:'Diplococos lanceolados. α-hemólise. Optoquina sensível. Bile solúvel. Antígeno urinário positivo. LCR: >1000 PMN, proteínas muito elevadas (>200mg/dL), glicose <40mg/dL ou relação LCR/soro <0.4.', tests:{ Catalase:'Negativo', Hemólise:'Alpha', Optoquina:'Sensível', AgUrinario:'Positivo', BileSolubilidade:'Positivo' }, virulence:'Cápsula. Pneumolisina (lise neuronal direta). Inflamação excessiva via TLRs → edema cerebral. PspC (PspC liga fator H — evasão complemento).', resistance:'PRP: resistência por PBPs alteradas. Ceftriaxona: ainda ativa em muitos PRP. Testar CIM obrigatório.', treatment:'Ceftriaxona 2g 12/12h + vancomicina 30-45mg/kg/dia (dividido a cada 8-12h) até antibiograma. Dexametasona 0.15mg/kg/6h x 4 dias (ANTES do ATB — reduz inflamação). Ampliar para ampicilina se >50 anos (risco Listeria).', clinical:'Principal causa de meningite em adultos (após N. meningitidis em jovens). Mortalidade 20–30%. Sequelas: surdez (30%), déficit neurológico. Prognóstico piora com ATB tardio — tratar empiricamente em <60 min se suspeita clínica. PL após TC em pacientes com focos neurológicos ou imunocomprometidos.' },
+    { name:'Listeria monocytogenes', disease:'Meningite em Imunossuprimidos · Listeriose Neonatal · Listeriose em Gestantes', gram:'G+', shape:'Bacilo', tags:['gpos','fac'], morpho:'Bacilo gram-positivo curto. Catalase+. Coagulase−. Motilidade típica: "guarda-chuva" a 20–25°C (flagelos peritríquios), imóvel a 37°C. β-hemólise. CAMP test positivo com S. aureus. Cresce a 4°C (geladeira!) — psicrotrófico. Colônias azuladas em luz oblíqua.', tests:{ Catalase:'Positivo', Motilidade:'Positivo (20-25°C)', CAMPtest:'Positivo', Hemólise:'Beta', Temperatura4C:'Cresce' }, virulence:'Internalinas A e B (InlA, InlB): se ligam a E-caderina e receptor Met — penetra células epiteliais intestinais e hepatócitos. Listeriolisina O (LLO): poro-formadora — escape do vacúolo para citoplasma. ActA: polimerização de actina da célula hospedeira → movimento intracelular em "cauda de cometa". Passa a barreira placentária e hematoencefálica.', resistance:'Resistência intrínseca a cefalosporinas. Sensível a ampicilina + gentamicina. TMP-SMX alternativa em alérgicos a penicilina.', treatment:'Ampicilina 2g/4h IV + gentamicina 1mg/kg/8h por 3–6 semanas (meningite). Gestante: ampicilina. Sem cefalosporinas — resistência intrínseca (adicionar ampicilina ao esquema empírico de meningite se >50 anos ou imunossuprimido).', clinical:'Epidemiologia: gestantes, >65 anos, imunossuprimidos, alcoólatras. Fontes alimentares: queijos macios, carnes processadas, verduras refrigeradas. Onset tardio neonatal (>7 dias): meningite grave. LCR: meningite com células mononucleares (atípico para bacteriana = suspeitar Listeria). Profilaxia: evitar alimentos de risco.' },
+    { name:'Haemophilus influenzae tipo b', disease:'Meningite Bacteriana Infantil · Epiglotite Aguda', gram:'G−', shape:'Cocobacilo', tags:['gneg','fac'], morpho:'Coco-bacilo gram-negativo muito pequeno e pleomórfico. Encapsulado (tipo b). Fastidioso — cresce em ágar chocolate (fator X + V). Satelitismo com S. aureus em ágar sangue. Oxidase variável. PRP positivo.', tests:{ Satelitismo:'Positivo', FatorXV:'Ambos necessários', PRP:'Positivo (tipo b)', Glicose:'Positivo' }, virulence:'Cápsula polirribitol fosfato (PRP) tipo b — principal fator de virulência. IgA1 protease. LOS (endotoxina — inflamação meníngea). Fímbrias.', resistance:'Beta-lactamase TEM-1 (ampicilina resistente). Cefotaxima/ceftriaxona ativas. BLNAR (PBP3 alterado) — emergente, testar.', treatment:'Ceftriaxona 80–100mg/kg/dia (crianças). Dexametasona 0.15mg/kg/6h x 4 dias (reduz surdez em meningite por Hib). Profilaxia: rifampicina 20mg/kg/dia x 4 dias para contatos.', clinical:'Raro em crianças vacinadas (vacina Hib eliminou >95% dos casos). Epiglotite: emergência — estridor, disfagia, febre, posição sentada inclinada para frente. NUNCA tentar ver garganta sem via aérea garantida. Médico intensivista + anestesista obrigatório.' },
+    { name:'Cryptococcus neoformans', disease:'Meningite Fúngica (HIV/AIDS · Transplantados)', gram:'—', shape:'Levedura', tags:['fac'], morpho:'Levedura encapsulada. Coloração com Tinta da China (Indian Ink): halo translúcido enorme ao redor da célula = cápsula polissacarídea. NÃO é bactéria — fungo dimórfico. LCR com abertura de pressão altíssima (>250 mmH2O). Poucas células no LCR (em imunocomprometidos severos = "meningite silenciosa").', tests:{ TintaDaChina:'Positivo (halo de cápsula)', AgCriptococico:'Positivo (sangue e LCR)', Cultura:'Ágar Sabouraud — colônias mucóides', LCRpressao:'Frequentemente >250mmH2O' }, virulence:'Cápsula polissacarídea (glucuronoxilomanana — GXM): inibe fagocitose, suprime imunidade celular. Melanina (inibe oxidação). Urease. Fosfolipase. Proteinase. Sobrevive em macrófagos.', resistance:'Fluconazol: resistência crescente (especialmente em HIV em tratamento fluconazol profilático). Anfotericina B: padrão de referência.', treatment:'Indução: anfotericina B desoxicolato 0.7-1mg/kg/dia + fluconazol 800mg/dia (alternativa: lipossomal amb) por 2 semanas. Consolidação: fluconazol 400mg/dia x 8 semanas. Manutenção: fluconazol 200mg/dia (enquanto CD4 <100 em HIV). Manejo da pressão intracraniana elevada: PL terapêuticas diárias até normalizar.', clinical:'Mais comum em HIV com CD4 <100 células/μL. Início insidioso: cefaleia progressiva, febre, vômitos. Pressão intracraniana elevada: principal causa de mortalidade precoce. PL diagnóstica E terapêutica (retirar LCR até pressão <200 mmH2O). Antígeno criptocócico no LCR/sangue: sensibilidade >99%.' },
+  ],
+  fezes: [
+    { name:'Salmonella typhi', disease:'Febre Tifoide · Bacteremia · Portador Biliar Crônico', gram:'G−', shape:'Bacilo', tags:['gneg','fac'], morpho:'Bacilo gram-negativo. Móvel (flagelos peritríquios). H2S positivo em TSI. Lactose negativo. Antígenos: O (somático LPS), H (flagelar), Vi (capsular — exclusivo da typhi).', tests:{ H2S:'Positivo', Motilidade:'Positivo', Lactose:'Negativo', TSI:'K/A', AntigViidal:'Positivo (Widal > 1:160)', AgFecal:'Positivo (1ª semana)' }, virulence:'SPI-1 e SPI-2 (Salmonella Pathogenicity Islands): sistema de secreção tipo III (T3SS) — injeta efetores nas células do hospedeiro. Invasão das células M das Placas de Peyer → penetra submucosa → linfáticos → bacteremia. Vi antígeno (cápsula) — anti-fagocítico.', resistance:'MDR S. typhi: resistente a ampicilina + cloranfenicol + TMP-SMX. XDR S. typhi (Paquistão 2016+): resistente a todos os anteriores + fluoroquinolonas + ceftriaxona — azitromicina única opção oral.', treatment:'Ceftriaxona 2–4g/dia x 10–14 dias. Fluoroquinolonas (se sensível): ciprofloxacina 500mg 12/12h x 14 dias. XDR: azitromicina 1g/dia x 5–7 dias. Portador crônico biliar: ciprofloxacina x 4 semanas ± colecistectomia. Vacinas: Ty21a (oral vivo atenuado), Vi-CPS (injetável), TCV (conjugada — crianças <2 anos).', clinical:'Síndrome febril: febre em "escada" (ascending), bradicardia relativa, dissociação pulso-temperatura, roséolas tíficas (manchas rosadas transitórias no tronco), esplenomegalia, hepatomegalia. 1ª semana: hemocultura+ (melhor diagnóstico). 2ª semana: coprocultura+. 3ª semana: urocultura+. Complicações: perfuração intestinal (2%), hemorragia digestiva.' },
+    { name:'Salmonella não-tifoide (NTS)', disease:'Salmonelose · Gastrenterite · Bacteremia em falciformes/HIV', gram:'G−', shape:'Bacilo', tags:['gneg','fac'], morpho:'Bacilo gram-negativo. H2S+. Móvel. Lactose−. Sorogrupos: Enteritidis, Typhimurium, Heidelberg, Newport... >2500 sorotipos (classificação Kauffmann-White pelo sistema de antígenos O e H).', tests:{ H2S:'Positivo', Motilidade:'Positivo', Lactose:'Negativo', TSI:'K/A + gás' }, virulence:'T3SS SPI-1 (invasão celular) e SPI-2 (sobrevivência intracelular). Salmolisina. LPS. Invasão da lâmina própria → inflamação → diarreia inflamatória.', resistance:'Resistência crescente a ciprofloxacina, ampicilina, TMP-SMX. ESBL em NTS invasivas. Monitoramento de resistência em aves e produtos avícolas.', treatment:'Gastrenterite leve: hidratação oral — ATB NÃO recomendado (prolonga excreção fecal). Bacteremia/forma invasiva: ceftriaxona 4g/dia. Falciforme + HIV: profilaxia se CD4 <200.', clinical:'Incubação: 6–48h. Diarreia aquosa ou sanguinolenta, febre, náuseas, vômitos. Auto-limitada (3–7 dias). ATB evitar em casos leves — prolongam portador assintomático e selecionam resistência. Reservatório: aves e ovos (S. Enteritidis), répteis (Typhimurium). Surtos alimentares: investigação de vigilância epidemiológica.' },
+    { name:'Shigella spp.', disease:'Disenteria Bacilar · Síndrome Hemolítico-Urêmica (S. dysenteriae)', gram:'G−', shape:'Bacilo', tags:['gneg','fac'], morpho:'Bacilo gram-negativo. H2S negativo. Imóvel. Lactose negativo. Não produz gás. Invasão intracelular das células epiteliais do cólon — multiplicação no citoplasma (como Listeria, usa actina = "actin tail").', tests:{ H2S:'Negativo', Motilidade:'Negativo', Lactose:'Negativo', TSI:'K/A, sem gás', Indol:'V (S. sonnei +)', Toxina:'Shiga (S. dysenteriae tipo 1)' }, virulence:'Toxina Shiga (Stx — S. dysenteriae tipo 1): inibe síntese proteica (inativa 28S rRNA) → morte celular → disenteria + SHU. Invasão intracelular: IpaB/C injetam efetores via T3SS. Movimentação intracelular via polimericação de actina (IcsA/VirG). Endotoxina LPS.', resistance:'MDR Shigella crescente — especialmente no hemisfério sul. Fluoroquinolonas: resistência emergente. Azitromicina: alternativa válida. Ampicilina + TMP-SMX: frequentemente resistentes.', treatment:'Dissenteria: azitromicina 500mg/dia x 3 dias ou ciprofloxacina (se sensível). Crianças: azitromicina. SHU por Stx: suporte — ATB CONTRAINDICADO (aumenta liberação de toxina e risco de SHU). Hidratação IV. Diálise se necessário.', clinical:'Dose infectante mínima: 10–200 bactérias (altamente contagiosa). Fezes com sangue + muco + tenesmo. Cólicas intensas. Febre. Complicações: prolapso retal, convulsões febris em crianças, artrite reativa, SHU (S. dysenteriae). RHS (Reactive Hemolytic Syndrome). Vigilância epidemiológica obrigatória.' },
+    { name:'Clostridioides difficile', disease:'Colite Pseudomembranosa · Diarreia Associada a ATB · Megacólon Tóxico', gram:'G+', shape:'Bacilo', tags:['gpos','an','spore'], morpho:'Bacilo gram-positivo anaeróbio estrito. Formador de esporos (resistentes a álcool — higiene de mãos com álcool não elimina C. difficile — necessário sabão!). Cresce em ágar CCFA (cefotetano-cicloserina-frutose-ágar). Colônias amareladas com odor de "estábulo de cavalos". Catalase−.', tests:{ Toxina:'Toxinas A e B (EIA ou PCR)', Cultura:'CCFA (anaeróbio)', GDH:'Glutamato Desidrogenase (rastreamento)', PCR:'Alta sensibilidade', Colonoscopio:'Pseudomembranas (placas brancas aderidas)' }, virulence:'Toxina A (TcdA — enterotoxina): disrução das tight junctions intestinais → diarreia secretora. Toxina B (TcdB — citotoxina): inibe Rho GTPases → morte celular → destruição da mucosa. Esporos: resistência extrema — sobrevivem em superfícies hospitalares por meses.', resistance:'Resistência ao metronidazol crescente. Vancomicina oral: boa eficácia. Fidaxomicina: menor taxa de recorrência. Bezlotoxumab (anticorpo anti-TcdB): prevenção de recorrência.', treatment:'Leve/moderado: vancomicina 125mg VO 6/6h x 10 dias ou fidaxomicina 200mg 12/12h x 10 dias. Grave (leucocitose >15.000, creatinina >1.5x): vancomicina 500mg VO/SNG 6/6h ± metronidazol IV. Megacólon tóxico: cirurgia (colectomia subtotal). Recorrência: fidaxomicina, bezlotoxumab ou transplante de microbiota fecal (TMF).', clinical:'Critério diagnóstico: diarreia (≥3 episódios líquidos/24h) + toxina positiva OU pseudomembranas na colonoscopia. Fatores de risco: ATB (especialmente quinolonas, cefalosporinas, ampicilina, clindamicina), hospitalização, >65 anos, IBP (inibidores de bomba de próton). Uso de ATB suspende por si só. Precauções de contato + higiene com água e sabão. NÃO usar álcool para C. difficile.' },
+    { name:'Campylobacter jejuni', disease:'Gastroenterite Inflamatória · Síndrome de Guillain-Barré', gram:'G−', shape:'Espiral', tags:['gneg','fac'], morpho:'Bacilo curvo ou espiral gram-negativo (como "asa de gaivota" aos pares). Microaerófilo (5% O₂). Oxidase+. Termotolerante — cresce melhor a 42°C (temperatura do intestino de aves). Altamente móvel (flagelo polar unipolar).', tests:{ Oxidase:'Positivo', Temperatura42:'Crescimento', Microaerofilismo:'5% O2 10% CO2', Forma:'"S" ou gaivota', Hippurato:'Positivo (C. jejuni)' }, virulence:'CDT (Cytolethal Distending Toxin): bloqueia ciclo celular → apoptose. Flagelos (mobilidade e invasão). CadF (adesina a fibronectina). CiaB (efetores intracelulares). Mimetismo molecular: LOS (lipooligossacarídeo) mimetiza gangliósidos do nervo periférico → SGB (Síndrome de Guillain-Barré) pós-infecção.', resistance:'Fluoroquinolonas: alta resistência (>50% em muitos países — uso veterinário em aves). Azitromicina: ainda eficaz. Eritromicina: 1ª linha clássica.', treatment:'Gastrenterite: auto-limitada (5–7 dias) — hidratação. ATB apenas em casos graves, imunocomprometidos ou septicemia. Azitromicina 500mg/dia x 3–5 dias ou eritromicina 500mg 12/12h x 5 dias. SGB: IVIG (Imunoglobulina IV) ou plasmaférese, fisioterapia intensiva.', clinical:'Incubação 2–5 dias. Diarreia sanguinolenta + cólicas intensas + febre. 1–3 semanas depois: SGB em 1/1000 casos (ascendente, paralisia flácida, arreflexia — atentar para fraqueza progressiva!). Reservatório: aves cruas, leite não pasteurizado. Prevenção: cozimento adequado das aves.' },
+  ],
+  swab: [
+    { name:'Streptococcus pyogenes (GAS)', disease:'Faringite Estreptocócica · Escarlatina · Febre Reumática · STSS', gram:'G+', shape:'Coco', tags:['gpos','fac'], morpho:'Cocos gram-positivos em cadeias. Catalase−. Beta-hemólise. Grupo A de Lancefield (proteína C polissacarídea). Bacitracina sensível. PYR positivo. Antígeno grupo A (teste rápido — Strep A).', tests:{ Catalase:'Negativo', Hemólise:'Beta', Bacitracina:'Sensível', PYR:'Positivo', TesteRapido:'Strep A (sensib. 70-90%, espec. 95-99%)' }, virulence:'Proteína M (anti-fagocítica — >180 tipos — classificação EMM). Estreptolisinas O e S (hemolisinas, cardiotóxicas — ASO = Anti-Estreptolisina O eleva na febre reumática). Toxinas pirogênicas (SPE-A, B, C, J): superantígenos → síndrome do choque tóxico estreptocócico. Estreptoquinase, hialuronidase. DNase, exotoxinas necrotizantes.', resistance:'Universalmente sensível à penicilina após 70+ anos de uso! Não há resistência adquirida à penicilina. Resistência a macrolídeos: 5–30% (gene ermB, mefA). Resistência a clindamicina: menos comum.', treatment:'Faringite: amoxicilina 500mg 12/12h x 10 dias (penicilina V oral 250mg 4x/dia x 10 dias). Alergia: azitromicina ou cefalosporinas. Febre reumática: tratamento + profilaxia secundária com benzilpenicilina benzatina 1.2 MUI/mês por 5–10 anos. STSS: penicilina + clindamicina (inibe síntese de toxinas) + IVIG.', clinical:'Teste rápido Strep A: sensibilidade 70–90%. Negativo com alta suspeita clínica → cultura de swab (gold standard). Critérios de Centor/McIsaac para decisão de testar/tratar. Febre reumática: critérios de Jones. ASO e Anti-DNase B confirmam infecção recente. Profilaxia primária da febre reumática = tratar faringite adequadamente.' },
+    { name:'Staphylococcus aureus (Nasal)', disease:'Portador Nasal · SSTI · Fonte de Surtos Hospitalares', gram:'G+', shape:'Coco', tags:['gpos','fac','res'], morpho:'Cocos em cachos. Catalase+. Coagulase+. Colonização nasal assintomática (portador): 20–30% da população. Fossa nasal anterior = reservatório. MRSA nasal = risco para cirurgia cardíaca, ortopédica, diálise.', tests:{ Catalase:'Positivo', Coagulase:'Positivo', Hemólise:'Beta', MRSA_PCR:'Triagem nasal por PCR em 1-4h' }, virulence:'Proteína A (liga Fc das IgGs — evasão imune). Leucocidina PVL (necrotizante — especialmente CA-MRSA). Toxinas TSST-1, enterotoxinas. Esfingomielinase. Hemolisinas. Biofilme.', resistance:'MRSA-HA (Healthcare-Associated): multirresistente. MRSA-CA (Community-Associated): geralmente mais sensível mas produz PVL. MRSA-LA (Livestock-Associated): bovinos — ST398. Descolonização: mupirocina nasal + clorexidina corporal (antes de cirurgias de alto risco).', treatment:'Descolonização (MRSA pré-cirurgia): mupirocina 2% intranasal 2x/dia x 5 dias + banhos com clorexidina 4% x 5 dias. SSTIS por CA-MRSA: TMP-SMX + doxiciclina. MRSA invasivo: vancomicina IV.', clinical:'Triagem de portadores em UTI, cirurgia cardíaca, hemodiálise. Swab nasal bilateral. PCR: resultado em 1–4h (vs. 24–48h para cultura). Descolonização pré-operatória reduz infecção de sítio cirúrgico por S. aureus em 60%.' },
+    { name:'Neisseria gonorrhoeae', disease:'Gonorreia · Uretrite · Cervicite · DIP · Artrite Gonocócica', gram:'G−', shape:'Diplococo', tags:['gneg','fac'], morpho:'Diplococo gram-negativo intraleucocitário. Oxidase+. Fastidioso — cresce em Thayer-Martin (meio seletivo com antibióticos para inibir flora normal). Temperatura 35–37°C. CO₂ 5%. Fermentador de glicose (não maltose — diferencia de N. meningitidis). Pilinas (fímbrias tipo IV).', tests:{ Oxidase:'Positivo', Glicose:'Positivo', Maltose:'Negativo', ThayerMartin:'Crescimento', NAAT:'Alta sensibilidade (PCR — padrão ouro para triagem)' }, virulence:'Pili (adesão e evasão imune). Proteína Opa (adesão a células hospedeiras). Protease IgA1. LOS (endotoxina + variação antigênica). Por (porina — previne fusão fagossomo). Rmp (bloqueia anticorpos bactericidas). Variação antigênica de pili e Opa — evasão imune.', resistance:'PPNG (Penicillinase-Producing N. gonorrhoeae): beta-lactamase — ampicilina ineficaz. QRNG (Quinolone-Resistant): CDS não recomenda mais ciprofloxacina para gonorreia. XDR-NG: resistente a ceftriaxona — emergência global. Ceftriaxona: último recurso de primeira linha.', treatment:'Uretrite/Cervicite: ceftriaxona 500mg IM (dose única) + azitromicina 1g VO (clamídia concomitante). OMS e CDC: ceftriaxona 1g IM em dose única. Falha de tratamento: ceftriaxona 500mg IM + azitromicina 2g VO. SEMPRE tratar o parceiro. Rastreamento ITS.', clinical:'Corrimento purulento uretral + disúria em homem = gonorreia até prova em contrário. Mulher: frequentemente assintomática (cervicite). DIP (Doença Inflamatória Pélvica): febre + dor pélvica + dor à mobilização do colo. NAAT (swab uretral/cervical/vaginal/anal/orofaringe) = padrão ouro diagnóstico. Notificação compulsória.' },
+  ],
+  ferida: [
+    { name:'Staphylococcus aureus', disease:'Infecção de Ferida Cirúrgica · Furúnculo · Abscesso · Celulite', gram:'G+', shape:'Coco', tags:['gpos','fac','res'], morpho:'Cocos em cachos. Catalase+. Coagulase+. β-hemólise. Colônias douradas (aureus = ouro em latim). Formação de biofilme em tecidos desvitalizados e corpos estranhos.', tests:{ Catalase:'Positivo', Coagulase:'Positivo', Hemólise:'Beta', Manitol:'Positivo' }, virulence:'PVL (Leucocidina de Panton-Valentine): necrotiza tecido — furúnculos recorrentes e pneumonia necrotizante em CA-MRSA. Estafiloquinase. Hialuronidase. Colagenase. Toxinas esfoliativas (TEN — Síndrome da Pele Escaldada Estafilocócica). Biofilme em feridas crónicas.', resistance:'MRSA-CA: resistente à meticilina mas frequentemente sensível a TMP-SMX, doxiciclina, clindamicina. MRSA-HA: MDR. Teste de suscetibilidade OBRIGATÓRIO em infecções de pele moderadas a graves.', treatment:'Abscesso: drenagem cirúrgica É o tratamento — ATB adjuvante. CA-MRSA (celulite/abscesso): TMP-SMX 160/800mg 12/12h x 5–7 dias. Celulite sem drenagem: cefalexina (se MSSA). Infecção grave/sepse: vancomicina IV. Linezolida oral para alta hospitalar.', clinical:'Abscesso: flutuação + calor + rubor + dor + eritema — DRENAR. Celulite: sem flutuação — ATB. Marcar borda do eritema com caneta: progressão = falha terapêutica. Fasciíte necrotizante: dor desproporcional ao aspecto + crepitação + bullae hemorrágicas = cirurgia URGENTE + carbapenêmico + clindamicina.' },
+    { name:'Pseudomonas aeruginosa', disease:'Infecção de Queimaduras · Úlcera de Pressão · Otite Externa Maligna · Pé Diabético', gram:'G−', shape:'Bacilo', tags:['gneg','aer','res'], morpho:'Bacilo gram-negativo não fermentador. Oxidase+. Piocianina azul-verde. Odor frutado (2-aminoacetofenona). Cresce em meios simples e em ambientes úmidos (torneiras hospitalares, nebulizadores). Biofilme polissacarídeo espesso (especialmente em pé diabético).', tests:{ Oxidase:'Positivo', Piocianina:'Azul-verde', Odor:'Adocicado', Temp42:'Crescimento', Biofilme:'Extenso' }, virulence:'Alginato (biofilme mucóide — resistência a ATB e fagocitose). LasA/LasB proteases. Exotoxina A. Fosfolipase C. Ramnolipídeos. Piocianina (gera radicais livres). T3SS com ExoS, ExoT, ExoU (ExoU = mais necrotizante).', resistance:'MDR/XDR frequente. Bombas de efflux: MexAB-OprM, MexCD-OprJ, MexEF-OprN, MexXY. Perda de OprD. AmpC hiperexpressada. KPC, NDM, VIM metalo-beta-lactamases. Colistina + carbapenêmico: terapia de recurso.', treatment:'Pé diabético: desbridamento cirúrgico + culturas profundas + ATB anti-Pseudomonas (pip/tazo, cefepima, meropeném) se isolado. Queimaduras: prata sulfadiazina tópica + sistêmica se bacteremia. Otite externa maligna (diabéticos): ciprofloxacina IV x 4–8 semanas + desbridamento cirúrgico.', clinical:'Ferida com exsudato azul-verde + odor frutado = Pseudomonas. Pé diabético grau ≥3 (Wagner): osteomielite — ressonância magnética + biopsia óssea. Não tratar colonização (apenas infecção real). Desbridamento é sempre prioritário sobre antibiótico.' },
+    { name:'Clostridium perfringens', disease:'Gangrena Gasosa · Celulite Anaeróbia · Intoxicação Alimentar', gram:'G+', shape:'Bacilo', tags:['gpos','an','spore'], morpho:'Bacilo gram-positivo anaeróbio estrito. Formador de esporos (subterminais). Capaz de produzir gás (CO₂ + H₂) a partir de metabolismo anaeróbio — "gangrena gasosa" = crepitação detectável pela palpação ou RX (bolhas de gás nos tecidos). Colônias com "tempestade" de hemólise dupla em ágar sangue (hemolisina teta + alfa).', tests:{ Gram:'Positivo (bacilo)', Anaerobie:'Estrito', Esporos:'Subterminais', H2S:'Negativo', Nagler:'Positivo (lecitinase)', RX:'Gás em partes moles' }, virulence:'Alpha toxina (fosfolipase C/lecitinase): destrói membrana celular → hemólise, necrose muscular, trombose vascular. Perfringolisina O (theta toxina): hemólise. Colagenase, hialuronidase. Enterotoxina (intoxicação alimentar — tipo A).', resistance:'Penicilina: sempre sensível (nunca adquiriu resistência). Metronidazol: sensível. Clindamicina: adjuvante (inibe produção de toxinas).', treatment:'EMERGÊNCIA CIRÚRGICA: desbridamento radical + fasciotomia/amputação frequentemente necessários. Penicilina G 4 MUI/4h + clindamicina 900mg/8h IV. Câmara hiperbárica: adjuvante. Intoxicação alimentar: auto-limitada (8–24h) — hidratação.', clinical:'Gangrena gasosa: dor INTENSA e desproporcional, edema, bullae hemorrágicas, gás palpável (crepitação), cheiro adocicado de "carne podre". Mortalidade >80% sem cirurgia precoce. RX partes moles: gás dissecando planos fasciais. Cirurgia em <6h. Não aguardar piora para indicar.' },
+  ],
+  liquido: [
+    { name:'Streptococcus pneumoniae', disease:'Empiema Pleural · Pericardite Purulenta · Artrite Séptica', gram:'G+', shape:'Diplococo', tags:['gpos','fac'], morpho:'Diplococos lanceolados. Alpha-hemólise. Optoquina sensível. Principal causa de empiema bacteriano em adultos e crianças. LDH elevado, pH < 7.2 e glicose < 60mg/dL = critérios de Light para exsudato.', tests:{ Catalase:'Negativo', Hemólise:'Alpha', Optoquina:'Sensível', LDH:'Elevado no líquido', pH:'<7.2 (empiema)' }, virulence:'Pneumolisina. Cápsula. PspA. Inflamação excessiva → fibrina → loculação → empiema.', resistance:'PRP: monitorar CIM. Ceftriaxona ativa na maioria.', treatment:'Empiema: drenagem torácica (tubo de tórax ou VATS) OBRIGATÓRIA + ATB (ceftriaxona 2g/dia). Artrite séptica: artrocentese diária ou cirúrgica (artroscopia) + ceftriaxona. Pericardite: pericardiocentese + ATB.', clinical:'Critérios de Light: exsudato se LDH pleural/soro >0.6, proteína pleural/soro >0.5, LDH >2/3 do limite superior sérico. Empiema: pH <7.2 + glicose <60 = drena. Artrite séptica: líquido sinovial >50.000 leucócitos com >75% PMN = suspeita alta → tratar empiricamente.' },
+    { name:'Staphylococcus aureus', disease:'Artrite Séptica · Osteomielite · Empiema Nosocomial', gram:'G+', shape:'Coco', tags:['gpos','fac','res'], morpho:'Cocos em cachos. Principal causa de artrite séptica em adultos e crianças. Bacteremia hematogênica → articulação → inflamação local intensa → destruição articular rápida.', tests:{ Catalase:'Positivo', Coagulase:'Positivo', Hemólise:'Beta', LeucSinovial:'>50.000 PMN' }, virulence:'Proteína A (anti-opsonização). Hemolisinas. Proteases. Biofilme em próteses articulares. LukDE (leucocidina).', resistance:'MRSA frequente em artrite séptica hospitalar. TSA obrigatório. Vancomicina IV para MRSA. Daptomicina boa em osteoarticular.', treatment:'Artrite séptica: artrocentese/artroscopia + vancomicina (MRSA) ou oxacilina (MSSA) x 4 semanas. Osteomielite: 6 semanas de ATB. Prótese infectada: troca em 2 tempos geralmente necessária.', clinical:'Articulação com rubor, calor, edema, dor intensa + febre = artrite séptica até prova contrária. Artrocentese URGENTE (antes do ATB se possível). NÃO infiltrar corticoide antes de descartar infecção. Hemocultura + cultura do líquido sinovial = diagnóstico.' },
+    { name:'Escherichia coli', disease:'Peritonite Bacteriana Espontânea (PBE) · Peritonite Secundária', gram:'G−', shape:'Bacilo', tags:['gneg','fac'], morpho:'Bacilo gram-negativo. Principal causa de PBE em cirróticos (ascite infectada). Diagnóstico: >250 PMN/mm³ no líquido ascítico OU cultura positiva.', tests:{ Oxidase:'Negativo', PMN_Ascite:'>250/mm³ (PBE)', Indol:'Positivo', Lactose:'Positivo', pH_Ascite:'Diminuído' }, virulence:'Fímbrias. LPS endotoxina → ativa peritoneal macrófagos → inflamação. Bacteremia portal → ascite → PBE.', resistance:'ESBL crescente em PBE — ceftriaxona pode falhar. Carbapenêmico em PBE hospitalar ou exposição prévia a ATB.', treatment:'PBE: ceftriaxona 2g/dia IV x 5 dias + albumina 1.5g/kg D1 e 1g/kg D3 (previne SHR — Síndrome Hepatorrenal). ESBL: meropeném. Profilaxia primária PBE: norfloxacina 400mg/dia em cirróticos com proteína ascítica <1.5g/dL.', clinical:'PBE: febre + dor abdominal + piora da encefalopatia em cirrótico = PBE. Paracentese diagnóstica: <30 min. PMN >250: tratar empiricamente. Mortalidade sem tratamento: >70%. Albumina IV é obrigatória — reduz mortalidade e insuficiência renal.' },
+  ],
+};
+
+// BIOCHEM DATA
+const biochemTests = [
+  { test:'Catalase', principle:'Decompõe H₂O₂ → H₂O + O₂. Enzima catalase presente em aeróbios e anaeróbios facultativos. Borbulhamento visível.', result:'Bolhas = Positivo (Staphylococcus, Bacillus). Sem bolhas = Negativo (Streptococcus, Clostridium).' },
+  { test:'Coagulase', principle:'A enzima coagulase reage com fator plasmático (CRF) convertendo fibrinogênio em fibrina → coágulo. Testada em plasma de coelho.', result:'Coágulo em 4h = Positivo (S. aureus). Sem coágulo = Negativo (CNS — S. epidermidis, S. saprophyticus).' },
+  { test:'Oxidase', principle:'TMPD (reagente) é oxidado pelo complexo IV da cadeia respiratória (citocromo c oxidase) → cor azul/roxa em < 10 seg.', result:'Azul/roxo = Positivo (Pseudomonas, Neisseria, Vibrio, Campylobacter). Sem cor = Negativo (Enterobacteriaceae).' },
+  { test:'TSI (Triple Sugar Iron)', principle:'Agar com glicose (0.1%), lactose (1%), sacarose (1%), ferro e vermelho de fenol. Fermentação → ácido (amarelo). H₂S reduz sulfato ferroso → precipitado preto. Gás → rachaduras.', result:'A/A + gás + H₂S = E. coli-like. K/A + H₂S = Salmonella. K/A sem gás = Shigella. K/K = Pseudomonas.' },
+  { test:'Indol', principle:'Triptofanase degrada L-triptofano em indol + piruvato + amônia. Indol + reagente de Kovacs (paradimetilaminobenzaldeído) → anel vermelho/rosa (Ehrlich).', result:'Rosa/vermelho = Positivo (E. coli, S. dysenteriae, Proteus vulgaris). Sem cor = Negativo (Klebsiella, Salmonella, Proteus mirabilis).' },
+  { test:'Citrato (Simmons)', principle:'Meio de Simmons: única fonte de carbono é citrato. Bactérias que utilizam citrato produzem compostos alcalinos → azul de bromotimol vira de verde para azul.', result:'Azul = Positivo (Klebsiella, Enterobacter, Citrobacter). Verde = Negativo (E. coli, Shigella, Salmonella typhi).' },
+  { test:'Urease (Christensen)', principle:'Urease hidrolisa ureia → NH₃ + CO₂. Amônia alcaliniza o meio → vermelho de fenol muda de amarelo/laranja para rosa/rosa intenso.', result:'Rosa intenso = Fortemente Positivo (Proteus, Helicobacter). Rosa = Positivo (Klebsiella, Cryptococcus). Laranja = Negativo.' },
+  { test:'Hemólise (Ágar Sangue)', principle:'Toxinas bacterianas (hemolisinas) lisam eritrócitos do ágar sangue de carneiro 5%. Alpha-hemolisinas = oxidação parcial (metahemoglobina verde). Beta = lise total (zona clara).', result:'Zona clara = Beta-hemólise (S. pyogenes, S. aureus). Verde = Alpha-hemólise (S. pneumoniae, Streptococcus viridans). Sem halo = Gamma (Enterococcus, CNS).' },
+];
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderSamples() {
+  const grid = document.getElementById('sampleGrid');
+  samples.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'sample-btn';
+    btn.dataset.id = s.id;
+    btn.innerHTML = `<span class="sample-icon">${s.icon}</span><span class="sample-name">${s.name}</span>`;
+    btn.addEventListener('click', () => selectSample(s));
+    grid.appendChild(btn);
+  });
+}
+
+function selectSample(s) {
+  document.querySelectorAll('.sample-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-id="${s.id}"]`).classList.add('active');
+
+  const banner = document.getElementById('sampleBanner');
+  banner.classList.add('show');
+  document.getElementById('bannerTitle').textContent = `${s.icon} ${s.name}`;
+  document.getElementById('bannerDesc').textContent = s.desc;
+
+  document.getElementById('flowContainer').style.display = 'block';
+  document.getElementById('flowContainer').scrollIntoView({ behavior:'smooth', block:'start' });
+
+  renderPathogens(s.id);
+}
+
+function renderPathogens(sampleId) {
+  const grid = document.getElementById('pathogenGrid');
+  const panel = document.getElementById('detailPanel');
+  grid.innerHTML = '';
+  panel.innerHTML = '';
+  panel.classList.remove('open');
+
+  const list = pathogens[sampleId] || [];
+  if (list.length === 0) {
+    grid.innerHTML = '<p style="color:var(--text-dim);font-size:14px">Nenhum patógeno cadastrado para esta amostra ainda.</p>';
+    return;
+  }
+
+  list.forEach((p, idx) => {
+    const card = document.createElement('div');
+    card.className = 'pathogen-card';
+    card.dataset.idx = idx;
+
+    const tagHtml = p.tags.map(t => {
+      const labels = { gpos:'Gram+', gneg:'Gram−', aer:'Aeróbio', an:'Anaeróbio', fac:'Fac. Anaeróbio', spore:'Esporulado', res:'Resistente' };
+      return `<span class="tag tag-${t}">${labels[t]||t}</span>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="pathogen-name">${p.name}</div>
+      <div class="pathogen-disease">${p.disease}</div>
+      <div class="pathogen-tags">${tagHtml}</div>
+      <div class="pathogen-detail"><strong>Morfologia:</strong> ${p.morpho.substring(0,120)}...</div>
+      <div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent-blue);letter-spacing:1px">VER DETALHES ▶</div>
+    `;
+    card.addEventListener('click', () => showDetail(p, card, sampleId));
+    grid.appendChild(card);
+  });
+}
+
+function showDetail(p, card, sampleId) {
+  document.querySelectorAll('.pathogen-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+
+  const panel = document.getElementById('detailPanel');
+
+  const testsRows = Object.entries(p.tests).map(([k,v]) => {
+    let cls = '';
+    const low = v.toLowerCase();
+    if (low.includes('positivo') || low === '+' || low.includes('cresce') || low.includes('sensível')) cls = 'pos';
+    else if (low.includes('negativo') || low === '−' || low.includes('negativa')) cls = 'neg';
+    else if (low.includes('variável') || low.includes('v')) cls = 'var';
+    return `<tr><td>${k}</td><td class="${cls}">${v}</td></tr>`;
+  }).join('');
+
+  panel.innerHTML = `
+    <h3>${p.name}</h3>
+    <h4>${p.disease}</h4>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-item-label">Coloração de Gram</div><div class="detail-item-val">${p.gram}</div></div>
+      <div class="detail-item"><div class="detail-item-label">Forma Celular</div><div class="detail-item-val">${p.shape}</div></div>
+      <div class="detail-item" style="grid-column:1/-1"><div class="detail-item-label">Morfologia Completa</div><div class="detail-item-val" style="font-weight:300;font-size:12px;line-height:1.7">${p.morpho}</div></div>
+    </div>
+
+    <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px">Testes Bioquímicos / Diagnóstico</p>
+    <div style="overflow-x:auto">
+      <table class="tests-table"><thead><tr><th>Teste</th><th>Resultado</th></tr></thead><tbody>${testsRows}</tbody></table>
+    </div>
+
+    <div style="margin-top:20px">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent-orange);margin-bottom:8px">Virulência & Patogenicidade</p>
+      <p style="font-size:12.5px;color:var(--text-dim);line-height:1.75">${p.virulence}</p>
+    </div>
+
+    <div style="margin-top:20px">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent-red);margin-bottom:8px">Resistência Antimicrobiana</p>
+      <p style="font-size:12.5px;color:var(--text-dim);line-height:1.75">${p.resistance}</p>
+    </div>
+
+    <div class="treatment-box">
+      <h5>Tratamento & Antibioticoterapia</h5>
+      <p>${p.treatment}</p>
+    </div>
+
+    <div style="margin-top:16px;padding:14px 18px;background:rgba(45,156,255,0.06);border:1px solid rgba(45,156,255,0.2);border-radius:8px">
+      <h5 style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent-blue);margin-bottom:8px">Relevância Clínica</h5>
+      <p style="font-size:12px;color:var(--text-dim);line-height:1.7">${p.clinical}</p>
+    </div>
+
+    <div class="close-btn" onclick="closePanel()">✕ Fechar detalhes</div>
+  `;
+
+  panel.classList.add('open');
+  setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+
+function closePanel() {
+  const panel = document.getElementById('detailPanel');
+  panel.classList.remove('open');
+  document.querySelectorAll('.pathogen-card').forEach(c => c.classList.remove('selected'));
+}
+
+function renderBiochem() {
+  const grid = document.getElementById('biochemGrid');
+  biochemTests.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'biochem-card';
+    card.innerHTML = `
+      <div class="biochem-test">${t.test}</div>
+      <div class="biochem-principle">${t.principle}</div>
+      <div class="biochem-result">${t.result}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// INIT
+renderSamples();
+renderBiochem();
+</script>
+</body>
+</html>
