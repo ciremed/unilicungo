@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Inflamação: Fibrina · Granulação · Fibrose</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg2: #0f1218;
+    --bg3: #151a22;
+    --line: rgba(255,255,255,0.07);
+
+    --fibrina: #e8b86d;
+    --fibrina-dim: rgba(232,184,109,0.15);
+    --fibrina-glow: rgba(232,184,109,0.35);
+
+    --gran: #6dc4e8;
+    --gran-dim: rgba(109,196,232,0.15);
+    --gran-glow: rgba(109,196,232,0.35);
+
+    --fibrose: #c46de8;
+    --fibrose-dim: rgba(196,109,232,0.15);
+    --fibrose-glow: rgba(196,109,232,0.35);
+
+    --danger: #e8706d;
+    --success: #6de8a0;
+    --neutral: rgba(255,255,255,0.55);
+    --text: rgba(255,255,255,0.88);
+    --muted: rgba(255,255,255,0.4);
+
+    --r: 14px;
+    --r-sm: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.6;
+  }
+
+  /* ── LAYOUT ── */
+  .page { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 48px 32px 80px; }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+    animation: fadeDown 0.8s ease both;
+  }
+  .header-label {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    padding: 4px 16px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--fibrina) 0%, #fff 40%, var(--gran) 70%, var(--fibrose) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .header p {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── CENTRAL NODE ── */
+  .central-node {
+    background: var(--bg3);
+    border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: var(--r);
+    padding: 28px 36px;
+    text-align: center;
+    margin: 0 auto 48px;
+    max-width: 680px;
+    position: relative;
+    animation: fadeUp 0.8s 0.1s ease both;
+    box-shadow: 0 0 60px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .central-node::before {
+    content: '';
+    position: absolute; inset: -1px;
+    border-radius: calc(var(--r) + 1px);
+    background: linear-gradient(135deg, var(--fibrina-glow), transparent 40%, var(--gran-glow) 70%, var(--fibrose-glow));
+    z-index: -1;
+    opacity: 0.6;
+  }
+  .central-node h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  .central-node p { color: var(--muted); font-size: 12px; }
+
+  /* ── PHASE FLOW ── */
+  .flow-section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+  .section-title {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .flow-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 0;
+    align-items: stretch;
+  }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    color: var(--muted);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  @media(max-width: 800px) {
+    .flow-row { grid-template-columns: 1fr; }
+    .flow-arrow { transform: rotate(90deg); padding: 4px 0; }
+  }
+
+  /* ── CARDS ── */
+  .card {
+    border-radius: var(--r);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: default;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: var(--r) var(--r) 0 0;
+  }
+  .card.fibrina { background: var(--bg3); border: 1px solid rgba(232,184,109,0.2); }
+  .card.fibrina::after { background: var(--fibrina); }
+  .card.gran { background: var(--bg3); border: 1px solid rgba(109,196,232,0.2); }
+  .card.gran::after { background: var(--gran); }
+  .card.fibrose { background: var(--bg3); border: 1px solid rgba(196,109,232,0.2); }
+  .card.fibrose::after { background: var(--fibrose); }
+
+  .card-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  .card.fibrina .card-icon { background: var(--fibrina-dim); }
+  .card.gran .card-icon { background: var(--gran-dim); }
+  .card.fibrose .card-icon { background: var(--fibrose-dim); }
+
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .card.fibrina h3 { color: var(--fibrina); }
+  .card.gran h3 { color: var(--gran); }
+  .card.fibrose h3 { color: var(--fibrose); }
+
+  .card-phase {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  /* ── DETAIL ROWS ── */
+  .detail-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: flex-start;
+    font-size: 12px;
+  }
+  .detail-label {
+    flex-shrink: 0;
+    width: 90px;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding-top: 2px;
+  }
+  .detail-value { color: var(--text); }
+
+  /* ── TAGS ── */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    margin: 2px 2px 2px 0;
+    font-weight: 500;
+  }
+  .tag.fibrina-t { background: var(--fibrina-dim); color: var(--fibrina); border: 1px solid rgba(232,184,109,0.25); }
+  .tag.gran-t { background: var(--gran-dim); color: var(--gran); border: 1px solid rgba(109,196,232,0.25); }
+  .tag.fibrose-t { background: var(--fibrose-dim); color: var(--fibrose); border: 1px solid rgba(196,109,232,0.25); }
+  .tag.danger-t { background: rgba(232,112,109,0.12); color: var(--danger); border: 1px solid rgba(232,112,109,0.25); }
+  .tag.success-t { background: rgba(109,232,160,0.12); color: var(--success); border: 1px solid rgba(109,232,160,0.25); }
+  .tag.neutral-t { background: rgba(255,255,255,0.06); color: var(--neutral); border: 1px solid rgba(255,255,255,0.1); }
+
+  .divider { height: 1px; background: var(--line); margin: 14px 0; }
+
+  /* ── TWO-COL GRID ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  @media(max-width: 900px) { .two-col, .three-col { grid-template-columns: 1fr; } }
+
+  /* ── TIMELINE ── */
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+    margin-top: 8px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 0; bottom: 0;
+    width: 1px;
+    background: var(--line);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 14px;
+    font-size: 12px;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -24px; top: 5px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    background: var(--bg);
+  }
+  .tl-item.fibrina { color: var(--fibrina); }
+  .tl-item.gran { color: var(--gran); }
+  .tl-item.fibrose { color: var(--fibrose); }
+  .tl-item.neutral { color: var(--muted); }
+  .tl-item span { color: var(--text); }
+
+  /* ── INFO CARD ── */
+  .info-card {
+    background: var(--bg3);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 20px 24px;
+  }
+  .info-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: #fff;
+  }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    font-weight: 500;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ── DANGER BOX ── */
+  .danger-box {
+    background: rgba(232,112,109,0.08);
+    border: 1px solid rgba(232,112,109,0.25);
+    border-radius: var(--r);
+    padding: 20px 24px;
+  }
+  .danger-box h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--danger);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .danger-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    align-items: flex-start;
+  }
+  .danger-item::before {
+    content: '⚠';
+    color: var(--danger);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── PEARL BOX ── */
+  .pearl-box {
+    background: rgba(109,232,160,0.06);
+    border: 1px solid rgba(109,232,160,0.2);
+    border-radius: var(--r);
+    padding: 20px 24px;
+  }
+  .pearl-box h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--success);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pearl-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    align-items: flex-start;
+  }
+  .pearl-item::before {
+    content: '◆';
+    color: var(--success);
+    flex-shrink: 0;
+    font-size: 9px;
+    margin-top: 3px;
+  }
+
+  /* ── PATHWAY BOX ── */
+  .pathway {
+    background: var(--bg3);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 24px;
+    font-size: 12px;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .pathway h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .path-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+  }
+  .path-step {
+    padding: 10px 16px;
+    border-radius: var(--r-sm);
+    text-align: center;
+    font-size: 11px;
+    min-width: 110px;
+  }
+  .path-step.fibrina-s { background: var(--fibrina-dim); border: 1px solid rgba(232,184,109,0.3); color: var(--fibrina); }
+  .path-step.gran-s { background: var(--gran-dim); border: 1px solid rgba(109,196,232,0.3); color: var(--gran); }
+  .path-step.fibrose-s { background: var(--fibrose-dim); border: 1px solid rgba(196,109,232,0.3); color: var(--fibrose); }
+  .path-step.neutral-s { background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--muted); }
+  .path-step.success-s { background: rgba(109,232,160,0.1); border: 1px solid rgba(109,232,160,0.3); color: var(--success); }
+  .path-step strong { display: block; font-weight: 500; margin-bottom: 2px; }
+  .path-step small { font-size: 9px; opacity: 0.7; letter-spacing: 0.05em; }
+  .path-arr {
+    color: var(--muted);
+    font-size: 16px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+  .path-branch {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    margin-top: 6px;
+  }
+  .branch-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .branch-vert { width: 1px; height: 24px; background: var(--line); }
+  .branch-label { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; }
+
+  /* ── MEDIATORS GRID ── */
+  .med-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .med-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    padding: 12px 14px;
+    font-size: 11px;
+  }
+  .med-item strong {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .med-item.fibrina-m strong { color: var(--fibrina); }
+  .med-item.gran-m strong { color: var(--gran); }
+  .med-item.fibrose-m strong { color: var(--fibrose); }
+  .med-item p { color: var(--muted); }
+
+  /* ── COEX TABLE ── */
+  .coex-table-wrap {
+    overflow-x: auto;
+  }
+  .coex-table th:first-child { min-width: 200px; }
+  .check-yes { color: var(--success); font-size: 14px; }
+  .check-no { color: rgba(255,255,255,0.2); font-size: 14px; }
+  .check-partial { color: var(--fibrina); font-size: 14px; }
+
+  /* ── KEY POINTS ── */
+  .keypoints {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .kp-item {
+    background: var(--bg3);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    padding: 16px;
+    font-size: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .kp-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    color: rgba(255,255,255,0.1);
+    flex-shrink: 0;
+    min-width: 24px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .anim-1 { animation: fadeUp 0.7s 0.1s ease both; }
+  .anim-2 { animation: fadeUp 0.7s 0.2s ease both; }
+  .anim-3 { animation: fadeUp 0.7s 0.3s ease both; }
+  .anim-4 { animation: fadeUp 0.7s 0.4s ease both; }
+  .anim-5 { animation: fadeUp 0.7s 0.5s ease both; }
+
+  /* scroll-based reveal */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    text-transform: uppercase;
+  }
+
+  .mb-32 { margin-bottom: 32px; }
+  .mb-20 { margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-label">Patologia · Medicina Interna</div>
+    <h1>Inflamação & Reparo Tecidual</h1>
+    <p>Tecido Fibrinoso · Tecido de Granulação · Fibrose — Fisiopatologia Integrada</p>
+  </div>
+
+  <!-- CENTRAL NODE -->
+  <div class="central-node anim-1">
+    <h2>Resposta Inflamatória &amp; Reparadora</h2>
+    <p>Três elementos distintos, com fases, mecanismos e destinos diferentes — que coexistem dependendo do estágio e tipo de lesão</p>
+    <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+      <span class="tag fibrina-t">Fase Aguda</span>
+      <span class="tag gran-t">Reparo Precoce</span>
+      <span class="tag fibrose-t">Reparo Tardio / Crónico</span>
+      <span class="tag danger-t">Pode Coexistir</span>
+    </div>
+  </div>
+
+  <!-- PHASE FLOW: 3 MAIN CARDS -->
+  <div class="flow-section anim-2">
+    <div class="section-title">Os Três Elementos Principais</div>
+    <div class="flow-row">
+
+      <!-- FIBRINOSO -->
+      <div class="card fibrina">
+        <div class="card-icon">🔶</div>
+        <h3>Tecido Fibrinoso</h3>
+        <div class="card-phase">Fase Aguda · Horas–Dias</div>
+
+        <div class="detail-row">
+          <div class="detail-label">O quê</div>
+          <div class="detail-value">Depósito extracelular de <strong>fibrina</strong> insolúvel derivada do fibrinogênio</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Quando</div>
+          <div class="detail-value">Aumento acentuado de permeabilidade vascular → fibrinogênio extravasa → trombina → fibrina</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Células</div>
+          <div class="detail-value"><span class="tag neutral-t">Neutrófilos</span> <span class="tag neutral-t">Plaquetas</span></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="detail-row">
+          <div class="detail-label">Exemplos</div>
+          <div class="detail-value">Pleurite fibrinosa, pericardite fibrinosa, peritonite, pneumonia lobar (hepatização)</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Aspecto</div>
+          <div class="detail-value">Membranoso, leitoso, filamentos de fibrina ao corte</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div style="font-size:11px; color:var(--muted); margin-bottom:6px;">Destinos possíveis:</div>
+        <div class="timeline">
+          <div class="tl-item success"><span style="color:var(--success);">✓ Resolução</span> — fibrinólise pela plasmina</div>
+          <div class="tl-item fibrose"><span style="color:var(--fibrose);">↳ Organização</span> — fibroblastos invadem → fibrose</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <!-- GRANULAÇÃO -->
+      <div class="card gran">
+        <div class="card-icon">🔵</div>
+        <h3>Tecido de Granulação</h3>
+        <div class="card-phase">Reparo Precoce · Dia 3–5 em diante</div>
+
+        <div class="detail-row">
+          <div class="detail-label">O quê</div>
+          <div class="detail-value">Tecido conjuntivo <strong>neoformado</strong>, altamente vascularizado — não confundir com granuloma!</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Tríade histo.</div>
+          <div class="detail-value">
+            <span class="tag gran-t">Neovascularização</span>
+            <span class="tag gran-t">Fibroblastos jovens</span>
+            <span class="tag gran-t">Macrófagos</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Estímulos</div>
+          <div class="detail-value">VEGF, FGF, TGF-β, PDGF — secretados por macrófagos e plaquetas</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="detail-row">
+          <div class="detail-label">Aspecto</div>
+          <div class="detail-value">Rosa-avermelhado, granular, mole, sangra facilmente ao toque</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Onde vemos</div>
+          <div class="detail-value">Base de feridas cirúrgicas, úlceras crónicas, cavidade após necrose</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div style="font-size:11px; color:var(--muted); margin-bottom:6px;">Destino:</div>
+        <div class="timeline">
+          <div class="tl-item fibrose"><span style="color:var(--fibrose);">→ Maturação</span> — fibroblastos depositam colágeno tipo I → cicatriz</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow">→</div>
+
+      <!-- FIBROSE -->
+      <div class="card fibrose">
+        <div class="card-icon">🟣</div>
+        <h3>Fibrose</h3>
+        <div class="card-phase">Reparo Tardio / Crónico · Semanas–Anos</div>
+
+        <div class="detail-row">
+          <div class="detail-label">O quê</div>
+          <div class="detail-value">Substituição por <strong>colágeno denso tipo I</strong> produzido por miofibroblastos ativados</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Quando</div>
+          <div class="detail-value">Lesão extensa, persistente ou recorrente; maturação do tec. de granulação; organização do fibrinoso</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Células</div>
+          <div class="detail-value"><span class="tag fibrose-t">Miofibroblastos</span> <span class="tag fibrose-t">Macrófagos M2</span></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="detail-row">
+          <div class="detail-label">Exemplos</div>
+          <div class="detail-value">Cirrose hepática, FPI, estenose mitral pós-reumática, aderências peritoneais</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Aspecto</div>
+          <div class="detail-value">Esbranquiçado, duro, retrátil — distorce arquitetura</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div style="font-size:11px; color:var(--muted); margin-bottom:6px;">Reversibilidade:</div>
+        <div class="timeline">
+          <div class="tl-item danger" style="color:var(--danger);"><span>Parcialmente reversível precoce</span></div>
+          <div class="tl-item danger" style="color:var(--danger);"><span>Irreversível quando estabelecida (cross-linking de colágeno)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PATHWAY / FLUXO DECISIONAL -->
+  <div class="pathway mb-32 reveal">
+    <h4>Fluxo Clínico-Patológico Integrado</h4>
+    <div class="path-steps">
+      <div class="path-step neutral-s"><strong>Lesão Tecidual</strong><small>Qualquer etiologia</small></div>
+      <div class="path-arr">→</div>
+      <div class="path-step fibrina-s"><strong>Exsudato Fibrinoso</strong><small>Fase aguda · h–dias</small></div>
+    </div>
+    <div style="display:flex; justify-content:center; margin-top:6px;">
+      <div style="display:flex; flex-direction:column; align-items:center;">
+        <div style="height:20px; width:1px; background:var(--line);"></div>
+        <div style="display:flex; gap:80px; align-items:flex-start;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+            <div style="height:20px; width:1px; background:var(--line);"></div>
+            <div class="path-step success-s"><strong>Resolução</strong><small>Fibrinólise → cura total</small></div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+            <div style="height:20px; width:1px; background:var(--line);"></div>
+            <div class="path-step gran-s"><strong>Tecido de Granulação</strong><small>Dia 3–5 · reparo ativo</small></div>
+            <div style="height:14px; width:1px; background:var(--line);"></div>
+            <div class="path-step fibrose-s"><strong>Fibrose / Cicatriz</strong><small>Maturação · semanas</small></div>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-size:10px; color:var(--muted); text-align:center; letter-spacing:0.1em;">
+          ← Fibrinólise eficaz &nbsp;|&nbsp; Organização → fibrose →
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEDIADORES -->
+  <div class="mb-32 reveal">
+    <div class="section-title">Mediadores-Chave por Fase</div>
+    <div class="med-grid">
+      <div class="med-item fibrina-m"><strong>Trombina</strong><p>Converte fibrinogênio → fibrina; ativa plaquetas</p></div>
+      <div class="med-item fibrina-m"><strong>Plasmina</strong><p>Fibrinólise — dissolve fibrina → resolução</p></div>
+      <div class="med-item fibrina-m"><strong>PAI-1</strong><p>Inibe fibrinólise → favorece organização fibrinosa</p></div>
+      <div class="med-item gran-m"><strong>VEGF</strong><p>Angiogênese → neovascularização do tec. de granulação</p></div>
+      <div class="med-item gran-m"><strong>FGF</strong><p>Proliferação de fibroblastos e células endoteliais</p></div>
+      <div class="med-item gran-m"><strong>PDGF</strong><p>Quimiotaxia e proliferação de fibroblastos</p></div>
+      <div class="med-item fibrose-m"><strong>TGF-β</strong><p>Maestro da fibrose: ativa fibroblastos → miofibroblastos; inibe MMPs</p></div>
+      <div class="med-item fibrose-m"><strong>IL-13 / IL-4</strong><p>Fibrose via Th2 (helmintas, asma, FPI)</p></div>
+      <div class="med-item fibrose-m"><strong>Macrófagos M2</strong><p>Secretam TGF-β, IL-10, arginase — pró-fibróticos</p></div>
+    </div>
+  </div>
+
+  <!-- COEXISTÊNCIA TABLE -->
+  <div class="mb-32 reveal">
+    <div class="section-title">Coexistência Clínica — Quando os Três Elementos se Sobrepõem</div>
+    <div class="info-card coex-table-wrap">
+      <table class="coex-table">
+        <thead>
+          <tr>
+            <th>Situação Clínica</th>
+            <th style="color:var(--fibrina)">Fibrinoso</th>
+            <th style="color:var(--gran)">Granulação</th>
+            <th style="color:var(--fibrose)">Fibrose</th>
+            <th>Observação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pneumonia lobar D3</td>
+            <td><span class="check-yes">●</span></td>
+            <td><span class="check-no">○</span></td>
+            <td><span class="check-no">○</span></td>
+            <td style="color:var(--muted)">Hepatização: puro exsudato fibrinoso alveolar</td>
+          </tr>
+          <tr>
+            <td>Ferida cirúrgica D5</td>
+            <td><span class="check-partial">◐</span></td>
+            <td><span class="check-yes">●</span></td>
+            <td><span class="check-no">○</span></td>
+            <td style="color:var(--muted)">Fibrina residual + granulação ativa</td>
+          </tr>
+          <tr>
+            <td>Pleurite em organização</td>
+            <td><span class="check-partial">◐</span></td>
+            <td><span class="check-yes">●</span></td>
+            <td><span class="check-partial">◐</span></td>
+            <td style="color:var(--muted)">Transição — todos três simultâneos</td>
+          </tr>
+          <tr>
+            <td>Úlcera crónica</td>
+            <td><span class="check-no">○</span></td>
+            <td><span class="check-yes">●</span></td>
+            <td><span class="check-yes">●</span></td>
+            <td style="color:var(--muted)">Base = granulação; bordas = fibrose</td>
+          </tr>
+          <tr>
+            <td>TB pulmonar activa</td>
+            <td><span class="check-yes">●</span></td>
+            <td><span class="check-yes">●</span></td>
+            <td><span class="check-yes">●</span></td>
+            <td style="color:var(--muted)">Centro caseoso + granulação periférica + cápsula fibrosa</td>
+          </tr>
+          <tr>
+            <td>Cirrose estabelecida</td>
+            <td><span class="check-no">○</span></td>
+            <td><span class="check-partial">◐</span></td>
+            <td><span class="check-yes">●</span></td>
+            <td style="color:var(--muted)">Fibrose septada em ponte; fase exsudativa resolvida</td>
+          </tr>
+          <tr>
+            <td>Pericardite fibrinosa</td>
+            <td><span class="check-yes">●</span></td>
+            <td><span class="check-no">○</span></td>
+            <td><span class="check-no">○</span></td>
+            <td style="color:var(--muted)">Pode organizar → pericardite constritiva (fibrose)</td>
+          </tr>
+          <tr>
+            <td>Infarto miocárdio semanas</td>
+            <td><span class="check-no">○</span></td>
+            <td><span class="check-yes">●</span></td>
+            <td><span class="check-yes">●</span></td>
+            <td style="color:var(--muted)">Granulação substitui necrose → cicatriz fibrosa</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px; font-size:10px; color:var(--muted);">
+        <span class="check-yes">●</span> Presente &nbsp;|&nbsp;
+        <span class="check-partial">◐</span> Parcial/transitório &nbsp;|&nbsp;
+        <span class="check-no">○</span> Ausente
+      </div>
+    </div>
+  </div>
+
+  <!-- DISTINÇÕES IMPORTANTES -->
+  <div class="two-col mb-32 reveal">
+    <div class="info-card">
+      <h4>📊 Tabela Comparativa Rápida</h4>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th style="color:var(--fibrina)">Fibrinoso</th>
+            <th style="color:var(--gran)">Granulação</th>
+            <th style="color:var(--fibrose)">Fibrose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="color:var(--muted)">Fase</td><td>Aguda</td><td>Reparo precoce</td><td>Tardio/crónico</td></tr>
+          <tr><td style="color:var(--muted)">Componente principal</td><td>Fibrina</td><td>Capilares + fibroblastos</td><td>Colágeno tipo I</td></tr>
+          <tr><td style="color:var(--muted)">Célula-chave</td><td>Neutrófilo/plaqueta</td><td>Macrófago + fibroblasto</td><td>Miofibroblasto</td></tr>
+          <tr><td style="color:var(--muted)">Vascularização</td><td>Passiva (exsudato)</td><td>Alta (neovascular)</td><td>Baixa (avascular)</td></tr>
+          <tr><td style="color:var(--muted)">Reversível?</td><td>Sim (fibrinólise)</td><td>Sim (matura)</td><td>Parcial/Não</td></tr>
+          <tr><td style="color:var(--muted)">Cor macroscópica</td><td>Leitoso/membranoso</td><td>Rosa-avermelhado</td><td>Esbranquiçado</td></tr>
+          <tr><td style="color:var(--muted)">Consistência</td><td>Gelatinosa</td><td>Mole, friável</td><td>Dura, retrátil</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card">
+      <h4>⏱ Linha do Tempo do Reparo</h4>
+      <div class="timeline" style="margin-top:8px;">
+        <div class="tl-item fibrina"><strong>0 h – 24 h</strong> <span>Hemostase → exsudato fibrinoso → neutrófilos</span></div>
+        <div class="tl-item fibrina"><strong>24 h – 72 h</strong> <span>Fibrina consolida; macrófagos substituem neutrófilos</span></div>
+        <div class="tl-item gran"><strong>Dia 3 – 5</strong> <span>Tecido de granulação aparece: brotos vasculares + fibroblastos</span></div>
+        <div class="tl-item gran"><strong>Semana 1 – 2</strong> <span>Granulação madura; colágeno tipo III depositado</span></div>
+        <div class="tl-item fibrose"><strong>Semana 2 – 4</strong> <span>Colágeno tipo III → tipo I; regressão vascular</span></div>
+        <div class="tl-item fibrose"><strong>Meses – anos</strong> <span>Cross-linking colágeno, contração cicatriz, achatamento</span></div>
+        <div class="tl-item neutral"><strong>Crônico</strong> <span>Fibrose progressiva se estímulo persiste (TGF-β contínuo)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISTINÇÕES GRANULAÇÃO vs GRANULOMA -->
+  <div class="mb-32 reveal">
+    <div class="section-title">Confusão Frequente — Granulação ≠ Granuloma</div>
+    <div class="two-col">
+      <div class="card gran">
+        <div class="card-icon">🔵</div>
+        <h3>Tecido de Granulação</h3>
+        <div class="card-phase">Reparo — qualquer lesão</div>
+        <div class="detail-row"><div class="detail-label">Definição</div><div class="detail-value">Tecido reparador vascularizado — fase normal do reparo</div></div>
+        <div class="detail-row"><div class="detail-label">Células</div><div class="detail-value">Fibroblastos, células endoteliais, macrófagos</div></div>
+        <div class="detail-row"><div class="detail-label">Vascularização</div><div class="detail-value">Alta — neovascularização exuberante</div></div>
+        <div class="detail-row"><div class="detail-label">Contexto</div><div class="detail-value">Cirurgia, queimaduras, úlceras, infartos</div></div>
+        <div class="detail-row"><div class="detail-label">Evolução</div><div class="detail-value">→ Cicatriz fibrosa</div></div>
+      </div>
+      <div class="card fibrose" style="border-color: rgba(232,112,109,0.2);">
+        <div class="card-icon" style="background: rgba(232,112,109,0.12);">🔴</div>
+        <h3 style="color: var(--danger);">Granuloma</h3>
+        <div class="card-phase" style="color: var(--danger);">Inflamação Granulomatosa — resposta imune específica</div>
+        <div class="detail-row"><div class="detail-label">Definição</div><div class="detail-value">Agregado de macrófagos epitelioides + células gigantes multinucleadas</div></div>
+        <div class="detail-row"><div class="detail-label">Células</div><div class="detail-value">Macrófagos epitelioides, células gigantes (Langhans), linfócitos T</div></div>
+        <div class="detail-row"><div class="detail-label">Vascularização</div><div class="detail-value">Baixa / avascular (especialmente centro)</div></div>
+        <div class="detail-row"><div class="detail-label">Etiologia</div><div class="detail-value">TB, sarcoidose, doença de Crohn, fungos, corpos estranhos</div></div>
+        <div class="detail-row"><div class="detail-label">Evolução</div><div class="detail-value">Necrose caseosa (TB) ou fibrose periférica</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARMADILHAS E PÉROLAS -->
+  <div class="two-col mb-32 reveal">
+    <div class="danger-box">
+      <h4>⚠ Armadilhas de Prova &amp; Clínica</h4>
+      <div class="danger-item">Tecido de granulação ≠ granuloma — erro gravíssimo de nomenclatura, cobrado em provas de patologia e residência</div>
+      <div class="danger-item">Fibrose não requer necessariamente que tenha havido fase exsudativa visível — em inflamação crónica de baixo grau, pode ocorrer fibrose gradual sem exsudato óbvio</div>
+      <div class="danger-item">A "organização do exsudato fibrinoso" é a ponte entre tecido fibrinoso e fibrose — fibroblastos invadem a fibrina não resolvida → fibrose local</div>
+      <div class="danger-item">Pericardite fibrinosa → se não resolvida → "coração em armadura" (pericardite constritiva fibrótica) — complicação tardia classicamente cobrada</div>
+      <div class="danger-item">TGF-β inibe a resposta inflamatória E ativa fibroblastos simultaneamente — é pró-fibrótico e anti-inflamatório ao mesmo tempo</div>
+      <div class="danger-item">Colágeno tipo III (reticulina) → precede o tipo I; ratio III:I elevado indica tecido de granulação imaturo</div>
+    </div>
+
+    <div class="pearl-box">
+      <h4>◆ Pérolas Clínicas de Alto Rendimento</h4>
+      <div class="pearl-item">TGF-β é o principal mediador pró-fibrótico — alvo terapêutico na fibrose pulmonar idiopática (pirfenidona atua nessa via)</div>
+      <div class="pearl-item">Vitamina C é essencial para a síntese de colágeno (hidroxilação de prolina e lisina) — escorbuto → má cicatrização por defeito de colágeno</div>
+      <div class="pearl-item">Zinco e vitamina A também modulam o reparo — deficiências retardam a fase de granulação</div>
+      <div class="pearl-item">Corticosteroides inibem o tecido de granulação e a síntese de colágeno → cicatrização comprometida em uso crónico</div>
+      <div class="pearl-item">Na tuberculose, todos os três elementos coexistem: centro caseoso (fibrinoso/necrótico), zona de granulação (epitelioides + células gigantes), cápsula fibrosa — modelo completo de patologia mista</div>
+      <div class="pearl-item">Cicatrização por 1.ª intenção: tecido de granulação mínimo. Cicatrização por 2.ª intenção: granulação exuberante → maior fibrose e contração</div>
+    </div>
+  </div>
+
+  <!-- EXEMPLOS CLÍNICOS EXPANDIDOS -->
+  <div class="mb-32 reveal">
+    <div class="section-title">Contextos Clínicos Paradigmáticos</div>
+    <div class="three-col">
+      <div class="info-card">
+        <h4 style="color:var(--fibrina);">🫁 Pneumonia Lobar</h4>
+        <div class="timeline">
+          <div class="tl-item fibrina"><strong>Congestion</strong> <span>Vasodilatação, edema, poucos neutrófilos</span></div>
+          <div class="tl-item fibrina"><strong>Hepatização vermelha</strong> <span>Exsudato fibrinoso rico + eritrócitos — aspecto hepático</span></div>
+          <div class="tl-item fibrina"><strong>Hepatização cinzenta</strong> <span>Fibrina consolidada + neutrófilos degradados</span></div>
+          <div class="tl-item success" style="color:var(--success);"><strong>Resolução</strong> <span>Macrófagos fagocitam debris; fibrinólise</span></div>
+          <div class="tl-item fibrose"><strong>Organização</strong> <span>Se não resolvida → carnificação pulmonar (fibrose)</span></div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h4 style="color:var(--gran);">❤️ Infarto do Miocárdio</h4>
+        <div class="timeline">
+          <div class="tl-item neutral" style="color:var(--muted);"><strong>0–6 h</strong> <span>Necrose de coagulação; sem reação visível</span></div>
+          <div class="tl-item fibrina"><strong>6–24 h</strong> <span>Neutrófilos invadem; edema; fibrina</span></div>
+          <div class="tl-item gran"><strong>D3–D7</strong> <span>Tecido de granulação substitui necrose (risco de ruptura!)</span></div>
+          <div class="tl-item fibrose"><strong>Semana 3–8</strong> <span>Colágeno denso → cicatriz fibrosa transmural</span></div>
+        </div>
+        <div style="margin-top:10px; font-size:11px; padding:8px; background:rgba(232,112,109,0.08); border-radius:6px; color:var(--danger);">
+          ⚠ D4–D7: tecido de granulação mole → risco máximo de ruptura ventricular
+        </div>
+      </div>
+
+      <div class="info-card">
+        <h4 style="color:var(--fibrose);">🫀 Pericardite Fibrinosa</h4>
+        <div class="timeline">
+          <div class="tl-item fibrina"><strong>Fase aguda</strong> <span>Depósito fibrinoso entre folhetos ("atrito de couro")</span></div>
+          <div class="tl-item success" style="color:var(--success);"><strong>Resolução</strong> <span>Fibrinólise → pericárdio normal</span></div>
+          <div class="tl-item gran"><strong>Organização</strong> <span>Fibroblastos invadem → tecido de granulação</span></div>
+          <div class="tl-item fibrose"><strong>Fibrose</strong> <span>Aderências pericárdicas → pericardite constritiva</span></div>
+        </div>
+        <div style="margin-top:10px; font-size:11px; padding:8px; background:rgba(196,109,232,0.08); border-radius:6px; color:var(--fibrose);">
+          Pericardite constritiva = sequela fibrótica clássica — cobrada em cardiologia
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PONTOS-CHAVE FINAIS -->
+  <div class="mb-32 reveal">
+    <div class="section-title">Pontos-Chave para Prova &amp; Prática</div>
+    <div class="keypoints">
+      <div class="kp-item"><div class="kp-num">01</div><div>Tecido fibrinoso = exsudato agudo rico em fibrina — fase precoce, reversível se fibrinólise ocorre</div></div>
+      <div class="kp-item"><div class="kp-num">02</div><div>Tecido de granulação = reparo ativo — tríade: neovascularização + fibroblastos + macrófagos. Aparece em dias 3–5</div></div>
+      <div class="kp-item"><div class="kp-num">03</div><div>Fibrose = produto final do reparo ou da inflamação crónica — colágeno tipo I, miofibroblastos, TGF-β</div></div>
+      <div class="kp-item"><div class="kp-num">04</div><div>Os três podem coexistir — TB é o exemplo paradigmático com os três simultâneos</div></div>
+      <div class="kp-item"><div class="kp-num">05</div><div>Fibrinoso → fibrose = "organização do exsudato" — transição clássica de patologia</div></div>
+      <div class="kp-item"><div class="kp-num">06</div><div>Granulação ≠ granuloma — erro clássico de nomenclatura com fisiopatologias completamente distintas</div></div>
+      <div class="kp-item"><div class="kp-num">07</div><div>TGF-β = maestro da fibrose: ativa fibroblastos, inibe MMPs, inibe inflamação</div></div>
+      <div class="kp-item"><div class="kp-num">08</div><div>Infarto D4–D7: granulação mole = risco de ruptura ventricular (janela de vulnerabilidade)</div></div>
+      <div class="kp-item"><div class="kp-num">09</div><div>Cicatrização 1ª intenção = mínima granulação. 2ª intenção = granulação exuberante + maior fibrose</div></div>
+      <div class="kp-item"><div class="kp-num">10</div><div>Corticosteroides inibem granulação e colágeno — cautela pós-operatória em uso crónico</div></div>
+    </div>
+  </div>
+
+  <!-- QUESTÃO ESTILO BOARD -->
+  <div class="mb-32 reveal">
+    <div class="section-title">Questão Estilo Board / Residência</div>
+    <div class="danger-box" style="background: rgba(109,196,232,0.05); border-color: rgba(109,196,232,0.2);">
+      <h4 style="color:var(--gran);">📝 Active Recall</h4>
+      <div style="font-size:12px; margin-bottom:16px; line-height:1.8; color:var(--text);">
+        Homem, 52 anos, com diagnóstico de pneumonia lobar há 2 semanas, não tratada adequadamente. TC tórax revela condensação persistente com aspecto sólido homogêneo no LID. Broncoscopia mostra tecido esbranquiçado, firme, não ventilado. O patologista descreve "proliferação de fibroblastos no interior dos alvéolos com deposição de colágeno."
+      </div>
+      <div style="font-size:12px; color:var(--gran); margin-bottom:8px;">Qual é o processo descrito e como chegou a esse estado?</div>
+      <details style="margin-top:10px;">
+        <summary style="cursor:pointer; font-size:11px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase;">Ver resposta</summary>
+        <div style="margin-top:12px; font-size:12px; line-height:1.8; color:var(--text); padding:12px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid var(--line);">
+          <strong style="color:var(--fibrose);">Carnificação pulmonar</strong> — organização do exsudato fibrinoso não resolvido.<br><br>
+          Sequência: Pneumonia → exsudato fibrinoso alveolar (fase fibrinosa) → sem fibrinólise eficaz (por tratamento tardio ou inadequado) → fibroblastos invadem a fibrina → tecido de granulação intralveolar → maturação → <strong>fibrose intralveolar permanente</strong>.<br><br>
+          O pulmão fica "carnificado" — consistência de carne, não ventila. É uma complicação da resolução incompleta — transição clássica <span style="color:var(--fibrina);">fibrinoso</span> → <span style="color:var(--gran);">granulação</span> → <span style="color:var(--fibrose);">fibrose</span>.
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="footer">
+    Medicina Interna · Patologia Geral · Fibrose · Granulação · Tecido Fibrinoso<br>
+    Mapa Mental — Medicina Baseada em Evidências
+  </div>
+</div>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

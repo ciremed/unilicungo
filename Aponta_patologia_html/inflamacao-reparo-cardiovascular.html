@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inflamação e Reparo — Fisiopatologia Cardiovascular Avançada</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13161d;
+    --bg3: #1a1e28;
+    --surface: #1e2333;
+    --border: #2a3045;
+    --accent: #c0392b;
+    --accent2: #e74c3c;
+    --gold: #d4a843;
+    --gold2: #f0c060;
+    --teal: #1abc9c;
+    --teal2: #2ecc71;
+    --blue: #3498db;
+    --purple: #9b59b6;
+    --text: #e8e4dc;
+    --text2: #b8b4ac;
+    --text3: #7a7870;
+    --code-bg: #111318;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.85;
+    font-weight: 300;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, #0d0f14 0%, #1a0a0a 40%, #0d1520 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(192,57,43,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid rgba(231,76,60,0.4);
+    padding: 6px 16px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 900;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 em {
+    color: var(--gold);
+    font-style: italic;
+  }
+  .hero .subtitle {
+    font-size: 1.1rem;
+    color: var(--text2);
+    font-weight: 300;
+    font-style: italic;
+    margin-bottom: 36px;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-meta span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    letter-spacing: 1px;
+  }
+  .hero-meta span strong { color: var(--teal); }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ── TOC ── */
+  .toc-wrapper {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    margin: 48px auto;
+    max-width: 900px;
+    padding: 36px 40px;
+  }
+  .toc-wrapper h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .toc-part {
+    margin-bottom: 20px;
+  }
+  .toc-part-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .toc-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 16px;
+  }
+  .toc-links a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 0.92rem;
+    transition: color 0.2s;
+    font-family: 'Source Serif 4', serif;
+  }
+  .toc-links a:hover { color: var(--gold2); }
+
+  /* ── PARTS ── */
+  .part-header {
+    background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
+    border-top: 2px solid var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 40px 32px;
+    margin: 60px 0 0;
+  }
+  .part-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 10px;
+  }
+  .part-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 48px 40px;
+    border-bottom: 1px solid var(--border);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold2);
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+  .section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--teal2);
+    margin: 36px 0 14px;
+    border-left: 3px solid var(--teal);
+    padding-left: 14px;
+    line-height: 1.3;
+  }
+  .section h4 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin: 28px 0 10px;
+    letter-spacing: 0.3px;
+  }
+  .section p {
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  /* ── EMPHASIS ── */
+  strong { color: var(--gold2); font-weight: 600; }
+  em { color: var(--text2); }
+
+  /* ── CLINICAL BOX ── */
+  .clinical-box {
+    background: linear-gradient(135deg, rgba(26,188,156,0.06) 0%, rgba(26,188,156,0.02) 100%);
+    border: 1px solid rgba(26,188,156,0.3);
+    border-left: 4px solid var(--teal);
+    border-radius: 0 6px 6px 0;
+    padding: 20px 24px;
+    margin: 24px 0;
+    position: relative;
+  }
+  .clinical-box::before {
+    content: '▸ APLICAÇÃO CLÍNICA';
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--teal);
+    display: block;
+    margin-bottom: 10px;
+  }
+  .clinical-box p { margin-bottom: 10px; font-size: 0.95rem; }
+  .clinical-box p:last-child { margin-bottom: 0; }
+
+  .alert-box {
+    background: linear-gradient(135deg, rgba(192,57,43,0.08) 0%, rgba(192,57,43,0.02) 100%);
+    border: 1px solid rgba(192,57,43,0.3);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .alert-box::before {
+    content: '⚠ ATENÇÃO CLÍNICA';
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    display: block;
+    margin-bottom: 10px;
+  }
+  .alert-box p { margin-bottom: 10px; font-size: 0.95rem; }
+  .alert-box p:last-child { margin-bottom: 0; }
+
+  .concept-box {
+    background: linear-gradient(135deg, rgba(212,168,67,0.07) 0%, rgba(212,168,67,0.02) 100%);
+    border: 1px solid rgba(212,168,67,0.25);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 6px 6px 0;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .concept-box::before {
+    content: '◆ CONCEITO-CHAVE';
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  /* ── CODE / PATHWAY ── */
+  .pathway {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin: 24px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    color: #a8d8a8;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* ── TABLES ── */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 24px 0;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  thead {
+    background: var(--surface);
+  }
+  thead th {
+    padding: 14px 16px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba(42,48,69,0.6);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  tbody td {
+    padding: 12px 16px;
+    vertical-align: top;
+    color: var(--text2);
+    line-height: 1.55;
+  }
+  tbody td:first-child { color: var(--text); font-weight: 400; }
+
+  /* ── ETYMOLOGY ── */
+  .etymology {
+    display: inline-block;
+    background: rgba(155,89,182,0.12);
+    border: 1px solid rgba(155,89,182,0.3);
+    border-radius: 3px;
+    padding: 2px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #c39bd3;
+    margin: 2px 4px;
+  }
+
+  /* ── CASE STUDIES ── */
+  .case-study {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--blue);
+    border-radius: 0 0 6px 6px;
+    padding: 32px 36px;
+    margin: 36px 0;
+  }
+  .case-study-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .case-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--blue);
+    border: 1px solid rgba(52,152,219,0.4);
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+  .case-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .case-patient {
+    background: var(--bg3);
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 0.93rem;
+    color: var(--text2);
+    border-left: 3px solid var(--blue);
+  }
+  .questions-list {
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 24px;
+  }
+  .questions-list li {
+    padding: 10px 0 10px 28px;
+    border-bottom: 1px solid rgba(42,48,69,0.5);
+    position: relative;
+    font-size: 0.95rem;
+  }
+  .questions-list li::before {
+    content: counter(q-counter) '.';
+    counter-increment: q-counter;
+    position: absolute;
+    left: 0;
+    color: var(--blue);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    top: 12px;
+  }
+  .questions-list { counter-reset: q-counter; }
+  .answer-block {
+    background: rgba(52,152,219,0.05);
+    border: 1px solid rgba(52,152,219,0.15);
+    border-radius: 4px;
+    padding: 20px 24px;
+  }
+  .answer-block-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--blue);
+    margin-bottom: 14px;
+  }
+  .answer-item {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(42,48,69,0.4);
+    font-size: 0.9rem;
+    color: var(--text2);
+    line-height: 1.65;
+  }
+  .answer-item:last-child { border-bottom: none; }
+  .answer-num {
+    color: var(--blue);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 8px;
+  }
+
+  /* ── LISTS ── */
+  ul, ol {
+    padding-left: 28px;
+    margin: 14px 0;
+  }
+  li {
+    margin-bottom: 8px;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  li strong { color: var(--gold2); }
+
+  /* ── REFERENCES ── */
+  .references {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--gold);
+    padding: 36px 40px;
+    margin-top: 60px;
+  }
+  .references h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .ref-item {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(42,48,69,0.5);
+    font-size: 0.88rem;
+    color: var(--text3);
+    line-height: 1.6;
+  }
+  .ref-item a {
+    color: var(--blue);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    display: block;
+    margin-top: 4px;
+  }
+  .ref-item a:hover { color: var(--teal); }
+
+  /* ── SCROLL PROGRESS ── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--gold), var(--teal));
+    width: 0%;
+    z-index: 999;
+    transition: width 0.1s;
+  }
+
+  /* ── BACK TO TOP ── */
+  #back-top {
+    position: fixed;
+    bottom: 32px; right: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s, border-color 0.2s;
+    z-index: 100;
+  }
+  #back-top.visible { opacity: 1; }
+  #back-top:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 40px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .hero { padding: 60px 20px 40px; }
+    .section { padding: 36px 20px; }
+    .part-header { padding: 32px 20px 24px; }
+    .pathway { font-size: 11px; padding: 18px 16px; }
+    .toc-wrapper { padding: 28px 20px; }
+    .case-study { padding: 24px 20px; }
+    .references { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="back-top" title="Voltar ao topo">↑</div>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="hero-badge">Patologia Avançada · Módulo II</div>
+  <h1>Inflamação e Reparo<br><em>Fisiopatologia Cardiovascular</em></h1>
+  <p class="subtitle">Da biologia molecular à prática clínica intensiva</p>
+  <div class="hero-meta">
+    <span>Nível <strong>Avançado</strong></span>
+    <span>Foco <strong>Cardiovascular</strong></span>
+    <span>Módulos <strong>XI + III Casos Clínicos</strong></span>
+  </div>
+</header>
+
+<!-- TOC -->
+<nav class="toc-wrapper container" id="toc">
+  <h2>◈ Índice de Conteúdo</h2>
+  <div class="toc-part">
+    <div class="toc-part-title">Parte I–IV · Fundamentos Moleculares</div>
+    <div class="toc-links">
+      <a href="#sec1">1. Etimologia e História</a>
+      <a href="#sec2">2. Definição Fisiopatológica</a>
+      <a href="#sec3">3. Inflamação Aguda vs. Crônica</a>
+      <a href="#sec4">4. PRRs — TLRs e NLRP3/Inflamassoma</a>
+      <a href="#sec5">5. Citocinas — IL-1β, TNF-α, IL-6, IL-10</a>
+      <a href="#sec6">6. Sistema do Complemento</a>
+      <a href="#sec7">7. Mediadores Vasoativos e Eicosanoides</a>
+      <a href="#sec8">8. Leucostase e Diapedese</a>
+    </div>
+  </div>
+  <div class="toc-part">
+    <div class="toc-part-title">Parte V–VI · Aterosclerose e SCA</div>
+    <div class="toc-links">
+      <a href="#sec9">9. O Novo Paradigma: Aterosclerose como Doença Inflamatória</a>
+      <a href="#sec10">10. Anatomia da Parede Arterial</a>
+      <a href="#sec11">11. Disfunção Endotelial</a>
+      <a href="#sec12">12. Patogênese da Aterosclerose — 6 Etapas</a>
+      <a href="#sec13">13. Desestabilização da Placa (MMPs, IFN-γ)</a>
+      <a href="#sec14">14. Ruptura, Trombose e SCA</a>
+      <a href="#sec15">15. Inflamação no IAM — Fases Temporais</a>
+    </div>
+  </div>
+  <div class="toc-part">
+    <div class="toc-part-title">Parte VII · Outras Patologias CV</div>
+    <div class="toc-links">
+      <a href="#sec16">16. Pericardite</a>
+      <a href="#sec17">17. Miocardite</a>
+      <a href="#sec18">18. Endocardite Infecciosa</a>
+    </div>
+  </div>
+  <div class="toc-part">
+    <div class="toc-part-title">Parte VIII–XI · Resolução, Reparo e Prática</div>
+    <div class="toc-links">
+      <a href="#sec19">19. Resolução Ativa da Inflamação</a>
+      <a href="#sec20">20. Fibrose Cardíaca</a>
+      <a href="#sec21">21. Biomarcadores Clínicos (PCR-us, Troponinas, BNP)</a>
+      <a href="#sec22">22. Síntese Integrativa</a>
+      <a href="#casos">Casos Clínicos (3 casos + gabaritos)</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     PARTE I
+═══════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Parte I</div>
+  <h2>Fundamentos Moleculares da Inflamação</h2>
+</div>
+
+<div class="section" id="sec1">
+  <span class="section-number">01 · ETIMOLOGIA E HISTÓRIA</span>
+  <h2>Etimologia e História do Conceito</h2>
+  <p>A palavra <strong>inflamação</strong> vem do latim <em>inflammatio</em>, derivado de <em>inflammare</em> = "colocar em chamas". Os romanos já descreviam os 4 sinais cardinais — sistematizados por <strong>Aulus Cornelius Celsus</strong> (século I d.C.) no <em>De Medicina</em>:</p>
+  <ul>
+    <li><strong>Rubor</strong> (vermelhidão) → vasodilatação + hiperemia</li>
+    <li><strong>Tumor</strong> (inchaço) → edema por extravasamento</li>
+    <li><strong>Calor</strong> (calor local) → aumento do fluxo sanguíneo</li>
+    <li><strong>Dolor</strong> (dor) → mediadores algogênicos (bradicinina, PGs)</li>
+  </ul>
+  <p><strong>Rudolf Virchow</strong> (1858) adicionou o quinto sinal:</p>
+  <ul>
+    <li><strong>Functio laesa</strong> (perda de função) → dano tecidual + inibição neuromuscular</li>
+  </ul>
+  <p><strong>Élie Metchnikoff</strong> (1882) descobriu a fagocitose em larvas de estrela-do-mar — fundamento da imunidade inata — e ganhou o Nobel de Fisiologia em 1908.</p>
+</div>
+
+<div class="section" id="sec2">
+  <span class="section-number">02 · DEFINIÇÃO</span>
+  <h2>Definição Fisiopatológica Avançada</h2>
+  <p>Inflamação é uma <strong>resposta protetora estereotipada</strong> do tecido vascularizado a agentes lesivos (patógenos, células mortas, irritantes), mediada pela ativação coordenada de:</p>
+  <ol>
+    <li><strong>Sensores de perigo inatos</strong> — PRRs (<em>Pattern Recognition Receptors</em> = Receptores de Reconhecimento de Padrões)</li>
+    <li><strong>Células residentes</strong> — macrófagos, mastócitos, células dendríticas</li>
+    <li><strong>Sistema vascular</strong> — endotélio + plaquetas</li>
+    <li><strong>Leucócitos circulantes</strong></li>
+    <li><strong>Cascatas de proteínas plasmáticas</strong> — complemento, coagulação, cininas</li>
+  </ol>
+  <div class="concept-box">
+    <p>A inflamação <strong>NÃO</strong> é sinônimo de infecção. Ela é a RESPOSTA do hospedeiro — podendo ocorrer sem nenhum patógeno (<strong>inflamação estéril</strong>).</p>
+  </div>
+</div>
+
+<div class="section" id="sec3">
+  <span class="section-number">03 · AGUDA vs. CRÔNICA</span>
+  <h2>Os Dois Grandes Braços da Inflamação</h2>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Característica</th><th>Aguda</th><th>Crônica</th></tr></thead>
+      <tbody>
+        <tr><td>Duração</td><td>Horas a dias</td><td>Semanas a anos</td></tr>
+        <tr><td>Célula predominante</td><td>Neutrófilo (PMN)</td><td>Macrófago, Linfócito, Plasmócito</td></tr>
+        <tr><td>Início</td><td>Rápido</td><td>Insidioso</td></tr>
+        <tr><td>Exsudato</td><td>Seroso, fibrinoso, purulento</td><td>Granulomatoso, fibrose</td></tr>
+        <tr><td>Resolução</td><td>Completa (se estímulo cessa)</td><td>Fibrose, dano permanente</td></tr>
+        <tr><td>Exemplo CV</td><td>Pericardite aguda pós-IAM</td><td>Aterosclerose</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PARTE II
+═══════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Parte II</div>
+  <h2>Receptores de Perigo e Ativação Inflamatória</h2>
+</div>
+
+<div class="section" id="sec4">
+  <span class="section-number">04 · PRRs, TLRs E INFLAMASSOMA</span>
+  <h2>PRRs — Receptores de Reconhecimento de Padrões</h2>
+
+  <h3>4.1 PAMPs e DAMPs</h3>
+  <p><strong>PAMPs</strong> (<em>Pathogen-Associated Molecular Patterns</em> = Padrões Moleculares Associados a Patógenos): moléculas conservadas evolutivamente em microrganismos, ausentes em células do hospedeiro: LPS de bactérias Gram-negativas, peptidoglicano, RNA de fita dupla viral, CpG DNA, flagelina.</p>
+  <p><strong>DAMPs</strong> (<em>Damage-Associated Molecular Patterns</em> = Padrões Moleculares Associados a Dano): moléculas endógenas liberadas por células mortas — cruciais na inflamação cardiovascular:</p>
+  <ul>
+    <li><strong>HMGB1</strong> (<em>High Mobility Group Box 1</em>) — liberada por necrose miocárdica</li>
+    <li><strong>ATP extracelular</strong> — sinal de morte celular</li>
+    <li><strong>DNA mitocondrial</strong> — liberado no infarto; mimetiza DNA bacteriano (sem histonas)</li>
+    <li><strong>Cristais de colesterol</strong> — fundamentais na aterosclerose</li>
+    <li><strong>HSPs</strong> (<em>Heat Shock Proteins</em>) — HSP60, HSP70</li>
+    <li><strong>IL-1α intracelular</strong> — liberada passivamente na necrose</li>
+  </ul>
+  <div class="clinical-box">
+    <p>No <strong>IAM</strong> (<em>Infarto Agudo do Miocárdio</em>), a necrose dos cardiomiócitos libera avalanche de DAMPs — HMGB1, DNA mitocondrial, ATP — que ativam macrófagos cardíacos residentes e disparam a resposta inflamatória pós-infarto. Essa inflamação é NECESSÁRIA para limpeza de debris, mas se EXCESSIVA expande o dano — conceito de <strong>lesão de reperfusão</strong>.</p>
+  </div>
+
+  <h3>4.2 TLRs — Toll-Like Receptors</h3>
+  <p><span class="etymology">Toll</span> em alemão = "fantástico/incrível" — exclamação de Christiane Nüsslein-Volhard ao ver o fenótipo mutante da <em>Drosophila</em> em 1985. São glicoproteínas transmembrana com domínio extracelular <strong>LRR</strong> (<em>Leucine-Rich Repeat</em>) e domínio intracelular <strong>TIR</strong> (<em>Toll/IL-1 Receptor</em>).</p>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>TLR</th><th>Localização</th><th>Ligante principal</th><th>Relevância CV</th></tr></thead>
+      <tbody>
+        <tr><td>TLR2</td><td>Superfície</td><td>Peptidoglicano, lipoproteínas</td><td>Aterosclerose, endocardite</td></tr>
+        <tr><td>TLR4</td><td>Superfície</td><td>LPS, HMGB1, HSP60, LDL oxidado</td><td><strong>Central na aterosclerose</strong></td></tr>
+        <tr><td>TLR9</td><td>Endossomo</td><td>DNA CpG, DNA mitocondrial</td><td>Inflamação pós-IAM</td></tr>
+        <tr><td>TLR3</td><td>Endossomo</td><td>dsRNA viral</td><td>Miocardite viral</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Via de Sinalização do TLR4:</h4>
+  <div class="pathway">LPS / LDL-ox / HMGB1
+       ↓
+  Liga-se ao TLR4 (co-receptor MD-2 + CD14)
+       ↓
+Recrutamento: MyD88 + TRIF
+       ↓
+MyD88 → IRAK4 → IRAK1 → TRAF6
+       ↓
+TAK1 (TGF-β Activated Kinase 1)
+       ↓
+    ┌──────┴──────┐
+  IKK-β        MKK3/6
+    ↓               ↓
+  IκB-α          p38 MAPK
+  fosfor.              ↓
+    ↓            AP-1 ativado
+NF-κB liberado
+    ↓
+Translocação nuclear
+    ↓
+Transcrição: TNF-α, IL-1β, IL-6, IL-8
+             COX-2, iNOS
+             ICAM-1, VCAM-1, E-selectina
+             MMP-9 (rompe cápsula fibrosa!)</div>
+  <div class="clinical-box">
+    <p><strong>Estatinas têm efeito pleiotrópico anti-inflamatório</strong> — independente de baixar colesterol — justamente por inibirem NF-κB e reduzirem expressão de VCAM-1 e MCP-1 no endotélio. Isso explica por que estatinas reduzem eventos CV mesmo em pacientes com LDL já baixo (trial <strong>JUPITER</strong>).</p>
+  </div>
+
+  <h3>4.3 Inflamassoma NLRP3 — A Bomba Molecular</h3>
+  <p><span class="etymology">Inflammasome</span> = "corpo inflamatório" — complexo multiproteico citoplasmático. O mais importante cardiovascularmente é o <strong>NLRP3</strong> (<em>NOD-Like Receptor Protein 3</em>). Ativadores no contexto CV: cristais de colesterol, cristais de urato, ATP extracelular, ROS, perturbação lisossomial.</p>
+  <div class="pathway">SINAL 1 (Priming) — TLR4/NF-κB
+→ Induz expressão de NLRP3 e Pró-IL-1β
+
+SINAL 2 (Ativação) — cristal de colesterol
+→ Ruptura lisossomial → Catepsina B
+→ NLRP3 + ASC + Pró-Caspase-1
+→ Auto-clivagem → CASPASE-1 ATIVA
+         ↓                    ↓
+    IL-1β madura         IL-18 madura
+         ↓
+   GASDERMIN D clivado → Poros na membrana
+         ↓
+   PIROPTOSE + liberação massiva de IL-1β/IL-18</div>
+  <p><strong>PIROPTOSE</strong> (<span class="etymology">pyro</span> = fogo + <span class="etymology">ptosis</span> = queda) — morte celular programada INFLAMATÓRIA, distinta da apoptose: explosiva, libera conteúdo intracelular, amplifica a inflamação.</p>
+  <div class="clinical-box">
+    <p>O trial <strong>CANTOS (2017)</strong> — <em>Canakinumab Anti-inflammatory Thrombosis Outcomes Study</em> — testou canakinumabe (anti-IL-1β) em 10.061 pacientes pós-IAM com PCR-us elevada. Reduziu eventos CV recorrentes em 15% (HR 0,85, p=0,021) <strong>independentemente de qualquer efeito no LDL</strong> — provando que a inflamação mediada pelo NLRP3/IL-1β é CAUSA de eventos CV. (Ridker et al., NEJM 2017)</p>
+    <p>O trial <strong>COLCOT (2019)</strong> e <strong>LoDoCo2 (2020)</strong> demonstraram que <strong>colchicina</strong> reduz eventos CV em 23–31% pós-IAM e em doença coronariana estável. Hoje aprovada para prevenção CV secundária.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PARTE III
+═══════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Parte III</div>
+  <h2>Mediadores Moleculares da Inflamação</h2>
+</div>
+
+<div class="section" id="sec5">
+  <span class="section-number">05 · CITOCINAS</span>
+  <h2>Citocinas — Mensageiros Moleculares da Guerra</h2>
+  <p><span class="etymology">Cyto</span> (grego) = célula + <span class="etymology">kinos</span> = movimento → moléculas que movem/ativam células.</p>
+
+  <h3>5.1 IL-1β — Interleucina-1 Beta</h3>
+  <p>Produzida por macrófagos, células dendríticas, endotélio e cardiomiócitos. Processamento: Pró-IL-1β (31 kDa) → caspase-1 → <strong>IL-1β madura (17 kDa)</strong>.</p>
+  <p><strong>Ações cardiovasculares:</strong> ativa endotélio → ICAM-1, VCAM-1, E-selectina; induz IL-6 → PCR↑; <strong>inotrópico negativo</strong> (via NO); ativa fibroblastos → fibrose miocárdica; induz COX-2 → PGs → febre, dor.</p>
+
+  <h3>5.2 TNF-α — Fator de Necrose Tumoral Alfa</h3>
+  <p>Produzido por macrófagos (principal), mastócitos, células T, cardiomiócitos sob estresse. Ações cardiovasculares:</p>
+  <ul>
+    <li><strong>Disfunção endotelial</strong> → reduz NO via downregulation da eNOS</li>
+    <li><strong>Inotrópico negativo</strong> — via NO e ceramida</li>
+    <li><strong>Induz apoptose de cardiomiócitos</strong> — via TNFR1/caspase-8</li>
+    <li><strong>Remodelamento cardíaco patológico</strong> → hipertrofia, fibrose</li>
+  </ul>
+  <div class="alert-box">
+    <p><strong>Paradoxo clínico:</strong> Anti-TNF (infliximabe, etanercepte) reduzem risco CV na Artrite Reumatoide. PORÉM, trials de anti-TNF diretamente na IC com FE reduzida (RENEWAL, ATTACH) foram <strong>NEUTROS ou PREJUDICIAIS</strong> — o TNF tem papel duplo: deletério na aterosclerose, mas necessário na IC.</p>
+  </div>
+
+  <h3>5.3 IL-6 — Interleucina-6</h3>
+  <p>Receptor: IL-6R + gp130 → JAK1/2 → <strong>STAT3</strong>. O fígado como alvo — induz proteínas de fase aguda:</p>
+  <ul>
+    <li><strong>PCR</strong> (<em>Proteína C-Reativa</em>) — marcador clínico central</li>
+    <li><strong>Fibrinogênio</strong> → trombose</li>
+    <li><strong>SAA</strong> (<em>Amiloide Sérico A</em>) → pró-aterogênico</li>
+    <li><strong>Hepicidina</strong> → anemia de doença crônica</li>
+  </ul>
+  <div class="clinical-box">
+    <p><strong>PCR-us</strong> (<em>Proteína C-Reativa ultra-sensível</em>):</p>
+    <p>• &lt; 1 mg/L → baixo risco CV &nbsp;|&nbsp; 1–3 mg/L → risco intermediário &nbsp;|&nbsp; &gt; 3 mg/L → alto risco CV &nbsp;|&nbsp; &gt; 10 mg/L → pensar em processo inflamatório ativo.</p>
+  </div>
+
+  <h3>5.4 IL-10 — A Anti-inflamatória Endógena</h3>
+  <p>Produzida por macrófagos M2, Tregs e células B regulatórias. <strong>Ações:</strong> inibe NF-κB; reduz TNF-α, IL-1β, IL-6, IL-12; promove polarização M2; <strong>estabiliza placa aterosclerótica</strong>. O equilíbrio IL-10 (estabilizadora) vs. IL-18/IFN-γ (desestabilizadoras) determina vulnerabilidade da placa.</p>
+</div>
+
+<div class="section" id="sec6">
+  <span class="section-number">06 · COMPLEMENTO</span>
+  <h2>Sistema do Complemento — A Artilharia Humoral</h2>
+  <p><span class="etymology">Complementum</span> (latim) = "o que completa" a ação dos anticorpos. Três vias: <strong>Clássica</strong> (IgG/IgM), <strong>Alternativa</strong> (C3 espontâneo) e <strong>Via da Lectina</strong> (MBL reconhece manose).</p>
+  <p>Ponto de convergência — <strong>C3 convertase</strong> → C3a (anafilatoxina) + C3b (opsonina) → C5 convertase → C5a (quimiotático potente) + C5b → <strong>MAC</strong> (<em>Membrane Attack Complex</em> = Complexo de Ataque à Membrana): C5b-6-7-8-9 → poro → lise.</p>
+  <div class="clinical-box">
+    <p><strong>Relevância cardiovascular:</strong> Na reperfusão pós-IAM, o complemento ativa-se maciçamente → contribui para lesão por reperfusão (até 30-40% do dano total!). C3b deposita-se na íntima arterial; MAC encontrado em placas. <strong>Eculizumabe</strong> (anti-C5) estudado em reperfusão pós-IAM com resultados preliminares interessantes.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PARTE IV
+═══════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Parte IV</div>
+  <h2>A Cascata Vascular da Inflamação Aguda</h2>
+</div>
+
+<div class="section" id="sec7">
+  <span class="section-number">07 · MEDIADORES VASOATIVOS E EICOSANOIDES</span>
+  <h2>Vasodilatação, Permeabilidade e Eicosanoides</h2>
+
+  <h3>7.1 Mediadores Vasoativos Principais</h3>
+  <p><strong>Histamina:</strong> Grânulos de mastócitos → liberação por IgE, C3a, C5a, trauma. Via H1 → Gq → IP3 → Ca²⁺ → contração de células endoteliais → abertura de junções → extravasamento.</p>
+  <p><strong>Bradicinina:</strong> Calicreína → cininogênio → bradicinina. Vasodilatação POTENTE + aumento de permeabilidade + dor (ativa nociceptores C). Degradada pela <strong>ECA</strong> (<em>Angiotensin-Converting Enzyme</em>).</p>
+  <div class="alert-box">
+    <p>iECA causam <strong>tosse seca</strong> em 10–15% dos pacientes pois a ECA normalmente degrada bradicinina. Ao inibir a ECA → bradicinina acumula → estimula receptores B2 na traqueia → tosse reflexa. BRAs não afetam a ECA → não causam tosse. O <strong>angioedema</strong> com iECA também é mediado por acúmulo de bradicinina — pode ser fatal (via aérea!).</p>
+  </div>
+
+  <h3>7.2 Eicosanoides — Derivados do Ácido Araquidônico</h3>
+  <div class="pathway">Fosfolipídios de membrana
+       ↓ PLA2 (ativada por Ca²⁺, citocinas)
+  Ácido Araquidônico (AA)
+       ↓
+  ┌────┴──────────────┐
+COX-1/2           5-LOX
+  ↓                    ↓
+Prostaglandinas   Leucotrienos
+Tromboxanos       (LTB4, LTC4, LTD4)
+Prostaciclinas</div>
+
+  <p><strong>COX-1</strong> (constitutiva): TXA2 nas plaquetas → vasoconstricção + agregação. PGE2 na mucosa gástrica → proteção. Por isso AINEs não-seletivos causam úlcera!</p>
+  <p><strong>COX-2</strong> (induzida): PGI2 (prostaciclina) no endotélio → vasodilatação + ANTI-agregação. PGE2 → febre, dor, vasodilatação.</p>
+
+  <div class="alert-box">
+    <p><strong>O Paradoxo dos Coxibs:</strong> Inibidores seletivos de COX-2 → bloqueiam PGI2 endotelial SEM bloquear TXA2 plaquetário (plaquetas não têm núcleo, não expressam COX-2 induzível) → desequilíbrio pró-trombótico → aumento de IAM e AVC. O <strong>Rofecoxibe (Vioxx)</strong> foi retirado do mercado em 2004 por aumentar risco de IAM em 4x. (Graham et al., Lancet 2005)</p>
+  </div>
+
+  <h4>Aspirina (AAS — Ácido Acetilsalicílico):</h4>
+  <p>Acetila irreversivelmente a serina 529 da COX-1 e serina 516 da COX-2. Plaquetas sem núcleo → não sintetizam nova COX → efeito dura TODA a vida da plaqueta (7–10 dias). Dose baixa (75–100 mg): inibe predominantemente COX-1 plaquetária → anti-trombótico com mínima inibição da PGI2 endotelial.</p>
+
+  <h4>Via da 5-LOX — Leucotrienos:</h4>
+  <p><strong>LTB4</strong>: potente quimiotático para neutrófilos. <strong>LTC4/D4/E4</strong> (cisteinil-leucotrienos): broncoconstricção (asma!), vasoconstricção, edema. Montelucaste (bloqueador CysLT1) atua aqui.</p>
+
+  <h4>Lipoxinas, Resolvinas e Protectinas — O Sinal de Resolução:</h4>
+  <p>Derivadas do AA (lipoxinas) e de EPA/DHA ômega-3 (resolvinas, protectinas, maresinas). São <strong>pró-resolução</strong>: inibem migração de neutrófilos, ativam macrófagos M2. Explicam mecanicamente por que ômega-3 tem efeito anti-inflamatório.</p>
+</div>
+
+<div class="section" id="sec8">
+  <span class="section-number">08 · LEUCOSTASE E DIAPEDESE</span>
+  <h2>As Quatro Etapas do Recrutamento Leucocitário</h2>
+  <p><span class="etymology">Dia</span> (grego) = através + <span class="etymology">pedesis</span> = salto → "saltar através" da parede vascular.</p>
+
+  <h3>Etapa 1 — Rolamento (Rolling)</h3>
+  <p>Mediado por <strong>selectinas</strong>: E-selectina (endotélio, induzida por TNF-α/IL-1β em 1–2h), P-selectina (grânulos de Weibel-Palade — expressão em MINUTOS), L-selectina (leucócitos, constitutiva). Ligante: <strong>PSGL-1</strong>. O leucócito rola — ligações fracas quebradas pelo fluxo e refeitas → movimento lento.</p>
+
+  <h3>Etapa 2 — Ativação</h3>
+  <p>Quimiocinas imobilizadas no endotélio: <strong>IL-8/CXCL8</strong> (neutrófilos), <strong>MCP-1/CCL2</strong> (monócitos — FUNDAMENTAL na aterosclerose), <strong>RANTES/CCL5</strong> (linfócitos T). Via GPCR → ↑Ca²⁺ → ativação conformacional de integrinas (baixa → ALTA afinidade).</p>
+
+  <h3>Etapa 3 — Adesão Firme</h3>
+  <p>Integrinas ativadas ligam IgSF endotelial: <strong>LFA-1</strong> (αLβ2) → ICAM-1; <strong>Mac-1</strong> (αMβ2) → ICAM-1/2; <strong>VLA-4</strong> (α4β1) → <strong>VCAM-1</strong> (induzido por NF-κB!).</p>
+
+  <h3>Etapa 4 — Transmigração (Diapedese)</h3>
+  <p>Migração paracelular ou transcelular. Facilitada por <strong>PECAM-1</strong> (CD31), CD99 e JAMs (<em>Junctional Adhesion Molecules</em>). Leucócito segue gradiente de quimiocinas até o foco inflamatório.</p>
+
+  <div class="clinical-box">
+    <p><strong>Alvo terapêutico:</strong> Natalizumabe (anti-α4-integrina) bloqueia VLA-4 → impede migração de linfócitos → usado em Esclerose Múltipla e DII. Preocupação: risco de LMP (leucoencefalopatia multifocal progressiva) por JC vírus.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PARTE V
+═══════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Parte V</div>
+  <h2>Aterosclerose como Doença Inflamatória Crônica</h2>
+</div>
+
+<div class="section" id="sec9">
+  <span class="section-number">09 · NOVO PARADIGMA</span>
+  <h2>De "Entupimento de Cano" para Inflamação</h2>
+  <p>Por décadas, aterosclerose foi vista como acúmulo passivo de lipídios. A revolução começou com <strong>Russell Ross</strong> (1976, 1999) e foi consolidada por <strong>Peter Libby</strong> (Harvard), que demonstrou ser uma <strong>doença inflamatória crônica da parede arterial</strong>.</p>
+  <div class="concept-box">
+    <p>Referência fundamental: Libby P, Ridker PM, Maseri A. "Inflammation and Atherosclerosis." <em>Circulation</em>. 2002. — Um dos artigos mais citados da cardiologia.</p>
+  </div>
+</div>
+
+<div class="section" id="sec10">
+  <span class="section-number">10 · ANATOMIA DA PAREDE ARTERIAL</span>
+  <h2>Anatomia da Parede Arterial</h2>
+
+  <h3>Camadas Arteriais</h3>
+  <p><strong>Túnica Íntima:</strong> Endotélio (monocamada de CEs) + lâmina basal (colágeno IV, laminina, fibronectina) + camada subendotelial. Limitada pela <strong>LEI</strong> (lâmina elástica interna).</p>
+  <p><strong>Túnica Média:</strong> CMLVs (<em>células musculares lisas vasculares</em>) + MEC: elastina, colágeno I e III, proteoglicanos. Nas artérias elásticas (aorta): lâminas elásticas. Nas artérias musculares (coronárias): predominam CMLVs. Limitada pela <strong>LEE</strong>.</p>
+  <p><strong>Túnica Adventícia:</strong> Fibroblastos, macrófagos residentes, vasa vasorum, nervos adrenérgicos, células progenitoras de CMLVs.</p>
+
+  <h3>O Endotélio — Órgão Metabólico Ativo</h3>
+  <p>Superfície total: ~6.000 m². Peso: ~1,5 kg (mais que o fígado!). NÃO é uma barreira passiva.</p>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Função</th><th>Mediador</th><th>Mecanismo</th></tr></thead>
+      <tbody>
+        <tr><td>Vasodilatação</td><td>NO (<em>Óxido Nítrico</em>)</td><td>eNOS → L-arg → NO → GCs → cGMP → relaxamento CMLV</td></tr>
+        <tr><td>Vasodilatação</td><td>PGI2 (<em>Prostaciclina</em>)</td><td>COX-2 → PGI2 → ↑AMPc → relaxamento</td></tr>
+        <tr><td>Vasoconstricção</td><td>ET-1 (<em>Endotelina-1</em>)</td><td>ETA receptor → ↑Ca²⁺ → contração CMLV</td></tr>
+        <tr><td>Anti-trombose</td><td>NO, PGI2, trombomodulina</td><td>Inibem agregação plaquetária</td></tr>
+        <tr><td>Pró-trombose (se lesado)</td><td>FvW, PAI-1, TF</td><td>Grânulos de Weibel-Palade</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h4>NO — Óxido Nítrico (Nobel de Fisiologia 1998 — Furchgott, Ignarro, Murad):</h4>
+  <div class="pathway">L-Arginina + O₂ + NADPH
+      ↓
+  eNOS (Cofatores: BH4, Ca²⁺-calmodulina, FAD, FMN)
+      ↓
+  NO + L-Citrulina
+      ↓ (difunde para CMLV)
+Guanilato ciclase solúvel (GCs)
+      ↓
+GTP → cGMP ↑↑ → PKG
+      ↓
+Fosforila MLCK → inativa
+Fosforila canais K⁺ → hiperpolarização
+      ↓
+↓ Ca²⁺ intracelular → RELAXAMENTO</div>
+  <div class="alert-box">
+    <p><strong>BH4</strong> (Tetrahidrobiopterina): Cofator ESSENCIAL da eNOS. Quando oxidado em estados de estresse oxidativo → <strong>eNOS desacoplada</strong> → produz O₂⁻ (superóxido) em vez de NO → círculo vicioso de disfunção endotelial!</p>
+  </div>
+</div>
+
+<div class="section" id="sec11">
+  <span class="section-number">11 · DISFUNÇÃO ENDOTELIAL</span>
+  <h2>Disfunção Endotelial — O Gatilho Inicial</h2>
+  <p>Estado em que o endotélio perde suas propriedades protetoras e assume fenótipo <strong>pró-inflamatório e pró-aterogênico</strong>. Causas: LDL oxidado (principal), hipertensão, tabagismo, hiperglicemia/DM, homocisteína elevada, infecções crônicas.</p>
+  <div class="pathway">Fator de risco (ex: LDL-ox)
+       ↓
+Ativa TLR4 no endotélio → NF-κB
+       ↓
+VCAM-1 ↑, ICAM-1 ↑, E-selectina ↑
+MCP-1/CCL2 ↑ (quimioatrai monócitos)
+ET-1 ↑ (vasoconstricção)
+       ↓
+NO ↓ (eNOS desacoplada)
+PGI2 ↓
+       ↓
+Estado pró-inflamatório, pró-trombótico, vasoconstritor</div>
+  <div class="clinical-box">
+    <p><strong>Avaliação da disfunção endotelial:</strong></p>
+    <p>• <strong>FMD</strong> (<em>Flow-Mediated Dilation</em>): Ultrassom braquial após oclusão → mede vasodilatação dependente do endotélio (NO-dependente). FMD &lt; 6–7% = disfunção endotelial.</p>
+    <p>• <strong>EIM/IMT</strong> (Espessura Íntima-Média) carotídea: Marcador de aterosclerose subclínica. &gt; 0,9 mm = espessamento; considera-se placa se &gt; 1,5 mm ou ≥ 0,5 mm de aumento focal.</p>
+  </div>
+</div>
+
+<div class="section" id="sec12">
+  <span class="section-number">12 · PATOGÊNESE DA ATEROSCLEROSE</span>
+  <h2>Patogênese — As 6 Etapas Moleculares</h2>
+
+  <h3>Etapa 1 — Retenção Subendotelial do LDL</h3>
+  <p>LDL (<em>Low-Density Lipoprotein</em>): partícula com ApoB-100. Penetra a íntima e liga-se a proteoglicanos (biglicano, decorina) via carga negativa dos sulfatos × carga positiva do ApoB-100. <strong>LDL pequeno e denso (sdLDL)</strong> é mais aterogênico: maior afinidade por proteoglicanos, mais susceptível à oxidação, menor afinidade pelo LDLR.</p>
+
+  <h3>Etapa 2 — Oxidação do LDL</h3>
+  <p>LDL retido é oxidado por: ROS (NADPH oxidase, eNOS desacoplada), MPO (<em>Mieloperoxidase</em>) de neutrófilos/macrófagos, LOX-1 (<em>Lectin-like Oxidized LDL Receptor-1</em>) do endotélio. LDL completamente oxidado NÃO é reconhecido pelo LDLR → reconhecido pelos <strong>receptores scavenger</strong> (SR-A, CD36, LOX-1) dos macrófagos, que <strong>não são regulados por feedback</strong> → internalização ilimitada!</p>
+
+  <h3>Etapa 3 — Células Espumosas e Estria Gordurosa</h3>
+  <div class="pathway">MCP-1 ↑↑ + VCAM-1 ↑ → Monócito migra para íntima
+       ↓ M-CSF
+   Macrófago
+       ↓ Fagocita ox-LDL via SR-A, CD36
+   CÉLULA ESPUMOSA (foam cell)
+   (macrófago cheio de gotículas lipídicas)
+       ↓ × múltiplas
+   ESTRIA GORDUROSA (fatty streak)
+   ← REVERSÍVEL NESTA FASE! →</div>
+  <p>A estria gordurosa é visível na <strong>aorta de crianças com 10 anos</strong> (estudos de autopsia).</p>
+
+  <h3>Etapa 4 — Resposta Imune Adaptativa</h3>
+  <p>LDL-ox apresentado como antígeno via MHC II → ativa CD4⁺. Subtipos:</p>
+  <ul>
+    <li><strong>Th1</strong>: IFN-γ → macrófago M1 → <strong>desestabilizador</strong> de placa</li>
+    <li><strong>Treg</strong>: IL-10, TGF-β → <strong>estabilizador</strong> de placa</li>
+    <li><strong>CD8⁺</strong>: mata CMLVs → cap fibroso mais fino</li>
+  </ul>
+
+  <h3>Etapa 5 — Migração e Proliferação de CMLVs</h3>
+  <p>PDGF (<em>Platelet-Derived Growth Factor</em>) = mais potente mitógeno e quimiotático de CMLVs. CMLVs mudam de fenótipo contrátil para <strong>sintético</strong> → migram para íntima → produzem colágeno I e III → <strong>cap fibroso</strong>. Este processo é PROTETOR — dá estabilidade mecânica à placa!</p>
+
+  <h3>Etapa 6 — Núcleo Necrótico e Placa Vulnerável</h3>
+  <p>Células espumosas morrem → debris lipídicos acumulam → <strong>núcleo necrótico (NC)</strong> rico em colesterol, ésteres de colesterol e <strong>TF (Fator Tecidual)</strong> altamente trombogênico. Se o cap romper → trombose imediata.</p>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Característica</th><th>Placa Estável</th><th>Placa Vulnerável</th></tr></thead>
+      <tbody>
+        <tr><td>Cap fibroso</td><td>Espesso (&gt;65 μm)</td><td>Fino (&lt;65 μm — TCFA)</td></tr>
+        <tr><td>Núcleo necrótico</td><td>Pequeno (&lt;40%)</td><td>Grande (&gt;40%)</td></tr>
+        <tr><td>Células dominantes</td><td>CMLVs, colágeno</td><td>Macrófagos, linfócitos T</td></tr>
+        <tr><td>Calcificação</td><td>Difusa (estabilizadora)</td><td>Nodular (desestabilizadora)</td></tr>
+        <tr><td>Risco</td><td>Estenose sintomática</td><td><strong>SCA por ruptura</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>TCFA</strong> (<em>Thin-Cap Fibroatheroma</em> = Fibroateroma de Cap Fino) — principal substrato patológico da <strong>SCA</strong> (<em>Síndrome Coronariana Aguda</em>).</p>
+</div>
+
+<div class="section" id="sec13">
+  <span class="section-number">13 · DESESTABILIZAÇÃO DA PLACA</span>
+  <h2>Mecanismos de Desestabilização</h2>
+
+  <h3>13.1 MMPs — Matrix MetalloProteinases</h3>
+  <p><span class="etymology">Metalo</span> = zinco-dependente. Degradam MEC (<em>Matriz Extracelular</em>).</p>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>MMP</th><th>Nome</th><th>Substrato</th><th>Produzida por</th></tr></thead>
+      <tbody>
+        <tr><td>MMP-1</td><td>Colagenase intersticial</td><td>Colágeno I, II, III</td><td>Macrófagos, CMLVs</td></tr>
+        <tr><td>MMP-9</td><td>Gelatinase B</td><td>Colágeno IV, elastina</td><td><strong>Macrófagos (no cap!)</strong></td></tr>
+        <tr><td>MMP-8</td><td>Colagenase neutrofílica</td><td>Colágeno I</td><td>Neutrófilos (no trombo)</td></tr>
+        <tr><td>MMP-12</td><td>Metaloelastase</td><td>Elastina</td><td>Macrófagos</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>O "ombro" da placa:</strong> junção entre cap fibroso e parede normal — maior concentração de macrófagos/MMP-9 → ponto mais frágil → <strong>local mais frequente de ruptura</strong>.</p>
+
+  <h3>13.2 IFN-γ — O Inibidor da Síntese de Colágeno</h3>
+  <p>Produzido pelos linfócitos Th1: inibe fenótipo sintético das CMLVs, inibe produção de colágeno, induz apoptose de CMLVs → cap mais fino. IFN-γ + TNF-α = sinergia devastadora na desestabilização.</p>
+
+  <h3>13.3 Neovascularização da Placa</h3>
+  <p>Vasa vasorum expande-se para dentro da placa (VEGF/FGF de macrófagos hipóxicos) → novos vasos frágeis → sangramento intraplaca → Fe²⁺ → reação de Fenton → mais ROS → expansão rápida do NC → desestabilização aguda.</p>
+  <div class="clinical-box">
+    <p><strong>Imagem invasiva:</strong> <strong>OCT</strong> (<em>Optical Coherence Tomography</em>) intracoronária — resolução de 10–15 μm, identifica TCFA. <strong>IVUS</strong> (<em>Intravascular Ultrasound</em>) detecta placa mole. <strong>RM cardíaca de alta resolução</strong> identifica hemorragia intraplaca, NC e espessura do cap em carótida.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PARTE VI
+═══════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Parte VI</div>
+  <h2>Ruptura de Placa, Trombose e SCA</h2>
+</div>
+
+<div class="section" id="sec14">
+  <span class="section-number">14 · RUPTURA E TROMBOSE</span>
+  <h2>Da Placa à Síndrome Coronariana Aguda</h2>
+
+  <h3>Mecanismo de Ruptura</h3>
+  <p>Triggers agudos: aumento súbito da PA (manhã cedo!), exercício intenso, estresse emocional → catecolaminas → vasoespasmo + ↑FC + ↑PA, frio intenso.</p>
+  <div class="concept-box">
+    <p><strong>Ritmo circadiano do IAM:</strong> IAM ocorre mais frequentemente das 6h às 12h — pico de atividade simpática, PA, viscosidade sanguínea, atividade plaquetária (TXA2↑) e PAI-1 (fibrinólise endógena menor). Descrito por Muller et al.</p>
+  </div>
+
+  <h3>Cascata Trombótica Pós-Ruptura</h3>
+  <div class="pathway">Ruptura do cap fibroso
+       ↓
+Exposição do TF (Fator Tecidual) do NC ao sangue
+       ↓
+TF + Fator VIIa → VIA EXTRÍNSECA
+       ↓
+Fator Xa + Va → PROTROMBINASE
+       ↓
+Protrombina → TROMBINA (Fator IIa)
+       ↓
+  ┌────┴────────────────────────┐
+Fibrinogênio → FIBRINA      Ativa PLAQUETAS
+                                  ↓
+                      Conformação GpIIb/IIIa
+                                  ↓
+                      Liga FIBRINOGÊNIO → agregação
+                                  ↓
+                      TXA2, ADP, serotonina liberados
+                                  ↓
+                      TROMBO PLAQUETÁRIO (branco)
+                                  ↓
+                    + fibrina → TROMBO MISTO (vermelho)</div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>SCA</th><th>Trombo</th><th>ECG</th></tr></thead>
+      <tbody>
+        <tr><td><strong>AI/NSTEMI</strong></td><td>Parcialmente oclusivo</td><td>Depressão ST, inversão T, ou normal</td></tr>
+        <tr><td><strong>STEMI</strong></td><td>Completamente oclusivo</td><td>Supradesnivelamento ST → necrose transmural</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Erosão de Placa (20–30% dos SCAs):</h4>
+  <p>SEM ruptura do cap → erosão da superfície endotelial → trombose. Mediada por hialuronidase de neutrófilos. Especialmente em mulheres jovens e fumantes. Placa menos inflamada, mais rica em CMLVs.</p>
+  <div class="clinical-box">
+    <p>STEMI por erosão pode ser candidato a tratamento antitrombótico SEM stent (estratégia conservadora). <strong>OCT</strong> pode distinguir ruptura de erosão → pode mudar conduta. (Trial EROSION: Jia et al., JACC 2019)</p>
+  </div>
+</div>
+
+<div class="section" id="sec15">
+  <span class="section-number">15 · INFLAMAÇÃO NO IAM</span>
+  <h2>Inflamação no IAM — Três Fases Temporais</h2>
+
+  <h3>Fase 1 — Inflamação Imediata (0–24h)</h3>
+  <p>Necrose de coagulação dos cardiomiócitos. Microscopicamente: perda de estriações, citoplasma hipereosinofílico, núcleos picnóticos, <strong>"bandas de contração"</strong>. Liberação de DAMPs → neutrófilos como primeiras células a chegar (pico 24–48h). Risco: excesso de neutrófilos → catepsina G, elastase, MMP-8 → remodelamento patológico e <strong>ruptura cardíaca</strong> (nas primeiras 72h!).</p>
+
+  <h3>Fase 2 — Limpeza (24h–1 semana)</h3>
+  <p>Monócitos chegam em dois subtipos:</p>
+  <ul>
+    <li><strong>Ly6C⁺ alto</strong> (pró-inflamatório, equiv. humano CD14⁺CD16⁻): dias 1–4 → fagocitam debris, TNF-α, IL-1β</li>
+    <li><strong>Ly6C⁻ baixo</strong> (pró-resolução M2, equiv. CD14ˡᵒCD16⁺): dias 4–7 → efagocitose, IL-10, TGF-β, VEGF</li>
+  </ul>
+  <p><strong>Efagocitose</strong>: macrófagos reconhecem fosfatidilserina exposta via receptores MerTK, Axl, Tim-4, αvβ5 → geram IL-10, TGF-β, lipoxinas. Falha na efagocitose → debris acumulam → inflamação não-resolvida → remodelamento patológico → IC.</p>
+
+  <h3>Fase 3 — Reparo e Fibrose (1–3 semanas)</h3>
+  <p>Macrófagos M2 dominam → TGF-β → fibroblastos cardíacos → <strong>miofibroblastos</strong> (expressam α-SMA) → colágeno I e III → <strong>cicatriz fibrosa</strong>.</p>
+  <div class="clinical-box">
+    <p><strong>iECA e BRAs pós-IAM:</strong> Bloqueiam angiotensina II → ↓AT1 → ↓NF-κB nos fibroblastos → ↓TGF-β → ↓fibrose. Também ↓aldosterona → ↓fibrose perivascular. Reduzem mortalidade (trials SAVE com captopril, VALIANT com valsartana). Antagonistas da aldosterona (eplerenona — trial EPHESUS) também reduzem mortalidade pós-IAM com FE reduzida.</p>
+    <p><strong>Sacubitril/valsartana (ARNI):</strong> além de bloquear SRAA, aumenta BNP/cGMP → efeito anti-fibrótico. Reduziu fibrose no trial PROVE-HF (Januzzi et al., JAMA 2019).</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PARTE VII
+═══════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Parte VII</div>
+  <h2>Outras Patologias Cardiovasculares Inflamatórias</h2>
+</div>
+
+<div class="section" id="sec16">
+  <span class="section-number">16 · PERICARDITE</span>
+  <h2>Pericardite — Inflamação do Pericárdio</h2>
+  <p><strong>Anatomia:</strong> Pericárdio parietal (externo, fibroso) + pericárdio visceral/epicárdio (interno, seroso). Cavidade: 15–50 mL de fluido.</p>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Tipo</th><th>Mecanismo</th><th>Relevância</th></tr></thead>
+      <tbody>
+        <tr><td>Serosa</td><td>Transudato</td><td>ICC, hipoalbuminemia</td></tr>
+        <tr><td>Fibrinosa/sero-fibrinosa</td><td>Exsudato + fibrina</td><td>Viral, pós-IAM, Dressler</td></tr>
+        <tr><td>Purulenta</td><td>Bacteriana</td><td>S. aureus, pneumococo</td></tr>
+        <tr><td>Hemorrágica</td><td>Sangramento</td><td>TB, neoplasia, trauma</td></tr>
+        <tr><td>Granulomatosa</td><td>Granuloma caseoso</td><td>TB, sarcoidose</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Síndrome de Dressler</h3>
+  <p>Pericardite autoimune 2–12 semanas após IAM: anticorpos anti-miosina cardíaca + hipersensibilidade. Tríade: febre + dor pleurítica + atrito pericárdico. Tratamento: AINEs + colchicina. <strong>EVITAR corticoides precocemente!</strong></p>
+
+  <h3>Tamponamento Cardíaco — Fisiologia</h3>
+  <p>Acúmulo rápido de 150–200 mL → compressão = tamponamento (acúmulo lento pode chegar a 1–2 L). <strong>Tríade de Beck:</strong> Hipotensão + Estase jugular + Abafamento de bulhas.</p>
+  <p><strong>Pulso Paradoxal:</strong> ↓PA sistólica &gt;10 mmHg na inspiração. Mecanismo: inspiração → VD enche mais → septo desvia para esquerda (interdependência ventricular) → VE enche menos → ↓DC → ↓PA.</p>
+  <div class="clinical-box">
+    <p><strong>Pericardiocentese</strong> guiada por ECO (agulha no espaço pericárdico). Posição da agulha: subxifóide ou apical. Monitorização de ECG na agulha — lesão de corrente indica contato miocárdico.</p>
+  </div>
+
+  <h3>Pericardite Constritiva</h3>
+  <p>Sequela crônica (TB, cirurgia, radioterapia) → pericárdio espessado, calcificado, rígido → IC com <strong>FE PRESERVADA</strong>. Padrão de cateterismo: equalização das pressões diastólicas, sinal da raiz quadrada. Tratamento: <strong>pericardiectomia</strong>.</p>
+</div>
+
+<div class="section" id="sec17">
+  <span class="section-number">17 · MIOCARDITE</span>
+  <h2>Miocardite — Inflamação do Miocárdio</h2>
+  <p><span class="etymology">Myo</span> = músculo + <span class="etymology">kardia</span> = coração + <span class="etymology">itis</span> = inflamação.</p>
+  <p><strong>Causas principais:</strong> Viral (Coxsackievirus B, Adenovírus, Parvovírus B19, SARS-CoV-2), Bacteriana (Lyme → bloqueio AV!), Chagas (<em>T. cruzi</em> — mais comum de CMD no Brasil), Autoimune, Eosinofílica, Células Gigantes (rara e letal), Pós-vacinal mRNA.</p>
+
+  <h3>Fisiopatologia da Miocardite Viral — 3 Fases</h3>
+  <p><strong>Fase 1 — Viral aguda (dias 1–7):</strong> Vírus entra via receptor (Coxsackievirus B → CAR = <em>Coxsackievirus-Adenovirus Receptor</em>). Replicação → morte celular. DAMPs + PAMPs → TLR3 → IFN-α/β → NK cells matam cardiomiócitos infectados.</p>
+  <p><strong>Fase 2 — Autoimune (dias 7–28):</strong> Mimetismo molecular → CD8⁺ matam cardiomiócitos via perforina/granzima. Anticorpos anti-coração (anti-receptor β1, anti-miosina). Linfocitose intersticial + edema (Critérios de Dallas). Fase de maior risco de morte súbita.</p>
+  <p><strong>Fase 3 — Crônica/Fibrose:</strong> Remodelamento → CMD (<em>Cardiomiopatia Dilatada</em>) em ~30% dos casos.</p>
+
+  <div class="clinical-box">
+    <p><strong>Biópsia Endomiocárdica (BEM):</strong> Padrão ouro. Indicação: miocardite fulminante, suspeita de células gigantes ou eosinofílica. Via jugular → VD → septo. Sensibilidade ~50% (erro de amostragem). <strong>RM cardíaca com gadolínio:</strong> realce tardio subepicárdico/intramural "parchado" — diferente do IAM (subendocárdico). Método não-invasivo mais sensível.</p>
+  </div>
+
+  <h3>Doença de Chagas</h3>
+  <p><em>Trypanosoma cruzi</em> → infecta cardiomiócitos → pseudocistos intracelulares (forma amastigota). Mecanismos: direto (lise celular), autoimune (anti-B13 cross-reage com miosina; anti-receptor β1 → arritmias), microvasculopatia, fibrose por TGF-β.</p>
+  <p>Forma crônica: CMD com FE reduzida + <strong>aneurisma apical do VE</strong> (habitat preferencial) + <strong>BCRD + HBAE</strong> no ECG + morte súbita por TV/FV + tromboembolismo pelo trombo apical.</p>
+</div>
+
+<div class="section" id="sec18">
+  <span class="section-number">18 · ENDOCARDITE INFECCIOSA</span>
+  <h2>Endocardite Infecciosa</h2>
+  <p><strong>Patogênese — 4 eventos sequenciais:</strong></p>
+  <ol>
+    <li><strong>Lesão endotelial</strong> — fluxo turbulento, cateter, cardiopatia congênita, valvopatia reumática</li>
+    <li><strong>Trombo estéril (NBTE)</strong> — plaquetas + fibrina no endocárdio lesado</li>
+    <li><strong>Bacteremia transitória</strong> — escovação dentária, procedimento, acesso venoso</li>
+    <li><strong>Inflamação, destruição, propagação</strong> — vegetações crescem, destroem folhetos → regurgitação aguda → embolização séptica</li>
+  </ol>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Agente</th><th>Perfil</th></tr></thead>
+      <tbody>
+        <tr><td>S. aureus</td><td>Mais virulento; válvulas nativas e protéticas; UDIV</td></tr>
+        <tr><td>S. viridans</td><td>Clássico da valva reumática; bacteremia odontológica</td></tr>
+        <tr><td>Enterococcus</td><td>Idosos; trato GI/urinário</td></tr>
+        <tr><td>HACEK group</td><td>Crescimento lento; hemoculturas demoradas</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="clinical-box">
+    <p><strong>Fenômenos imunológicos na EI</strong> — imunocomplexos depositam-se:</p>
+    <p>• Rim → Glomerulonefrite membranoproliferativa (hematúria, proteinúria)</p>
+    <p>• Pele → <strong>Nódulos de Osler</strong> (dolorosos, dedos) e <strong>Manchas de Janeway</strong> (indolores, palmas — embolização séptica)</p>
+    <p>• Retina → <strong>Manchas de Roth</strong> (hemorragias com centro pálido — vasculite imune)</p>
+    <p>• Dedos → Baqueteamento digital (hipoxemia crônica + VEGF)</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PARTE VIII–IX
+═══════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Partes VIII–IX</div>
+  <h2>Resolução da Inflamação e Reparo Tecidual</h2>
+</div>
+
+<div class="section" id="sec19">
+  <span class="section-number">19 · RESOLUÇÃO ATIVA</span>
+  <h2>A Resolução como Processo Ativo</h2>
+  <p>A resolução da inflamação NÃO é simplesmente o "fim" dos estímulos pró-inflamatórios. É um programa ATIVO de:</p>
+  <ol>
+    <li><strong>Parada do recrutamento</strong> de leucócitos (lipoxinas, resolvinas)</li>
+    <li><strong>Apoptose dos neutrófilos</strong> no tecido → removidos por efagocitose</li>
+    <li><strong>Efagocitose</strong> pelos macrófagos M2 → muda o fenótipo para anti-inflamatório</li>
+    <li><strong>Drenagem linfática</strong> de fluido e proteínas</li>
+    <li><strong>Regeneração</strong> (tecido proliferativo) ou <strong>Fibrose</strong> (tecido sem capacidade)</li>
+  </ol>
+  <p><strong>Mediadores pró-resolução:</strong> Lipoxina A4 (LXA4) via ALX/FPR2; Resolvinas E1 (do EPA) via ChemR23; Resolvinas D1/D2 (do DHA) via GPR32; Protectina D1; Maresina 1.</p>
+  <div class="concept-box">
+    <p><strong>"Resolução Falhada"</strong> na aterosclerose e IC crônica: efagocitose comprometida (macrófagos sobrecarregados de lipídios), lipoxinas reduzidas, macrófagos M1 persistentes → inflamação crônica de baixo grau = <em>"fumaça sem chama"</em> = <strong>inflamassoma vascular crônico</strong>.</p>
+  </div>
+</div>
+
+<div class="section" id="sec20">
+  <span class="section-number">20 · FIBROSE CARDÍACA</span>
+  <h2>Fibrose — O Reparo Quando a Regeneração Falha</h2>
+  <p>O coração humano adulto tem capacidade regenerativa MÍNIMA (~1% dos cardiomiócitos renovados/ano). Lesão significativa → <strong>FIBROSE</strong> é a regra.</p>
+
+  <h3>Tipos de Fibrose Cardíaca</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Tipo</th><th>Localização</th><th>Mecanismo</th><th>Consequência</th></tr></thead>
+      <tbody>
+        <tr><td>Substituição</td><td>Zona de necrose (IAM)</td><td>Substitui tecido morto</td><td>Escara, aneurisma VE</td></tr>
+        <tr><td>Intersticial</td><td>Entre cardiomiócitos viáveis</td><td>TGF-β, SRAA, SNS crônico</td><td>Disfunção diastólica</td></tr>
+        <tr><td>Perivascular</td><td>Ao redor de vasos</td><td>Hipertensão, aldosterona</td><td>Isquemia subendocárdica</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Ciclo Vicioso da Fibrose Cardíaca</h3>
+  <div class="pathway">IAM / HAS / Valvopatia / Miocardite
+         ↓
+Dano miocárdico → Ativação SRAA + SNS
+         ↓
+Angiotensina II + Aldosterona + ET-1
+         ↓
+Ativação de fibroblastos → TGF-β
+         ↓
+Miofibroblastos → ↑Colágeno I e III
+         ↓
+Fibrose intersticial + substituição
+         ↓
+↓Complacência diastólica → ↑Pressões de enchimento
+         ↓
+IC → Ativação AINDA MAIOR do SRAA/SNS
+         ↓
+    (ciclo vicioso)</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PARTE X
+═══════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Parte X</div>
+  <h2>Biomarcadores Inflamatórios na Prática Clínica</h2>
+</div>
+
+<div class="section" id="sec21">
+  <span class="section-number">21 · BIOMARCADORES</span>
+  <h2>Biomarcadores — A Janela Molecular Clínica</h2>
+
+  <h3>21.1 PCR-us — Proteína C-Reativa Ultra-Sensível</h3>
+  <p>Produzida pelo fígado sob estímulo de IL-6. Meia-vida: 19 horas. Liga fosfocolina em células mortas → ativa complemento → opsonização.</p>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>PCR-us</th><th>Interpretação CV</th></tr></thead>
+      <tbody>
+        <tr><td>&lt; 1 mg/L</td><td>Baixo risco</td></tr>
+        <tr><td>1–3 mg/L</td><td>Risco intermediário</td></tr>
+        <tr><td>&gt; 3 mg/L</td><td>Alto risco CV</td></tr>
+        <tr><td>&gt; 10 mg/L</td><td>Pensar em processo inflamatório/infeccioso ativo</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>21.2 Troponinas — Marcadores de Dano Miocárdico</h3>
+  <p>Complexo troponina: <strong>TnC</strong> (liga Ca²⁺), <strong>TnI</strong> (inibidor), <strong>TnT</strong> (liga tropomiosina). Isoformas cardíacas cTnI e cTnT são 100% cardio-específicas.</p>
+  <p><strong>Cinética:</strong> Elevação: 2–4h. Pico cTnI: 24h; cTnT: 12–48h. Normalização: cTnI em 5–7 dias; cTnT em 10–14 dias (melhor para diagnóstico tardio).</p>
+  <div class="clinical-box">
+    <p><strong>hs-cTn (Alta Sensibilidade):</strong> Protocolo 0h/1h ESC 2020 — se hs-cTnT &lt;5 ng/L em 0h: probabilidade &lt;1% de NSTEMI. Critério de Copenhagen para rule-in: hs-cTnT ≥52 ng/L em 0h OU Δ≥6 ng/L em 1h.</p>
+    <p><strong>"Troponinite" não-isquêmica:</strong> miocardite, TEP, sepse, insuficiência renal, Takotsubo.</p>
+  </div>
+
+  <h3>21.3 BNP e NT-proBNP</h3>
+  <p><strong>BNP</strong> (<em>Brain Natriuretic Peptide</em>): produzido pelos cardiomiócitos do VE em resposta a estresse de parede. Pró-BNP → corina/furina → BNP ativo + NT-proBNP (inativo). Ações: natriurese, vasodilatação, inibe SRAA e SNS, anti-fibrótico.</p>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>BNP</th><th>NT-proBNP</th><th>Interpretação</th></tr></thead>
+      <tbody>
+        <tr><td>&lt;35 pg/mL</td><td>&lt;125 pg/mL</td><td>IC improvável (rule-out)</td></tr>
+        <tr><td>&gt;100 pg/mL (agudo)</td><td>&gt;900 pg/mL (&lt;75a) / &gt;1800 (&ge;75a)</td><td>IC provável</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="alert-box">
+    <p><strong>Sacubitril (inibidor de neprilisina):</strong> neprilisina degrada BNP → sacubitril aumenta BNP. Portanto, BNP NÃO serve para monitoramento em pacientes em uso de sacubitril/valsartana. Use <strong>NT-proBNP</strong> (não é substrato da neprilisina).</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PARTE XI
+═══════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Parte XI</div>
+  <h2>Síntese Integrativa</h2>
+</div>
+
+<div class="section" id="sec22">
+  <span class="section-number">22 · SÍNTESE</span>
+  <h2>O Fio Condutor Molecular — Conectando Tudo</h2>
+  <div class="pathway">FATORES DE RISCO (HAS, DM, tabaco, dislipidemia, obesidade)
+         ↓
+DISFUNÇÃO ENDOTELIAL
+(↓NO, ↑ROS, ↑NF-κB, ↑VCAM-1/ICAM-1/MCP-1)
+         ↓
+RETENÇÃO E OXIDAÇÃO DO LDL
+         ↓
+RECRUTAMENTO DE MONÓCITOS → MACRÓFAGOS
+Células espumosas → Estria gordurosa
+         ↓
+RESPOSTA IMUNE ADAPTATIVA (Th1/Treg)
+IFN-γ → desestabiliza   |   IL-10 → estabiliza
+         ↓
+PLACA ATEROSCLERÓTICA
+Estável → Estenose crônica → Angina estável
+Vulnerável → TCFA → SCA
+         ↓
+RUPTURA / EROSÃO
+TF exposto → Cascata coagulação → TROMBO
+         ↓
+OCLUSÃO CORONARIANA → ISQUEMIA → NECROSE
+DAMPs → Inflamação aguda (neutrófilos → macrófagos Ly6C⁺)
+         ↓
+REPARO (macrófagos Ly6C⁻ → miofibroblastos → fibrose)
+OU
+FALHA DE RESOLUÇÃO → Expansão do infarto, ruptura cardíaca
+         ↓
+REMODELAMENTO CARDÍACO
+(SRAA + SNS → fibrose intersticial → disfunção diastólica/sistólica)
+         ↓
+INSUFICIÊNCIA CARDÍACA (ICFEr ou ICFEp)
+         ↓
+IC terminal, arritmias, morte súbita</div>
+
+  <h3>Alvos Terapêuticos Anti-inflamatórios Cardiovasculares</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Alvo</th><th>Fármaco</th><th>Mecanismo</th><th>Trial/Evidência</th></tr></thead>
+      <tbody>
+        <tr><td>NLRP3/IL-1β</td><td>Canakinumabe</td><td>Anti-IL-1β (AcMo)</td><td>CANTOS 2017</td></tr>
+        <tr><td>NLRP3/microtúbulos</td><td>Colchicina</td><td>Inibe NLRP3 + migração PMN</td><td>COLCOT, LoDoCo2</td></tr>
+        <tr><td>NF-κB/pleiotrópico</td><td>Estatinas</td><td>↓NF-κB, VCAM-1, PCR</td><td>JUPITER, 4S, WOSCOPS</td></tr>
+        <tr><td>IL-6R</td><td>Tocilizumabe</td><td>Anti-IL-6R</td><td>Estudos em SCA, COVID</td></tr>
+        <tr><td>TXA2/COX-1</td><td>AAS</td><td>Inibe COX-1 plaquetária</td><td>50 anos de evidência</td></tr>
+        <tr><td>SRAA</td><td>iECA/BRA/ARNI</td><td>↓fibrose, remodelamento</td><td>SAVE, VALIANT, PARADIGM-HF</td></tr>
+        <tr><td>NADPH oxidase/ROS</td><td>Inibidores SGLT-2</td><td>↓ROS, ↓NLRP3, ↓fibrose</td><td>EMPA-REG, DAPA-HF, EMPEROR</td></tr>
+        <tr><td>C5</td><td>Eculizumabe</td><td>Anti-C5</td><td>HPN, pesquisa IAM</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     CASOS CLÍNICOS
+═══════════════════════════════════════════════ -->
+<div class="part-header" id="casos">
+  <div class="part-label">Parte XII · Casos Clínicos</div>
+  <h2>Consolidação Prática — 3 Casos com Gabaritos</h2>
+</div>
+
+<div class="section">
+
+  <!-- CASO 1 -->
+  <div class="case-study">
+    <div class="case-study-header">
+      <div class="case-badge">CASO 01</div>
+      <div class="case-title">O Infarto às 7h da Manhã</div>
+    </div>
+    <div class="case-patient">
+      <strong>Paciente:</strong> Homem, 58 anos, HAS + DM2 + ex-tabagista, sedentário. Acorda às 6h30 com dor precordial opressiva intensa, irradiando para braço esquerdo, acompanhada de sudorese fria.
+    </div>
+    <ol class="questions-list">
+      <li>Por que o IAM ocorreu de manhã? Cite 3 mecanismos moleculares do ciclo circadiano.</li>
+      <li>Qual a célula que mediou a inflamação nas primeiras 24h na zona necrótica?</li>
+      <li>O paciente tem cristais de colesterol na placa. Qual inflamassoma é ativado e qual o produto que agiu como inotrópico negativo?</li>
+      <li>No 3º dia, a troponina T ainda está 5× o limite superior. Isso é esperado? Justifique com a cinética molecular.</li>
+      <li>Prescreveu-se captopril. Explique os mecanismos pelos quais previne o remodelamento tardio.</li>
+    </ol>
+    <div class="answer-block">
+      <div class="answer-block-title">◈ GABARITO DETALHADO</div>
+      <div class="answer-item"><span class="answer-num">1.</span> Manhã: (a) pico de cortisol e epinefrina → ↑FC, ↑PA; (b) pico de viscosidade sanguínea + atividade plaquetária máxima (TXA2↑); (c) redução de t-PA (fibrinólise endógena menor) + pico de PAI-1 → maior tendência a propagação do trombo.</div>
+      <div class="answer-item"><span class="answer-num">2.</span> <strong>Neutrófilos</strong> — chegam em 6–12h, pico em 24–48h, recrutados por IL-8 (CXCL8), C5a, LTB4.</div>
+      <div class="answer-item"><span class="answer-num">3.</span> <strong>Inflamassoma NLRP3</strong> (cristais rompem lisossomo → catepsina B → NLRP3 → caspase-1 → IL-1β). IL-1β ativa receptor IL-1R1 no cardiomiócito → iNOS → excesso de NO → disfunção contrátil (<strong>inotrópico negativo</strong>).</div>
+      <div class="answer-item"><span class="answer-num">4.</span> <strong>Sim, é esperado.</strong> cTnT tem pico em 12–48h e normaliza em 10–14 dias — no 3º dia está em fase de clearance. Além disso, reperfusão libera troponina "represada" no interstício.</div>
+      <div class="answer-item"><span class="answer-num">5.</span> Captopril → ↓Ang II → ↓AT1 → ↓NF-κB nos fibroblastos → ↓TGF-β → ↓fibrose; ↓aldosterona → ↓fibrose perivascular; ↓ET-1 → ↓hipertrofia de CMLV; acúmulo de bradicinina → ↑PGI2 → vasodilatação adicional.</div>
+    </div>
+  </div>
+
+  <!-- CASO 2 -->
+  <div class="case-study">
+    <div class="case-study-header">
+      <div class="case-badge">CASO 02</div>
+      <div class="case-title">A Jovem com Dor Pleurítica</div>
+    </div>
+    <div class="case-patient">
+      <strong>Paciente:</strong> Mulher, 24 anos, 2 semanas após episódio gripal. Dor precordial piorada na inspiração e decúbito dorsal, melhora sentada com tronco inclinado para frente. ECG: supradesnivelamento côncavo difuso de ST com infra de PR.
+    </div>
+    <ol class="questions-list">
+      <li>Qual o diagnóstico? Qual vírus mais comum nesta apresentação?</li>
+      <li>Por que a dor melhora com o tronco inclinado para frente?</li>
+      <li>Qual o achado molecular do líquido pericárdico que confirma natureza inflamatória?</li>
+      <li>Prescreveu-se ibuprofeno + colchicina. Explique o mecanismo de ação de cada um.</li>
+      <li>Por que NÃO se deve prescrever corticoide como primeira linha?</li>
+    </ol>
+    <div class="answer-block">
+      <div class="answer-block-title">◈ GABARITO DETALHADO</div>
+      <div class="answer-item"><span class="answer-num">1.</span> <strong>Pericardite aguda viral/idiopática.</strong> Vírus: Coxsackievirus B, Echovírus, Adenovírus; atualmente Parvovírus B19 e HHV-6 em ascensão. SST côncavo difuso + infra-PR = patognomônico.</div>
+      <div class="answer-item"><span class="answer-num">2.</span> Posição inclinada → pericárdio parietal cai para frente → ↓contato com epicárdio inflamado → ↓fricção → ↓dor. Posição de alívio clássica da pericardite.</div>
+      <div class="answer-item"><span class="answer-num">3.</span> Exsudato: proteínas &gt;3 g/dL, LDH elevada, celularidade aumentada (predomínio linfocítico em viral), IL-6 e TNF-α elevados no líquido.</div>
+      <div class="answer-item"><span class="answer-num">4.</span> <strong>Ibuprofeno:</strong> Inibe COX-1 e COX-2 → ↓PGE2 (analgesia, antipirexia, ↓vasodilatação inflamatória). <strong>Colchicina:</strong> Liga tubulina → inibe polimerização de microtúbulos → bloqueia migração de neutrófilos + inibe ativação do NLRP3 → ↓IL-1β. Trials COPE e ICAP: colchicina reduz recorrência em ~50%.</div>
+      <div class="answer-item"><span class="answer-num">5.</span> Corticoides inibem PLA2 (via lipocortina/anexina-1) — efeito imunossupressor interfere no clearance viral → replicação prolongada → lesão persistente. Além disso, aumentam recorrência após desmame (trial COPE, Imazio et al.).</div>
+    </div>
+  </div>
+
+  <!-- CASO 3 -->
+  <div class="case-study">
+    <div class="case-study-header">
+      <div class="case-badge">CASO 03</div>
+      <div class="case-title">O Diabético com IC e PCR Elevada</div>
+    </div>
+    <div class="case-patient">
+      <strong>Paciente:</strong> Homem, 65 anos, DM2 + HAS + obesidade (IMC 34). ICFEp, FE 55%, NYHA II. Eco: VE hipertrófico, disfunção diastólica grau II. Labs: PCR-us 4,2 mg/L, NT-proBNP 480 pg/mL, IL-6 12 pg/mL, HbA1c 9,5%.
+    </div>
+    <ol class="questions-list">
+      <li>Qual o papel da obesidade na inflamação que causa ICFEp?</li>
+      <li>Cite 3 mediadores moleculares que ligam resistência à insulina à fibrose cardíaca.</li>
+      <li>Como a hiperglicemia causa disfunção endotelial? Detalhe molecularmente.</li>
+      <li>A colchicina seria benéfica? Justifique com base em evidências.</li>
+      <li>Qual classe de antidiabético demonstrou reduzir fibrose e inflamação cardíaca além de controlar glicemia?</li>
+    </ol>
+    <div class="answer-block">
+      <div class="answer-block-title">◈ GABARITO DETALHADO</div>
+      <div class="answer-item"><span class="answer-num">1.</span> Adipócitos hipertrofiados → hipóxia → necrose → macrófagos M1 → TNF-α, IL-6, IL-1β, MCP-1 → inflamação sistêmica → endotélio disfuncional → ↑fibrose (TGF-β + SRAA ativado). Adiponectina ↓ (protetora), Leptina ↑ (pró-fibrótica).</div>
+      <div class="answer-item"><span class="answer-num">2.</span> (a) Hiperinsulinemia → IGF-1R nos fibroblastos → proliferação + síntese de colágeno; (b) AGEs: glicação de colágeno → crosslinks + ativa RAGE → NF-κB → inflamação; (c) PKC ativada por hiperglicemia → fosforila eNOS → ↓NO → ↑TGF-β → fibrose.</div>
+      <div class="answer-item"><span class="answer-num">3.</span> Hiperglicemia → ativa via dos polióis → ↓NADPH → ↑ROS; ativa NADPH oxidase → O₂⁻; NO + O₂⁻ → ONOO⁻ → oxida BH4 → eNOS desacoplada → mais O₂⁻ (ciclo vicioso); glica ApoB-100 → LDL mais aterogênico; ativa PKC → inibe eNOS por fosforilação inibitória.</div>
+      <div class="answer-item"><span class="answer-num">4.</span> <strong>Possivelmente benéfico.</strong> PCR-us 4,2 mg/L indica inflamação ativa. Colchicina é barata, segura e tem forte mecanismo racional (inibe NLRP3/IL-1β). Trials CLEAR e CANTOS sugerem benefício em pacientes com alta inflamação. Aguardam-se trials específicos para ICFEp.</div>
+      <div class="answer-item"><span class="answer-num">5.</span> <strong>Inibidores de SGLT-2</strong> (empagliflozina, dapagliflozina, canagliflozina): além de glucosúria, reduzem ativação do NLRP3 (↓troca Na⁺/H⁺ → ↓Ca²⁺ mitocondrial → ↓ROS); reduzem fibrose cardíaca (↓TGF-β); reduzem hospitalizações por IC em ICFEp (trial EMPEROR-Preserved, NEJM 2021) e ICFEr (DAPA-HF).</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- REFERENCES -->
+<div class="references container">
+  <h2>◈ Referências Principais</h2>
+  <div class="ref-item">
+    Kumar V, Abbas AK, Aster JC. <em>Robbins &amp; Cotran: Patologia — Bases Patológicas das Doenças.</em> 10ª ed. Elsevier, 2021.
+    <a href="https://www.elsevier.com/books/robbins-and-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9" target="_blank">→ elsevier.com</a>
+  </div>
+  <div class="ref-item">
+    Libby P et al. "Atherosclerosis." <em>Nature Reviews Disease Primers</em>. 2019.
+    <a href="https://www.nature.com/articles/s41572-019-0106-z" target="_blank">→ nature.com/articles/s41572-019-0106-z</a>
+  </div>
+  <div class="ref-item">
+    Ridker PM et al. "Antiinflammatory Therapy with Canakinumab — CANTOS." <em>NEJM</em>. 2017.
+    <a href="https://www.nejm.org/doi/10.1056/NEJMoa1707914" target="_blank">→ nejm.org/doi/10.1056/NEJMoa1707914</a>
+  </div>
+  <div class="ref-item">
+    Tardif JC et al. "Efficacy and Safety of Low-Dose Colchicine — COLCOT." <em>NEJM</em>. 2019.
+    <a href="https://www.nejm.org/doi/10.1056/NEJMoa1912388" target="_blank">→ nejm.org/doi/10.1056/NEJMoa1912388</a>
+  </div>
+  <div class="ref-item">
+    Libby P, Loscalzo J, Ridker PM et al. "Inflammation, Immunity, and Infection in Atherothrombosis." <em>JACC</em>. 2018.
+    <a href="https://www.jacc.org/doi/10.1016/j.jacc.2018.08.1043" target="_blank">→ jacc.org/doi/10.1016/j.jacc.2018.08.1043</a>
+  </div>
+  <div class="ref-item">
+    Anker SD et al. "Empagliflozin in Heart Failure with Preserved EF — EMPEROR-Preserved." <em>NEJM</em>. 2021.
+    <a href="https://www.nejm.org/doi/10.1056/NEJMoa2107038" target="_blank">→ nejm.org/doi/10.1056/NEJMoa2107038</a>
+  </div>
+  <div class="ref-item">
+    ESC Guidelines for Acute Coronary Syndromes. 2023.
+    <a href="https://academic.oup.com/eurheartj/article/44/38/3720/7243210" target="_blank">→ academic.oup.com (EHJ 2023)</a>
+  </div>
+  <div class="ref-item">
+    Imazio M et al. "Colchicine for Pericarditis — ICAP trial." <em>NEJM</em>. 2013.
+    <a href="https://www.nejm.org/doi/10.1056/NEJMoa1208536" target="_blank">→ nejm.org/doi/10.1056/NEJMoa1208536</a>
+  </div>
+  <div class="ref-item">
+    Januzzi JL et al. "NT-proBNP and Cardiac Remodeling — PROVE-HF." <em>JAMA</em>. 2019.
+    <a href="https://jamanetwork.com/journals/jama/fullarticle/2730520" target="_blank">→ jamanetwork.com/journals/jama/fullarticle/2730520</a>
+  </div>
+  <div class="ref-item">
+    Libby P, Ridker PM, Maseri A. "Inflammation and Atherosclerosis." <em>Circulation</em>. 2002.
+    <a href="https://www.ahajournals.org/doi/10.1161/hc0902.104353" target="_blank">→ ahajournals.org/doi/10.1161/hc0902.104353</a>
+  </div>
+  <div class="ref-item">
+    Braunwald's Heart Disease. 12ª ed. Elsevier, 2022. / Braunwald E et al.
+  </div>
+</div>
+
+<footer>
+  Patologia Avançada · Inflamação e Reparo CV · Nível Medicina Interna e Intensiva<br>
+  Gerado com Claude · Conteúdo educacional · Verifique sempre as fontes originais
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop || document.body.scrollTop;
+    const total = doc.scrollHeight - doc.clientHeight;
+    const pct = (scrolled / total) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    const btn = document.getElementById('back-top');
+    btn.classList.toggle('visible', scrolled > 400);
+  });
+  document.getElementById('back-top').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>

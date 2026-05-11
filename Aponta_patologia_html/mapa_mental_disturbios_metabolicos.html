@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Distúrbios Metabólicos</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070b14;
+    --surface: #0d1424;
+    --surface2: #111827;
+    --border: #1e2d47;
+    --accent1: #00c9ff;
+    --accent2: #ff6b35;
+    --accent3: #a78bfa;
+    --accent4: #34d399;
+    --accent5: #f59e0b;
+    --accent6: #f472b6;
+    --accent7: #60a5fa;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --glow1: rgba(0,201,255,0.15);
+    --glow2: rgba(255,107,53,0.15);
+    --glow3: rgba(167,139,250,0.15);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── GRID BG ── */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(0,201,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,201,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none; z-index:0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative; z-index:10;
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(0,201,255,0.06) 0%, transparent 100%);
+  }
+
+  .badge {
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.65rem; letter-spacing:0.15em;
+    color: var(--accent1);
+    border:1px solid rgba(0,201,255,0.35);
+    padding:0.3rem 0.8rem; border-radius:2px;
+    margin-bottom:1rem;
+    text-transform:uppercase;
+  }
+
+  h1 {
+    font-family:'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    letter-spacing: 0.04em;
+    line-height:1;
+    background: linear-gradient(135deg, var(--accent1) 0%, var(--accent7) 50%, var(--accent3) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    margin-top:0.8rem;
+    font-size:0.9rem; color: var(--muted);
+    font-weight:300; letter-spacing:0.05em;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display:flex; flex-wrap:wrap; gap:0.6rem;
+    justify-content:center;
+    padding: 1.2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    position:relative; z-index:10;
+    background: var(--surface);
+  }
+
+  .legend-item {
+    display:flex; align-items:center; gap:0.4rem;
+    font-size:0.72rem; color: var(--muted);
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  .legend-dot {
+    width:10px; height:10px; border-radius:50%;
+  }
+
+  /* ── MAIN CANVAS ── */
+  #canvas-wrap {
+    position:relative; z-index:5;
+    padding: 2rem;
+    display:flex; flex-direction:column; gap:2rem;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display:flex; align-items:center; gap:1rem;
+    padding: 1.2rem 1.5rem;
+    border-radius:4px;
+    border-left:4px solid;
+    cursor:pointer;
+    user-select:none;
+    transition: background 0.2s;
+    position:relative; overflow:hidden;
+  }
+
+  .section-header:hover { background: rgba(255,255,255,0.03); }
+  .section-header::after {
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(90deg, currentColor 0%, transparent 60%);
+    opacity:0.05;
+  }
+
+  .section-icon {
+    font-size:1.8rem; flex-shrink:0;
+  }
+
+  .section-title {
+    font-family:'Bebas Neue', sans-serif;
+    font-size:1.6rem; letter-spacing:0.06em;
+  }
+
+  .section-tag {
+    margin-left:auto; flex-shrink:0;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.6rem; letter-spacing:0.1em;
+    padding:0.2rem 0.5rem;
+    border:1px solid; border-radius:2px;
+    opacity:0.7; text-transform:uppercase;
+  }
+
+  .chevron {
+    margin-left:0.5rem; transition:transform 0.35s ease;
+    font-size:0.9rem; opacity:0.6; flex-shrink:0;
+  }
+
+  .section-header.open .chevron { transform:rotate(180deg); }
+
+  /* ── SECTION BODY ── */
+  .section-body {
+    display:none;
+    padding: 0 0 1rem;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .section-body.open { display:block; }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform: translateY(-8px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* ── BRANCHES ── */
+  .branch-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap:1rem;
+    padding: 1rem 0.5rem;
+  }
+
+  .branch {
+    background: var(--surface);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:1.2rem;
+    position:relative;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor:default;
+  }
+
+  .branch:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+
+  .branch-title {
+    font-family:'Bebas Neue', sans-serif;
+    font-size:1.05rem; letter-spacing:0.08em;
+    margin-bottom:0.8rem;
+    display:flex; align-items:center; gap:0.5rem;
+  }
+
+  .branch-title .dot {
+    width:8px; height:8px; border-radius:50%;
+    flex-shrink:0;
+  }
+
+  /* ── LEAF ITEMS ── */
+  .leaf-list {
+    list-style:none;
+    display:flex; flex-direction:column; gap:0.4rem;
+  }
+
+  .leaf-list li {
+    font-size:0.8rem; color: #94a3b8;
+    padding:0.3rem 0.5rem;
+    border-left:2px solid transparent;
+    border-radius:0 2px 2px 0;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    line-height:1.5;
+  }
+
+  .leaf-list li:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* ── SUB-BRANCHES ── */
+  .sub-branch {
+    margin-top:0.6rem;
+    padding:0.7rem;
+    background: rgba(255,255,255,0.02);
+    border:1px solid var(--border);
+    border-radius:3px;
+  }
+
+  .sub-branch-title {
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.68rem; letter-spacing:0.08em;
+    text-transform:uppercase; margin-bottom:0.5rem;
+    opacity:0.7;
+  }
+
+  /* ── PILL TAGS ── */
+  .pills {
+    display:flex; flex-wrap:wrap; gap:0.35rem;
+    margin-top:0.6rem;
+  }
+
+  .pill {
+    font-size:0.65rem;
+    padding:0.2rem 0.55rem;
+    border-radius:20px;
+    border:1px solid;
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:0.05em;
+    opacity:0.85;
+  }
+
+  /* ── COLOR THEMES per section ── */
+  .s1 { --sc: var(--accent1); }
+  .s2 { --sc: var(--accent2); }
+  .s3 { --sc: var(--accent3); }
+  .s4 { --sc: var(--accent4); }
+  .s5 { --sc: var(--accent5); }
+  .s6 { --sc: var(--accent6); }
+  .s7 { --sc: var(--accent7); }
+
+  .section-wrap { border:1px solid rgba(255,255,255,0.06); border-radius:6px; overflow:hidden; }
+
+  .section-wrap .section-header { border-left-color: var(--sc); color: var(--sc); }
+  .section-wrap .section-tag { color: var(--sc); border-color: var(--sc); }
+
+  .section-wrap .branch { border-top: 2px solid var(--sc); }
+  .section-wrap .branch .dot { background: var(--sc); }
+  .section-wrap .leaf-list li:hover { border-left-color: var(--sc); }
+
+  .section-wrap .pill { color: var(--sc); border-color: var(--sc); background: rgba(255,255,255,0.03); }
+
+  /* ── CONNECTOR LINE visual ── */
+  .connector {
+    display:flex; align-items:flex-start; gap:1rem;
+    padding: 0 0.5rem 0 1rem;
+  }
+
+  .connector-line {
+    width:2px; flex-shrink:0;
+    background: linear-gradient(180deg, var(--sc) 0%, transparent 100%);
+    min-height:60px; margin-top:4px;
+    border-radius:2px;
+  }
+
+  .connector-content { flex:1; }
+
+  /* ── WIDE BRANCH (full row) ── */
+  .branch-wide {
+    grid-column: 1 / -1;
+  }
+
+  /* ── TABLE STYLE ── */
+  .mini-table {
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.75rem;
+    margin-top:0.5rem;
+  }
+
+  .mini-table th {
+    background: rgba(255,255,255,0.05);
+    padding:0.4rem 0.6rem;
+    text-align:left;
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.62rem; letter-spacing:0.08em;
+    text-transform:uppercase;
+    border-bottom:1px solid var(--border);
+    color: var(--sc, var(--accent1));
+  }
+
+  .mini-table td {
+    padding:0.35rem 0.6rem;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+    color:#94a3b8;
+    line-height:1.4;
+  }
+
+  .mini-table tr:hover td { background:rgba(255,255,255,0.02); color:var(--text); }
+
+  /* ── CALLOUT ── */
+  .callout {
+    display:flex; gap:0.7rem;
+    background:rgba(255,255,255,0.025);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:0.8rem;
+    margin-top:0.6rem;
+    font-size:0.78rem;
+    line-height:1.6;
+  }
+
+  .callout-icon { font-size:1.1rem; flex-shrink:0; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align:center;
+    padding:2rem;
+    border-top:1px solid var(--border);
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem;
+    color: var(--muted);
+    letter-spacing:0.08em;
+    position:relative; z-index:10;
+  }
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    position:relative; z-index:10;
+    padding:1rem 2rem;
+    background: var(--surface2);
+    border-bottom:1px solid var(--border);
+    display:flex; gap:1rem; align-items:center;
+  }
+
+  #search {
+    flex:1;
+    background: var(--surface);
+    border:1px solid var(--border);
+    border-radius:3px;
+    padding:0.55rem 1rem;
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    font-size:0.85rem;
+    outline:none;
+    transition: border-color 0.2s;
+  }
+
+  #search:focus { border-color: var(--accent1); }
+  #search::placeholder { color: var(--muted); }
+
+  .expand-all-btn {
+    background:transparent;
+    border:1px solid var(--border);
+    border-radius:3px;
+    color:var(--muted);
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.65rem; letter-spacing:0.08em;
+    padding:0.55rem 1rem;
+    cursor:pointer;
+    text-transform:uppercase;
+    transition: border-color 0.2s, color 0.2s;
+    white-space:nowrap;
+  }
+
+  .expand-all-btn:hover { border-color:var(--accent1); color:var(--accent1); }
+
+  /* ── HIGHLIGHT ── */
+  mark {
+    background: rgba(255,200,0,0.3);
+    color:var(--text);
+    border-radius:2px;
+    padding:0 1px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:600px){
+    .branch-grid { grid-template-columns:1fr; }
+    h1 { font-size:2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Patologia — Medicina Interna · Classe I &amp; II</div>
+  <h1>Distúrbios Metabólicos</h1>
+  <p class="subtitle">Mapa Mental Interativo · Clique nos blocos para expandir · 93 slides</p>
+</header>
+
+<div class="search-wrap">
+  <input id="search" type="text" placeholder="🔍  Pesquisar no mapa (ex: hemocromatose, aterosclerose, diabetes)…" autocomplete="off">
+  <button class="expand-all-btn" id="expandBtn">Expandir Tudo</button>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot" style="background:var(--accent1)"></span>Minerais / Cálcio</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--accent2)"></span>Pigmentos</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--accent3)"></span>MPS / Proteínas / Purinas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--accent4)"></span>Lipídios / Aterosclerose</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--accent5)"></span>Diabetes Mellitus</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--accent6)"></span>Glicogenose</div>
+  <div class="legend-item"><span class="legend-dot" style="background:var(--accent7)"></span>Classificação Geral</div>
+</div>
+
+<div id="canvas-wrap">
+
+<!-- ══════════════════════════════════════════════════════
+     SEÇÃO 0 — CLASSIFICAÇÃO GERAL
+══════════════════════════════════════════════════════ -->
+<div class="section-wrap s7">
+  <div class="section-header" onclick="toggle(this)">
+    <span class="section-icon">🧬</span>
+    <span class="section-title">Classificação Geral das Perturbações Metabólicas</span>
+    <span class="section-tag">BASE</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body">
+    <div class="connector">
+      <div class="connector-line"></div>
+      <div class="connector-content">
+        <div class="branch-grid">
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Por Extensão</div>
+            <ul class="leaf-list">
+              <li>🌍 <strong>Generalizada</strong> — afeta o organismo inteiro</li>
+              <li>📍 <strong>Local</strong> — confinada a tecido/órgão específico</li>
+            </ul>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Por Origem</div>
+            <ul class="leaf-list">
+              <li>🧬 <strong>Congênita (hereditária)</strong> — defeito genético presente ao nascimento; erros inatos do metabolismo</li>
+              <li>🌿 <strong>Adquirida</strong> — resultado da interação entre organismo e ambiente; doenças, toxinas, deficiências nutricionais</li>
+            </ul>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Por Substrato Afetado</div>
+            <ul class="leaf-list">
+              <li>🪨 Minerais (Cálcio, Ferro)</li>
+              <li>🎨 Pigmentos endógenos e exógenos</li>
+              <li>🍬 Mucopolissacarídeos (Glicosaminoglicanos)</li>
+              <li>🥩 Proteínas</li>
+              <li>⚗️ Purinas (ácido úrico)</li>
+              <li>🧈 Lipídios</li>
+              <li>🍚 Hidratos de carbono (glicose, glicogênio)</li>
+            </ul>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Classes do Documento</div>
+            <div class="pills">
+              <span class="pill">Classe I — Minerais, Pigmentos, MPS, Proteínas, Purinas</span>
+              <span class="pill">Classe II — Lipídios, Diabetes, Glicogenose</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SEÇÃO 1 — CÁLCIO / MINERAIS
+══════════════════════════════════════════════════════ -->
+<div class="section-wrap s1">
+  <div class="section-header" onclick="toggle(this)">
+    <span class="section-icon">🪨</span>
+    <span class="section-title">Distúrbios Metabólicos do Cálcio</span>
+    <span class="section-tag">Classe I</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body">
+    <div class="connector">
+      <div class="connector-line"></div>
+      <div class="connector-content">
+        <div class="branch-grid">
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Fisiologia do Cálcio</div>
+            <ul class="leaf-list">
+              <li>⚖️ <strong>Valores normais:</strong> 2,25 – 2,75 mmol/L</li>
+              <li>🦴 <strong>Formação óssea</strong> — mineralização da matriz colágena (hidroxiapatita)</li>
+              <li>🩸 <strong>Coagulação</strong> — cofator essencial na cascata (fator IV)</li>
+              <li>💪 <strong>Excitabilidade muscular</strong> — acoplamento excitação-contração</li>
+              <li>⚡ Transmissão de impulsos nervosos</li>
+              <li>🔑 Regulação: PTH (hormônio paratireoidiano), Vitamina D, Calcitonina</li>
+            </ul>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>HIPERCALCEMIA</div>
+            <ul class="leaf-list">
+              <li>📊 Cálcio sérico &gt; 2,75 mmol/L</li>
+              <li>🦴 <strong>Causas:</strong> Hiperparatireoidismo primário, neoplasias (PTHrP), imobilização, excesso de Vit D, sarcoidose</li>
+              <li>🫀 <strong>Manifestações:</strong> fraqueza muscular, poliúria, constipação, confusão mental, "stones, bones, groans, moans"</li>
+              <li>🔬 <strong>Crise hipercalcêmica</strong> — emergência; Ca &gt; 3,5 mmol/L</li>
+            </ul>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Calcificações Patológicas</div>
+              <ul class="leaf-list">
+                <li>🏛️ <strong>Distrófica</strong> — depósito em tecido necrótico/morto; Ca sérico normal</li>
+                <li>🌊 <strong>Metastática</strong> — depósito em tecido normal; Ca sérico elevado</li>
+                <li>📍 Sítios: paredes vasculares, rins, pulmões, mucosa gástrica, córnea</li>
+              </ul>
+            </div>
+            <div class="pills">
+              <span class="pill">Hidroxiapatita</span>
+              <span class="pill">Calcificação distrófica</span>
+              <span class="pill">Calcificação metastática</span>
+            </div>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>HIPOCALCEMIA</div>
+            <ul class="leaf-list">
+              <li>📊 Cálcio sérico &lt; 2,25 mmol/L</li>
+              <li>😣 Perturbações graves da função muscular</li>
+              <li>⚡ <strong>Tetania</strong> — hiperexcitabilidade neuromuscular</li>
+            </ul>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Causas</div>
+              <ul class="leaf-list">
+                <li>☀️ Deficiência de Vitamina D</li>
+                <li>🫘 Insuficiência Renal Crônica (IRC)</li>
+                <li>🦋 Hipofunção da Paratireoide (Hipoparatireoidismo)</li>
+                <li>🍽️ Distúrbios graves na ingestão ou absorção de cálcio</li>
+                <li>🔬 Pancreatite aguda (saponificação)</li>
+              </ul>
+            </div>
+            <div class="pills">
+              <span class="pill">Sinal de Trousseau</span>
+              <span class="pill">Sinal de Chvostek</span>
+              <span class="pill">PTH baixo/alto</span>
+            </div>
+          </div>
+
+          <div class="branch branch-wide">
+            <div class="branch-title"><span class="dot"></span>Tipos de Calcificações — Aspectos Morfológicos</div>
+            <table class="mini-table">
+              <tr><th>Tipo</th><th>Ca sérico</th><th>Local</th><th>Mecanismo</th><th>Exemplo clínico</th></tr>
+              <tr><td>Distrófica</td><td>Normal</td><td>Tecido lesado/necrótico</td><td>Liberação de fosfatos intracelulares, pH ↓</td><td>Ateroma, válvula mitral, tuberculose cicatriz</td></tr>
+              <tr><td>Metastática</td><td>Elevado</td><td>Tecido normal (pulmão, rim, mucosa gástrica)</td><td>Supersaturação sistêmica de Ca²⁺</td><td>Hiperparatireoidismo, hipervitaminose D</td></tr>
+              <tr><td>Idiopática (Calcinose)</td><td>Normal</td><td>Pele, músculos (esclerodermia)</td><td>Mecanismo incerto, precipitação local</td><td>CREST, dermatomiosite</td></tr>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SEÇÃO 2 — PIGMENTOS
+══════════════════════════════════════════════════════ -->
+<div class="section-wrap s2">
+  <div class="section-header" onclick="toggle(this)">
+    <span class="section-icon">🎨</span>
+    <span class="section-title">Distúrbios Metabólicos dos Pigmentos</span>
+    <span class="section-tag">Classe I</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body">
+    <div class="connector">
+      <div class="connector-line"></div>
+      <div class="connector-content">
+        <div class="branch-grid">
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Classificação dos Pigmentos</div>
+            <ul class="leaf-list">
+              <li>🧬 <strong>Endógenos</strong> — produzidos pelo próprio organismo</li>
+              <li>🌍 <strong>Exógenos</strong> — introduzidos externamente</li>
+            </ul>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Pigmentos Endógenos</div>
+              <ul class="leaf-list">
+                <li>🟤 <strong>Hemossiderina</strong> — derivado da hemoglobina, rico em ferro</li>
+                <li>🟡 <strong>Bilirrubina</strong> — produto da degradação do heme; icterícia</li>
+                <li>🟤 <strong>Melanina</strong> — pigmento da pele (melanócitos)</li>
+                <li>🟠 <strong>Lipofuscina</strong> — "pigmento do envelhecimento", grânulos lipoproteicos</li>
+                <li>🟢 <strong>Hematoidina</strong> — derivado do heme sem ferro (igual a bilirrubina in situ)</li>
+                <li>🟡 <strong>Porfirina</strong> — precursor do heme; acumula em porfirias</li>
+              </ul>
+            </div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Pigmentos Exógenos</div>
+              <ul class="leaf-list">
+                <li>🖤 <strong>Antracose</strong> — acúmulo de carvão; escurece pulmões</li>
+                <li>🎨 <strong>Tatuagem</strong> — pigmentos inoculados fagocitados por macrófagos dérmicos</li>
+                <li>⚙️ <strong>Siderose</strong> — depósito de ferro exógeno (trabalhadores de minas)</li>
+                <li>🟢 <strong>Argiria</strong> — prata; coloração azul-acinzentada da pele</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>HEMOSSIDEROSE</div>
+            <ul class="leaf-list">
+              <li>🟤 Acúmulo <em>local</em> de hemossiderina em tecidos</li>
+              <li>📍 Geralmente após hemorragia local (equimose → amarelado = hematoidina/bilirrubina)</li>
+              <li>🔬 <strong>Reação de Perls (Azul da Prússia)</strong> — coloração histológica para ferro (azul)</li>
+              <li>✅ Sem dano orgânico sistêmico</li>
+              <li>🫁 Pulmão: macrófagos alveolares carregados de hemossiderina ("células de insuficiência cardíaca")</li>
+            </ul>
+            <div class="pills">
+              <span class="pill">Hemossiderina</span>
+              <span class="pill">Azul da Prússia +</span>
+              <span class="pill">Local / sem sistêmico</span>
+            </div>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>HEMOCROMATOSE</div>
+            <ul class="leaf-list">
+              <li>⚠️ Depósito <em>sistêmico</em> excessivo de ferro em múltiplos órgãos</li>
+              <li>🧬 <strong>Primária (hereditária)</strong> — mutação HFE (C282Y); cromossoma 6; autossômica recessiva; aumento da síntese de ferro nos tecidos</li>
+              <li>💉 <strong>Secundária (adquirida)</strong> — transfusões múltiplas, anemias hemolíticas crônicas, excesso dietético de ferro</li>
+            </ul>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Patogênese</div>
+              <ul class="leaf-list">
+                <li>⬆️ Aumento na absorção de ferro pela mucosa duodenal</li>
+                <li>❌ Ausência de gastroferritina (proteína do suco gástrico que regula absorção)</li>
+                <li>⬆️ Aumento da síntese de ferro nos tecidos (forma hereditária)</li>
+              </ul>
+            </div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Aspectos Morfológicos</div>
+              <ul class="leaf-list">
+                <li>🔭 <strong>Macroscopia:</strong> Fígado moderadamente aumentado (hepatomegalia), cor castanha-achocolatada, superfície micronodular difusa</li>
+                <li>🔬 <strong>Microscopia:</strong> Deposição abundante de hemossiderina no citoplasma de hepatócitos periportais (Azul da Prússia +) e células de Kupffer; mesmo pigmento em tratos fibrosos e áreas de necrose</li>
+                <li>🫀 Coração: cardiomiopatia dilatada (insuficiência cardíaca)</li>
+                <li>🦋 Pâncreas: "cirrose de bronze", diabetes mellitus</li>
+                <li>🔑 Hipófise: hipogonadismo hipogonadotrópico</li>
+                <li>🎨 Pele: hiperpigmentação (melanina + hemossiderina → bronzeamento)</li>
+              </ul>
+            </div>
+            <div class="callout">
+              <span class="callout-icon">💡</span>
+              <span><strong>Tríade clássica:</strong> Cirrose hepática + Diabetes mellitus + Bronzeamento da pele = "Cirrose de bronze" / "Diabetes bronzeado"</span>
+            </div>
+            <div class="pills">
+              <span class="pill">Gene HFE</span>
+              <span class="pill">Ferritina ↑↑</span>
+              <span class="pill">Saturação transferrina ↑</span>
+              <span class="pill">Flebotomia terapêutica</span>
+              <span class="pill">Deferoxamina</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SEÇÃO 3 — MPS / PROTEÍNAS / PURINAS
+══════════════════════════════════════════════════════ -->
+<div class="section-wrap s3">
+  <div class="section-header" onclick="toggle(this)">
+    <span class="section-icon">🧪</span>
+    <span class="section-title">Mucopolissacarídeos · Proteínas · Purinas</span>
+    <span class="section-tag">Classe I</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body">
+    <div class="connector">
+      <div class="connector-line"></div>
+      <div class="connector-content">
+        <div class="branch-grid">
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Mucopolissacaridoses (MPS)</div>
+            <ul class="leaf-list">
+              <li>🧬 Grupo de síndromes relacionadas por deficiência geneticamente determinada de enzimas lisossomais</li>
+              <li>⚙️ Enzimas envolvidas na degradação de GAGs (Glicosaminoglicanos)</li>
+              <li>📦 Acúmulo de MPS (mucopolissacarídeos) intracelular — sobrecarga lisossomal</li>
+              <li>🧠 Repercussões sistêmicas: neurológicas, ósseas, viscerais</li>
+            </ul>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Formas Clínicas Principais</div>
+              <ul class="leaf-list">
+                <li>🦁 <strong>MPS I — Síndrome de Hurler</strong>: deficiência de α-L-iduronidase; fácies grosseira ("gárgula"), córnea turva, hepatoesplenomegalia, retardo mental, morte na infância</li>
+                <li>🦊 <strong>MPS II — Síndrome de Hunter</strong>: deficiência de iduronato-2-sulfatase; ligada ao X (somente meninos); sem opacidade corneana; sobrevida maior</li>
+              </ul>
+            </div>
+            <div class="pills">
+              <span class="pill">Dermatan sulfato</span>
+              <span class="pill">Heparan sulfato</span>
+              <span class="pill">Lisossomo</span>
+              <span class="pill">Enzima terapia</span>
+            </div>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Distúrbios Metabólicos Proteicos</div>
+            <ul class="leaf-list">
+              <li>🥩 <strong>Degeneração hialina</strong> — acúmulo de material proteico homogêneo róseo intra ou extracelular</li>
+              <li>🫧 <strong>Degeneração vacuolar / hidrópica</strong> — acúmulo de água intracelular; edema celular</li>
+              <li>🌫️ <strong>Amiloidose</strong> — depósito extracelular de fibras proteicas β-pregueadas (amiloide); coloração Congo Red (birrefringência verde/laranja na luz polarizada)</li>
+              <li>🔴 <strong>Corpos de Mallory</strong> — filamentos citoqueratínicos em hepatócitos (alcoólicos)</li>
+            </ul>
+            <div class="callout">
+              <span class="callout-icon">🔬</span>
+              <span><strong>Amiloidose:</strong> Tipos — AL (cadeias leves de imunoglobulina), AA (proteína sérica amiloide A reativa), ATTR (transtirretina hereditária/senil). Órgãos-alvo: rim (síndrome nefrótica), coração, fígado, língua (macroglossia).</span>
+            </div>
+            <div class="pills">
+              <span class="pill">Congo Red</span>
+              <span class="pill">Birrefringência verde</span>
+              <span class="pill">β-pregueado</span>
+            </div>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Distúrbios Metabólicos das Purinas — GOTA</div>
+            <ul class="leaf-list">
+              <li>⚗️ Metabolismo anormal das purinas → hiperuricemia (ácido úrico &gt; 6,8 mg/dL)</li>
+              <li>🎯 Depósito de cristais de urato monossódico nas articulações e tecidos moles</li>
+              <li>🔥 <strong>Artrite gotosa aguda</strong> — primeiro metatarsofalângico ("podagra"), dor excruciante, rubor, calor</li>
+              <li>🪨 <strong>Tofo gotoso</strong> — agregados nodulares de cristais de urato rodeados por macrófagos/células gigantes (granuloma)</li>
+              <li>🫘 <strong>Nefropatia úrica</strong> — depósito de cristais no parênquima renal</li>
+            </ul>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Morfologia — Aspectos</div>
+              <ul class="leaf-list">
+                <li>🔬 Cristais aciculares (em agulha), birrefringentes negativamente sob luz polarizada</li>
+                <li>🏛️ Tofo: material branco-gizado rodeado por reação granulomatosa de corpo estranho</li>
+                <li>🫘 Rim: cristais de urato nos túbulos → nefropatia intersticial → IRC</li>
+              </ul>
+            </div>
+            <div class="pills">
+              <span class="pill">Alopurinol</span>
+              <span class="pill">Colchicina</span>
+              <span class="pill">AINE</span>
+              <span class="pill">Febuxostat</span>
+              <span class="pill">Cristais em agulha</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SEÇÃO 4 — LIPÍDIOS / ATEROSCLEROSE
+══════════════════════════════════════════════════════ -->
+<div class="section-wrap s4">
+  <div class="section-header" onclick="toggle(this)">
+    <span class="section-icon">🧈</span>
+    <span class="section-title">Distúrbios Lipídicos · Aterosclerose · Lipidose</span>
+    <span class="section-tag">Classe II</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body">
+    <div class="connector">
+      <div class="connector-line"></div>
+      <div class="connector-content">
+        <div class="branch-grid">
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Aterosclerose — Visão Geral</div>
+            <ul class="leaf-list">
+              <li>🩸 Doença crônica das artérias de grande e médio calibre</li>
+              <li>📌 <strong>Artérias afetadas:</strong> Aorta, coronárias, cerebrais, renais, ilíacas, femorais</li>
+              <li>❤️ Principal causa de insuficiência arterial, IAM, AVC, doença renal</li>
+              <li>🚬 <strong>Fatores de risco:</strong> hipercolesterolemia (LDL↑), hipertensão, tabagismo, DM, obesidade, sedentarismo, sexo masculino/pós-menopausa</li>
+            </ul>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Placa de Ateroma — Lesão Básica</div>
+            <ul class="leaf-list">
+              <li>🔬 Lesão focal elevada na íntima (intimal plaque)</li>
+              <li>💛 Núcleo lipídico: colesterol, ésteres de colesterol, complexos com proteínas</li>
+              <li>🪢 Cobertura fibrosa (cápsula fibrosa): colágeno, células musculares lisas</li>
+            </ul>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Componentes da Placa</div>
+              <ul class="leaf-list">
+                <li>🔵 Células musculares lisas migradas da média</li>
+                <li>🟡 Macrófagos espumosos (foam cells) — LDL oxidado fagocitado</li>
+                <li>⚪ Leucócitos (linfócitos T, monócitos)</li>
+                <li>🕸️ Matriz extracelular: colágeno, fibras elásticas, proteoglicanos</li>
+                <li>💧 Depósito lipídico intra e extracelular</li>
+              </ul>
+            </div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Evolução / Progressão das Lesões</div>
+              <ul class="leaf-list">
+                <li>1️⃣ <strong>Estria gordurosa</strong> — foam cells subendoteliais; sem elevação; corada Sudan IV em vermelho; reversível</li>
+                <li>2️⃣ <strong>Placa fibrosa</strong> — elevação íntima; coloração amarelada; lesão íntima elevada estabelecida</li>
+                <li>3️⃣ <strong>Placa complicada</strong> — hemorragia, ulceração, calcificação, trombose, rotura</li>
+              </ul>
+            </div>
+            <div class="pills">
+              <span class="pill">LDL oxidado</span>
+              <span class="pill">Foam cells</span>
+              <span class="pill">Sudan IV (vermelho)</span>
+              <span class="pill">Estatinas</span>
+            </div>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Esclerose Calcificada da Túnica Média (Mönckeberg)</span></div>
+            <ul class="leaf-list">
+              <li>🪨 Calcificações anulares da túnica média</li>
+              <li>📍 Artérias musculares de médio e pequeno calibre</li>
+              <li>✅ Endotélio <em>permanece intacto</em> — sem obstrução luminal direta</li>
+              <li>🦵 Artérias afetadas: Femoral, cubital, radial, tibial, artérias genitais</li>
+              <li>⚕️ Rx: calcificações vasculares ("artéria em trilho de trem")</li>
+            </ul>
+            <div class="pills">
+              <span class="pill">Média calcificada</span>
+              <span class="pill">Sem obstrução</span>
+              <span class="pill">Idosos / DM</span>
+            </div>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Arteriolosclerose</div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Hialina</div>
+              <ul class="leaf-list">
+                <li>🧓 Idosos, HAS e DM leve</li>
+                <li>🔬 Espessamento hialino, homogêneo e rosa da parede da arteríola; perda de detalhes estruturais; diminuição do calibre</li>
+                <li>🫘 Característica microscópica da <strong>nefroesclerose benigna</strong></li>
+              </ul>
+            </div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Hiperplásica</div>
+              <ul class="leaf-list">
+                <li>⚡ Característica da <strong>HAS maligna</strong></li>
+                <li>🧅 Espessamento arteriolar laminado e concêntrico <em>"em camadas de cebola"</em></li>
+                <li>🔬 Duplicação de membrana basal + proliferação do músculo liso + depósito de fibrina + necrose (arteriolite necrosante)</li>
+                <li>🫘 Nefroesclerose maligna / microangiopatia trombótica</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="branch branch-wide">
+            <div class="branch-title"><span class="dot"></span>LIPIDOSE — Doenças de Armazenamento Lipídico</div>
+            <ul class="leaf-list">
+              <li>📖 <strong>Definição:</strong> Alterações estáveis do plasma/tecidos com deposição de substâncias lipídicas por déficit enzimático lisossomal</li>
+            </ul>
+            <table class="mini-table">
+              <tr><th>Doença</th><th>Déficit Enzimático</th><th>Substrato Acumulado</th><th>Órgão-Alvo</th><th>Característica</th></tr>
+              <tr><td>Tay-Sachs</td><td>Hexosaminidase A</td><td>Gangliosídeo GM2</td><td>Neurônios (SNC)</td><td>Mancha vermelho-cereja macular, demência progressiva, morte &lt;5 anos</td></tr>
+              <tr><td>Niemann-Pick</td><td>Esfingomielinase</td><td>Esfingomielina</td><td>Fígado, baço, pulmão, SNC</td><td>Hepatoesplenomegalia, células espumosas (foam cells)</td></tr>
+              <tr><td>Gaucher</td><td>β-Glicocerebrosidase</td><td>Glicocerebrosídeos</td><td>Baço, fígado, medula óssea</td><td>Células de Gaucher (citoplasma "papel amassado"); esplenomegalia maciça</td></tr>
+            </table>
+            <div class="pills">
+              <span class="pill">Lisossomal</span>
+              <span class="pill">Autossômica recessiva</span>
+              <span class="pill">Terapia enzimática (Gaucher)</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SEÇÃO 5 — DIABETES MELLITUS
+══════════════════════════════════════════════════════ -->
+<div class="section-wrap s5">
+  <div class="section-header" onclick="toggle(this)">
+    <span class="section-icon">🍬</span>
+    <span class="section-title">Diabetes Mellitus — Distúrbio dos Hidratos de Carbono</span>
+    <span class="section-tag">Classe II</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body">
+    <div class="connector">
+      <div class="connector-line"></div>
+      <div class="connector-content">
+        <div class="branch-grid">
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Definição</div>
+            <ul class="leaf-list">
+              <li>📖 Doença metabólica hereditária de transmissão autossômica recessiva</li>
+              <li>⚡ Falta absoluta ou relativa de insulina</li>
+              <li>🍚 Provoca graves distúrbios no uso de hidratos de carbono</li>
+              <li>🧈 Alterações no metabolismo lipídico e proteico</li>
+            </ul>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Características Clínicas Clássicas</div>
+              <ul class="leaf-list">
+                <li>📊 Hiperglicemia em jejum (&gt;126 mg/dL)</li>
+                <li>💧 Glicosúria (limiar renal &gt;180 mg/dL)</li>
+                <li>📉 Hipocolesterolemia (DM1) ou hipercolesterolemia (DM2)</li>
+                <li>🍋 Cetoacidose (DM1) — corpos cetônicos: acetona, acetoacetato, β-hidroxibutirato</li>
+                <li>🚰 Poliúria / polidipsia / polifagia</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Classificação</div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">DM Tipo I — Insulino-Dependente (DMID)</div>
+              <ul class="leaf-list">
+                <li>🔥 Destruição autoimune das células β pancreáticas (insulite)</li>
+                <li>🧬 HLA-DR3/DR4; autoanticorpos anti-ilhota (ICA), anti-GAD, anti-insulina</li>
+                <li>👶 Início na infância/adolescência</li>
+                <li>⚡ Insulinopenia absoluta → cetoacidose</li>
+              </ul>
+            </div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">DM Tipo II — Não Insulino-Dependente (DMNID)</div>
+              <ul class="leaf-list">
+                <li>💊 Resistência insulínica periférica + disfunção progressiva das células β</li>
+                <li>⚖️ Associado a obesidade, sedentarismo, síndrome metabólica</li>
+                <li>🧓 Geralmente adultos (mas crescente em jovens)</li>
+                <li>💉 Não requer insulina inicialmente</li>
+              </ul>
+            </div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">DM Secundário</div>
+              <ul class="leaf-list">
+                <li>🔴 Pancreatite, tumores pancreáticos, cirurgia pancreática</li>
+                <li>🟤 Hemocromatose (depósito de ferro nas ilhotas)</li>
+                <li>🧬 Síndrome de Down</li>
+                <li>🫁 Síndrome de Cushing (hipercortisolismo)</li>
+                <li>🔵 Síndrome carcinoide</li>
+                <li>⚫ Feocromocitoma (catecolaminas → hiperglicemia)</li>
+                <li>💊 Drogas: corticosteroides, tiazídicos, antipsicóticos atípicos</li>
+              </ul>
+            </div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">MODY (Maturity-Onset Diabetes of the Young)</div>
+              <ul class="leaf-list">
+                <li>🧬 Diabetes juvenil com início na maturidade</li>
+                <li>🔑 Defeito genético autossômico dominante (várias formas)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Alterações Morfológicas do Pâncreas</div>
+            <ul class="leaf-list">
+              <li>🏛️ <strong>Hialinização de ilhotas</strong> — depósito amiloide (IAPP) nas ilhotas (DM2)</li>
+              <li>🔥 <strong>Insulite</strong> — infiltrado inflamatório linfocitário dentro das ilhotas (DM1)</li>
+              <li>📉 Diminuição global do número e tamanho das ilhotas (DM1)</li>
+              <li>📉 Diminuição do número de células β (DM1)</li>
+              <li>📉 Diminuição da massa das ilhotas (DM2)</li>
+              <li>🕸️ Fibrose pancreática</li>
+              <li>🫧 Adenoma insular (raro)</li>
+            </ul>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Complicações Vasculares</div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Macroangiopatia</div>
+              <ul class="leaf-list">
+                <li>❤️ Aterosclerose acelerada: Aorta, coronárias, cerebrais, renais</li>
+                <li>⚡ IAM (principal causa de morte no DM2)</li>
+                <li>🧠 AVC isquêmico</li>
+                <li>🦵 Doença arterial periférica (pé diabético)</li>
+              </ul>
+            </div>
+            <div class="sub-branch">
+              <div class="sub-branch-title">Microangiopatia</div>
+              <ul class="leaf-list">
+                <li>🔬 Espessamento da membrana basal capilar</li>
+                <li>👁️ <strong>Retinopatia não proliferativa:</strong> microaneurismas capilares, hemorragias retinianas, exsudato seroso, edema da retina, dilatações venosas</li>
+                <li>👁️ <strong>Retinopatia proliferativa:</strong> neovascularização, retrolental, hemorragia vítrea → cegueira</li>
+                <li>🫘 <strong>Nefropatia diabética:</strong> glomeruloesclerose de Kimmelstiel-Wilson, proteinúria progressiva → IRC</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Complicações Neurológicas</div>
+            <ul class="leaf-list">
+              <li>⚡ <strong>Neuropatia periférica simétrica distal</strong> — "luva e meia"; sensitivo-motora</li>
+              <li>🎯 <strong>Mononeuropatia</strong> — nervo craniano ou periférico único</li>
+              <li>🤖 <strong>Neuropatia autonômica</strong> — gastroparesia, disfunção erétil, hipotensão ortostática, bexiga neurogênica</li>
+            </ul>
+          </div>
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Complicações Cutâneas</div>
+            <ul class="leaf-list">
+              <li>🦠 <strong>Infecções cutâneas</strong> — furúnculos, candidíase recorrente, erisipela</li>
+              <li>💛 <strong>Xantomas diabéticos</strong> — depósitos lipídicos na pele (hipertrigliceridemia)</li>
+              <li>🟤 Necrobiose lipoídica diabeticorum</li>
+              <li>🌊 Pé diabético: úlcera neuropática + isquemia + infecção</li>
+            </ul>
+            <div class="pills">
+              <span class="pill">HbA1c</span>
+              <span class="pill">Glicemia jejum</span>
+              <span class="pill">TOTG</span>
+              <span class="pill">Insulina</span>
+              <span class="pill">Metformina</span>
+              <span class="pill">SGLT2i</span>
+              <span class="pill">GLP-1a</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SEÇÃO 6 — GLICOGENOSE
+══════════════════════════════════════════════════════ -->
+<div class="section-wrap s6">
+  <div class="section-header" onclick="toggle(this)">
+    <span class="section-icon">🍚</span>
+    <span class="section-title">Glicogenoses — Doenças de Armazenamento do Glicogênio</span>
+    <span class="section-tag">Classe II</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body">
+    <div class="connector">
+      <div class="connector-line"></div>
+      <div class="connector-content">
+        <div class="branch-grid">
+
+          <div class="branch">
+            <div class="branch-title"><span class="dot"></span>Definição e Mecanismo</div>
+            <ul class="leaf-list">
+              <li>📖 Doença de armazenamento de glicogênio, de origem congênita</li>
+              <li>🧬 Anomalias na síntese ou catabolismo do glicogênio</li>
+              <li>❌ Falta de enzimas envolvidas no metabolismo deste hidrato de carbono</li>
+              <li>📦 Glicogênio acumula-se em diferentes órgãos (fígado, músculo, coração, rins)</li>
+              <li>⚡ Consequência: hipoglicemia (fígado não libera glicose) + dano celular por acúmulo</li>
+            </ul>
+          </div>
+
+          <div class="branch branch-wide">
+            <div class="branch-title"><span class="dot"></span>Principais Formas — Glicogenoses</div>
+            <table class="mini-table">
+              <tr><th>Tipo</th><th>Nome</th><th>Enzima Deficiente</th><th>Órgão-Alvo</th><th>Característica Clínica</th></tr>
+              <tr><td>Tipo Ia</td><td>Doença de Von Gierke</td><td>Glicose-6-fosfatase</td><td>Fígado, rim</td><td>Hepatomegalia maciça, hipoglicemia grave em jejum, acidose lática, face de boneca</td></tr>
+              <tr><td>Tipo II</td><td>Doença de Pompe</td><td>Ácido α-1,4-glucosidase (maltase ácida) — lisossomal</td><td>Coração, músculo, SNC</td><td>Cardiomegalia maciça, hipotonia, morte no 1º ano de vida (forma infantil)</td></tr>
+              <tr><td>Tipo III</td><td>Doença de Forbes (Cori)</td><td>Amilo-1,6-glucosidase (enzima desramificante)</td><td>Fígado, músculo</td><td>Hepatomegalia, hipoglicemia moderada, glicogênio com ramos curtos anormais</td></tr>
+            </table>
+            <div class="callout">
+              <span class="callout-icon">💊</span>
+              <span><strong>Pompe:</strong> Única glicogenose lisossomal. Tratamento com alglucosidase alfa (terapia enzimática de reposição) aprovado — muda radicalmente o prognóstico.</span>
+            </div>
+            <div class="pills">
+              <span class="pill">PAS + (coloração glicogênio)</span>
+              <span class="pill">Autossômica recessiva</span>
+              <span class="pill">Biopsia hepática</span>
+              <span class="pill">Enzimas lisossomais</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SEÇÃO 7 — QUADRO RESUMO / DIAGNÓSTICO DIFERENCIAL
+══════════════════════════════════════════════════════ -->
+<div class="section-wrap s7">
+  <div class="section-header" onclick="toggle(this)">
+    <span class="section-icon">📋</span>
+    <span class="section-title">Quadro Comparativo — Diagnóstico Diferencial &amp; Clínica</span>
+    <span class="section-tag">RESUMO</span>
+    <span class="chevron">▾</span>
+  </div>
+  <div class="section-body">
+    <div class="connector">
+      <div class="connector-line"></div>
+      <div class="connector-content">
+        <div class="branch-grid">
+
+          <div class="branch branch-wide">
+            <div class="branch-title"><span class="dot"></span>Distúrbios de Depósito — Comparativo Geral</div>
+            <table class="mini-table">
+              <tr><th>Doença</th><th>Substância</th><th>Herança</th><th>Lab Chave</th><th>Coloração Histol.</th><th>Tratamento Principal</th></tr>
+              <tr><td>Hemocromatose</td><td>Ferro (hemossiderina)</td><td>AR (HFE)</td><td>Ferritina ↑↑, Saturação Tf ↑</td><td>Azul da Prússia</td><td>Flebotomia, deferoxamina</td></tr>
+              <tr><td>Doença de Wilson</td><td>Cobre</td><td>AR (ATP7B)</td><td>Ceruloplasmina ↓, Cu urina ↑</td><td>Rodanina</td><td>Penicilamina, zinco</td></tr>
+              <tr><td>Gaucher</td><td>Glicocerebrosídeo</td><td>AR</td><td>Quitotriosidase ↑</td><td>PAS+, Sudan III</td><td>Imiglicerase (ERT)</td></tr>
+              <tr><td>Niemann-Pick</td><td>Esfingomielina</td><td>AR</td><td>Esfingomielinase ↓</td><td>Filipina (NPC)</td><td>Suporte; miglustat (NPC)</td></tr>
+              <tr><td>Tay-Sachs</td><td>Gangliosídeo GM2</td><td>AR</td><td>Hexosaminidase A ↓</td><td>Luxol fast blue</td><td>Suporte</td></tr>
+              <tr><td>Gota</td><td>Urato monossódico</td><td>Multifatorial</td><td>Ác. úrico sérico ↑</td><td>Cristais birrefringentes (polarizada)</td><td>Colchicina, alopurinol, AINE</td></tr>
+              <tr><td>MPS I (Hurler)</td><td>Dermatan/Heparan sulfato</td><td>AR</td><td>GAG urinário ↑</td><td>Alcian Blue, toluidina</td><td>Laronidase (ERT), TMO</td></tr>
+            </table>
+          </div>
+
+          <div class="branch branch-wide">
+            <div class="branch-title"><span class="dot"></span>Complicações Crônicas do DM — Resumo Sistêmico</div>
+            <table class="mini-table">
+              <tr><th>Sistema</th><th>Lesão</th><th>Mecanismo</th><th>Diagnóstico</th><th>Monitoramento</th></tr>
+              <tr><td>Ocular</td><td>Retinopatia; catarata; glaucoma</td><td>Microangiopatia, sorbitol</td><td>Fundo de olho anual</td><td>Oftalmologista anual</td></tr>
+              <tr><td>Renal</td><td>Nefropatia (Kimmelstiel-Wilson)</td><td>Hiperfiltração → glomeruloesclerose</td><td>Microalbuminúria, creatinina</td><td>Albuminúria a cada 6-12m</td></tr>
+              <tr><td>Neurológico</td><td>Neuropatia sensitivo-motora</td><td>Desmielinização, isquemia vasa nervorum</td><td>EMG, monofilamento</td><td>Exame pés anual</td></tr>
+              <tr><td>Cardiovascular</td><td>Aterosclerose acelerada</td><td>Dislipidemia, hiperglicemia, HAS</td><td>ECG, eco, escore de risco</td><td>Lipidograma, PA</td></tr>
+              <tr><td>Pé</td><td>Úlcera neuropática/isquêmica</td><td>Neuropatia + PAD + infecção</td><td>ITB, pulsos, monofilamento</td><td>Inspeção a cada consulta</td></tr>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /canvas-wrap -->
+
+<footer>
+  DISTÚRBIOS METABÓLICOS · CLASSES I &amp; II · MAPA MENTAL INTERATIVO · © MEDICINA INTERNA
+</footer>
+
+<script>
+// ── TOGGLE ──
+function toggle(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+}
+
+// ── EXPAND ALL ──
+let allExpanded = false;
+document.getElementById('expandBtn').addEventListener('click', function() {
+  allExpanded = !allExpanded;
+  document.querySelectorAll('.section-body').forEach(b => b.classList.toggle('open', allExpanded));
+  document.querySelectorAll('.section-header').forEach(h => h.classList.toggle('open', allExpanded));
+  this.textContent = allExpanded ? 'Recolher Tudo' : 'Expandir Tudo';
+});
+
+// ── SEARCH / HIGHLIGHT ──
+const searchInput = document.getElementById('search');
+
+searchInput.addEventListener('input', function() {
+  const term = this.value.trim().toLowerCase();
+
+  // Restore clean text first
+  document.querySelectorAll('.section-body').forEach(b => {
+    b.innerHTML = b.innerHTML.replace(/<mark>(.*?)<\/mark>/gi, '$1');
+  });
+
+  if (!term) {
+    // collapse all
+    document.querySelectorAll('.section-body').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.section-header').forEach(h => h.classList.remove('open'));
+    return;
+  }
+
+  // Search and expand matching sections
+  document.querySelectorAll('.section-wrap').forEach(wrap => {
+    const header = wrap.querySelector('.section-header');
+    const body = wrap.querySelector('.section-body');
+    const text = body.textContent.toLowerCase();
+
+    if (text.includes(term)) {
+      header.classList.add('open');
+      body.classList.add('open');
+      // Highlight
+      highlightText(body, term);
+    } else {
+      header.classList.remove('open');
+      body.classList.remove('open');
+    }
+  });
+});
+
+function highlightText(container, term) {
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+
+  nodes.forEach(node => {
+    const idx = node.textContent.toLowerCase().indexOf(term);
+    if (idx >= 0 && node.parentElement && !['SCRIPT','STYLE'].includes(node.parentElement.tagName)) {
+      const span = document.createElement('span');
+      span.innerHTML = node.textContent.substring(0, idx) +
+        '<mark>' + node.textContent.substring(idx, idx + term.length) + '</mark>' +
+        node.textContent.substring(idx + term.length);
+      node.parentNode.replaceChild(span, node);
+    }
+  });
+}
+
+// ── OPEN FIRST SECTION BY DEFAULT ──
+document.addEventListener('DOMContentLoaded', () => {
+  const first = document.querySelector('.section-header');
+  if (first) {
+    first.classList.add('open');
+    first.nextElementSibling.classList.add('open');
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa Mental — Cicatrização & Reparação Tecidual</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0f1524;
+    --center: #e8c84a;
+    --c1: #ff6b6b;   /* Reparação */
+    --c2: #4ecdc4;   /* Fatores Crescimento */
+    --c3: #a78bfa;   /* MEC */
+    --c4: #fb923c;   /* Cicatrização Feridas */
+    --c5: #34d399;   /* Células por Cap. Prolif */
+    --c6: #60a5fa;   /* Sinalização */
+    --c7: #f472b6;   /* Fatores que Interferem */
+    --c8: #facc15;   /* Aspectos Anormais */
+    --text: #e8eaf6;
+    --muted: #8892b0;
+    --card: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 3rem 2rem 1.5rem;
+    position: relative;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(232,200,74,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(232,200,74,0.15);
+    border: 1px solid rgba(232,200,74,0.35);
+    color: var(--center);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.35rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #e8c84a 0%, #fff 50%, #e8c84a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.8rem;
+  }
+  header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* Nav tabs */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    padding: 1.5rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,14,26,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    border: 1px solid;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.02em;
+  }
+  .tab-btn:hover, .tab-btn.active {
+    color: #0a0e1a !important;
+  }
+
+  /* Sections */
+  .section { display: none; padding: 2rem 1.5rem 4rem; max-width: 1400px; margin: 0 auto; }
+  .section.visible { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Section title */
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .section-title .dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .section-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+  }
+  .section-title .count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* Grid */
+  .grid { display: grid; gap: 1.2rem; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.4rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.02em;
+  }
+  .card h4 {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 1rem 0 0.5rem;
+  }
+  .card ul { list-style: none; }
+  .card ul li {
+    font-size: 0.84rem;
+    color: var(--muted);
+    padding: 0.28rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    line-height: 1.4;
+  }
+  .card ul li:last-child { border-bottom: none; }
+  .card ul li::before {
+    content: '›';
+    font-size: 0.9rem;
+    opacity: 0.5;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+
+  /* Pill tags */
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.8rem; }
+  .tag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 2rem; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.6rem; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--border);
+    border-radius: 2px;
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 1.2rem;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 0.45rem;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: var(--bg);
+  }
+  .tl-item .tl-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+  .tl-item p {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* Compare table */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.83rem;
+  }
+  .compare-table th {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-table td {
+    padding: 0.75rem 1rem;
+    color: var(--muted);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    line-height: 1.4;
+    vertical-align: top;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+
+  /* Highlight box */
+  .highlight-box {
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-top: 1rem;
+    border: 1px solid;
+    font-size: 0.83rem;
+    line-height: 1.6;
+  }
+
+  /* Pathway flow */
+  .pathway {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-top: 0.8rem;
+  }
+  .pathway .step {
+    padding: 0.35rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+  }
+  .pathway .arrow {
+    color: var(--muted);
+    font-size: 1rem;
+  }
+
+  /* Factor pill large */
+  .factor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+  }
+  .factor-item {
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .factor-item .fi-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Scroll top */
+  #scrollTop {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 44px; height: 44px;
+    background: var(--center);
+    color: #0a0e1a;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    transition: transform 0.2s;
+  }
+  #scrollTop:hover { transform: scale(1.1); }
+  #scrollTop.show { display: flex; }
+
+  /* Legend strip */
+  .legend-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.4rem;
+    margin-bottom: 2rem;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .section { padding: 1.5rem 1rem 3rem; }
+    .tabs { gap: 0.4rem; padding: 1rem; }
+    .tab-btn { font-size: 0.72rem; padding: 0.4rem 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Medicina Interna · Patologia Geral · 2026</div>
+  <h1>Cicatrização &<br>Reparação Tecidual</h1>
+  <p>Mapa Mental Completo — baseado no documento de estudo</p>
+</header>
+
+<!-- TABS -->
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" data-section="s0" style="color:#e8c84a;border-color:#e8c84a;">🗺 Visão Geral</button>
+  <button class="tab-btn" data-section="s1" style="color:#ff6b6b;border-color:#ff6b6b;">🔄 Reparação</button>
+  <button class="tab-btn" data-section="s2" style="color:#34d399;border-color:#34d399;">🧬 Células</button>
+  <button class="tab-btn" data-section="s3" style="color:#4ecdc4;border-color:#4ecdc4;">🌱 Fatores Crescimento</button>
+  <button class="tab-btn" data-section="s4" style="color:#60a5fa;border-color:#60a5fa;">📡 Sinalização</button>
+  <button class="tab-btn" data-section="s5" style="color:#a78bfa;border-color:#a78bfa;">🧱 MEC</button>
+  <button class="tab-btn" data-section="s6" style="color:#fb923c;border-color:#fb923c;">🩹 Cicatrização</button>
+  <button class="tab-btn" data-section="s7" style="color:#f472b6;border-color:#f472b6;">⚠️ Interferências</button>
+  <button class="tab-btn" data-section="s8" style="color:#facc15;border-color:#facc15;">❌ Aspectos Anormais</button>
+</nav>
+
+<!-- =================== S0: VISÃO GERAL =================== -->
+<section class="section visible" id="s0">
+  <div class="section-title">
+    <div class="dot" style="background:#e8c84a;box-shadow:0 0 10px #e8c84a"></div>
+    <h2 style="color:#e8c84a">Visão Geral do Tema</h2>
+  </div>
+
+  <div class="legend-strip">
+    <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div>Reparação</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>Células por Cap. Proliferativa</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#4ecdc4"></div>Fatores de Crescimento</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>Sinalização Celular</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>Matriz Extracelular</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fb923c"></div>Cicatrização de Feridas</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div>Fatores que Interferem</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#facc15"></div>Aspectos Anormais</div>
+  </div>
+
+  <div class="grid grid-2">
+
+    <div class="card" style="border-color:rgba(255,107,107,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#ff6b6b;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#ff6b6b">🔄 Dois grandes mecanismos de Reparação</h3>
+      <ul>
+        <li>Regeneração — mesmo tipo celular, sem rastro residual</li>
+        <li>Substituição (Fibroplasia) — tecido fibroso, cicatriz permanente</li>
+        <li>Ambos exigem: crescimento celular + diferenciação + interação célula-MEC</li>
+      </ul>
+      <div class="highlight-box" style="background:rgba(255,107,107,0.08);border-color:rgba(255,107,107,0.25);color:#ff9090">
+        Regeneração completa de órgãos <strong>NÃO</strong> ocorre em mamíferos
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(78,205,196,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#4ecdc4;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#4ecdc4">🌱 Principais Fatores de Crescimento</h3>
+      <ul>
+        <li>EGF — Epidermal Growth Factor (Fator de Crescimento Epidérmico)</li>
+        <li>TGF-α — Transforming Growth Factor Alpha</li>
+        <li>VEGF — Vascular Endothelial Growth Factor</li>
+        <li>PDGF — Platelet-Derived Growth Factor</li>
+        <li>FGF — Fibroblast Growth Factor</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(167,139,250,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#a78bfa;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#a78bfa">🧱 Matriz Extracelular (MEC)</h3>
+      <ul>
+        <li>Colágeno — 27 tipos — proteína mais abundante</li>
+        <li>Elastina — fibras elásticas</li>
+        <li>Glicoproteínas adesivas — fibronectina, laminina</li>
+        <li>Proteoglicanos + Ácido Hialurônico</li>
+        <li>Duas organizações: Matriz Intersticial + Membrana Basal</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(251,146,60,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#fb923c;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#fb923c">🩹 Tipos de Cicatrização</h3>
+      <ul>
+        <li>1ª Intenção — ferida limpa, suturada, fechamento imediato</li>
+        <li>2ª Intenção — ferida aberta, tecido de granulação, retração</li>
+        <li>3ª Intenção — fechamento primário retardado</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(52,211,153,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#34d399;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#34d399">🧬 Células por Capacidade Proliferativa</h3>
+      <ul>
+        <li>Lábeis — divisão constante (pele, TGI, hematopoiese)</li>
+        <li>Estáveis/Quiescentes — G₀, proliferam se estimuladas (fígado, rim, fibroblastos)</li>
+        <li>Permanentes — fora do ciclo celular (neurônios, miócitos cardíacos)</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(250,204,21,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#facc15;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#facc15">❌ Aspectos Anormais da Reparação</h3>
+      <ul>
+        <li>Cicatriz hipertrófica — dentro dos bordos da ferida</li>
+        <li>Queloide — ultrapassa bordos, não regride, predisposição genética</li>
+        <li>Hipergranulação — "orgulho da carne"</li>
+        <li>Deiscência da ferida</li>
+        <li>Ulceração, Fibrose excessiva (cirrose, desmoides)</li>
+        <li>Contracturas — comprometem movimento</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- FLUXO CENTRAL -->
+  <div class="card" style="margin-top:1.2rem;border-color:rgba(232,200,74,0.25)">
+    <h3 style="color:#e8c84a;margin-bottom:1rem">⚡ Fluxo do Processo de Cicatrização</h3>
+    <div class="pathway">
+      <div class="step" style="background:rgba(255,107,107,0.15);border-color:#ff6b6b;color:#ff6b6b">Lesão / Necrose</div>
+      <div class="arrow">→</div>
+      <div class="step" style="background:rgba(251,146,60,0.15);border-color:#fb923c;color:#fb923c">Inflamação</div>
+      <div class="arrow">→</div>
+      <div class="step" style="background:rgba(78,205,196,0.15);border-color:#4ecdc4;color:#4ecdc4">Angiogênese</div>
+      <div class="arrow">→</div>
+      <div class="step" style="background:rgba(167,139,250,0.15);border-color:#a78bfa;color:#a78bfa">Proliferação Fibroblastos</div>
+      <div class="arrow">→</div>
+      <div class="step" style="background:rgba(96,165,250,0.15);border-color:#60a5fa;color:#60a5fa">Depósito MEC / Colágeno</div>
+      <div class="arrow">→</div>
+      <div class="step" style="background:rgba(52,211,153,0.15);border-color:#34d399;color:#34d399">Remodelação Tissular</div>
+      <div class="arrow">→</div>
+      <div class="step" style="background:rgba(232,200,74,0.15);border-color:#e8c84a;color:#e8c84a">Contração + Resistência</div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== S1: REPARAÇÃO =================== -->
+<section class="section" id="s1">
+  <div class="section-title">
+    <div class="dot" style="background:#ff6b6b;box-shadow:0 0 10px #ff6b6b"></div>
+    <h2 style="color:#ff6b6b">Reparação Tecidual</h2>
+    <span class="count">02 mecanismos principais</span>
+  </div>
+  <div class="grid grid-2">
+
+    <div class="card" style="border-color:rgba(255,107,107,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#ff6b6b;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#ff6b6b">Regeneração</h3>
+      <ul>
+        <li>Reposição pelo mesmo tipo celular (ou classe similar)</li>
+        <li>Sem rastros residuais visíveis</li>
+        <li>Exemplos: tecido hematopoiético, pele, mucosa GI</li>
+        <li>Mamíferos: NÃO regeneram órgãos completos</li>
+      </ul>
+      <h4>Controle bioquímico</h4>
+      <ul>
+        <li>Induz células em repouso a entrar no ciclo celular</li>
+        <li>Equilibra fatores estimulatórios e inibitórios</li>
+        <li>Encurta o ciclo celular</li>
+        <li>Diminui a perda celular</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(255,107,107,0.2)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#ff4040;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#ff9090">Substituição (Fibroplasia)</h3>
+      <ul>
+        <li>Tecido original substituído por tecido fibroso</li>
+        <li>Deixa cicatriz permanente</li>
+        <li>Ocorre quando o tecido é incapaz de restituição completa</li>
+        <li>Ou quando a membrana basal está danificada</li>
+      </ul>
+      <div class="highlight-box" style="background:rgba(255,107,107,0.08);border-color:rgba(255,107,107,0.25);color:#ff9090">
+        A membrana basal íntegra é fundamental para que ocorra regeneração organizada. Se destruída → substitução por fibrose.
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(255,107,107,0.3);grid-column: 1 / -1">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ff6b6b,#fb923c);border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#ff6b6b">Etapas da Reparação por Cicatrização</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.8rem;margin-top:0.8rem">
+        <div style="background:rgba(255,107,107,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(255,107,107,0.2)">
+          <div style="color:#ff6b6b;font-size:0.72rem;font-weight:600;letter-spacing:0.1em;margin-bottom:0.4rem">PASSO 1</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Indução do processo inflamatório</div>
+        </div>
+        <div style="background:rgba(251,146,60,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(251,146,60,0.2)">
+          <div style="color:#fb923c;font-size:0.72rem;font-weight:600;letter-spacing:0.1em;margin-bottom:0.4rem">PASSO 2</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Proliferação e migração de células parenquimatosas e do tecido conjuntivo</div>
+        </div>
+        <div style="background:rgba(78,205,196,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(78,205,196,0.2)">
+          <div style="color:#4ecdc4;font-size:0.72rem;font-weight:600;letter-spacing:0.1em;margin-bottom:0.4rem">PASSO 3</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Angiogênese + formação de tecido de granulação</div>
+        </div>
+        <div style="background:rgba(167,139,250,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(167,139,250,0.2)">
+          <div style="color:#a78bfa;font-size:0.72rem;font-weight:600;letter-spacing:0.1em;margin-bottom:0.4rem">PASSO 4</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Síntese de proteínas da MEC + depósito de colágeno</div>
+        </div>
+        <div style="background:rgba(52,211,153,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(52,211,153,0.2)">
+          <div style="color:#34d399;font-size:0.72rem;font-weight:600;letter-spacing:0.1em;margin-bottom:0.4rem">PASSO 5</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Remodelação tissular (MMPs vs TIMPs)</div>
+        </div>
+        <div style="background:rgba(232,200,74,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(232,200,74,0.2)">
+          <div style="color:#e8c84a;font-size:0.72rem;font-weight:600;letter-spacing:0.1em;margin-bottom:0.4rem">PASSO 6</div>
+          <div style="font-size:0.82rem;color:var(--muted)">Contração da ferida + aquisição de resistência tensil</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(255,107,107,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#ff6b6b;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#ff6b6b">Angiogênese — Duas Vias</h3>
+      <h4>Via 1 — EPCs da Medula Óssea</h4>
+      <ul>
+        <li>Hemangioblasto mobilizado da medula</li>
+        <li>EPCs (Endothelial Progenitor Cells) circulam no sangue</li>
+        <li>Processo de "Homing" até o local da lesão</li>
+        <li>Diferenciação em células endoteliais e pericitos</li>
+      </ul>
+      <h4>Via 2 — Sprouting (brotamento) de vasos pré-existentes</h4>
+      <ul>
+        <li>Vasodilatação mediada por NO e VEGF</li>
+        <li>Degradação proteolítica da Membrana Basal (MMPs)</li>
+        <li>Migração e proliferação de células endoteliais</li>
+        <li>Maturação → recrutamento de pericitos periendoteliais</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(255,107,107,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#ff6b6b;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#ff6b6b">Remodelação Tissular — MMPs e TIMPs</h3>
+      <ul>
+        <li><strong style="color:#fff">Transição:</strong> tecido de granulação → cicatriz fibrosa</li>
+        <li>Mudanças na composição da MEC ao longo do tempo</li>
+        <li>Colagenases e estromelisinas degradam a MEC</li>
+        <li>Ativação por plasminogênio → plasmina → ativa MMPs</li>
+      </ul>
+      <h4>Estimuladores das MMPs</h4>
+      <div class="tags">
+        <span class="tag" style="background:rgba(251,146,60,0.15);border-color:#fb923c;color:#fb923c">PDGF</span>
+        <span class="tag" style="background:rgba(78,205,196,0.15);border-color:#4ecdc4;color:#4ecdc4">EGF</span>
+        <span class="tag" style="background:rgba(255,107,107,0.15);border-color:#ff6b6b;color:#ff6b6b">IL-1 / TNF</span>
+      </div>
+      <h4>Inibidores (TIMPs)</h4>
+      <div class="tags">
+        <span class="tag" style="background:rgba(52,211,153,0.15);border-color:#34d399;color:#34d399">TGF-β</span>
+        <span class="tag" style="background:rgba(96,165,250,0.15);border-color:#60a5fa;color:#60a5fa">Esteroides</span>
+        <span class="tag">TIMPs endógenos</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =================== S2: CÉLULAS =================== -->
+<section class="section" id="s2">
+  <div class="section-title">
+    <div class="dot" style="background:#34d399;box-shadow:0 0 10px #34d399"></div>
+    <h2 style="color:#34d399">Células por Capacidade Proliferativa</h2>
+    <span class="count">03 categorias</span>
+  </div>
+  <div class="grid grid-3">
+
+    <div class="card" style="border-color:rgba(52,211,153,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#34d399;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#34d399">🟢 Células Lábeis</h3>
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.8rem;font-family:'DM Mono',monospace">Divisão contínua — ciclo ativo</div>
+      <ul>
+        <li>Epitélios estratificados: pele, cavidade oral, vagina, colo uterino</li>
+        <li>Epitélio cilíndrico: trato digestivo, colo uterino</li>
+        <li>Epitélio de transição do trato urinário</li>
+        <li>Células da medula óssea e tecidos hematopoiéticos</li>
+        <li>Glândulas salivares, pâncreas exócrino, vias biliares</li>
+      </ul>
+      <div class="highlight-box" style="background:rgba(52,211,153,0.08);border-color:rgba(52,211,153,0.25);color:#34d399;margin-top:1rem">
+        Proliferam durante toda a vida, reemplazando células destruídas a partir de células-tronco / progenitoras
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(250,204,21,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#facc15;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#facc15">🟡 Células Estáveis (Quiescentes)</h3>
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.8rem;font-family:'DM Mono',monospace">Fase G₀ — proliferação rápida se estimuladas</div>
+      <ul>
+        <li>Hepatócitos (fígado) — regeneração hepática clássica</li>
+        <li>Células renais tubulares (rim)</li>
+        <li>Células acinares do pâncreas</li>
+        <li>Células endoteliais vasculares</li>
+        <li>Fibroblastos do tecido conjuntivo</li>
+        <li>Condrócitos, osteócitos, fibras musculares lisas</li>
+        <li>Glândulas endócrinas</li>
+      </ul>
+      <div class="highlight-box" style="background:rgba(250,204,21,0.08);border-color:rgba(250,204,21,0.25);color:#facc15;margin-top:1rem">
+        Regeneração organizada depende da conservação da membrana basal
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(244,114,182,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#f472b6;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#f472b6">🔴 Células Permanentes</h3>
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.8rem;font-family:'DM Mono',monospace">Fora do ciclo celular — lesão → cicatriz</div>
+      <ul>
+        <li>Neurônios — sistema nervoso central e periférico</li>
+        <li>Miócitos cardíacos — músculo cardíaco</li>
+        <li>Fibras musculares esqueléticas</li>
+        <li>Conos e bastonetes da retina</li>
+      </ul>
+      <div class="highlight-box" style="background:rgba(244,114,182,0.08);border-color:rgba(244,114,182,0.25);color:#f472b6;margin-top:1rem">
+        Abandonaram o ciclo celular na vida pós-natal. Lesão irreversível → substituição por cicatriz fibrosa permanente
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CICLO CELULAR -->
+  <div class="card" style="margin-top:1.2rem;border-color:rgba(52,211,153,0.2)">
+    <h3 style="color:#34d399;margin-bottom:1rem">🔁 Ciclo Celular — Fases</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.8rem">
+      <div style="background:rgba(255,107,107,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(255,107,107,0.2);text-align:center">
+        <div style="font-size:1.4rem;font-family:'Playfair Display',serif;color:#ff6b6b;margin-bottom:0.3rem">G₁</div>
+        <div style="font-size:0.78rem;color:var(--muted)">Gap 1 — crescimento celular, síntese proteica</div>
+      </div>
+      <div style="background:rgba(78,205,196,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(78,205,196,0.2);text-align:center">
+        <div style="font-size:1.4rem;font-family:'Playfair Display',serif;color:#4ecdc4;margin-bottom:0.3rem">S</div>
+        <div style="font-size:0.78rem;color:var(--muted)">Síntese — replicação do DNA</div>
+      </div>
+      <div style="background:rgba(167,139,250,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(167,139,250,0.2);text-align:center">
+        <div style="font-size:1.4rem;font-family:'Playfair Display',serif;color:#a78bfa;margin-bottom:0.3rem">G₂</div>
+        <div style="font-size:0.78rem;color:var(--muted)">Gap 2 — preparação para mitose</div>
+      </div>
+      <div style="background:rgba(250,204,21,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(250,204,21,0.2);text-align:center">
+        <div style="font-size:1.4rem;font-family:'Playfair Display',serif;color:#facc15;margin-bottom:0.3rem">M</div>
+        <div style="font-size:0.78rem;color:var(--muted)">Mitose — divisão celular</div>
+      </div>
+      <div style="background:rgba(52,211,153,0.08);border-radius:10px;padding:0.8rem;border:1px solid rgba(52,211,153,0.2);text-align:center">
+        <div style="font-size:1.4rem;font-family:'Playfair Display',serif;color:#34d399;margin-bottom:0.3rem">G₀</div>
+        <div style="font-size:0.78rem;color:var(--muted)">Quiescência — saída do ciclo (células estáveis)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estímulos para proliferação -->
+  <div class="card" style="margin-top:1.2rem;border-color:rgba(52,211,153,0.2)">
+    <h3 style="color:#34d399;margin-bottom:1rem">⚡ Estímulos para Proliferação Celular</h3>
+    <div class="grid grid-2">
+      <div>
+        <h4>Fisiológicos</h4>
+        <ul>
+          <li>Endométrio — estimulação estrogênica no ciclo menstrual</li>
+          <li>Tireoide — TSH durante a gravidez</li>
+          <li>Estímulos fisiológicos excessivos → patologia: hiperplasia prostática, bócio multinodular</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Patológicos</h4>
+        <ul>
+          <li>Lesão celular de qualquer causa</li>
+          <li>Morte celular (necrose, apoptose)</li>
+          <li>Liberação de fatores bioquímicos locais</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== S3: FATORES CRESCIMENTO =================== -->
+<section class="section" id="s3">
+  <div class="section-title">
+    <div class="dot" style="background:#4ecdc4;box-shadow:0 0 10px #4ecdc4"></div>
+    <h2 style="color:#4ecdc4">Fatores de Crescimento</h2>
+    <span class="count">05 principais famílias</span>
+  </div>
+  <div class="grid grid-2">
+
+    <div class="card" style="border-color:rgba(78,205,196,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#4ecdc4;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#4ecdc4">EGF / TGF-α</h3>
+      <div style="font-size:0.75rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:0.8rem">Epidermal Growth Factor / Transforming Growth Factor Alpha</div>
+      <ul>
+        <li>Família EGF — partilham o mesmo receptor (EGFR)</li>
+        <li>EGF: mitógeno para células epiteliais, hepatócitos e fibroblastos</li>
+        <li>Produzido por: queratinocitos, macrófagos, células inflamatórias</li>
+        <li>TGF-α: muito similar ao EGF em estrutura e função</li>
+      </ul>
+      <h4>Via de Sinalização EGFR</h4>
+      <ul>
+        <li>EGFR (ErbB-1), B1 e B2 (erb-B2) — receptores tirosina-cinase</li>
+        <li>Fosforilação → JAK → STAT1/STAT3 (transcrição)</li>
+        <li>Grb2 → SOS → Ras → Raf → MEK → ERK (proliferação)</li>
+      </ul>
+      <div class="tags">
+        <span class="tag" style="background:rgba(78,205,196,0.15);border-color:#4ecdc4;color:#4ecdc4">Mitogênese</span>
+        <span class="tag">Pele</span>
+        <span class="tag">Fígado</span>
+        <span class="tag">ERK signaling</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(96,165,250,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#60a5fa;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#60a5fa">VEGF</h3>
+      <div style="font-size:0.75rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:0.8rem">Vascular Endothelial Growth Factor</div>
+      <ul>
+        <li>Família: VEGF-A, VEGF-B, VEGF-C, VEGF-D</li>
+        <li>Indutor potente da vasculogênese e angiogênese</li>
+        <li>VEGF-C e -D → linfangiogênese</li>
+      </ul>
+      <h4>Receptores (RTKs)</h4>
+      <ul>
+        <li>VEGFR-1 — angiogênese via Neuropilina-1 (NRP-1)</li>
+        <li>VEGFR-2 — angiogênese + linfangiogênese (com NRP-1)</li>
+        <li>VEGFR-3 — linfangiogênese</li>
+        <li>Co-receptor: Integrina αVβ3</li>
+      </ul>
+      <div class="highlight-box" style="background:rgba(96,165,250,0.08);border-color:rgba(96,165,250,0.25);color:#93c5fd">
+        Alvo terapêutico: Bevacizumab (anti-VEGF) em oncologia para suprimir angiogênese tumoral
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(251,146,60,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#fb923c;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#fb923c">PDGF</h3>
+      <div style="font-size:0.75rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:0.8rem">Platelet-Derived Growth Factor — Fator de Crescimento Derivado de Plaquetas</div>
+      <ul>
+        <li>Família de proteínas (homodímeros e heterodímeros)</li>
+        <li>Receptor: PDGFR (tirosina-cinase, dimerização)</li>
+        <li>Efeitos: migração e proliferação de fibroblastos, células de músculo liso e monócitos</li>
+        <li>Papel central na fibrose hepática (ativação de células estreladas)</li>
+        <li>Liberado pelas plaquetas na agregação (homeostasia)</li>
+      </ul>
+      <div class="tags">
+        <span class="tag" style="background:rgba(251,146,60,0.15);border-color:#fb923c;color:#fb923c">Plaquetas</span>
+        <span class="tag">Fibrose</span>
+        <span class="tag">Fibroblastos</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(167,139,250,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#a78bfa;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#a78bfa">FGF</h3>
+      <div style="font-size:0.75rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:0.8rem">Fibroblast Growth Factor — Fator de Crescimento de Fibroblastos</div>
+      <ul>
+        <li>Mais de 10 membros na família</li>
+        <li>Receptores com atividade tirosina-cinase (FGFRs)</li>
+        <li>Via: Ras → Raf → MEK → ERK → transcrição nuclear</li>
+      </ul>
+      <h4>Funções</h4>
+      <ul>
+        <li>Angiogênese — fundamental para vascularização</li>
+        <li>Reparação de feridas: migração de macrófagos e células endoteliais</li>
+        <li>Desenvolvimento do músculo esquelético</li>
+        <li>Hematopoiese</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(52,211,153,0.3);grid-column:1/-1">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#34d399;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#34d399;margin-bottom:1rem">📊 Resumo Comparativo dos Fatores de Crescimento</h3>
+      <div style="overflow-x:auto">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="color:#34d399">Fator</th>
+              <th style="color:#34d399">Sigla (Inglês / Português)</th>
+              <th style="color:#34d399">Receptor</th>
+              <th style="color:#34d399">Funções Principais</th>
+              <th style="color:#34d399">Aplicação Clínica</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#4ecdc4">EGF</td>
+              <td>Epidermal Growth Factor / Fator de Crescimento Epidérmico</td>
+              <td>EGFR (ErbB-1, ErbB-2)</td>
+              <td>Mitogênese epitelial, cicatrização</td>
+              <td>Erlotinib, Gefitinib, Cetuximab (bloqueadores em CA)</td>
+            </tr>
+            <tr>
+              <td style="color:#60a5fa">VEGF</td>
+              <td>Vascular Endothelial Growth Factor / Fator de Crescimento Endotelial Vascular</td>
+              <td>VEGFR-1, -2, -3</td>
+              <td>Angiogênese, vasculogênese, linfangiogênese</td>
+              <td>Bevacizumab (anti-VEGF), Ranibizumab (olho)</td>
+            </tr>
+            <tr>
+              <td style="color:#fb923c">PDGF</td>
+              <td>Platelet-Derived Growth Factor / Fator de Crescimento Derivado de Plaquetas</td>
+              <td>PDGFR-α, PDGFR-β</td>
+              <td>Fibroblastos, músculo liso, fibrose hepática</td>
+              <td>Imatinib (bloqueia PDGFR em GIST)</td>
+            </tr>
+            <tr>
+              <td style="color:#a78bfa">FGF</td>
+              <td>Fibroblast Growth Factor / Fator de Crescimento de Fibroblastos</td>
+              <td>FGFR 1–4</td>
+              <td>Angiogênese, reparo de feridas, miogênese</td>
+              <td>Erdafitinib (FGFR inibidor em CA urotelial)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =================== S4: SINALIZAÇÃO =================== -->
+<section class="section" id="s4">
+  <div class="section-title">
+    <div class="dot" style="background:#60a5fa;box-shadow:0 0 10px #60a5fa"></div>
+    <h2 style="color:#60a5fa">Mecanismos de Sinalização Celular</h2>
+    <span class="count">03 modos</span>
+  </div>
+  <div class="grid grid-3">
+
+    <div class="card" style="border-color:rgba(96,165,250,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#60a5fa;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#60a5fa">📡 Sinalização Autócrina</h3>
+      <div style="font-size:0.75rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:0.8rem">Auto = própria célula</div>
+      <p style="font-size:0.83rem;color:var(--muted);margin-bottom:0.8rem">A célula produz o fator e tem receptores para ele mesma</p>
+      <ul>
+        <li>Regeneração hepática</li>
+        <li>Proliferação de linfócitos estimulados por antígeno</li>
+        <li>Crescimento tumoral: superprodução de fatores e receptores</li>
+      </ul>
+      <div class="highlight-box" style="background:rgba(96,165,250,0.08);border-color:rgba(96,165,250,0.25);color:#93c5fd;margin-top:0.8rem">
+        Sinal externo → receptor na mesma célula → loop de feedback positivo (risco oncogênico!)
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(167,139,250,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#a78bfa;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#a78bfa">📡 Sinalização Parácrina</h3>
+      <div style="font-size:0.75rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:0.8rem">Para = ao lado — células vizinhas</div>
+      <p style="font-size:0.83rem;color:var(--muted);margin-bottom:0.8rem">Células vizinhas de tipos diferentes respondem ao sinal</p>
+      <ul>
+        <li>Reparação do tecido conjuntivo</li>
+        <li>Replicação hepatocitária durante a regeneração hepática</li>
+        <li>Molécula e receptor ancorados em duas células próximas</li>
+        <li>Difusão local limitada pelo espaço intersticial</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(52,211,153,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#34d399;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#34d399">📡 Sinalização Endócrina</h3>
+      <div style="font-size:0.75rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:0.8rem">Endo = interno — células distantes via sangue</div>
+      <p style="font-size:0.83rem;color:var(--muted);margin-bottom:0.8rem">Fatores transportados pelo sangue para células distantes</p>
+      <ul>
+        <li>Citocinas inflamatórias sistêmicas (IL-6, TNF-α)</li>
+        <li>Hormônios que estimulam proliferação (estrógeno, TSH)</li>
+        <li>Resposta sistêmica de fase aguda</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:1.2rem;border-color:rgba(96,165,250,0.2)">
+    <h3 style="color:#60a5fa;margin-bottom:1rem">🔗 Como os Fatores de Crescimento Atuam (Mecanismo Geral)</h3>
+    <div class="pathway">
+      <div class="step" style="background:rgba(78,205,196,0.15);border-color:#4ecdc4;color:#4ecdc4">Ligação ao receptor de membrana</div>
+      <div class="arrow">→</div>
+      <div class="step" style="background:rgba(251,146,60,0.15);border-color:#fb923c;color:#fb923c">Fosforilação (tirosina-cinase)</div>
+      <div class="arrow">→</div>
+      <div class="step" style="background:rgba(167,139,250,0.15);border-color:#a78bfa;color:#a78bfa">Cascata de sinalização intracelular</div>
+      <div class="arrow">→</div>
+      <div class="step" style="background:rgba(96,165,250,0.15);border-color:#60a5fa;color:#60a5fa">Transcrição de genes "silenciosos"</div>
+      <div class="arrow">→</div>
+      <div class="step" style="background:rgba(52,211,153,0.15);border-color:#34d399;color:#34d399">Entrada no ciclo celular</div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== S5: MEC =================== -->
+<section class="section" id="s5">
+  <div class="section-title">
+    <div class="dot" style="background:#a78bfa;box-shadow:0 0 10px #a78bfa"></div>
+    <h2 style="color:#a78bfa">Matriz Extracelular (MEC)</h2>
+    <span class="count">Colágeno · Elastina · Glicoproteínas · Proteoglicanos</span>
+  </div>
+  <div class="grid grid-2">
+
+    <div class="card" style="border-color:rgba(167,139,250,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#a78bfa;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#a78bfa">Funções da MEC</h3>
+      <ul>
+        <li>Substrato fundamental para interação célula-célula</li>
+        <li>Substrato para adesão, migração e proliferação celular</li>
+        <li>Síntese e degradação da MEC → morfogênese</li>
+        <li>Fundamental na cura de feridas</li>
+        <li>Papel na invasão tumoral e metástases</li>
+      </ul>
+      <h4>Duas Organizações Estruturais</h4>
+      <ul>
+        <li><strong style="color:#fff">Matriz Intersticial:</strong> colágenos fibrilares, elastina, proteoglicanos, hialuronan</li>
+        <li><strong style="color:#fff">Membrana Basal:</strong> colágeno tipo IV, laminina, proteoglicano (associada à superfície celular)</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(232,200,74,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#e8c84a;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#e8c84a">Colágeno — A Proteína Mais Abundante</h3>
+      <ul>
+        <li>3 cadeias polipeptídicas α formando tripla hélice</li>
+        <li>27 tipos conhecidos</li>
+        <li>Tipos I, II, III, V, XI — colágenos intersticiais/fibrilares</li>
+        <li>Tipo IV — membrana basal (não fibrilar, em rede)</li>
+        <li>Sintetizado como procolágeno (precursor inativo)</li>
+        <li>Vitamina C (ácido ascórbico) — essencial para hidroxilação de prolina e lisina</li>
+      </ul>
+      <div class="highlight-box" style="background:rgba(232,200,74,0.08);border-color:rgba(232,200,74,0.25);color:#e8c84a">
+        Déficit de Vitamina C → Escorbuto: síntese de colágeno defeituosa → feridas não cicatrizam, hemorragias
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(78,205,196,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#4ecdc4;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#4ecdc4">Fibras Elásticas (Elastina)</h3>
+      <ul>
+        <li>Capacidade de recuperar a forma após distensão</li>
+        <li>Abundantes em: pele, útero, pulmão, artérias</li>
+        <li>Estrutura: núcleo de elastina + microfibrilas de fibrilina</li>
+        <li>Síndrome de Marfan → mutação na fibrilina-1 (FBN1)</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(251,146,60,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#fb923c;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#fb923c">Moléculas de Adesão Celular (CAMs)</h3>
+      <div style="font-size:0.75rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:0.8rem">Cell Adhesion Molecules — quatro famílias</div>
+      <ul>
+        <li><strong style="color:#fff">Tipo Imunoglobulina (ICAMs, VCAMs):</strong> interação leucócito-endotélio</li>
+        <li><strong style="color:#fff">Caderinas (E, N, P-caderina):</strong> adesão célula-célula, tecido epitelial</li>
+        <li><strong style="color:#fff">Integrinas (α/β):</strong> adesão célula-MEC + célula-célula; sinalização bidirecional</li>
+        <li><strong style="color:#fff">Selectinas (E, P, L):</strong> adesão leucócito-endotélio na inflamação</li>
+      </ul>
+      <div class="highlight-box" style="background:rgba(251,146,60,0.08);border-color:rgba(251,146,60,0.25);color:#fdba74">
+        Integrinas: receptores na membrana que conectam a MEC com o citoesqueleto interno — bidirecional (outside-in e inside-out signaling)
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(167,139,250,0.2);grid-column:1/-1">
+      <h3 style="color:#a78bfa;margin-bottom:1rem">📐 Glicoproteínas Adesivas e Proteoglicanos</h3>
+      <div class="grid grid-3">
+        <div>
+          <h4>Fibronectina</h4>
+          <ul>
+            <li>Glicoproteína adesiva multifuncional</li>
+            <li>Liga células à MEC via integrinas</li>
+            <li>Fundamental na migração celular durante reparo</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Laminina</h4>
+          <ul>
+            <li>Principal componente da membrana basal</li>
+            <li>Conecta células à lâmina densa</li>
+            <li>Papel na diferenciação e polaridade celular</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Proteoglicanos / Ácido Hialurônico</h4>
+          <ul>
+            <li>Proteínas + glicosaminoglicanos (GAGs)</li>
+            <li>Retêm água → estrutura gel → suporte mecânico</li>
+            <li>Ácido hialurônico: abundante em tecido de granulação inicial</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =================== S6: CICATRIZAÇÃO =================== -->
+<section class="section" id="s6">
+  <div class="section-title">
+    <div class="dot" style="background:#fb923c;box-shadow:0 0 10px #fb923c"></div>
+    <h2 style="color:#fb923c">Cicatrização de Feridas</h2>
+    <span class="count">1ª · 2ª · 3ª Intenção</span>
+  </div>
+  <div class="grid grid-2">
+
+    <div class="card" style="border-color:rgba(52,211,153,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#34d399;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#34d399">✅ 1ª Intenção (Cicatrização Primária)</h3>
+      <p style="font-size:0.83rem;color:var(--muted);margin-bottom:0.8rem">Ferida limpa, asséptica, bordos imediatamente aproximados por sutura</p>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-time" style="color:#34d399;border-color:#34d399">Imediato</div>
+          <p>Incisão limpa. Hemostasia precisa. Desidratação da superfície → crosta</p>
+        </div>
+        <div class="tl-item" style="border-left-color:#34d399">
+          <div class="tl-time" style="color:#34d399">24 h</div>
+          <p>Neutrófilos migram. Células basais do epitélio entram em mitose</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time" style="color:#4ecdc4">1–2 dias</div>
+          <p>Células epiteliais basais crescem ao longo da derme; células basais proliferam</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time" style="color:#facc15">3 dias</div>
+          <p>Neutrófilos saem → macrófagos entram. Tecido de granulação se forma</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time" style="color:#fb923c">5 dias</div>
+          <p>Espaço preenchido por tecido de granulação + pontes de fibrilas colágenas. Epidermização</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time" style="color:#a78bfa">2 semanas</div>
+          <p>Acúmulo de colágeno. Fibroblastos predominam. Edema e inflamação reduzidos</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time" style="color:#ff6b6b">1 mês</div>
+          <p>Tecido conjuntivo sem inflamação. Epiderme intacta com arquitetura normal</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-time" style="color:#f472b6">3 meses</div>
+          <p>Força de tensão: 70–80% da pele normal (máxima resistência)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(255,107,107,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#ff6b6b;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#ff6b6b">⚠️ 2ª Intenção (Cicatrização Secundária)</h3>
+      <p style="font-size:0.83rem;color:var(--muted);margin-bottom:0.8rem">Ferida aberta — bordos NÃO aproximados. Reepitelização a partir das bordas</p>
+      <ul>
+        <li>Úlceras, queimaduras profundas, biópsias cutâneas</li>
+        <li>Feridas infectadas mantidas abertas</li>
+        <li>Muito tecido de granulação para preencher o defeito</li>
+        <li>Resposta inflamatória muito mais intensa</li>
+        <li><strong style="color:#fff">Retração da ferida</strong> — ação de miofibroblastos (alfa-SMA+)</li>
+        <li>Tempo de cicatrização depende de: profundidade, localização, forma</li>
+      </ul>
+      <div class="highlight-box" style="background:rgba(255,107,107,0.08);border-color:rgba(255,107,107,0.25);color:#ff9090">
+        Miofibroblastos — fibroblastos com características de músculo liso — são os responsáveis pela contração da ferida na 2ª intenção
+      </div>
+    </div>
+
+    <!-- TECIDO DE GRANULAÇÃO -->
+    <div class="card" style="border-color:rgba(251,146,60,0.3);grid-column:1/-1">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#fb923c;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#fb923c;margin-bottom:1rem">🌱 Tecido de Granulação — O Elemento Inicial do Reparo</h3>
+      <div class="grid grid-2">
+        <div>
+          <ul>
+            <li>Formado por: capilares neoformados (angiogênese) + fibroblastos em proliferação + edema + elementos inflamatórios</li>
+            <li>Nome: origem no aspecto mole, granuloso e rosado da superfície das feridas</li>
+            <li>Tecido macio, bem vascularizado, avermelhado</li>
+            <li><strong style="color:orange">ATENÇÃO:</strong> Não confundir com tecido granulomatoso (reação diferente)</li>
+          </ul>
+        </div>
+        <div>
+          <h4>4 Eventos Estruturais da Cicatrização</h4>
+          <ul>
+            <li>1. Formação de novos vasos — Angiogênese</li>
+            <li>2. Migração e proliferação de fibroblastos</li>
+            <li>3. Depósito de MEC (colágeno tipo III → tipo I)</li>
+            <li>4. Desenvolvimento e organização do tecido fibroso (Remodelação)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABELA COMPARATIVA -->
+    <div class="card" style="border-color:rgba(251,146,60,0.2);grid-column:1/-1">
+      <h3 style="color:#fb923c;margin-bottom:1rem">📊 Comparação: 1ª vs 2ª Intenção</h3>
+      <div style="overflow-x:auto">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="color:#fb923c">Característica</th>
+              <th style="color:#34d399">1ª Intenção</th>
+              <th style="color:#ff6b6b">2ª Intenção</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#fff">Tipo de ferida</td>
+              <td>Incisão cirúrgica limpa, asséptica, bordos suturados</td>
+              <td>Úlcera, abscesso, queimadura, ferida infectada, bordos não confrontados</td>
+            </tr>
+            <tr>
+              <td style="color:#fff">Magnitude da lesão</td>
+              <td>Pequeno número de células mortas</td>
+              <td>Grande destruição com fibrina e detrito necrótico</td>
+            </tr>
+            <tr>
+              <td style="color:#fff">Tecido de granulação</td>
+              <td>Pouca quantidade</td>
+              <td>Maior quantidade para preencher o defeito</td>
+            </tr>
+            <tr>
+              <td style="color:#fff">Resposta inflamatória</td>
+              <td>Menor</td>
+              <td>Reação muito mais intensa</td>
+            </tr>
+            <tr>
+              <td style="color:#fff">Retração</td>
+              <td>Não ocorre</td>
+              <td>Ocorre pela ação dos miofibroblastos</td>
+            </tr>
+            <tr>
+              <td style="color:#fff">Cicatriz final</td>
+              <td>Fina, linear</td>
+              <td>Mais ampla, irregular, maior depósito de colágeno</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =================== S7: INTERFERÊNCIAS =================== -->
+<section class="section" id="s7">
+  <div class="section-title">
+    <div class="dot" style="background:#f472b6;box-shadow:0 0 10px #f472b6"></div>
+    <h2 style="color:#f472b6">Fatores que Interferem na Cicatrização</h2>
+    <span class="count">Gerais · Locais · Farmacológicos</span>
+  </div>
+  <div class="grid grid-2">
+
+    <div class="card" style="border-color:rgba(244,114,182,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#f472b6;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#f472b6">🌍 Fatores Gerais / Sistêmicos</h3>
+      <h4>Nutrição</h4>
+      <ul>
+        <li>Má-nutrição — fator mais importante especialmente em idosos</li>
+        <li>Déficit proteico → retardo na cicatrização, inibição da angiogênese, proliferação e síntese de fibroblastos, interfere no acúmulo e remodelação do colágeno</li>
+        <li>Déficit de Vitamina C → colágeno defeituoso (hidroxilação comprometida)</li>
+        <li>Déficit de Zinco (Zn²⁺) e Cobre (Cu²⁺) — cofatores enzimáticos essenciais</li>
+      </ul>
+      <h4>Hipóxia</h4>
+      <ul>
+        <li>Pacientes anêmicos, em choque, sepse, nefropatas e diabéticos</li>
+        <li>Feridas infectadas, com hematoma e suturas sob tensão</li>
+        <li>O₂ necessário para síntese de colágeno (prolil e lisil-hidroxilase)</li>
+      </ul>
+      <h4>Diabetes Mellitus</h4>
+      <ul>
+        <li>Neuropatia sensorial → falta de percepção da dor</li>
+        <li>Vasculopatia diabética → isquemia periférica</li>
+        <li>Baixa imunidade + distúrbios metabólicos</li>
+        <li>Quimiotaxia reduzida e ativação de células inflamatórias diminuída</li>
+        <li>Menor eficiência na destruição bacteriana</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(244,114,182,0.3)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#e879b0;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#f472b6">📍 Fatores Locais</h3>
+      <ul>
+        <li><strong style="color:#fff">Infecção</strong> — causa isolada mais importante de atraso da cicatrização. Contaminação bacteriana → infecção clínica</li>
+        <li><strong style="color:#fff">Fatores mecânicos</strong> — mobilização precoce da área lesada atrasa a cicatrização</li>
+        <li><strong style="color:#fff">Corpos estranhos</strong> — suturas desnecessárias, fragmentos de aço, vidro ou osso</li>
+        <li><strong style="color:#fff">Riego sanguíneo</strong> — isquemia local</li>
+        <li><strong style="color:#fff">Denervação</strong> — interfere na troficidade tecidual</li>
+        <li><strong style="color:#fff">Hematoma</strong> — espaço morto, meio de cultura para bactérias</li>
+        <li><strong style="color:#fff">Tecido necrótico</strong> — obstrui a cicatrização</li>
+        <li><strong style="color:#fff">Tamanho, localização e classe da ferida</strong></li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(244,114,182,0.2)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#d946ef;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#f472b6">💊 Drogas e Fatores Farmacológicos</h3>
+      <ul>
+        <li><strong style="color:#fff">Corticosteroides:</strong> inibem migração de macrófagos, proliferação de fibroblastos e síntese da matriz proteica. Efeito anti-inflamatório → inibe colágeno</li>
+        <li><strong style="color:#fff">Glucocorticoides:</strong> ação anti-inflamatória, inibem síntese de colágeno</li>
+        <li><strong style="color:#fff">Irradiação local:</strong> reduz população de fibroblastos e potencial proliferativo do endotélio</li>
+        <li><strong style="color:#fff">Medicações citotóxicas (quimioterapia):</strong> suprimem proliferação celular</li>
+        <li><strong style="color:#fff">Terapia antibiótica intensiva:</strong> pode alterar a flora e a resposta inflamatória</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(244,114,182,0.2)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#c026d3;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#f472b6">🧬 Fatores Genéticos / Sistêmicos Adicionais</h3>
+      <div class="factor-grid">
+        <div class="factor-item"><div class="fi-dot" style="background:#f472b6"></div>Osteogênese Imperfecta</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#f472b6"></div>Sínd. de Ehlers-Danlos</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#f472b6"></div>Sínd. de Marfan (fibrilina)</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#fb923c"></div>Obesidade</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#fb923c"></div>Idade avançada</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#ff6b6b"></div>Anemia</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#ff6b6b"></div>Uremia</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#60a5fa"></div>Temperatura</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#a78bfa"></div>Neoplasia</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#34d399"></div>Hormonas</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#facc15"></div>Hipovolemia</div>
+        <div class="factor-item"><div class="fi-dot" style="background:#4ecdc4"></div>Infecção sistêmica</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =================== S8: ASPECTOS ANORMAIS =================== -->
+<section class="section" id="s8">
+  <div class="section-title">
+    <div class="dot" style="background:#facc15;box-shadow:0 0 10px #facc15"></div>
+    <h2 style="color:#facc15">Aspectos Anormais da Reparação</h2>
+    <span class="count">Deficiência · Excesso · Contracturas</span>
+  </div>
+  <div class="grid grid-3">
+
+    <div class="card" style="border-color:rgba(255,107,107,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#ff6b6b;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#ff6b6b">⬇️ Formação Deficiente da Cicatriz</h3>
+      <h4>Deiscência da Ferida</h4>
+      <ul>
+        <li>Abertura espontânea da ferida</li>
+        <li>Causas: vômito, tosse, íleo paralítico</li>
+        <li>Aumento de pressão intra-abdominal</li>
+        <li>Emergência cirúrgica potencial (evisceração)</li>
+      </ul>
+      <h4>Ulceração</h4>
+      <ul>
+        <li>Membros inferiores — insuficiência venosa ou arterial</li>
+        <li>Neuropatias diabéticas (pé diabético)</li>
+        <li>Pressão crônica (úlcera de decúbito)</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(250,204,21,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#facc15;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#facc15">⬆️ Formação Excessiva dos Componentes</h3>
+      <h4>Cicatriz Hipertrófica</h4>
+      <ul>
+        <li>Excesso de colágeno DENTRO dos bordos da ferida original</li>
+        <li>Pode regredir espontaneamente</li>
+        <li>Sem crescimento além da margem</li>
+      </ul>
+      <h4>Queloide</h4>
+      <ul>
+        <li>Depósito excessivo de colágeno que ultrapassa os bordos originais</li>
+        <li>NÃO regride espontaneamente</li>
+        <li>Predisposição genética — mais frequente na raça negra</li>
+        <li>Histologia: feixes espessos e desorganizados de colágeno hialino</li>
+        <li>Tratamento: corticoide intralesional, laser, compressão, cirurgia (risco de recorrência)</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(251,146,60,0.4)">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#fb923c;border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#fb923c">🥩 Hipergranulação</h3>
+      <ul>
+        <li>"Orgulho da carne" — granulação exuberante</li>
+        <li>Tecido de granulação excede o nível da pele</li>
+        <li>Impede a reepitelização normal</li>
+        <li>Tratamento: eliminação cirúrgica ou química (nitrato de prata)</li>
+      </ul>
+      <h4>Fibrose Excessiva</h4>
+      <ul>
+        <li>Cirrose hepática — fibrose difusa do parênquima hepático</li>
+        <li>Fibrose pulmonar — remodelação alveolar patológica</li>
+        <li>Desmoides / Fibromatoses agressivas — entre proliferação benigna e neoplasia de baixo grau</li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-color:rgba(250,204,21,0.4);grid-column:1/-1">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#facc15,#fb923c,#f472b6);border-radius:16px 16px 0 0"></div>
+      <h3 style="color:#facc15;margin-bottom:1rem">🔒 Contracturas — Deformidades por Retração Excessiva</h3>
+      <div class="grid grid-2">
+        <div>
+          <ul>
+            <li>Deformidades que podem comprometer gravemente o movimento articular</li>
+            <li>Ocorrem quando há retração excessiva dos miofibroblastos</li>
+            <li>Comuns após queimaduras extensas — especialmente em zonas articulares</li>
+            <li>Podem exigir cirurgia reconstrutiva (enxertos, Z-plastia)</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Comparação: Cicatriz Hipertrófica vs Queloide</h4>
+          <div style="overflow-x:auto">
+            <table class="compare-table" style="margin-top:0.5rem">
+              <thead>
+                <tr>
+                  <th style="color:#facc15">Característica</th>
+                  <th style="color:#4ecdc4">C. Hipertrófica</th>
+                  <th style="color:#ff6b6b">Queloide</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color:#fff">Bordos</td>
+                  <td>Dentro da ferida</td>
+                  <td>Ultrapassa a ferida</td>
+                </tr>
+                <tr>
+                  <td style="color:#fff">Regressão</td>
+                  <td>Pode regredir</td>
+                  <td>Não regride</td>
+                </tr>
+                <tr>
+                  <td style="color:#fff">Recorrência pós-cirurgia</td>
+                  <td>Baixa</td>
+                  <td>Alta</td>
+                </tr>
+                <tr>
+                  <td style="color:#fff">Predisposição racial</td>
+                  <td>Qualquer</td>
+                  <td>Negros (maior risco)</td>
+                </tr>
+                <tr>
+                  <td style="color:#fff">Histologia</td>
+                  <td>Colágeno em feixes organizados</td>
+                  <td>Colágeno hialino desorganizado, espesso</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // Tab navigation
+  const tabs = document.querySelectorAll('.tab-btn');
+  const sections = document.querySelectorAll('.section');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.section;
+      tabs.forEach(t => t.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('visible'));
+      tab.classList.add('active');
+      document.getElementById(target).classList.add('visible');
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+  });
+
+  // Scroll top
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scrollTop');
+    if (window.scrollY > 400) btn.classList.add('show');
+    else btn.classList.remove('show');
+  });
+
+  // Add color to timeline dots
+  document.querySelectorAll('.tl-item').forEach((item, i) => {
+    const colors = ['#34d399','#4ecdc4','#facc15','#fb923c','#a78bfa','#60a5fa','#ff6b6b','#f472b6'];
+    const pseudo = item.querySelector('.tl-time');
+    if (pseudo) item.style.setProperty('--dot-color', colors[i % colors.length]);
+  });
+</script>
+
+<style>
+  .tl-item::before { border-color: var(--dot-color, #4ecdc4) !important; }
+  .timeline::before { background: linear-gradient(to bottom, #34d399, #f472b6) !important; }
+</style>
+
+</body>
+</html>

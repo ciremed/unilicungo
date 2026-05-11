@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distúrbios Imunitários — Medicina Interna Avançada</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400;600&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --bg2: #0f1217;
+    --bg3: #141820;
+    --surface: #1a1f2e;
+    --surface2: #1f2535;
+    --border: #2a3040;
+    --border2: #354055;
+    --accent-gold: #c9a84c;
+    --accent-gold2: #e8c87a;
+    --accent-red: #c0392b;
+    --accent-red2: #e74c3c;
+    --accent-blue: #2980b9;
+    --accent-blue2: #5dade2;
+    --accent-green: #1e8449;
+    --accent-green2: #58d68d;
+    --accent-purple: #7d3c98;
+    --accent-purple2: #a569bd;
+    --accent-orange: #d35400;
+    --accent-orange2: #f0a500;
+    --text: #e8e2d8;
+    --text2: #b8b0a0;
+    --text3: #7a7060;
+    --highlight: rgba(201,168,76,0.08);
+    --shadow: 0 8px 32px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 17px;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAVIGATION */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: rgba(10,12,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+
+  .nav-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--accent-gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent-gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(201,168,76,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(41,128,185,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 70%, rgba(192,57,43,0.05) 0%, transparent 60%);
+  }
+
+  .hero-overline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent-gold2);
+  }
+
+  .hero-sub {
+    font-size: 1.2rem;
+    color: var(--text2);
+    max-width: 640px;
+    margin-bottom: 3rem;
+    font-style: italic;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border2);
+    border-radius: 2px;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  .badge.gold { border-color: rgba(201,168,76,0.4); color: var(--accent-gold); background: rgba(201,168,76,0.04); }
+  .badge.red { border-color: rgba(192,57,43,0.4); color: var(--accent-red2); background: rgba(192,57,43,0.04); }
+  .badge.blue { border-color: rgba(41,128,185,0.4); color: var(--accent-blue2); background: rgba(41,128,185,0.04); }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 1.2s forwards;
+  }
+
+  .scroll-hint span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--accent-gold), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* SECTION HEADERS */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    padding-top: 6rem;
+  }
+
+  .section-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    color: var(--border2);
+    line-height: 1;
+    flex-shrink: 0;
+    font-style: italic;
+  }
+
+  .section-title-block h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .section-title-block p {
+    font-size: 1rem;
+    color: var(--text3);
+    font-style: italic;
+    margin-top: 0.25rem;
+  }
+
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, var(--accent-gold), var(--border), transparent);
+    margin-bottom: 3rem;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+
+  .card:hover { border-color: var(--border2); }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .card.gold::before { background: linear-gradient(to right, var(--accent-gold), transparent); }
+  .card.red::before { background: linear-gradient(to right, var(--accent-red), transparent); }
+  .card.blue::before { background: linear-gradient(to right, var(--accent-blue), transparent); }
+  .card.green::before { background: linear-gradient(to right, var(--accent-green), transparent); }
+  .card.purple::before { background: linear-gradient(to right, var(--accent-purple), transparent); }
+  .card.orange::before { background: linear-gradient(to right, var(--accent-orange), transparent); }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--text);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .card-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .icon-gold { background: rgba(201,168,76,0.12); color: var(--accent-gold); }
+  .icon-red { background: rgba(192,57,43,0.12); color: var(--accent-red2); }
+  .icon-blue { background: rgba(41,128,185,0.12); color: var(--accent-blue2); }
+  .icon-green { background: rgba(30,132,73,0.12); color: var(--accent-green2); }
+  .icon-purple { background: rgba(125,60,152,0.12); color: var(--accent-purple2); }
+
+  /* GRID LAYOUTS */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2.5rem; }
+    .nav-links { display: none; }
+  }
+
+  /* TABLES */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--border2);
+  }
+
+  thead th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    padding: 0.85rem 1.25rem;
+    text-align: left;
+    font-weight: 400;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: var(--highlight); }
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody td {
+    padding: 0.85rem 1.25rem;
+    color: var(--text2);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  tbody td:first-child {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  /* ALERTS & CALLOUTS */
+  .callout {
+    border-left: 3px solid;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    background: rgba(0,0,0,0.2);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .callout.danger { border-color: var(--accent-red2); background: rgba(231,76,60,0.06); }
+  .callout.warning { border-color: var(--accent-orange2); background: rgba(240,165,0,0.06); }
+  .callout.info { border-color: var(--accent-blue2); background: rgba(93,173,226,0.06); }
+  .callout.success { border-color: var(--accent-green2); background: rgba(88,214,141,0.06); }
+  .callout.gold { border-color: var(--accent-gold); background: rgba(201,168,76,0.06); }
+
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .callout.danger .callout-label { color: var(--accent-red2); }
+  .callout.warning .callout-label { color: var(--accent-orange2); }
+  .callout.info .callout-label { color: var(--accent-blue2); }
+  .callout.success .callout-label { color: var(--accent-green2); }
+  .callout.gold .callout-label { color: var(--accent-gold); }
+
+  /* TYPOGRAPHY */
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin: 1.75rem 0 0.75rem;
+  }
+
+  h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  p { color: var(--text2); margin-bottom: 0.75rem; }
+
+  ul, ol {
+    color: var(--text2);
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  li { margin-bottom: 0.35rem; }
+
+  strong { color: var(--text); font-weight: 600; }
+
+  em { color: var(--accent-gold2); font-style: italic; }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8em;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 0.15em 0.5em;
+    border-radius: 3px;
+    color: var(--accent-blue2);
+  }
+
+  /* PATHWAY / FLOWCHART */
+  .pathway {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+
+  .pathway-step {
+    flex: 1;
+    min-width: 120px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    position: relative;
+    text-align: center;
+  }
+
+  .pathway-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent-gold);
+    font-size: 1.2rem;
+    z-index: 2;
+    background: var(--bg);
+    padding: 0 4px;
+  }
+
+  .pathway-step .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .pathway-step .step-text {
+    font-size: 0.85rem;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* MNEMONIC BOX */
+  .mnemonic {
+    background: var(--surface2);
+    border: 1px dashed var(--accent-gold);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+
+  .mnemonic::before {
+    content: 'MNEMÔNICO';
+    position: absolute;
+    top: -10px;
+    left: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--accent-gold);
+    background: var(--bg3);
+    padding: 0 0.5rem;
+  }
+
+  .mnemonic-word {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-style: italic;
+    color: var(--accent-gold2);
+    margin-bottom: 0.75rem;
+  }
+
+  .mnemonic ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .mnemonic li {
+    padding: 0.25rem 0;
+    color: var(--text2);
+  }
+
+  .mnemonic li strong {
+    color: var(--accent-gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+  }
+
+  /* BOARD QUESTION */
+  .board-question {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .board-question .q-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--accent-blue2);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .board-question .question {
+    color: var(--text);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .options { list-style: none; padding: 0; }
+  .options li {
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.35rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    color: var(--text2);
+  }
+
+  .options li:hover { background: var(--highlight); border-color: var(--border2); color: var(--text); }
+  .options li.correct { background: rgba(88,214,141,0.08); border-color: var(--accent-green2); color: var(--accent-green2); }
+  .options li.wrong { background: rgba(231,76,60,0.08); border-color: var(--accent-red2); color: var(--accent-red2); }
+
+  .answer-reveal {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(88,214,141,0.06);
+    border-left: 3px solid var(--accent-green2);
+    border-radius: 0 3px 3px 0;
+    font-size: 0.9rem;
+    color: var(--text2);
+  }
+
+  .answer-reveal.visible { display: block; }
+
+  /* HIGH YIELD PILL */
+  .hy-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 0.2em 0.6em;
+    border-radius: 2px;
+    text-transform: uppercase;
+    vertical-align: middle;
+    margin-left: 0.4rem;
+  }
+
+  .hy-tag.gold { background: rgba(201,168,76,0.15); color: var(--accent-gold); border: 1px solid rgba(201,168,76,0.3); }
+  .hy-tag.red { background: rgba(231,76,60,0.15); color: var(--accent-red2); border: 1px solid rgba(231,76,60,0.3); }
+  .hy-tag.blue { background: rgba(93,173,226,0.15); color: var(--accent-blue2); border: 1px solid rgba(93,173,226,0.3); }
+
+  /* TABS */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.25rem;
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    margin-bottom: -1px;
+  }
+
+  .tab-btn:hover { color: var(--text2); }
+  .tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* IMMUNE CELL DIAGRAM */
+  .cell-diagram {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .cell-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem;
+    text-align: center;
+    transition: all 0.25s;
+    cursor: default;
+  }
+
+  .cell-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border2);
+    box-shadow: var(--shadow);
+  }
+
+  .cell-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .cell-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+  }
+
+  .cell-role {
+    font-size: 0.78rem;
+    color: var(--text3);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  /* PEARL */
+  .pearl {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: rgba(201,168,76,0.04);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 4px;
+    margin: 1rem 0;
+  }
+
+  .pearl-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+  .pearl-text { font-size: 0.9rem; color: var(--text2); }
+  .pearl-text strong { color: var(--accent-gold); }
+
+  /* SEPARATOR */
+  .sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 3rem 0;
+  }
+
+  /* INDEX */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2rem;
+    margin: 4rem 0 2rem;
+  }
+
+  .toc h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--accent-gold);
+    margin-bottom: 1.5rem;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .toc-item:hover { background: var(--highlight); }
+
+  .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    flex-shrink: 0;
+  }
+
+  .toc-text {
+    font-size: 0.9rem;
+    color: var(--text2);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* PROGRESS LINE AT TOP */
+  #progress-bar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent-gold), var(--accent-red2));
+    z-index: 998;
+    transition: width 0.1s;
+    width: 0%;
+  }
+
+  /* SECTION ANCHORS */
+  section { scroll-margin-top: 80px; }
+
+  /* KEY CONCEPT HEADER */
+  .kc-header {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kc-header::after {
+    content: attr(data-concept);
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-8deg);
+    font-family: 'Playfair Display', serif;
+    font-size: 6rem;
+    font-style: italic;
+    color: rgba(201,168,76,0.04);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .kc-header p { font-size: 1.1rem; color: var(--text2); margin: 0; }
+
+  /* COMPARISON BLOCK */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 700px) { .compare-grid { grid-template-columns: 1fr; } }
+
+  .compare-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+
+  .compare-col.left::before, .compare-col.right::before {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .compare-col.left::before { content: 'IMUNIDADE INATA'; color: var(--accent-blue2); }
+  .compare-col.right::before { content: 'IMUNIDADE ADAPTATIVA'; color: var(--accent-gold); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    margin-top: 6rem;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav>
+  <span class="nav-brand">Imunologia Clínica</span>
+  <ul class="nav-links">
+    <li><a href="#fundamentos">Fundamentos</a></li>
+    <li><a href="#imunodeficiencias">Imunodeficiências</a></li>
+    <li><a href="#autoimunidade">Autoimunidade</a></li>
+    <li><a href="#hipersensibilidade">Hipersensibilidade</a></li>
+    <li><a href="#transplante">Transplante</a></li>
+    <li><a href="#boards">Boards</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-overline">Medicina Interna Avançada · Módulo IX</div>
+  <h1>Distúrbios<br><em>Imunitários</em></h1>
+  <p class="hero-sub">Fisiopatologia, diagnóstico e abordagem clínica dos distúrbios do sistema imunológico — do mecanismo molecular à prova de residência.</p>
+  <div class="hero-badges">
+    <span class="badge gold">Imunodeficiências Primárias</span>
+    <span class="badge red">Autoimunidade</span>
+    <span class="badge blue">Hipersensibilidade</span>
+    <span class="badge gold">Transplante & Rejeição</span>
+    <span class="badge red">Emergências Imunes</span>
+  </div>
+  <div class="scroll-hint">
+    <span>Explorar</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- TABLE OF CONTENTS -->
+<div class="container">
+  <div class="toc">
+    <h3>📚 Índice do Módulo</h3>
+    <div class="toc-grid">
+      <a href="#fundamentos" class="toc-item"><span class="toc-num">01</span><span class="toc-text">Fundamentos Imunológicos</span></a>
+      <a href="#imunodeficiencias" class="toc-item"><span class="toc-num">02</span><span class="toc-text">Imunodeficiências Primárias</span></a>
+      <a href="#imunodef-secundarias" class="toc-item"><span class="toc-num">03</span><span class="toc-text">Imunodeficiências Secundárias</span></a>
+      <a href="#autoimunidade" class="toc-item"><span class="toc-num">04</span><span class="toc-text">Doenças Autoimunes Sistêmicas</span></a>
+      <a href="#hipersensibilidade" class="toc-item"><span class="toc-num">05</span><span class="toc-text">Hipersensibilidade (Tipos I–IV)</span></a>
+      <a href="#transplante" class="toc-item"><span class="toc-num">06</span><span class="toc-text">Transplante & Rejeição</span></a>
+      <a href="#emergencias" class="toc-item"><span class="toc-num">07</span><span class="toc-text">Emergências Imunológicas</span></a>
+      <a href="#farmacologia" class="toc-item"><span class="toc-num">08</span><span class="toc-text">Farmacologia Imunológica</span></a>
+      <a href="#boards" class="toc-item"><span class="toc-num">09</span><span class="toc-text">Boards & Active Recall</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- ============================
+     SEÇÃO 1: FUNDAMENTOS
+     ============================ -->
+<div class="container">
+  <section id="fundamentos">
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <div class="section-title-block">
+        <h2>Fundamentos Imunológicos</h2>
+        <p>Bases para compreender qualquer distúrbio imunitário</p>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="kc-header" data-concept="Imunidade">
+      <p>O sistema imune é dividido em <strong>imunidade inata</strong> (resposta rápida, inespecífica, sem memória) e <strong>imunidade adaptativa</strong> (resposta lenta, específica, com memória). Ambas são interdependentes e qualquer falha em uma afeta profundamente a outra.</p>
+    </div>
+
+    <!-- Comparação Inata vs Adaptativa -->
+    <div class="compare-grid">
+      <div class="compare-col left">
+        <ul>
+          <li><strong>Células:</strong> Neutrófilos, macrófagos, NK, células dendríticas, mastócitos, basófilos, eosinófilos</li>
+          <li><strong>Receptores:</strong> PRRs — TLRs (Toll-like), NLRs, CLRs, RIG-I</li>
+          <li><strong>Reconhece:</strong> PAMPs e DAMPs</li>
+          <li><strong>Tempo resposta:</strong> Minutos a horas</li>
+          <li><strong>Memória:</strong> Não (exceção: NK com memória)</li>
+          <li><strong>Componentes solúveis:</strong> Complemento, citocinas, defensinas</li>
+        </ul>
+      </div>
+      <div class="compare-col right">
+        <ul>
+          <li><strong>Células:</strong> Linfócitos T (CD4+, CD8+, Treg) e Linfócitos B (plasmócitos)</li>
+          <li><strong>Receptores:</strong> TCR (receptor de células T) e BCR/Anticorpos</li>
+          <li><strong>Reconhece:</strong> Antígenos específicos apresentados via MHC</li>
+          <li><strong>Tempo resposta:</strong> Dias a semanas (1ª exposição)</li>
+          <li><strong>Memória:</strong> Sim — células de memória T e B</li>
+          <li><strong>Componentes solúveis:</strong> Imunoglobulinas (IgA, IgG, IgM, IgD, IgE)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Células Imunes -->
+    <h3>Principais Células do Sistema Imune</h3>
+    <div class="cell-diagram">
+      <div class="cell-card">
+        <span class="cell-icon">🔵</span>
+        <div class="cell-name">Linfócito T CD4+</div>
+        <div class="cell-role">Th1: ativa macrófagos (IFN-γ)<br>Th2: ativa linfócitos B (IL-4, IL-5, IL-13)<br>Th17: defesa fúngica/bacteriana (IL-17)<br>Treg: supressão imune (IL-10, TGF-β)</div>
+      </div>
+      <div class="cell-card">
+        <span class="cell-icon">🟣</span>
+        <div class="cell-name">Linfócito T CD8+</div>
+        <div class="cell-role">Citotóxico: reconhece MHC-I<br>Mata células infectadas e tumorais via perforina/granzima e FasL</div>
+      </div>
+      <div class="cell-card">
+        <span class="cell-icon">🟡</span>
+        <div class="cell-name">Linfócito B / Plasmócito</div>
+        <div class="cell-role">Produz anticorpos<br>Apresenta antígenos via MHC-II<br>Plasmócitos de vida longa na medula óssea</div>
+      </div>
+      <div class="cell-card">
+        <span class="cell-icon">🟠</span>
+        <div class="cell-name">Macrófago</div>
+        <div class="cell-role">M1: pró-inflamatório (TNF, IL-12, IL-6)<br>M2: anti-inflamatório, reparo tecidual<br>Fagocitose, APC (MHC-II)</div>
+      </div>
+      <div class="cell-card">
+        <span class="cell-icon">⚪</span>
+        <div class="cell-name">Célula NK</div>
+        <div class="cell-role">Mata células com baixo MHC-I<br>Reconhece "missing self"<br>Importantíssima anti-viral e anti-tumoral</div>
+      </div>
+      <div class="cell-card">
+        <span class="cell-icon">🔴</span>
+        <div class="cell-name">Neutrófilos</div>
+        <div class="cell-role">Primeira linha: fagocitose, NET (armadilha extracelular), degranulação<br>Vida curta (6–12h)</div>
+      </div>
+    </div>
+
+    <!-- Sistema Complemento -->
+    <h3>Sistema Complemento <span class="hy-tag gold">Alto Rendimento</span></h3>
+    <div class="card gold">
+      <div class="card-title"><span class="card-icon icon-gold">C</span> Vias do Complemento</div>
+
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="showTab('comp-class', this)">Via Clássica</button>
+        <button class="tab-btn" onclick="showTab('comp-alt', this)">Via Alternativa</button>
+        <button class="tab-btn" onclick="showTab('comp-lectin', this)">Via da Lectina</button>
+        <button class="tab-btn" onclick="showTab('comp-final', this)">Via Final Comum</button>
+      </div>
+
+      <div id="comp-class" class="tab-content active">
+        <p><strong>Ativador:</strong> Complexo antígeno-anticorpo (IgG ou IgM ligados)</p>
+        <p><strong>Sequência:</strong> C1q → C1r, C1s → C4 → C2 → C3 convertase (C4b2a) → C3 → C5 convertase → C5b → MAC</p>
+        <p><strong>Deficiência de C1q, C1r, C1s, C4, C2:</strong> Doença semelhante ao LES (lupus-like) — mais comum com <em>deficiência de C2</em></p>
+      </div>
+      <div id="comp-alt" class="tab-content">
+        <p><strong>Ativador:</strong> Superfícies microbianas (LPS, zimosan) espontaneamente via hidrólise de C3</p>
+        <p><strong>Sequência:</strong> C3 → C3b + Fator B + Fator D → C3 convertase alternativa (C3bBb) + Properdina (estabiliza) → amplificação</p>
+        <p><strong>Deficiência de Properdina / Fator D:</strong> Infecções encapsuladas recorrentes (Neisseria)</p>
+      </div>
+      <div id="comp-lectin" class="tab-content">
+        <p><strong>Ativador:</strong> MBL (Mannose-Binding Lectin) liga manose em superfícies bacterianas/fúngicas</p>
+        <p><strong>Sequência:</strong> MBL + MASP-1, MASP-2 → cliva C4 e C2 → igual à via clássica</p>
+        <p><strong>Deficiência de MBL:</strong> Infecções respiratórias recorrentes, especialmente em crianças</p>
+      </div>
+      <div id="comp-final" class="tab-content">
+        <p><strong>Componentes:</strong> C5b → C6 → C7 → C8 → C9 (múltiplas moléculas) = <strong>Complexo de Ataque à Membrana (MAC / C5b-9)</strong></p>
+        <p><strong>Deficiências de C5–C9:</strong> Susceptibilidade específica a <em>Neisseria meningitidis</em> e <em>N. gonorrhoeae</em></p>
+      </div>
+
+      <div class="callout warning" style="margin-top:1.5rem;">
+        <span class="callout-label">⚠ Pérola Clínica</span>
+        <strong>As 3 funções do complemento:</strong> (1) Opsonização via C3b — facilita fagocitose; (2) Anafilatoxinas C3a e C5a — recrutamento de neutrófilos e inflamação; (3) Lise celular pelo MAC. C5a é o mais potente quimiotático.
+      </div>
+    </div>
+
+    <!-- Imunoglobulinas -->
+    <h3>Imunoglobulinas — Características Clínicas</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Isotipo</th>
+            <th>Localização Principal</th>
+            <th>Função Chave</th>
+            <th>Relevância Clínica</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>IgG</td>
+            <td>Soro (75%); atravessa placenta</td>
+            <td>Opsonização, fixação de complemento (via clássica), ADCC</td>
+            <td>↑ Em infecções bacterianas/virais tardias; transferência imunidade passiva neonatal; meia-vida: 23 dias</td>
+          </tr>
+          <tr>
+            <td>IgM</td>
+            <td>Soro (pentâmero); não atravessa placenta</td>
+            <td>Resposta primária; aglutinação; melhor fixador de complemento</td>
+            <td>Primeiro anticorpo produzido na infecção; ↑ em infecções agudas; crioglobulinas tipo I/II</td>
+          </tr>
+          <tr>
+            <td>IgA</td>
+            <td>Secreções (saliva, lágrima, leite materno, muco)</td>
+            <td>Defesa de mucosas; dimérico com cadeia J e componente secretório</td>
+            <td>Deficiência isolada de IgA — a mais comum (1:500); risco de anafilaxia com transfusão de hemoderivados</td>
+          </tr>
+          <tr>
+            <td>IgE</td>
+            <td>Ligada a mastócitos e basófilos (sérica muito baixa)</td>
+            <td>Hipersensibilidade tipo I; defesa anti-helmíntica</td>
+            <td>↑↑ Em atopia, asma alérgica, eosinofilia, infecção por helmintos; base da anafilaxia</td>
+          </tr>
+          <tr>
+            <td>IgD</td>
+            <td>Superfície do linfócito B naive</td>
+            <td>Receptor BCR; maturação linfocitária</td>
+            <td>Sem papel clínico direto; elevada em síndrome de hiper-IgD (febre periódica)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pearl">
+      <span class="pearl-icon">💎</span>
+      <div class="pearl-text"><strong>Pérola:</strong> IgM é pentamérico → 10 sítios de ligação ao antígeno → melhor para aglutinação. IgG é monômero com maior especificidade e meia-vida. A <em>muda de classe (class switching)</em> de IgM → IgG/IgA/IgE requer IL-4, IL-13 (→ IgE), TGF-β (→ IgA), IFN-γ (→ IgG1/IgG3) e necessita de CD40-CD40L.</div>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- ============================
+       SEÇÃO 2: IMUNODEFICIÊNCIAS PRIMÁRIAS
+       ============================ -->
+  <section id="imunodeficiencias">
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <div class="section-title-block">
+        <h2>Imunodeficiências Primárias</h2>
+        <p>Erros inatos da imunidade — classificação, fisiopatologia e infecções-guia</p>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="callout info">
+      <span class="callout-label">📌 Conceito Fundamental</span>
+      O tipo de infecção recorrente orienta qual braço imune está deficiente: <strong>bactérias encapsuladas</strong> → déficit de anticorpos/complemento; <strong>bactérias intracelulares + fungos + vírus</strong> → déficit de célula T; <strong>bactérias piogênicas</strong> → déficit de neutrófilos/fagocitose; <strong>Neisseria</strong> → déficit de complemento terminal (C5–C9).
+    </div>
+
+    <!-- TABELA GERAL -->
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Doença</th>
+            <th>Deficiência</th>
+            <th>Gene / Herança</th>
+            <th>Infecções Típicas</th>
+            <th>Achados Diagnósticos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SCID ligada ao X <span class="hy-tag red">Grave</span></td>
+            <td>Ausência de T, NK; B presentes mas não funcionais. Cadeia γc de IL-2R mutada → prejudica IL-2, -4, -7, -9, -15, -21</td>
+            <td><em>IL2RG</em>, X-linked</td>
+            <td>Todas: viral, bacteriana, fúngica, Pneumocystis jirovecii, CMV. Fatal < 1 ano sem TXM.</td>
+            <td>Linfopenia grave; ausência de sombra tímica na RX; T↓↓↓, NK↓, B presente (não funcional)</td>
+          </tr>
+          <tr>
+            <td>SCID por Deficiência de ADA</td>
+            <td>Adenosina desaminase → acúmulo de adenosina → tóxico para linfócitos T, B e NK</td>
+            <td><em>ADA</em>, AR</td>
+            <td>Idem SCID ligada ao X</td>
+            <td>↑ Adenosina e desoxiadenosina no plasma/urina; radiografia: anomalias costais/metafisárias</td>
+          </tr>
+          <tr>
+            <td>Agamaglobulinemia de Bruton (XLA)</td>
+            <td>BTK (Bruton's tyrosine kinase) mutada → bloqueio na maturação pré-B → sem linfócitos B</td>
+            <td><em>BTK</em>, X-linked</td>
+            <td>Bactérias encapsuladas após 6 meses (esgoto IgG materno): <em>S. pneumoniae</em>, <em>H. influenzae</em>, <em>Giardia</em>, Enterovirus (poliomielite por vacina oral!)</td>
+            <td>Ausência de B no sangue; todos os isotipos de Ig↓↓; ausência de centros germinais em linfonodos; amígdalas ausentes</td>
+          </tr>
+          <tr>
+            <td>Imunodeficiência Comum Variável (IDCV)</td>
+            <td>Defeito na diferenciação de linfócitos B → plasmócitos; IgG↓, IgA↓, IgM↓. Início adulto jovem</td>
+            <td>Vários genes (TACI, BAFF-R, ICOS)</td>
+            <td>Bactérias encapsuladas; Giardia; risco ↑ de autoimunidade (PTI, anemia hemolítica) e linfoma</td>
+            <td>Ig↓↓ em múltiplos isotipos; B presentes mas não funcionais; início tardio distingue de XLA</td>
+          </tr>
+          <tr>
+            <td>Deficiência Isolada de IgA <span class="hy-tag gold">Mais Comum</span></td>
+            <td>↓ IgA sérica (< 7 mg/dL) com IgG e IgM normais</td>
+            <td>Vários; associação com HLA-A1, B8, DR3</td>
+            <td>Infecções respiratórias/GI leves; Giardia; associada a atopia, doença celíaca, autoimunidade</td>
+            <td>IgA↓↓; risco de anafilaxia com transfusão (anticorpos anti-IgA em subgrupo)</td>
+          </tr>
+          <tr>
+            <td>Síndrome de DiGeorge (22q11.2)</td>
+            <td>Hipoplasia/aplasia tímica → ↓ ou ausência de linfócitos T (falha na 3ª e 4ª bolsa faríngea)</td>
+            <td>Deleção 22q11.2 (deleção CATCH-22)</td>
+            <td>Viral, fúngica, Pneumocystis; infecções por organismos intracelulares. Tetania neonatal (hipoparatireoidismo)</td>
+            <td>T↓↓ (ausência de sombra tímica); hipocalcemia; cardiopatia congênita (truncus, tetralogia de Fallot); fácies típica</td>
+          </tr>
+          <tr>
+            <td>Síndrome de Wiskott-Aldrich (WAS)</td>
+            <td>WASP mutado → defeito em T, B e plaquetas; IgM↓, IgA e IgE↑, IgG normal</td>
+            <td><em>WAS</em>, X-linked</td>
+            <td>Bactérias encapsuladas + infecções virais/fúngicas; risco de linfoma/autoimunidade</td>
+            <td>Tríade: eczema + trombocitopenia com plaquetas pequenas + infecções; IgM↓, IgE↑</td>
+          </tr>
+          <tr>
+            <td>Ataxia-Telangiectasia (AT)</td>
+            <td>ATM mutado → deficiência no reparo do DNA → linfócitos T↓; IgA↓, IgE↓</td>
+            <td><em>ATM</em>, AR</td>
+            <td>Infecções sinopulmonares recorrentes; altíssimo risco de linfoma/leucemia (câncer > infecção)</td>
+            <td>Ataxia cerebelar + telangiectasias oculocutâneas + imunodeficiência; AFP↑; sensibilidade à radiação</td>
+          </tr>
+          <tr>
+            <td>Doença Granulomatosa Crônica (DGC)</td>
+            <td>NADPH oxidase defeituosa → sem burst oxidativo → macrófagos e neutrófilos não matam catalase-positivos</td>
+            <td><em>CYBB</em>, X-linked (70%); AR</td>
+            <td><em>S. aureus</em>, <em>Aspergillus</em>, <em>Serratia</em>, <em>Burkholderia cepacia</em>, <em>Nocardia</em> (todos catalase+)</td>
+            <td>DHR (Dihydrorhodamine) flow cytometry ou Nitro Blue Tetrazolium (NBT) — falha em reduzir. Granulomas em múltiplos órgãos</td>
+          </tr>
+          <tr>
+            <td>Deficiência de C3 <span class="hy-tag red">Grave</span></td>
+            <td>Ponto de convergência das 3 vias → ausência de C3 = sem opsonização, sem MAC</td>
+            <td>AR</td>
+            <td>Infecções piogênicas graves e recorrentes (encapsuladas); febre recorrente intensa</td>
+            <td>C3↓↓; CH50↓↓; AH50↓↓</td>
+          </tr>
+          <tr>
+            <td>Deficiência de C5–C9</td>
+            <td>Ausência do MAC; opsonização intacta</td>
+            <td>AR</td>
+            <td><em>Neisseria meningitidis</em> e <em>N. gonorrhoeae</em> recorrentes — infecções neisseriais atípicas</td>
+            <td>CH50↓↓ (hemólise zero); AH50 normal ou ↓; C3 normal</td>
+          </tr>
+          <tr>
+            <td>Deficiência de DAF e CD59 (Hemoglobinúria Paroxística Noturna)</td>
+            <td>Mutação em PIG-A → ausência de âncoras GPI → hemácias e leucócitos sem DAF (CD55) e CD59 → lise pelo complemento</td>
+            <td>Somática em PIG-A</td>
+            <td>Não se apresenta com infecções; hemólise + trombose (veia hepática = Budd-Chiari) + citopenias</td>
+            <td>Citometria de fluxo: ausência de CD55/CD59; Ham test (histórico); ↑ DHL, ↑ bilirrubina indireta, Hb↓</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MNEMÔNICO CATCH-22 -->
+    <div class="mnemonic">
+      <div class="mnemonic-word">CATCH-22</div>
+      <p style="font-size:0.85rem;color:var(--text3);margin-bottom:0.75rem;">Síndrome de DiGeorge — deleção 22q11.2</p>
+      <ul>
+        <li><strong>C</strong>ardiac defects (truncus arteriosus, tetralogia de Fallot, interrupção do arco aórtico)</li>
+        <li><strong>A</strong>bnormal facies</li>
+        <li><strong>T</strong>hymic aplasia / hipoplasia (→ ↓ T)</li>
+        <li><strong>C</strong>left palate</li>
+        <li><strong>H</strong>ypocalcemia (hipoparatireoidismo)</li>
+        <li><strong>22</strong>q11.2 deletion</li>
+      </ul>
+    </div>
+
+    <!-- Abordagem Diagnóstica -->
+    <h3>Fluxo Diagnóstico das Imunodeficiências Primárias</h3>
+    <div class="card blue">
+      <div class="pathway">
+        <div class="pathway-step">
+          <span class="step-num">01</span>
+          <span class="step-text">Suspeita clínica<br>(infecções recorrentes)</span>
+        </div>
+        <div class="pathway-step">
+          <span class="step-num">02</span>
+          <span class="step-text">Hemograma completo<br>com diferencial</span>
+        </div>
+        <div class="pathway-step">
+          <span class="step-num">03</span>
+          <span class="step-text">Dosagem de Ig<br>(IgG, IgA, IgM, IgE)</span>
+        </div>
+        <div class="pathway-step">
+          <span class="step-num">04</span>
+          <span class="step-text">Imunofenotipagem<br>(T, B, NK por citometria)</span>
+        </div>
+        <div class="pathway-step">
+          <span class="step-num">05</span>
+          <span class="step-text">Testes funcionais<br>(DHR, CH50, proliferação)</span>
+        </div>
+        <div class="pathway-step">
+          <span class="step-num">06</span>
+          <span class="step-text">Teste genético<br>confirmatório</span>
+        </div>
+      </div>
+
+      <div class="callout info" style="margin-top:1rem;">
+        <span class="callout-label">📊 Interpretação do CH50</span>
+        <strong>CH50 = 0:</strong> deficiência de complemento (via clássica ou C3–C9). <strong>CH50 baixo:</strong> consumo (LES, endocardite, crioglobulinemia). <strong>CH50 normal + AH50 = 0:</strong> deficiência da via alternativa (Fator D, Properdina).
+      </div>
+    </div>
+
+    <!-- 10 sinais de alerta -->
+    <h3>Os 10 Sinais de Alerta para Imunodeficiência Primária (Jeffrey Modell Foundation)</h3>
+    <div class="card gold">
+      <div class="grid-2">
+        <ul>
+          <li>≥ 4 otites por ano (em crianças)</li>
+          <li>≥ 2 sinusites graves por ano</li>
+          <li>≥ 2 pneumonias por ano</li>
+          <li>≥ 2 meses de tratamento com antibióticos com pouca resposta</li>
+          <li>Falha de crescimento em lactentes</li>
+        </ul>
+        <ul>
+          <li>Abscessos cutâneos ou de órgãos recorrentes</li>
+          <li>Candidíase oral persistente > 1 ano de idade</li>
+          <li>Necessidade de antibióticos IV para curar infecções comuns</li>
+          <li>≥ 2 infecções profundas (meningite, osteomielite, sepse)</li>
+          <li>História familiar de imunodeficiência primária</li>
+        </ul>
+      </div>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- ============================
+       SEÇÃO 3: IMUNODEFICIÊNCIAS SECUNDÁRIAS
+       ============================ -->
+  <section id="imunodef-secundarias">
+    <div class="section-header">
+      <span class="section-number">03</span>
+      <div class="section-title-block">
+        <h2>Imunodeficiências Secundárias</h2>
+        <p>HIV/AIDS, esplenectomia, quimioterapia e imunossupressão iatrogênica</p>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <!-- HIV/AIDS -->
+    <div class="card red">
+      <div class="card-title"><span class="card-icon icon-red">H</span> HIV/AIDS — Fisiopatologia & Clínica</div>
+
+      <h4>Fisiopatologia</h4>
+      <p>O HIV é um retrovírus que infecta preferencialmente <strong>linfócitos T CD4+</strong> (via receptor CD4 + CCR5/CXCR4 co-receptores), macrófagos e células dendríticas. A transcriptase reversa cria DNA proviral que se integra ao genoma do hospedeiro. O CD4+ é progressivamente destruído, levando à imunodeficiência profunda.</p>
+
+      <h4>Progressão da Doença (CD4+ count)</h4>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>CD4+ (células/µL)</th><th>Manifestações / Infecções Oportunistas</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>> 500</td><td>Infecções recorrentes (sinusite, pneumonia bacteriana), Sarcoma de Kaposi, candidíase oral</td></tr>
+            <tr><td>200–500</td><td>Tuberculose, candidíase esofágica, leucoplasia pilosa oral, herpes zoster disseminado</td></tr>
+            <tr><td>< 200 <span class="hy-tag red">AIDS definidor</span></td><td>Pneumocistose (PCP), toxoplasmose cerebral, criptococose meníngea, MAI, criptosporidiose</td></tr>
+            <tr><td>< 100</td><td>CMV (retinite, colite), MAI disseminado, microsporidiose</td></tr>
+            <tr><td>< 50</td><td>CMV retinite grave, PML (vírus JC), criptococose, MAI disseminado extenso</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>TARV — Terapia Antirretroviral</h4>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Classe</th><th>Mecanismo de Ação</th><th>Exemplo</th><th>Efeito Adverso Chave</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ITRN (Inibidor de TR Nucleosídeo)</td><td>Análogo nucleosídeo → inibe DNA polimerase viral (pela incorporação na cadeia)</td><td>Tenofovir, Abacavir, Zidovudina</td><td>Tenofovir: nefrotoxicidade; Abacavir: reação de hipersensibilidade (HLA-B*5701+); Zidovudina: mielossupressão</td></tr>
+            <tr><td>ITRNN (Inibidor de TR não Nucleosídeo)</td><td>Liga-se diretamente ao sítio alostérico da transcriptase reversa</td><td>Efavirenz, Nevirapina, Rilpivirina</td><td>Efavirenz: sonhos vívidos, depressão; Nevirapina: hepatotoxicidade, rash grave</td></tr>
+            <tr><td>IP (Inibidor de Protease)</td><td>Impede clivagem de poliproteínas virais → partículas imaturas</td><td>Darunavir, Lopinavir/r, Atazanavir</td><td>Lipodistrofia, hiperglicemia, hipertrigliceridemia, interações via CYP3A4; Atazanavir: hiperbilirrubinemia indireta (benigna)</td></tr>
+            <tr><td>INSTI (Inibidor de Integrase)</td><td>Impede integração do DNA proviral ao genoma do hospedeiro</td><td>Dolutegravir, Bictegravir, Raltegravir</td><td>Bem tolerados; Dolutegravir: efeitos no SNC, ganho de peso; interação com metformina (↑ metforminemia)</td></tr>
+            <tr><td>Inibidor de entrada/fusão</td><td>Bloqueia fusão do envelope viral com membrana celular (gp41)</td><td>Enfuvirtida, Maraviroc</td><td>Maraviroc (antagonista CCR5): somente para vírus CCR5-trópico (tropicotest requerido)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout danger">
+        <span class="callout-label">🚨 Síndrome de Reconstituição Imune (IRIS/SRI)</span>
+        Piora paradoxal após início da TARV com aumento do CD4+. Imunopatologia exacerbada contra antígenos preexistentes (TB, cryptococo, CMV). Paradoxal (piora da doença já tratada) ou unveiling (revela infecção oculta). <strong>Manejo:</strong> manter TARV (geralmente); corticoides em casos graves.
+      </div>
+    </div>
+
+    <!-- Esplenectomia -->
+    <div class="card orange">
+      <div class="card-title"><span class="card-icon icon-purple">S</span> Asplenia / Hipoesplenismo</div>
+      <p>O baço é o principal órgão de opsonização para bactérias encapsuladas (via IgM e complemento) e o maior repositório de macrófagos teciduais. Sua ausência leva ao <strong>OPSI — Overwhelming Post-Splenectomy Infection</strong>.</p>
+      <h4>Organismos de Risco (mnemônico "SHiN")</h4>
+      <ul>
+        <li><strong>S</strong>treptococcus pneumoniae — causa mais comum de OPSI (≈ 50%)</li>
+        <li><strong>H</strong>aemophilus influenzae tipo b</li>
+        <li><strong>N</strong>eisseria meningitidis</li>
+        <li>Outros: <em>Capnocytophaga canimorsus</em> (mordida de cão), <em>Babesia</em> (parasitemia intensa)</li>
+      </ul>
+      <h4>Profilaxia Obrigatória Pós-Esplenectomia</h4>
+      <ul>
+        <li>Vacinas: <strong>Pneumocócica</strong> (PCV13 + PPSV23), <strong>Meningocócica</strong> (A, C, W, Y + B), <strong>Hib</strong> — idealmente 2 semanas antes se eletiva</li>
+        <li><strong>Penicilina profilática</strong> por ≥ 2 anos (crianças: até 5 anos pós-esplenectomia ou até os 18 anos)</li>
+        <li>Antibioticoterapia empírica imediata em qualquer febre ≥ 38.5°C (amoxicilina ou cefuroxima)</li>
+      </ul>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- ============================
+       SEÇÃO 4: AUTOIMUNIDADE
+       ============================ -->
+  <section id="autoimunidade">
+    <div class="section-header">
+      <span class="section-number">04</span>
+      <div class="section-title-block">
+        <h2>Doenças Autoimunes</h2>
+        <p>Mecanismos de quebra da autotolerância, fisiopatologia e abordagem clínica</p>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="kc-header" data-concept="Tolerância">
+      <p>A autotolerância é mantida pela <strong>seleção tímica</strong> (central: eliminação de clones autorreativos) e por mecanismos periféricos: <strong>anergia clonal</strong>, <strong>deleção clonal</strong>, e células T regulatórias (Treg — FOXP3+). Mutações em FOXP3 → síndrome IPEX (Imunodisregulação, Poliendocrinopatia, Enteropatia, X-linked).</p>
+    </div>
+
+    <!-- LES -->
+    <div class="card blue">
+      <div class="card-title"><span class="card-icon icon-blue">L</span> Lúpus Eritematoso Sistêmico (LES)</div>
+
+      <h4>Fisiopatologia</h4>
+      <p>Defeito na depuração de células apoptóticas → exposição de DNA, histonas e nucleossomas → ativação de pDCs via TLR7/9 → produção de IFN-α (interferon tipo I) → ativação de linfócitos B autorreativos → anticorpos anti-DNA nativo e anti-nucleossomos. Deposição de imunocomplexos → ativação de complemento → nefrite, vasculite, pleurite.</p>
+
+      <h4>Critérios EULAR/ACR 2019 — Resumo (score ≥ 10 + ANA positivo)</h4>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Domínio</th><th>Critérios e Pontuação</th></tr></thead>
+          <tbody>
+            <tr><td>Constitucional</td><td>Febre inexplicada (2pts)</td></tr>
+            <tr><td>Hematológico</td><td>Leucopenia (3), Trombocitopenia (4), Anemia hemolítica autoimune (4)</td></tr>
+            <tr><td>Neuropsiquiátrico</td><td>Delirium (2), Psicose (3), Convulsões (5)</td></tr>
+            <tr><td>Mucocutâneo</td><td>Alopecia não-cicatricial (2), Úlceras orais (2), Rash discoide (4), Rash malar fotossensível (6)</td></tr>
+            <tr><td>Seroso</td><td>Derrame pleural/pericárdico (5), Pericardite aguda (6)</td></tr>
+            <tr><td>Musculoesquelético</td><td>Artrite (6)</td></tr>
+            <tr><td>Renal</td><td>Proteinúria > 0.5g/24h (4), Biópsia classe II/V (8), Biópsia classe III/IV (10)</td></tr>
+            <tr><td>Anticorpos específicos</td><td>Anti-dsDNA OU anti-Sm (6), Anti-fosfolípide (2), Complemento ↓ (C3, C4, CH50) (3), Coombs direto+ (1)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Anticorpos no LES e Relevância Clínica</h4>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Anticorpo</th><th>Especificidade para LES</th><th>Associação Clínica</th></tr></thead>
+          <tbody>
+            <tr><td>ANA (anti-nuclear)</td><td>Sensível (95–99%), pouco específico</td><td>Screening; se negativo, LES improvável</td></tr>
+            <tr><td><strong>Anti-dsDNA</strong></td><td>Alta especificidade (~70%); títulos correlacionam com atividade</td><td>Nefrite lúpica; monitorar atividade</td></tr>
+            <tr><td><strong>Anti-Sm</strong></td><td>Mais específico (25–30% LES); patognomônico</td><td>Doença renal e neurológica</td></tr>
+            <tr><td>Anti-Ro (SSA)</td><td>LES, SS, LESN</td><td>Bloqueio cardíaco congênito; lúpus neonatal; rash fotossensível</td></tr>
+            <tr><td>Anti-La (SSB)</td><td>LES, SS</td><td>Junto com Anti-Ro; lúpus neonatal</td></tr>
+            <tr><td>Anti-fosfolípide (aCL, anti-β2GPI, LAC)</td><td>SAF associado ao LES (30–40%)</td><td>Trombose, abortos recorrentes, trombocitopenia</td></tr>
+            <tr><td>Anti-histona</td><td>Lúpus induzido por drogas</td><td>Procainamida, hidralazina, isoniazida, quinidina, minociclina</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warning">
+        <span class="callout-label">⚠ Armadilha de Prova</span>
+        <strong>Lúpus induzido por drogas:</strong> Anti-histona+ e ANA+, mas Anti-dsDNA e Anti-Sm negativos. Resolve com a suspensão do medicamento. Causas: Procainamida (mais frequente), Hidralazina, INH, Quinidina, Minociclina. Mnemônico: <em>"PHIQM"</em> — <strong>P</strong>rocainamida, <strong>H</strong>idralazina, <strong>I</strong>soniazida, <strong>Q</strong>uinidina, <strong>M</strong>inociclina.
+      </div>
+
+      <h4>Nefrite Lúpica — Classificação ISN/RPS</h4>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Classe</th><th>Histologia</th><th>Tratamento</th></tr></thead>
+          <tbody>
+            <tr><td>I — Mesangial mínima</td><td>Depósitos imunes mesangiais sem alteração ao MO</td><td>Observação</td></tr>
+            <tr><td>II — Mesangial proliferativa</td><td>Expansão mesangial, proliferação celular</td><td>Corticoide se proteinúria > 1g/24h</td></tr>
+            <tr><td>III — Focal (< 50% glomérulos)</td><td>Proliferação endocapilar focal e segmentar</td><td>Pulso de metilprednisolona + MMF ou ciclofosfamida</td></tr>
+            <tr><td>IV — Difusa (≥ 50% glomérulos) <span class="hy-tag red">Mais Grave</span></td><td>Proliferação endocapilar difusa; "wire-loop lesions"</td><td>Pulso + MMF (indução) ou ciclofosfamida; manutenção: MMF</td></tr>
+            <tr><td>V — Membranosa</td><td>Depósitos subepiteliais; espessamento da MB</td><td>IECA/BRA + corticoide + MMF ou ciclosporina</td></tr>
+            <tr><td>VI — Esclerótica avançada</td><td>> 90% glomérulos escleróticos</td><td>Preparar para diálise</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AR -->
+    <div class="card green">
+      <div class="card-title"><span class="card-icon icon-green">A</span> Artrite Reumatoide (AR)</div>
+      <h4>Fisiopatologia</h4>
+      <p>Sinovite crônica mediada por linfócitos T CD4+ Th1/Th17 → ativação de macrófagos sinoviais → TNF-α, IL-1, IL-6 → proliferação de sinoviócitos → pannus → destruição óssea e cartilaginosa via metaloproteinases e RANKL.</p>
+      <h4>Autoanticorpos</h4>
+      <ul>
+        <li><strong>FR (Fator Reumatoide)</strong> — IgM anti-IgG; sensível (70–80%) mas pouco específico (presente em SS, endocardite, cirroses, idosos saudáveis)</li>
+        <li><strong>Anti-CCP (Anti-peptídeo citrulinado cíclico)</strong> — mais específico (95%); melhor marcador diagnóstico e preditivo de erosão articular; pode preceder a clínica em anos</li>
+      </ul>
+      <h4>Manifestações Extrarticulares (AR Soropositiva)</h4>
+      <ul>
+        <li><strong>Pulmão:</strong> DPI (padrão UIP/NSIP), bronquiectasias, pleurite, nódulos reumatoides</li>
+        <li><strong>Cardíaco:</strong> Pericardite, vasculite coronária</li>
+        <li><strong>Olhos:</strong> Esclerite, episclerite, ceratoconjuntivite seca (síndrome de Sjögren secundária)</li>
+        <li><strong>Neurológico:</strong> Síndrome do túnel do carpo, instabilidade C1-C2 (subluxação atlantoaxial → mielopatia!)</li>
+        <li><strong>Síndrome de Felty:</strong> AR + esplenomegalia + neutropenia (atenção a infecções)</li>
+        <li><strong>Amiloidose AA</strong> em AR de longa duração</li>
+      </ul>
+      <h4>Tratamento — Escada Terapêutica</h4>
+      <div class="pathway">
+        <div class="pathway-step">
+          <span class="step-num">1ª Linha</span>
+          <span class="step-text">Metotrexato (MTX)<br>+ AINE/corticoide</span>
+        </div>
+        <div class="pathway-step">
+          <span class="step-num">2ª Linha</span>
+          <span class="step-text">MTX + anti-TNF<br>(etanercept, adalimumabe, infliximabe)</span>
+        </div>
+        <div class="pathway-step">
+          <span class="step-num">Alternativas</span>
+          <span class="step-text">Abatacepte (anti-CTLA4-Ig), Tocilizumabe (anti-IL-6R), Rituximabe (anti-CD20)</span>
+        </div>
+        <div class="pathway-step">
+          <span class="step-num">JAKi</span>
+          <span class="step-text">Baricitinibe, Tofacitinibe, Upadacitinibe</span>
+        </div>
+      </div>
+      <div class="callout warning">
+        <span class="callout-label">⚠ Antes de Anti-TNF</span>
+        Rastrear TB latente (PPD/IGRA + RX tórax), hepatite B e C, varicela. Anti-TNF contraindicados em ICC avançada (FE < 50% — etanercept pode agravar), infecções ativas, desmielinização e malignidades recentes.
+      </div>
+    </div>
+
+    <!-- Síndrome de Sjögren -->
+    <div class="card purple">
+      <div class="card-title"><span class="card-icon icon-purple">S</span> Síndrome de Sjögren (SS) e outras Doenças Autoimunes</div>
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="showTab('ss-sjogren', this)">Sjögren</button>
+        <button class="tab-btn" onclick="showTab('ss-ssc', this)">Esclerose Sistêmica</button>
+        <button class="tab-btn" onclick="showTab('ss-miosite', this)">Miopatias Inflamatórias</button>
+        <button class="tab-btn" onclick="showTab('ss-saf', this)">SAF</button>
+        <button class="tab-btn" onclick="showTab('ss-vasculite', this)">Vasculites</button>
+      </div>
+      <div id="ss-sjogren" class="tab-content active">
+        <p><strong>Fisiopatologia:</strong> Infiltrado linfocitário (CD4+ Th1 e B) nas glândulas exócrinas (salivares, lacrimais) → xerostomia + xeroftalmia (síndrome seca). pDC → IFN-α → ativação de B.</p>
+        <p><strong>Anticorpos:</strong> Anti-Ro/SSA (mais comum), Anti-La/SSB. ANA+. FR pode ser positivo.</p>
+        <p><strong>Manifestações sistêmicas:</strong> Artralgia, DPI, nefrite tubulointersticial (acidose tubular distal), neuropatia periférica, <em>linfoma MALT de parótida</em> (risco 40× maior!).</p>
+        <p><strong>Diagnóstico:</strong> Critérios ACR/EULAR 2016 — biópsia de glândula salivar menor (infiltrado linfocitário focal ≥ 1 foco/4mm²); Anti-Ro/SSA+; Ocular staining ≥ 5; Schirmer ≤ 5mm/5min; fluxo salivar ≤ 0.1ml/min.</p>
+      </div>
+      <div id="ss-ssc" class="tab-content">
+        <p><strong>Esclerose Sistêmica (Esclerodermia):</strong> Triângulo — vasculopatia + autoimunidade + fibrose.</p>
+        <p><strong>Anticorpos:</strong> Anti-topoisomerase I (Anti-Scl-70): forma difusa + DPI fibrosante. Anti-centrômero (ACA): forma limitada + HAP. Anti-RNA polimerase III: crise renal + risco de câncer.</p>
+        <p><strong>Fenômeno de Raynaud</strong> quase universal (tripé: branco → azul → vermelho).</p>
+        <p><strong>Crise Renal Esclerodérmica:</strong> HAS acelerada + IRA + anemia hemolítica microangiopática → tratar com IECA (captopril) — urgência!</p>
+        <p><strong>Hipertensão Arterial Pulmonar (HAP)</strong> em forma limitada (antiga CREST): calcinose, Raynaud, dismotilidade Esofágica, Esclerodactilia, Telangiectasias.</p>
+      </div>
+      <div id="ss-miosite" class="tab-content">
+        <p><strong>Polimiosite (PM) e Dermatomiosite (DM):</strong> Fraqueza muscular proximal + ↑ CK.</p>
+        <p><strong>DM:</strong> Rash em heliotropo (periorbital violáceo), pápulas de Gottron (nós dos dedos), sinal do V e sinal do xale. Associação com malignidade (ovário, pulmão, GI).</p>
+        <p><strong>Anticorpos:</strong> Anti-Jo-1 (Anti-ARS) → síndrome antisintetase: miosite + DPI + artrite + mãos de mecânico + febres + Raynaud. Anti-MDA-5 → DPI rapidamente progressiva, pouca miosite. Anti-Mi-2 → DM clássica, bom prognóstico. Anti-SRP e Anti-HMGCR → miopatia necrosante imunomediada.</p>
+      </div>
+      <div id="ss-saf" class="tab-content">
+        <p><strong>Síndrome Antifosfolípide (SAF):</strong> Tríade: trombose arterial e/ou venosa + morbidade gestacional (abortamentos, pré-eclâmpsia grave, insuficiência placentária) + anticorpos antifosfolípide persistentes (≥ 12 semanas de intervalo).</p>
+        <p><strong>Anticorpos:</strong> Anticardiolipina (aCL), Anti-β2GPI, Anticoagulante Lúpico (LAC — paradoxalmente, ↑ PTT in vitro mas <em>pró-trombótico</em> in vivo). Tripla positividade = maior risco.</p>
+        <p><strong>SAF Catastrófico (Asherson):</strong> Tromboses em ≥ 3 órgãos em < 1 semana. Mortalidade 50%. Tratar com AC + corticoide + IVIG ± plasmaférese.</p>
+        <p><strong>Tratamento:</strong> Trombose venosa → Varfarina (INR 2-3). Trombose arterial ou tripla positividade → INR 3-4. Gestação: HBPM + AAS.</p>
+        <div class="callout danger">
+          <span class="callout-label">🚨 Armadilha</span>
+          LAC causa PTT prolongado in vitro que NÃO corrige com plasma normal (mistura) → distingue de deficiência de fatores (que corrigiria). DOAC não são recomendados no SAF (especialmente tripla positividade — inferioridade do rivaroxabana vs varfarina demonstrada).
+        </div>
+      </div>
+      <div id="ss-vasculite" class="tab-content">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Vasculite</th><th>Vaso Acometido</th><th>Marcador</th><th>Manifestações Chave</th></tr></thead>
+            <tbody>
+              <tr><td>Arterite de células gigantes (ACG)</td><td>Grandes vasos (aorta, ramos)</td><td>VHS > 50, CRP↑, biópsia da artéria temporal</td><td>Cefalalgia temporal, claudicação de mandíbula, perda visual súbita (NAION — urgência!), polimialgia reumática em 50%</td></tr>
+              <tr><td>Arterite de Takayasu</td><td>Grandes vasos; mulheres jovens < 40 anos</td><td>Angiografia/AngioTC; VHS↑</td><td>Pulsos ausentes, HAS renovascular, claudicação de membros superiores</td></tr>
+              <tr><td>Poliarterite Nodosa (PAN)</td><td>Médios vasos; poupa pulmão e glomérulo</td><td>ANCA negativo; biópsia; arteriografia (microaneurismas)</td><td>HAS renovascular, mononeurite múltipla, nódulos cutâneos, dor testicular. Associação com HBV</td></tr>
+              <tr><td>Granulomatose com Poliangiite (GPA — Wegener)</td><td>Pequenos vasos (AAV)</td><td>c-ANCA / Anti-PR3 +++</td><td>Sinusite necrosante, úlceras nasais, saddle-nose, hemorragia alveolar, GN rapidamente progressiva</td></tr>
+              <tr><td>Poliangiite Microscópica (PAM)</td><td>Pequenos vasos (AAV)</td><td>p-ANCA / Anti-MPO +++</td><td>GN + hemorragia alveolar (síndrome pulmão-rim); sem granuloma</td></tr>
+              <tr><td>Síndrome de Eosinofilia e Granulomatose com Poliangiite (EGPA — Churg-Strauss)</td><td>Pequenos vasos</td><td>p-ANCA/Anti-MPO (40%); eosinofilia ++</td><td>Asma grave + eosinofilia + vasculite; cardite eosinofílica (causa de morte)</td></tr>
+              <tr><td>Crioglobulinemia</td><td>Pequenos vasos</td><td>Crioglobulinas; C4↓; RF+; HCV (tipo II/III)</td><td>Púrpura palpável, artralgias, GN membranoproliferativa, neuropatia periférica</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout danger">
+          <span class="callout-label">🚨 Urgência — ACG com Perda Visual</span>
+          Amaurose fugaz ou perda visual permanente em suspeita de ACG → <strong>metilprednisolona IV 1g/dia × 3 dias imediatamente</strong>, sem esperar biópsia. A biópsia pode ser realizada até 2 semanas após início do corticoide. Nunca atrasar o tratamento por aguardar confirmação histológica.
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- ============================
+       SEÇÃO 5: HIPERSENSIBILIDADE
+       ============================ -->
+  <section id="hipersensibilidade">
+    <div class="section-header">
+      <span class="section-number">05</span>
+      <div class="section-title-block">
+        <h2>Hipersensibilidade — Tipos I a IV</h2>
+        <p>Classificação de Gell e Coombs — mecanismos, exemplos clínicos e manejo</p>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="grid-2">
+      <!-- TIPO I -->
+      <div class="card red">
+        <div class="card-title"><span class="card-icon icon-red">I</span> Tipo I — Anafilática / IgE-mediada</div>
+        <h4>Mecanismo</h4>
+        <p>1ª exposição (sensibilização): antígeno → linfócito B → IgE → liga a FcεRI em mastócitos/basófilos. 2ª exposição: antígeno cross-link IgE → degranulação → histamina, triptase, leucotrienos, prostaglandinas, PAF.</p>
+        <h4>Exemplos</h4>
+        <ul>
+          <li>Anafilaxia (penicilina, alimentos, veneno de abelha)</li>
+          <li>Asma alérgica, rinite alérgica, urticária aguda, dermatite atópica</li>
+        </ul>
+        <h4>Mediadores e Efeitos</h4>
+        <ul>
+          <li><strong>Histamina:</strong> vasodilatação, aumento de permeabilidade, broncoespasmo, prurido</li>
+          <li><strong>Leucotrienos (LTC4, D4, E4 = "SRS-A"):</strong> broncoespasmo intenso e prolongado; mais tardio</li>
+          <li><strong>Triptase:</strong> marcador sérico de anafilaxia (pico 1–2h); útil na investigação forense</li>
+        </ul>
+        <div class="callout danger">
+          <span class="callout-label">🚨 Anafilaxia — Manejo ABCDE</span>
+          <strong>1º: Epinefrina IM 0.3–0.5mg (adrenalina 1:1000) no vasto lateral</strong> — não há contraindicação absoluta. Decúbito com MMII elevados. O2 suplementar. SF 0.9% IV (1–2L). Salbutamol se broncoespasmo. Corticoides e anti-H1 são adjuvantes (não substituem a epinefrina). Observar ≥ 4–8h (reação bifásica em 5–20% dos casos).
+        </div>
+      </div>
+      <!-- TIPO II -->
+      <div class="card orange">
+        <div class="card-title"><span class="card-icon icon-gold">II</span> Tipo II — Citotóxica / Anticorpo-mediada</div>
+        <h4>Mecanismo</h4>
+        <p>IgG ou IgM se liga a antígenos em superfícies celulares → destruição celular por: (1) ADCC, (2) ativação de complemento (MAC), (3) fagocitose opsonizada.</p>
+        <h4>Variante: Hipersensibilidade Estimulatória</h4>
+        <p>Anticorpo mimetiza ligante endógeno → estimula receptor (sem destruição celular). Ex: Doença de Graves (anti-TSH-R → ↑ T4/T3).</p>
+        <h4>Exemplos Clínicos</h4>
+        <ul>
+          <li><strong>AHAI por anticorpos quentes</strong> (IgG anti-Rh) — Coombs direto +</li>
+          <li><strong>Eritroblastose fetal</strong> (incompatibilidade Rh)</li>
+          <li><strong>PTI</strong> (IgG anti-GP IIb/IIIa ou anti-GPIb/IX)</li>
+          <li><strong>Pênfigo vulgar</strong> (anti-desmogleína)</li>
+          <li><strong>Penfigoide bolhoso</strong> (anti-BP180, anti-BP230 — zona da membrana basal)</li>
+          <li><strong>Síndrome de Goodpasture</strong> (anti-colagênio IV → GN + hemorragia alveolar)</li>
+          <li><strong>Miastenia gravis</strong> (anti-AChR → bloqueio da junção NM)</li>
+          <li><strong>Trombocitopenia induzida por heparina (TIH)</strong> (anti-complexo heparina-FP4 → trombocitopenia + trombose!)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- TIPO III -->
+      <div class="card blue">
+        <div class="card-title"><span class="card-icon icon-blue">III</span> Tipo III — Imunocomplexos</div>
+        <h4>Mecanismo</h4>
+        <p>Antígeno + IgG/IgM → imunocomplexos → depositam em paredes vasculares, glomérulos, sinoviais → ativam complemento → quimiotaxia de neutrófilos → liberação de enzimas lisossomais → inflamação e dano tecidual.</p>
+        <h4>Exemplos</h4>
+        <ul>
+          <li><strong>Doença do soro:</strong> (anti-toxina heteróloga, ceftriaxona, infliximabe) — 7–10 dias após exposição: febre, urticária, artralgia, linfadenopatia, proteinúria</li>
+          <li><strong>GN pós-estreptocócica:</strong> depósitos subepiteliais ("humps"); C3↓; anti-estreptolisina O (ASO)↑</li>
+          <li><strong>Vasculite por hipersensibilidade/leucocitoclástica</strong></li>
+          <li><strong>LES:</strong> GN por imunocomplexos; C3, C4↓</li>
+          <li><strong>Crioglobulinemia:</strong> C4↓↓ (característico, especialmente no HCV)</li>
+          <li><strong>Reação de Arthus:</strong> reação local por antígeno intradérmico em indivíduo já com anticorpos</li>
+        </ul>
+        <h4>Complemento na Tipo III</h4>
+        <p>C3 e C4 baixos → ativação via clássica por imunocomplexos. Diferente de vasculites AAV (ANCA) onde complemento é normal.</p>
+      </div>
+      <!-- TIPO IV -->
+      <div class="card green">
+        <div class="card-title"><span class="card-icon icon-green">IV</span> Tipo IV — Celular / Tardia (Delayed-Type)</div>
+        <h4>Mecanismo</h4>
+        <p>Linfócitos T CD4+ (Th1) ou CD8+ sensibilizados → reconhecem antígeno → liberam citocinas (IFN-γ, TNF, IL-2) → ativam macrófagos → inflamação granulomatosa. Sem anticorpos envolvidos. Demora 24–72h.</p>
+        <h4>Subtipos</h4>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Subtipo</th><th>Célula</th><th>Exemplo</th></tr></thead>
+            <tbody>
+              <tr><td>IVa — Th1</td><td>Th1 → macrófago</td><td>Tuberculina (PPD), dermatite de contato, rejeição de transplante, DM tipo 1</td></tr>
+              <tr><td>IVb — Th2</td><td>Th2 → eosinófilo</td><td>Dermatite atópica crónica, asma eosinofílica</td></tr>
+              <tr><td>IVc — Citotóxica</td><td>CD8+ → célula-alvo</td><td>SSJ/NET (Steven-Johnson / Necrose Epidérmica Tóxica), hepatite por drogas</td></tr>
+              <tr><td>IVd — Neutrofílica</td><td>T → neutrófilos</td><td>Síndrome de Sweet, pústulas</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h4>Exemplos Clínicos Importantes</h4>
+        <ul>
+          <li><strong>Dermatite de contato</strong> (hapteno como níquel, látex, urushiol da hera venenosa)</li>
+          <li><strong>PPD (Mantoux)</strong> — baseado no tipo IV: se ≥ 10mm de enduração (≥ 5mm em imunossuprimidos, HIV, contato íntimo com TB)</li>
+          <li><strong>Sarcoidose</strong> — granulomas não-caseosos: T CD4+ Th1 + macrófagos → ativam ACE; hipercalcemia por 1α-hidroxilase nos macrófagos</li>
+          <li><strong>Doença de Crohn</strong> — componente Th1/Th17</li>
+          <li><strong>Rejeição aguda celular de transplante</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Comparação Resumida -->
+    <h3>Resumo Comparativo dos 4 Tipos</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Característica</th>
+            <th>Tipo I</th>
+            <th>Tipo II</th>
+            <th>Tipo III</th>
+            <th>Tipo IV</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mediador principal</td>
+            <td>IgE</td>
+            <td>IgG/IgM (anti-célula)</td>
+            <td>IgG/IgM (imunocomplexos)</td>
+            <td>Linfócito T / Macrófago</td>
+          </tr>
+          <tr>
+            <td>Tempo de início</td>
+            <td>Minutos</td>
+            <td>Horas</td>
+            <td>Horas a dias</td>
+            <td>48–72h</td>
+          </tr>
+          <tr>
+            <td>Complemento</td>
+            <td>Não</td>
+            <td>Sim (MAC, opsonização)</td>
+            <td>Sim (C3, C4↓)</td>
+            <td>Não</td>
+          </tr>
+          <tr>
+            <td>Transferência passiva</td>
+            <td>Soro (anticorpos IgE)</td>
+            <td>Soro (anticorpos)</td>
+            <td>Soro (imunocomplexos)</td>
+            <td>Células (linfócitos T)</td>
+          </tr>
+          <tr>
+            <td>Exemplos-chave</td>
+            <td>Anafilaxia, asma alérgica</td>
+            <td>AHAI, miastenia, Goodpasture</td>
+            <td>LES, GN pós-estrepto, doença do soro</td>
+            <td>PPD+, dermatite de contato, rejeição</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- ============================
+       SEÇÃO 6: TRANSPLANTE
+       ============================ -->
+  <section id="transplante">
+    <div class="section-header">
+      <span class="section-number">06</span>
+      <div class="section-title-block">
+        <h2>Transplante & Rejeição</h2>
+        <p>Imunobiologia do transplante, tipos de rejeição e imunossupressão</p>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="card gold">
+      <div class="card-title"><span class="card-icon icon-gold">T</span> Tipos de Rejeição</div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Tempo</th>
+              <th>Mecanismo</th>
+              <th>Histologia</th>
+              <th>Tratamento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Hiperaguda</strong></td>
+              <td>Minutos a horas (intraoperatório)</td>
+              <td>Anticorpos pré-formados (anti-HLA ou anti-ABO) → ativação de complemento → trombose microvascular</td>
+              <td>Trombose, necrose hemorrágica, vasculite neutrofílica</td>
+              <td>Não há — explante do órgão. Prevenção: prova cruzada (crossmatch) e compatibilidade ABO</td>
+            </tr>
+            <tr>
+              <td><strong>Aguda Celular</strong></td>
+              <td>Dias a meses (pico: semanas)</td>
+              <td>Linfócitos T CD4+ e CD8+ reconhecem MHC do doador → mediação celular (Tipo IV)</td>
+              <td>Infiltrado linfocitário intersticial; tubulite; endotelite</td>
+              <td>Pulso de corticoide; timoglobulina (ATG); reversível</td>
+            </tr>
+            <tr>
+              <td><strong>Aguda Humoral / Mediada por Anticorpos (AMR)</strong></td>
+              <td>Dias a meses</td>
+              <td>De novo anti-HLA DSA → ativação de complemento; C4d depositado</td>
+              <td>Capilarite peritubular; C4d+ em IF; glomerulopatia por transplante</td>
+              <td>Plasmaférese + IVIG ± rituximabe ± eculizumabe; difícil de tratar</td>
+            </tr>
+            <tr>
+              <td><strong>Crônica</strong></td>
+              <td>Meses a anos</td>
+              <td>Imunológico (AMR crônica, DSA) + não-imunológico (isquemia, nefrotoxicidade por CNI)</td>
+              <td>Nefropatia de enxerto crônica; fibrose intersticial e atrofia tubular (FIAT)</td>
+              <td>Otimização da imunossupressão; controle de fatores não-imunológicos; muitas vezes irreversível</td>
+            </tr>
+            <tr>
+              <td><strong>Doença Enxerto-Hospedeiro (DECH/GvHD)</strong></td>
+              <td>Aguda < 100d; crônica > 100d (transplante de MO)</td>
+              <td>Linfócitos T do doador reconhecem o hospedeiro como "estranho" → atacam pele, fígado, TGI</td>
+              <td>Aguda: dermatite, hepatite, enteropatia. Crônica: fibrose, síndrome de Sjögren-like, bronquiolite obliterante</td>
+              <td>Aguda: corticoide sistêmico ± CNI. Crônica: corticoide + outras imunossupressões</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pearl">
+        <span class="pearl-icon">💎</span>
+        <div class="pearl-text"><strong>Pérola:</strong> O C4d positivo no peritubular é o marcador da rejeição humoral (AMR) — indica ativação de complemento mediada por anticorpos anti-HLA. DSA (Donor-Specific Antibodies) são o principal fator de risco para AMR e perda tardia do enxerto.</div>
+      </div>
+    </div>
+
+    <!-- Imunossupressores -->
+    <h3>Imunossupressores em Transplante — Mecanismos</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Fármaco</th>
+            <th>Mecanismo de Ação</th>
+            <th>Toxicidades Principais</th>
+            <th>Monitorização</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ciclosporina A (CyA)</td>
+            <td>Inibe calcineurina → ↓ transcrição de IL-2 → ↓ proliferação de T CD4+</td>
+            <td>Nefrotoxicidade (dose-dependente), HAS, hiperplasia gengival, hirsutismo, neurotoxicidade, hipomagnesemia</td>
+            <td>Nível sérico (C0 ou C2); creatinina; PA</td>
+          </tr>
+          <tr>
+            <td>Tacrolimus (FK506)</td>
+            <td>Inibe calcineurina (via FKBP-12) → ↓ IL-2 — mais potente que CyA</td>
+            <td>Nefrotoxicidade, DM pós-transplante (mais que CyA), neurotoxicidade, alopecia</td>
+            <td>Nível sérico; creatinina; glicemia</td>
+          </tr>
+          <tr>
+            <td>Micofenolato mofetil (MMF)</td>
+            <td>Inibe IMPDH (inosina monofosfato desidrogenase) → ↓ síntese de purinas → antiproliferativo para T e B</td>
+            <td>Diarreia, náuseas (GI), leucopenia, teratogênico</td>
+            <td>Hemograma; nível (opcional)</td>
+          </tr>
+          <tr>
+            <td>Sirolimus / Everolimus</td>
+            <td>Inibe mTOR (via FKBP-12) → bloqueia ciclo celular na fase G1/S → antiproliferativo</td>
+            <td>Hipertrigliceridemia, hiperlipidemia, retardo na cicatrização, pneumonite, ↓ angiogênese, proteinúria</td>
+            <td>Lipidograma; nível sérico; proteinúria</td>
+          </tr>
+          <tr>
+            <td>Azatioprina</td>
+            <td>Pró-fármaco da 6-mercaptopurina → inibe síntese de purinas</td>
+            <td>Mielossupressão, hepatotoxicidade. Interação grave com alopurinol (inibe xantina oxidase → ↑ toxicidade)</td>
+            <td>Hemograma</td>
+          </tr>
+          <tr>
+            <td>Corticoides</td>
+            <td>Múltiplos: ↓ citocinas pró-inflamatórias (via NF-κB), ↓ migração leucocitária, ↓ apresentação de antígenos</td>
+            <td>DM, osteoporose, HAS, cataratas, infecções oportunistas, Cushing, retardo de crescimento</td>
+            <td>Glicemia, PA, DMO (DXA anual)</td>
+          </tr>
+          <tr>
+            <td>Anticorpos depletores (ATG, Basiliximabe)</td>
+            <td>ATG: depleção de T. Basiliximabe: anti-CD25 (anti-IL-2Rα) → bloqueia sinalização de IL-2</td>
+            <td>ATG: febre, síndrome de liberação de citocinas, trombocitopenia, infecções. Basiliximabe: bem tolerado</td>
+            <td>Hemograma; infecções oportunistas</td>
+          </tr>
+          <tr>
+            <td>Belatacept</td>
+            <td>Anti-CTLA4-Ig → bloqueia co-estimulação CD28-B7 → anergia de células T</td>
+            <td>↑ Risco de PTLDs (linfoproliferativa pós-transplante), especialmente em EBV soronegativo</td>
+            <td>Sorologias; EBV; hemograma</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout danger">
+      <span class="callout-label">🚨 Atenção — Infecções Oportunistas em Transplantados</span>
+      Seguir o <strong>"net state of immunosuppression"</strong> e o cronograma temporal: 1º mês: infecções cirúrgicas e doador. 1–6 meses: CMV (mais importante), Pneumocystis, fungos invasivos (Candida, Aspergillus), vírus herpéticos. > 6 meses: infecções da comunidade, BK vírus (nefropatia), EBV-PTLD, Nocardia, Cryptococcus. Profilaxias: trimetoprim-sulfametoxazol (PCP ± Toxoplasma), valganciclovir (CMV), fluconazol.
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- ============================
+       SEÇÃO 7: EMERGÊNCIAS
+       ============================ -->
+  <section id="emergencias">
+    <div class="section-header">
+      <span class="section-number">07</span>
+      <div class="section-title-block">
+        <h2>Emergências Imunológicas</h2>
+        <p>Manejo imediato, abordagem ABCDE e intervenções sensíveis ao tempo</p>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="grid-2">
+      <div class="card red">
+        <div class="card-title"><span class="card-icon icon-red">⚡</span> Tempestade de Citocinas / Síndrome de Ativação Macrofágica (SAM)</div>
+        <p><strong>SAM / Linfohistiocitose Hemofagocítica (HLH):</strong> Resposta imune descontrolada com hipersecreção de citocinas (IFN-γ, IL-1, IL-6, IL-18) → ativação e proliferação de macrófagos/histiócitos → fagocitose de eritrócitos e leucócitos.</p>
+        <h4>Critérios HLH-2004 (≥ 5/8)</h4>
+        <ul>
+          <li>Febre > 38.5°C</li>
+          <li>Esplenomegalia</li>
+          <li>Citopenia (≥ 2 linhagens)</li>
+          <li>Hipertrigliceridemia e/ou hipofibrinogenemia</li>
+          <li>Hemofagocitose em MO/baço/linfonodos</li>
+          <li>Ferritina > 500 ng/mL (> 10.000 = altamente sugestivo)</li>
+          <li>CD25 solúvel ↑↑↑</li>
+          <li>NK↓ ou ausente</li>
+        </ul>
+        <h4>Tratamento HLH</h4>
+        <p>HLH-2004: dexametasona + etoposídeo (VP-16) ± ciclosporina ± IVIG. Tratar causa desencadeante (EBV, malignidade, LES ativo). Emapalumabe (anti-IFN-γ) para HLH primária.</p>
+      </div>
+
+      <div class="card orange">
+        <div class="card-title"><span class="card-icon icon-gold">🔥</span> Angioedema Hereditário (AEH)</div>
+        <p><strong>Fisiopatologia:</strong> Deficiência de C1-inibidor (C1-INH) → acúmulo de bradicinina → vasodilatação e aumento de permeabilidade → angioedema não-pruriginoso, não-urticariforme, sem resposta a epinefrina/anti-H1/corticoide.</p>
+        <h4>Tipos</h4>
+        <ul>
+          <li><strong>Tipo I (85%):</strong> ↓ C1-INH quantitativo e funcional</li>
+          <li><strong>Tipo II (15%):</strong> C1-INH normal/↑ mas disfuncional</li>
+          <li><strong>Tipo III (raro):</strong> Fator XII mutado, em mulheres, desencadeado por estrogênio; C1-INH normal</li>
+        </ul>
+        <h4>Diagnóstico</h4>
+        <p>C4↓↓ (mesmo fora de crise) + C1-INH quantitativo + funcional. C1q é <strong>normal</strong> no AEH (diferencia de AEA por consumo de complemento).</p>
+        <h4>Tratamento</h4>
+        <ul>
+          <li><strong>Crise aguda:</strong> C1-INH concentrado IV → icatibanto (antagonista do receptor B2 de bradicinina) → ecallantida (inibidor de calicreína) → plasma fresco congelado se sem acesso a específicos</li>
+          <li><strong>Profilaxia a curto prazo:</strong> C1-INH IV antes de cirurgias/procedimentos</li>
+          <li><strong>Profilaxia de longo prazo:</strong> Lanadelumabe (anti-calicreína SC), C1-INH IV, garadacimabe; andrógenos atenuados (danazol) — menos utilizados hoje</li>
+        </ul>
+        <div class="callout danger">
+          <span class="callout-label">🚨 Atenção</span>
+          AEH laríngeo = emergência com risco de asfixia. NÃO responde a epinefrina, anti-H1 ou corticoide. Tratar imediatamente com C1-INH ou icatibanto. Manter via aérea.
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- ============================
+       SEÇÃO 8: FARMACOLOGIA
+       ============================ -->
+  <section id="farmacologia">
+    <div class="section-header">
+      <span class="section-number">08</span>
+      <div class="section-title-block">
+        <h2>Farmacologia Imunológica</h2>
+        <p>Biológicos, pequenas moléculas e imunomoduladores</p>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Agente</th>
+            <th>Alvo / Mecanismo</th>
+            <th>Indicações</th>
+            <th>Efeitos Adversos Notáveis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Infliximabe / Adalimumabe / Etanercept</td><td>Anti-TNF-α</td><td>AR, Crohn, UC, psoríase, EAS, uveíte</td><td>Reativação TB, infecções oportunistas, ICC, desmielinização, lúpus induzido</td></tr>
+          <tr><td>Certolizumabe pegol</td><td>Anti-TNF-α (sem porção Fc)</td><td>AR, Crohn — único anti-TNF seguro na gestação (não atravessa placenta via FcRn)</td><td>Infecções, menos risco que outros anti-TNF</td></tr>
+          <tr><td>Tocilizumabe / Sarilumabe</td><td>Anti-IL-6R</td><td>AR, AJI sistêmica, tempestade de citocinas (COVID-19 grave, SAM)</td><td>Infecções, perfuração intestinal, ↑ LDL, ↑ transaminases; mascara febre!</td></tr>
+          <tr><td>Rituximabe</td><td>Anti-CD20 (depleção de células B)</td><td>AR, LES refratário, vasculites AAV, penfigoide, TTP, linfomas</td><td>Reativação HBV (fatal — triagem obrigatória), PML (vírus JC), hipogamaglobulinemia tardia, síndrome de liberação de citocinas</td></tr>
+          <tr><td>Belimumabe</td><td>Anti-BLyS (BAFF) → ↓ sobrevida de células B</td><td>LES (especialmente com alto anti-dsDNA e C↓)</td><td>Infecções, depressão/suicídio (atenção ao monitorar), náuseas</td></tr>
+          <tr><td>Anifrolumabe</td><td>Anti-receptor de IFN tipo I (anti-IFNAR1)</td><td>LES moderado-grave não controlado</td><td>Herpes zoster, infecções respiratórias</td></tr>
+          <tr><td>Ustecinumabe</td><td>Anti-IL-12/IL-23 (subunidade p40)</td><td>Psoríase, Crohn, colite ulcerativa, artrite psoriásica</td><td>Bem tolerado; nasofringite; infecções</td></tr>
+          <tr><td>Secuquinumabe / Ixecizumabe</td><td>Anti-IL-17A</td><td>Psoríase, EAS, artrite psoriásica</td><td>Candidíase mucocutânea, ↑ exacerbações de Crohn — evitar em DII!</td></tr>
+          <tr><td>Guselcumabe / Risancizumabe</td><td>Anti-IL-23 (subunidade p19)</td><td>Psoríase, artrite psoriásica, Crohn</td><td>Infecções respiratórias superiores</td></tr>
+          <tr><td>Dupilumabe</td><td>Anti-IL-4Rα (bloqueia IL-4 e IL-13)</td><td>Dermatite atópica moderada-grave, asma eosinofílica, RSC com pólipos, esofagite eosinofílica, prurigo nodular</td><td>Conjuntivite (efeito classe), reação no sítio de injeção; ineficaz em Th2 não-dominante</td></tr>
+          <tr><td>Mepolizumabe / Benralizumabe</td><td>Anti-IL-5 (mepo) / Anti-IL-5Rα (benra) → ↓ eosinófilos</td><td>Asma eosinofílica grave, EGPA (Churg-Strauss), síndrome hipereosinofílica</td><td>Herpes zoster; reações de infusão</td></tr>
+          <tr><td>Eculizumabe / Ravulizumabe</td><td>Anti-C5 → inibe MAC</td><td>HPN, SHUa, GN por C3, MG refratária, NMO</td><td>Risco extremo de Neisseria — vacinação meningocócica OBRIGATÓRIA. Penicilina profilática nos primeiros 2 semanas</td></tr>
+          <tr><td>Tofacitinibe / Baricitinibe / Upadacitinibe</td><td>Inibidores de JAK (JAKi)</td><td>AR, UC, psoríase, dermatomiosite, GvHD, AA, atopia</td><td>TVP/TEP (atenção tofacitinibe ≥ 10mg 2×), herpes zoster, infecções, MACE em pacientes de risco CV, malignidades</td></tr>
+          <tr><td>IVIG (Imunoglobulina IV)</td><td>Múltiplos: FcRn saturation → catabolismo de autoanticorpos; modulação de FcγR; ↓ complemento; imunomodulação de DC e T</td><td>IDP (reposição), PTI, GBS, MG, CIDP, Kawasaki, SAM, HLH, rejeição AMR</td><td>Cefaleia, meningite asséptica, hemólise, trombose (produtos com alta osmolalidade), IRA (sucrose — evitar em nefropatas)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout danger">
+      <span class="callout-label">🚨 Reativação de HBV com Rituximabe</span>
+      Antes de qualquer imunossupressor potente (rituximabe, quimioterapia, anti-TNF): rastrear HBsAg, anti-HBc e anti-HBs. HBsAg+ ou anti-HBc+ com anti-HBs baixo → profilaxia com entecavir ou tenofovir por todo o período de imunossupressão + 12 meses após. Rituximabe é o agente de maior risco de reativação viral (depleção de B → perda do controle imune do HBV).
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- ============================
+       SEÇÃO 9: BOARDS & ACTIVE RECALL
+       ============================ -->
+  <section id="boards">
+    <div class="section-header">
+      <span class="section-number">09</span>
+      <div class="section-title-block">
+        <h2>Boards & Active Recall</h2>
+        <p>Questões estilo residência, high-yield facts e pontos-chave</p>
+      </div>
+    </div>
+    <div class="section-divider"></div>
+
+    <!-- Q1 -->
+    <div class="board-question">
+      <span class="q-label">🩺 Questão Clínica 01 — Imunodeficiência Primária</span>
+      <div class="question">Criança de 8 meses, sexo masculino, apresenta 3º episódio de pneumonia por <em>Streptococcus pneumoniae</em>. Exame físico: amígdalas ausentes, sem linfonodos palpáveis. Hemograma com linfopenia ausente. Imunoglobulinas: IgG, IgM, IgA todas indetectáveis. Imunofenotipagem: ausência de linfócitos B, presença de linfócitos T em número normal. Qual o diagnóstico mais provável e qual o gene envolvido?</div>
+      <ul class="options" id="q1-opts">
+        <li onclick="selectOption(this, 'q1', false)">A) SCID ligada ao X — gene IL2RG</li>
+        <li onclick="selectOption(this, 'q1', true)">B) Agamaglobulinemia de Bruton — gene BTK</li>
+        <li onclick="selectOption(this, 'q1', false)">C) IDCV — gene TACI</li>
+        <li onclick="selectOption(this, 'q1', false)">D) Síndrome de DiGeorge — deleção 22q11.2</li>
+      </ul>
+      <div id="q1-answer" class="answer-reveal">
+        <strong>✅ Resposta: B — Agamaglobulinemia de Bruton (XLA)</strong><br>
+        A apresentação clássica: criança do sexo masculino > 6 meses (esgotamento dos anticorpos maternos), infecções recorrentes por bactérias encapsuladas, ausência de amígdalas e linfonodos (sem centros germinais), pan-hipogamaglobulinemia e ausência de células B na imunofenotipagem com T normal. O gene BTK (Bruton's tyrosine kinase) em Xq21.33 é responsável. SCID teria T ausente também. DiGeorge teria T ausente e hipocalcemia. IDCV apresenta-se em adultos jovens com B presentes mas disfuncionais.
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="board-question">
+      <span class="q-label">🩺 Questão Clínica 02 — Hipersensibilidade</span>
+      <div class="question">Paciente de 45 anos, sem alergias conhecidas, recebe 3ª dose de antissoro heterólogo de cobra. 8 dias após, apresenta febre, urticária generalizada, artralgia bilateral e proteinúria 1+. Qual o mecanismo fisiopatológico e quais achados laboratoriais você esperaria?</div>
+      <ul class="options" id="q2-opts">
+        <li onclick="selectOption(this, 'q2', false)">A) Hipersensibilidade Tipo I — IgE e mastócitos — IgE elevado, triptase sérica ↑</li>
+        <li onclick="selectOption(this, 'q2', false)">B) Hipersensibilidade Tipo II — IgG anti-células — Coombs direto positivo</li>
+        <li onclick="selectOption(this, 'q2', true)">C) Hipersensibilidade Tipo III — imunocomplexos — C3↓, C4↓, vasculite</li>
+        <li onclick="selectOption(this, 'q2', false)">D) Hipersensibilidade Tipo IV — linfócitos T — PPD positivo, sem alteração de complemento</li>
+      </ul>
+      <div id="q2-answer" class="answer-reveal">
+        <strong>✅ Resposta: C — Doença do Soro (Hipersensibilidade Tipo III)</strong><br>
+        A tríade clássica da doença do soro: febre + urticária/rash + artralgia 7–10 dias após exposição ao antígeno heterólogo. A 3ª dose causa formação de imunocomplexos antígeno-anticorpo em excesso de antígeno (zona de equivalência não atingida), que depositam nas paredes vasculares e glomérulos → ativação de complemento (C3↓, C4↓, CH50↓), vasculite e proteinúria. Leucocitose com eosinofilia pode ocorrer. Tratamento: corticoide sistêmico e remoção do antígeno se possível.
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="board-question">
+      <span class="q-label">🩺 Questão Clínica 03 — LES</span>
+      <div class="question">Mulher de 32 anos com LES diagnosticado há 5 anos. Em acompanhamento: creatinina passou de 0.9 para 2.1 mg/dL em 3 meses, proteinúria de 24h = 3.2g, sedimento urinário com cilindros hemáticos. Anti-dsDNA ↑ e C3/C4 ↓. Biópsia renal: proliferação endocapilar difusa, em > 50% dos glomérulos, com lesões em "wire-loop" e C4d+. Qual a classificação da nefrite e o esquema de tratamento de indução mais adequado?</div>
+      <ul class="options" id="q3-opts">
+        <li onclick="selectOption(this, 'q3', false)">A) Classe III (focal) — pulso de corticoide isolado</li>
+        <li onclick="selectOption(this, 'q3', true)">B) Classe IV (difusa) — pulso de metilprednisolona + micofenolato mofetil</li>
+        <li onclick="selectOption(this, 'q3', false)">C) Classe V (membranosa) — IECA + corticoide + ciclosporina</li>
+        <li onclick="selectOption(this, 'q3', false)">D) Classe II (mesangial) — apenas IECA e observação</li>
+      </ul>
+      <div id="q3-answer" class="answer-reveal">
+        <strong>✅ Resposta: B — Nefrite Lúpica Classe IV (Difusa)</strong><br>
+        A proliferação endocapilar afetando ≥ 50% dos glomérulos, com lesões em "wire-loop" (deposição subendotelial de imunocomplexos), cilindros hemáticos e proteinúria nefrótica em contexto de LES ativo (↑ anti-dsDNA, ↓ C3/C4) = Classe IV. Tratamento de indução: Pulso de metilprednisolona 1g/dia × 3 dias → prednisona 1mg/kg/dia + MMF 3g/dia (regime preferencial atual; eurolupus = doses menores de ciclofosfamida como alternativa). Manutenção após 6 meses de indução: MMF 1–2g/dia + prednisona em desmame. Monitorar: clearance de creatinina, proteinúria, anti-dsDNA, C3/C4.
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="board-question">
+      <span class="q-label">🩺 Questão Clínica 04 — Transplante</span>
+      <div class="question">Transplantado renal há 18 meses, em uso de tacrolimus + MMF + prednisona, apresenta aumento progressivo de creatinina nos últimos 6 meses (1.4 → 2.8 mg/dL), proteinúria de 1.8g/24h, sem febre. Biópsia renal: capilarite peritubular, C4d positivo em imunofluorescência. Anticorpos anti-HLA doador-específicos (DSA) positivos. Qual o diagnóstico e o manejo mais adequado?</div>
+      <ul class="options" id="q4-opts">
+        <li onclick="selectOption(this, 'q4', false)">A) Rejeição aguda celular — aumento de tacrolimus e pulso de corticoide</li>
+        <li onclick="selectOption(this, 'q4', false)">B) Nefrotoxicidade por tacrolimus — reduzir dose e monitorar nível sérico</li>
+        <li onclick="selectOption(this, 'q4', true)">C) Rejeição mediada por anticorpos (AMR) — plasmaférese + IVIG ± rituximabe</li>
+        <li onclick="selectOption(this, 'q4', false)">D) GN membranosa de novo — tratar com corticoide + ciclofosfamida</li>
+      </ul>
+      <div id="q4-answer" class="answer-reveal">
+        <strong>✅ Resposta: C — Rejeição Mediada por Anticorpos (AMR)</strong><br>
+        A tríade diagnóstica da AMR: (1) evidência histológica de lesão endotelial (capilarite peritubular, glomerulopatia do transplante); (2) C4d positivo em IF; (3) DSA positivos. O padrão de piora progressiva sem febre sugere AMR crônica/ativa (não aguda). Manejo: plasmaférese (remove DSA circulantes) + IVIG (modula FcR e cataboliza anticorpos) ± rituximabe (depleta B produtores de DSA) ± eculizumabe em casos graves. A AMR tem pior prognóstico que a rejeição celular e é a principal causa de perda tardia do enxerto.
+      </div>
+    </div>
+
+    <!-- PONTOS-CHAVE -->
+    <h3>⭐ Pontos-Chave e High-Yield Facts</h3>
+    <div class="grid-2">
+      <div class="card gold">
+        <div class="card-title">Imunodeficiências — Pérolas de Prova</div>
+        <ul>
+          <li><strong>Neisseria recorrente (meningite/gonorreia atípica)</strong> → pensar deficiência de complemento terminal (C5–C9); CH50 = 0</li>
+          <li><strong>Candida oral > 1 ano de idade</strong> → déficit de célula T</li>
+          <li><strong>Abscessos por Staphylococcus sem febre</strong> → Síndrome de Job/Hiper-IgE (STAT3 mutado): eczema + infecções por S. aureus + IgE ↑↑↑</li>
+          <li><strong>Linfopenia absoluta < 1500</strong> em lactente → pensar SCID</li>
+          <li><strong>DGC: NBT/DHR negativo</strong> → NADPH oxidase defeituosa; tratar profilaxia com TMP-SMX + itraconazol + IFN-γ</li>
+          <li><strong>Deficiência isolada de IgA</strong> = mais comum; risco de anafilaxia com hemoderivados (pesquise anticorpos anti-IgA antes de transfusão)</li>
+        </ul>
+      </div>
+      <div class="card red">
+        <div class="card-title">Autoimunidade & Hipersensibilidade — Pérolas de Prova</div>
+        <ul>
+          <li><strong>Anti-Sm</strong> = mais específico para LES; <strong>Anti-dsDNA</strong> = monitora atividade da doença</li>
+          <li><strong>Anti-histona</strong> = lúpus induzido por drogas (procainamida, hidralazina)</li>
+          <li><strong>Anti-Jo-1</strong> = síndrome antisintetase: miosite + DPI + artrite + mãos de mecânico</li>
+          <li><strong>Anti-Scl-70</strong> = esclerose sistêmica difusa + DPI fibrosante; <strong>Anti-centrômero</strong> = forma limitada (CREST) + HAP</li>
+          <li><strong>LAC in vitro prolonga PTT</strong> mas é pró-trombótico in vivo — paradoxo do SAF</li>
+          <li><strong>Tipo IV não envolve anticorpos</strong> — transferência passiva por células, não soro</li>
+          <li><strong>C4 normal excluem AEH</strong> com especificidade razoável (C4 ↓ mesmo fora de crise em AEH)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card blue">
+        <div class="card-title">Transplante — Pérolas de Prova</div>
+        <ul>
+          <li><strong>C4d+ + DSA + capilarite peritubular</strong> = AMR aguda ou crônica</li>
+          <li><strong>GvHD ≠ rejeição</strong>: no GvHD, os linfócitos do DOADOR atacam o HOSPEDEIRO</li>
+          <li><strong>Azatioprina + alopurinol</strong> = interação fatal: a xantina oxidase metaboliza azatioprina; alopurinol inibe XO → ↑ toxicidade da azatioprina → mielossupressão grave. Reduzir dose para 25% ou substituir por MMF</li>
+          <li><strong>Eculizumabe</strong> → vacinação anti-meningocócica obrigatória + profilaxia com penicilina nas primeiras 2 semanas</li>
+          <li><strong>BK vírus</strong> → nefropatia por poliomavírus em transplantado renal (decoy cells no EAS); manejo = redução da imunossupressão</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <div class="card-title">Farmacologia — Pérolas de Prova</div>
+        <ul>
+          <li><strong>Anti-IL-17 (secuquinumabe)</strong> → agrava Doença de Crohn — contraindicado em DII</li>
+          <li><strong>Tocilizumabe mascara febre</strong> (↓ IL-6 → ↓ temperatura central); atenção ao diagnóstico de infecção</li>
+          <li><strong>Rituximabe</strong> → rastrear HBV obrigatório antes do uso</li>
+          <li><strong>JAKi (tofacitinibe ≥ 10mg 2×)</strong> → risco aumentado de TEV e MACE em > 50 anos com fatores de risco CV</li>
+          <li><strong>Certolizumabe</strong> = único anti-TNF sem porção Fc → não atravessa placenta via FcRn → seguro na gestação</li>
+          <li><strong>Sirolimus</strong> → inibe mTOR → retarda cicatrização → evitar no pós-operatório imediato do transplante</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- MNEMÔNICO FINAL -->
+    <div class="mnemonic">
+      <div class="mnemonic-word">PIRATES</div>
+      <p style="font-size:0.85rem;color:var(--text3);margin-bottom:0.75rem;">Causas de Imunodeficiência Secundária</p>
+      <ul>
+        <li><strong>P</strong>rematurity (prematuridade — baixos anticorpos maternos transferidos)</li>
+        <li><strong>I</strong>mmunossuppression (corticoides, quimioterapia, biológicos)</li>
+        <li><strong>R</strong>adiation (irradiação)</li>
+        <li><strong>A</strong>IDS / HIV</li>
+        <li><strong>T</strong>umors / hematologic malignancies (mieloma, linfoma, LLC)</li>
+        <li><strong>E</strong>lderly (imunossenescência)</li>
+        <li><strong>S</strong>plenectomy / asplenia (esplenectomia ou asplenia funcional)</li>
+      </ul>
+    </div>
+
+  </section>
+</div>
+
+<footer>
+  <p>Medicina Interna Avançada · Módulo IX — Distúrbios Imunitários</p>
+  <p style="margin-top:0.5rem;">Baseado em Harrison's, Abbas & Lichtman, UpToDate e diretrizes internacionais · 2025–2026</p>
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    document.getElementById('progress-bar').style.width = progress + '%';
+  });
+
+  // Tab system
+  function showTab(id, btn) {
+    const parent = btn.closest('.card, .card.purple');
+    const allContents = parent ? parent.querySelectorAll('.tab-content') : document.querySelectorAll('#' + id).length > 0 ? [] : [];
+    const allBtns = btn.closest('.tab-nav').querySelectorAll('.tab-btn');
+
+    allBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // find the tab content container
+    const container = btn.closest('[class]');
+    document.getElementById(id).parentElement.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // Board questions
+  function selectOption(el, qId, isCorrect) {
+    const opts = document.querySelectorAll('#' + qId + '-opts li');
+    opts.forEach(o => {
+      o.classList.remove('correct', 'wrong');
+      o.style.pointerEvents = 'none';
+    });
+    el.classList.add(isCorrect ? 'correct' : 'wrong');
+    if (!isCorrect) {
+      opts.forEach(o => {
+        if (o.onclick && o.onclick.toString().includes('true')) o.classList.add('correct');
+      });
+    }
+    document.getElementById(qId + '-answer').classList.add('visible');
+  }
+
+  // Smooth section reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.05 });
+
+  document.querySelectorAll('.card, .board-question, .mnemonic, .callout').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inflamação Aguda — Patologia Médica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crimson: #8B1A1A;
+    --crimson-light: #B22222;
+    --crimson-pale: #f9f0f0;
+    --crimson-mid: #e8c5c5;
+    --gold: #C8A84B;
+    --gold-light: #e8cc7a;
+    --ink: #1a1208;
+    --ink-mid: #3d2e1a;
+    --ink-light: #6b5744;
+    --parchment: #faf7f2;
+    --parchment-dark: #f0ead8;
+    --parchment-mid: #e8dfc8;
+    --white: #ffffff;
+    --sidebar-w: 280px;
+    --content-max: 900px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--parchment);
+    color: var(--ink);
+    line-height: 1.8;
+    font-size: 17px;
+  }
+
+  /* ─── SIDEBAR ─── */
+  #sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--ink);
+    color: var(--parchment);
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    border-right: 3px solid var(--gold);
+  }
+
+  #sidebar-logo {
+    padding: 28px 22px 18px;
+    border-bottom: 1px solid rgba(200,168,75,0.3);
+  }
+
+  #sidebar-logo .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  #sidebar-logo h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--parchment);
+    line-height: 1.3;
+  }
+
+  #sidebar nav { padding: 14px 0 30px; flex: 1; }
+
+  #sidebar nav a {
+    display: block;
+    padding: 8px 22px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 12.5px;
+    color: rgba(250,247,242,0.7);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+    line-height: 1.4;
+  }
+
+  #sidebar nav a:hover,
+  #sidebar nav a.active {
+    color: var(--gold-light);
+    border-left-color: var(--gold);
+    background: rgba(200,168,75,0.08);
+    padding-left: 26px;
+  }
+
+  #sidebar nav .nav-section {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 18px 22px 6px;
+  }
+
+  /* ─── MAIN ─── */
+  #main {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    background: var(--ink);
+    padding: 80px 60px 70px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 4px solid var(--gold);
+  }
+
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 80% 50%, rgba(139,26,26,0.35) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(200,168,75,0.1) 0%, transparent 60%);
+  }
+
+  #hero::after {
+    content: '🔥';
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 120px;
+    opacity: 0.08;
+  }
+
+  #hero .subject {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  #hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 18px;
+    position: relative;
+  }
+
+  #hero h1 em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  #hero .subtitle {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    color: rgba(250,247,242,0.65);
+    max-width: 600px;
+    position: relative;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  #hero .tags {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  #hero .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 5px 12px;
+    border: 1px solid rgba(200,168,75,0.5);
+    color: var(--gold-light);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* ─── CONTENT WRAPPER ─── */
+  #content {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 60px 60px 100px;
+  }
+
+  /* ─── SECTION ─── */
+  .section {
+    margin-bottom: 72px;
+    scroll-margin-top: 30px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--parchment-mid);
+  }
+
+  .section-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--crimson);
+    background: var(--crimson-pale);
+    border: 1px solid var(--crimson-mid);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+
+  .section h2 .emoji {
+    margin-right: 6px;
+  }
+
+  .section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink-mid);
+    margin: 36px 0 14px;
+    padding-left: 14px;
+    border-left: 3px solid var(--gold);
+  }
+
+  .section h4 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--crimson);
+    margin: 26px 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 13px;
+  }
+
+  .section p {
+    margin-bottom: 16px;
+    color: var(--ink-mid);
+  }
+
+  /* ─── BLOCKQUOTE ─── */
+  blockquote {
+    margin: 28px 0;
+    padding: 20px 26px;
+    background: var(--parchment-dark);
+    border-left: 4px solid var(--gold);
+    font-style: italic;
+    color: var(--ink-mid);
+    position: relative;
+  }
+
+  blockquote::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    color: var(--gold);
+    opacity: 0.25;
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    line-height: 1;
+  }
+
+  blockquote cite {
+    display: block;
+    margin-top: 10px;
+    font-size: 13px;
+    font-style: normal;
+    color: var(--ink-light);
+  }
+
+  /* ─── TABLES ─── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+    border: 1px solid var(--parchment-mid);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead th {
+    background: var(--ink);
+    color: var(--parchment);
+    padding: 11px 14px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  tbody tr:nth-child(even) { background: var(--parchment-dark); }
+  tbody tr:hover { background: var(--crimson-pale); }
+
+  tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--parchment-mid);
+    color: var(--ink-mid);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  tbody td strong { color: var(--ink); }
+
+  /* ─── CODE BLOCKS ─── */
+  pre {
+    background: var(--ink);
+    color: #e8dfc8;
+    padding: 22px 26px;
+    overflow-x: auto;
+    margin: 24px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    border-left: 3px solid var(--gold);
+    position: relative;
+  }
+
+  pre::before {
+    content: 'ESQUEMA MOLECULAR';
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    opacity: 0.7;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--parchment-dark);
+    padding: 2px 6px;
+    color: var(--crimson);
+    border: 1px solid var(--crimson-mid);
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+    border: none;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  /* ─── CALLOUTS ─── */
+  .callout {
+    margin: 28px 0;
+    padding: 20px 24px;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .callout-warning {
+    background: #fff8e6;
+    border-left: 4px solid var(--gold);
+  }
+
+  .callout-clinical {
+    background: #f0f7ff;
+    border-left: 4px solid #2563EB;
+  }
+
+  .callout-danger {
+    background: var(--crimson-pale);
+    border-left: 4px solid var(--crimson);
+  }
+
+  .callout-tip {
+    background: #f0fdf4;
+    border-left: 4px solid #16a34a;
+  }
+
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .callout-warning .callout-label { color: #92400e; }
+  .callout-clinical .callout-label { color: #1d4ed8; }
+  .callout-danger .callout-label { color: var(--crimson); }
+  .callout-tip .callout-label { color: #166534; }
+
+  /* ─── FORMULA ─── */
+  .formula-block {
+    background: var(--ink);
+    color: var(--parchment);
+    padding: 24px 32px;
+    margin: 28px 0;
+    text-align: center;
+    border: 1px solid var(--gold);
+    position: relative;
+  }
+
+  .formula-block .formula-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .formula-block .formula-math {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--white);
+    line-height: 1.6;
+  }
+
+  /* ─── EXERCISE ─── */
+  .exercise {
+    margin: 32px 0;
+    border: 1px solid var(--parchment-mid);
+    overflow: hidden;
+  }
+
+  .exercise-header {
+    background: var(--ink-mid);
+    color: var(--parchment);
+    padding: 12px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .exercise-body {
+    padding: 20px 24px;
+    background: var(--parchment-dark);
+  }
+
+  .exercise-body p { margin-bottom: 12px; }
+
+  details.answer {
+    margin-top: 16px;
+    border: 1px solid var(--parchment-mid);
+  }
+
+  details.answer summary {
+    padding: 10px 16px;
+    background: var(--crimson-pale);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--crimson);
+    user-select: none;
+  }
+
+  details.answer summary:hover { background: var(--crimson-mid); }
+
+  details.answer .answer-content {
+    padding: 16px 20px;
+    background: white;
+    font-size: 15px;
+    color: var(--ink-mid);
+    line-height: 1.7;
+  }
+
+  /* ─── MEDIATOR CARDS ─── */
+  .mediator-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .mediator-card {
+    border: 1px solid var(--parchment-mid);
+    padding: 18px;
+    background: white;
+    position: relative;
+    transition: box-shadow 0.2s;
+  }
+
+  .mediator-card:hover { box-shadow: 4px 4px 0 var(--crimson-mid); }
+
+  .mediator-card .mc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--crimson);
+    margin-bottom: 4px;
+  }
+
+  .mediator-card .mc-source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+
+  .mediator-card .mc-effect {
+    font-size: 13.5px;
+    color: var(--ink-mid);
+    line-height: 1.6;
+  }
+
+  /* ─── PATHWAY ─── */
+  .pathway {
+    background: #0f1a0f;
+    color: #a8e6a8;
+    padding: 24px 28px;
+    margin: 24px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    border-left: 3px solid #4ade80;
+    overflow-x: auto;
+  }
+
+  .pathway .arrow { color: #4ade80; }
+  .pathway .molecule { color: #fbbf24; font-weight: 500; }
+  .pathway .enzyme { color: #a78bfa; }
+  .pathway .effect { color: #f87171; }
+
+  /* ─── DRUG TABLE ─── */
+  .drug-card {
+    display: grid;
+    grid-template-columns: 180px 1fr 1fr;
+    gap: 0;
+    margin-bottom: 4px;
+    border: 1px solid var(--parchment-mid);
+    overflow: hidden;
+    font-size: 14px;
+  }
+
+  .drug-card:hover { border-color: var(--crimson-mid); }
+
+  .drug-card .drug-name {
+    background: var(--crimson);
+    color: white;
+    padding: 12px 16px;
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .drug-card .drug-mech,
+  .drug-card .drug-ind {
+    padding: 12px 16px;
+    background: white;
+    color: var(--ink-mid);
+    line-height: 1.5;
+  }
+
+  .drug-card .drug-mech { border-right: 1px solid var(--parchment-mid); }
+
+  /* ─── CASE CLINICAL ─── */
+  .case-box {
+    margin: 36px 0;
+    border: 2px solid var(--ink);
+    overflow: hidden;
+  }
+
+  .case-header {
+    background: var(--ink);
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .case-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .case-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 4px 10px;
+  }
+
+  .case-body { padding: 24px; background: white; }
+
+  .case-vitals {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 16px 0 24px;
+  }
+
+  .vital-item {
+    background: var(--parchment-dark);
+    padding: 10px 14px;
+    border-left: 3px solid var(--crimson);
+  }
+
+  .vital-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--ink-light);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .vital-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--crimson);
+  }
+
+  /* ─── REFERENCE LIST ─── */
+  .ref-list { list-style: none; }
+
+  .ref-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--parchment-mid);
+    font-size: 14px;
+    color: var(--ink-mid);
+    display: flex;
+    gap: 14px;
+  }
+
+  .ref-list li .ref-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--crimson);
+    flex-shrink: 0;
+    margin-top: 2px;
+    min-width: 30px;
+  }
+
+  .ref-list a {
+    color: var(--crimson-light);
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  .ref-list a:hover { text-decoration: underline; }
+
+  /* ─── TOC ─── */
+  .toc-box {
+    background: var(--parchment-dark);
+    border: 1px solid var(--parchment-mid);
+    padding: 28px 32px;
+    margin-bottom: 56px;
+    border-top: 3px solid var(--gold);
+  }
+
+  .toc-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    margin-bottom: 18px;
+    color: var(--ink);
+    border-left: none;
+    padding-left: 0;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 24px;
+  }
+
+  .toc-grid a {
+    font-size: 14px;
+    color: var(--ink-mid);
+    text-decoration: none;
+    padding: 4px 0;
+    border-bottom: 1px dotted var(--parchment-mid);
+    display: flex;
+    gap: 10px;
+  }
+
+  .toc-grid a:hover { color: var(--crimson); }
+
+  .toc-grid a .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ─── SUMMARY FINAL ─── */
+  .summary-final {
+    background: var(--ink);
+    color: var(--parchment);
+    padding: 40px 48px;
+    margin: 48px 0;
+    border: 3px solid var(--gold);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .summary-final::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(139,26,26,0.3) 0%, transparent 60%);
+  }
+
+  .summary-final h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--gold);
+    margin-bottom: 20px;
+    border: none;
+    padding: 0;
+    position: relative;
+  }
+
+  .summary-final pre {
+    background: rgba(250,247,242,0.05);
+    border-left-color: var(--gold);
+    color: #c8e6c9;
+    position: relative;
+  }
+
+  .summary-final pre::before { display: none; }
+
+  /* ─── HELPER ─── */
+  ul, ol {
+    padding-left: 22px;
+    margin: 12px 0 16px;
+  }
+
+  li { margin-bottom: 6px; color: var(--ink-mid); }
+  li strong { color: var(--ink); }
+
+  strong { color: var(--ink); }
+  em { color: var(--ink-mid); }
+
+  a { color: var(--crimson-light); }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--parchment-mid);
+    margin: 40px 0;
+  }
+
+  .gold { color: var(--gold); }
+  .crimson { color: var(--crimson); }
+
+  /* ─── SCROLL TOP ─── */
+  #scroll-top {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 44px;
+    height: 44px;
+    background: var(--crimson);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 200;
+  }
+
+  #scroll-top.visible { opacity: 1; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    :root { --sidebar-w: 0px; }
+    #sidebar { display: none; }
+    #main { margin-left: 0; }
+    #content { padding: 40px 24px 80px; }
+    #hero { padding: 50px 24px 44px; }
+    .toc-grid { grid-template-columns: 1fr; }
+    .drug-card { grid-template-columns: 1fr; }
+    .case-vitals { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media print {
+    #sidebar, #scroll-top { display: none; }
+    #main { margin-left: 0; }
+    .section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div id="sidebar-logo">
+    <div class="eyebrow">Patologia — Medicina Interna</div>
+    <h2>Inflamação<br>Aguda</h2>
+  </div>
+  <nav>
+    <div class="nav-section">Fundamentos</div>
+    <a href="#sec1">1. Etimologia &amp; História</a>
+    <a href="#sec2">2. Definição Formal</a>
+    <a href="#sec3">3. Teleologia &amp; Evolução</a>
+    <a href="#sec4">4. Estímulos Desencadeantes</a>
+    <div class="nav-section">Molecular</div>
+    <a href="#sec5">5. PRRs, PAMPs &amp; DAMPs</a>
+    <a href="#sec6">6. Fases da Inflamação</a>
+    <a href="#sec7">7. Eventos Vasculares</a>
+    <a href="#sec8">8. Recrutamento Leucocitário</a>
+    <a href="#sec9">9. Fagocitose &amp; NETs</a>
+    <div class="nav-section">Mediadores</div>
+    <a href="#sec10a">10a. Histamina</a>
+    <a href="#sec10b">10b. Eicosanoides</a>
+    <a href="#sec10c">10c. Citocinas</a>
+    <a href="#sec10d">10d. Complemento</a>
+    <a href="#sec10e">10e. Cininas &amp; NO</a>
+    <div class="nav-section">Clínica</div>
+    <a href="#sec11">11. Sinais Cardinais</a>
+    <a href="#sec12">12. Manifestações Sistêmicas</a>
+    <a href="#sec13">13. Histologia &amp; Morfologia</a>
+    <a href="#sec14">14. Desfechos</a>
+    <a href="#sec15">15. Diagnóstico &amp; Terapêutica</a>
+    <a href="#sec16">16. Casos Clínicos</a>
+    <a href="#sec17">17. Referências</a>
+  </nav>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+  <!-- HERO -->
+  <header id="hero">
+    <div class="subject">Patologia · Medicina Interna &amp; Intensiva · Nível Avançado</div>
+    <h1>🔥 Inflamação <em>Aguda</em></h1>
+    <p class="subtitle">Da Molécula à Beira do Leito — Mediadores, Fases e Células em profundidade exaustiva</p>
+    <div class="tags">
+      <span class="tag">Imunologia Inata</span>
+      <span class="tag">Fisiopatologia</span>
+      <span class="tag">Farmacologia</span>
+      <span class="tag">Histologia</span>
+      <span class="tag">Casos Clínicos</span>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- TOC -->
+    <div class="toc-box">
+      <h3>📌 Índice Geral</h3>
+      <div class="toc-grid">
+        <a href="#sec1"><span class="toc-num">01</span> Etimologia &amp; História</a>
+        <a href="#sec10a"><span class="toc-num">10a</span> Histamina</a>
+        <a href="#sec2"><span class="toc-num">02</span> Definição Formal</a>
+        <a href="#sec10b"><span class="toc-num">10b</span> Eicosanoides (COX, LOX, SPMs)</a>
+        <a href="#sec3"><span class="toc-num">03</span> Teleologia &amp; Evolução</a>
+        <a href="#sec10c"><span class="toc-num">10c</span> Citocinas (TNF-α, IL-1β, IL-6, IL-8)</a>
+        <a href="#sec4"><span class="toc-num">04</span> Estímulos Desencadeantes</a>
+        <a href="#sec10d"><span class="toc-num">10d</span> Sistema Complemento</a>
+        <a href="#sec5"><span class="toc-num">05</span> PRRs, PAMPs &amp; DAMPs</a>
+        <a href="#sec10e"><span class="toc-num">10e</span> Cininas &amp; Óxido Nítrico</a>
+        <a href="#sec6"><span class="toc-num">06</span> Fases da Inflamação Aguda</a>
+        <a href="#sec11"><span class="toc-num">11</span> 5 Sinais Cardinais (detalhe)</a>
+        <a href="#sec7"><span class="toc-num">07</span> Eventos Vasculares (Poiseuille, Starling)</a>
+        <a href="#sec12"><span class="toc-num">12</span> Manifestações Sistêmicas</a>
+        <a href="#sec8"><span class="toc-num">08</span> Recrutamento Leucocitário (6 etapas)</a>
+        <a href="#sec13"><span class="toc-num">13</span> Histologia &amp; Morfologia</a>
+        <a href="#sec9"><span class="toc-num">09</span> Fagocitose &amp; NETs</a>
+        <a href="#sec14"><span class="toc-num">14</span> Desfechos</a>
+        <a href="#sec16"><span class="toc-num">16</span> Exercícios &amp; Casos Clínicos</a>
+        <a href="#sec17"><span class="toc-num">17</span> Referências</a>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════ SECTION 1 ═══════════════════════════════ -->
+    <section class="section" id="sec1">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <h2><span class="emoji">📖</span> Etimologia &amp; História</h2>
+      </div>
+
+      <h3>A palavra "Inflamação"</h3>
+      <p>A palavra <strong>inflamação</strong> vem do latim <strong><em>inflammare</em></strong> = <em>in</em> (dentro) + <em>flamma</em> (chama, fogo). Literalmente: <strong>"colocar fogo em"</strong> ou <strong>"atear fogo por dentro"</strong>.</p>
+      <p>Em grego, o equivalente é <strong>φλόγωσις</strong> (<em>phlogosis</em>), da raiz <strong>φλόξ</strong> (<em>phlox</em>) = chama. Daí vem o prefixo médico <strong>flog-</strong> que aparece em termos como <em>flogístico</em> (relacionado à inflamação).</p>
+      <p>O sufixo <strong>-ite</strong> (do grego <em>-itis</em>) significa <strong>inflamação de</strong> — por isso temos: <strong>Apendicite</strong> (apêndice), <strong>Pneumonite</strong> (pulmão), <strong>Hepatite</strong> (<em>hêpar</em> = fígado), <strong>Meningite</strong> (meninges).</p>
+
+      <h3>História do Conceito</h3>
+
+      <h4>🏛️ Século I d.C. — Aulus Cornelius Celsus</h4>
+      <p>Descreveu os <strong>4 sinais cardinais clássicos</strong> da inflamação em sua obra <em>De Medicina</em>: <strong>Rubor</strong> (vermelhidão), <strong>Tumor</strong> (inchaço), <strong>Calor</strong> (calor local) e <strong>Dolor</strong> (dor). (<a href="https://www.ncbi.nlm.nih.gov/books/NBK534263/" target="_blank">NCBi Books</a>)</p>
+
+      <h4>🏛️ Século II d.C. — Claudius Galenus (Galeno)</h4>
+      <p>Adicionou o 5º sinal: <strong>Functio laesa</strong> = perda de função.</p>
+
+      <h4>🔬 1858 — Rudolf Virchow</h4>
+      <p>Pai da <strong>Patologia Celular</strong> (<em>Cellular Pathologie</em>). Estabeleceu que toda doença começa na célula. Descreveu as alterações celulares na inflamação ao microscópio. (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1890533/" target="_blank">PMC1890533</a>)</p>
+
+      <h4>🔬 1882 — Élie Metchnikoff</h4>
+      <p>Descobriu a <strong>fagocitose</strong> ao observar células amebóides em larvas de estrela-do-mar engolfando espinhos. Ganhou o <strong>Nobel de Fisiologia/Medicina em 1908</strong>. (<a href="https://www.nobelprize.org/prizes/medicine/1908/mechnikov/biographical/" target="_blank">nobelprize.org</a>)</p>
+
+      <h4>🔬 Décadas de 1970–2000 — Era Molecular</h4>
+      <p>Descoberta das citocinas (interleucinas, TNF), eicosanoides, sistema complemento, NF-κB e os receptores toll-like (TLRs). A inflamação passou a ser compreendida em nível molecular.</p>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 2 ═══════════════════════════════ -->
+    <section class="section" id="sec2">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <h2><span class="emoji">📐</span> Definição Formal</h2>
+      </div>
+
+      <blockquote>
+        <strong>Inflamação aguda</strong> é a <strong>resposta imediata e inicial do tecido vascularizado</strong> a um agente lesivo, caracterizada por alterações hemodinâmicas, aumento da permeabilidade vascular e acúmulo de leucócitos e proteínas plasmáticas no tecido lesado, com o objetivo de <strong>eliminar o agente causador, remover tecido morto e iniciar o reparo</strong>.
+        <cite>— Kumar, Abbas, Aster — <em>Robbins &amp; Cotran Patologia: Bases da Doença</em>, 10ª ed., 2021 · <a href="https://www.elsevier.com/books/robbins-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9" target="_blank">Elsevier</a></cite>
+      </blockquote>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Termo</th><th>O que significa clinicamente</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Tecido vascularizado</strong></td><td>A inflamação clássica SÓ ocorre onde há vasos. Tecidos avasculares (córnea, cartilagem) têm resposta diferente</td></tr>
+            <tr><td><strong>Resposta imediata</strong></td><td>Acontece em <strong>minutos a horas</strong> — diferente da inflamação crônica que leva dias/semanas</td></tr>
+            <tr><td><strong>Agente lesivo</strong></td><td>Pode ser micro-organismo, toxina, trauma físico, químico, isquemia, corpo estranho</td></tr>
+            <tr><td><strong>Alterações hemodinâmicas</strong></td><td>Vasodilatação + aumento de fluxo = rubor + calor</td></tr>
+            <tr><td><strong>Aumento de permeabilidade</strong></td><td>Proteínas e células saem dos vasos = edema + tumor</td></tr>
+            <tr><td><strong>Acúmulo de leucócitos</strong></td><td>Especialmente neutrófilos nas primeiras horas</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 3 ═══════════════════════════════ -->
+    <section class="section" id="sec3">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <h2><span class="emoji">🧬</span> Por que a inflamação existe? — Teleologia &amp; Evolução</h2>
+      </div>
+
+      <p>A inflamação é uma das respostas mais <strong>conservadas evolutivamente</strong> em todo o reino animal. Organismos sem sistema nervoso central já apresentam respostas inflamatórias primitivas.</p>
+      <p><strong>Teleologicamente</strong> (do grego <em>telos</em> = fim, propósito), a inflamação existe para:</p>
+      <ol>
+        <li><strong>Diluir</strong> o agente lesivo (com fluido plasmático rico em anticorpos e proteínas)</li>
+        <li><strong>Destruir</strong> o agente (por neutrófilos, macrófagos, complemento)</li>
+        <li><strong>Delimitar</strong> a área de dano (coágulo de fibrina cria uma barreira)</li>
+        <li><strong>Iniciar o reparo</strong> tecidual</li>
+      </ol>
+
+      <div class="callout callout-danger">
+        <div class="callout-label">⚠️ Paradoxo da Inflamação</div>
+        <p>A mesma resposta projetada para nos proteger pode nos destruir quando <strong>descontrolada</strong> (sepse, SIRS — <em>Systemic Inflammatory Response Syndrome</em> / Síndrome de Resposta Inflamatória Sistêmica), <strong>direcionada erroneamente</strong> (doenças autoimunes: artrite reumatoide, lúpus) ou <strong>crônica e não resolvida</strong> (aterosclerose, diabetes tipo 2, Alzheimer, câncer).</p>
+      </div>
+
+      <blockquote>
+        "A inflamação é uma faca de dois gumes — projetada para curar, mas capaz de matar."
+        <cite>— Charles Serhan, Harvard Medical School · <a href="https://www.cell.com/cell/fulltext/S0092-8674(14)01322-X" target="_blank">Cell, 2014</a></cite>
+      </blockquote>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 4 ═══════════════════════════════ -->
+    <section class="section" id="sec4">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <h2><span class="emoji">⚡</span> Estímulos que Desencadeiam a Inflamação Aguda</h2>
+      </div>
+
+      <div class="mediator-grid">
+        <div class="mediator-card">
+          <div class="mc-name">Infecções</div>
+          <div class="mc-source">EXÓGENO · BIÓTICO</div>
+          <div class="mc-effect">Bactérias (gram + e −), vírus (SARS-CoV-2, influenza, dengue), fungos (<em>Candida, Aspergillus</em>), parasitas (<em>Plasmodium, Leishmania</em>)</div>
+        </div>
+        <div class="mediator-card">
+          <div class="mc-name">Necrose Tecidual</div>
+          <div class="mc-source">ENDÓGENO · DAMPs</div>
+          <div class="mc-effect">Células mortas liberam moléculas intracelulares (HMGB1, ATP, DNA mitocondrial) que normalmente nunca ficam no espaço extracelular → reconhecidas como perigo</div>
+        </div>
+        <div class="mediator-card">
+          <div class="mc-name">Corpos Estranhos</div>
+          <div class="mc-source">EXÓGENO · ABIÓTICO</div>
+          <div class="mc-effect">Fragmentos de madeira, metal, sílica, suturas cirúrgicas, cristais de ácido úrico (gota), cristais de pirofosfato de cálcio (pseudogota)</div>
+        </div>
+        <div class="mediator-card">
+          <div class="mc-name">Reações Imunes</div>
+          <div class="mc-source">ENDÓGENO · HIPERSENSIBILIDADE</div>
+          <div class="mc-effect">Tipo I (IgE — alergia), Tipo II (anticorpos citotóxicos), Tipo III (imunocomplexos), Tipo IV (mediada por célula T)</div>
+        </div>
+        <div class="mediator-card">
+          <div class="mc-name">Agressões Físicas/Químicas</div>
+          <div class="mc-source">EXÓGENO · FÍSICO-QUÍMICO</div>
+          <div class="mc-effect">Queimaduras térmicas ou químicas, radiação ionizante, trauma mecânico, isquemia-reperfusão (reentrada de oxigênio gera radicais livres)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 5 ═══════════════════════════════ -->
+    <section class="section" id="sec5">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <h2><span class="emoji">🔍</span> Reconhecimento do Perigo — PRRs, PAMPs e DAMPs</h2>
+      </div>
+
+      <h3>Danger Theory — Polly Matzinger, 1994</h3>
+      <p>Em <strong>1994</strong>, <strong>Polly Matzinger</strong> (NIH) propôs a <strong>"Danger Theory" (Teoria do Perigo)</strong>:</p>
+      <blockquote>
+        O sistema imune responde a <strong>sinais de perigo ou dano</strong>, sejam eles de origem exógena (micróbios) ou endógena (células mortas).
+        <cite>— <a href="https://www.science.org/doi/10.1126/science.8009215" target="_blank">Science, 1994</a></cite>
+      </blockquote>
+
+      <h3>PRRs — Pattern Recognition Receptors</h3>
+      <p><strong>PRR</strong> = receptores expressos em células do sistema imune inato que reconhecem padrões moleculares associados a patógenos ou dano. <em>Pattern</em> (inglês) = padrão; <em>Recognition</em> = reconhecimento; <em>Receptor</em> = do latim <em>recipere</em> = receber.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tipo de PRR</th><th>Localização</th><th>O que reconhece</th></tr></thead>
+          <tbody>
+            <tr><td><strong>TLRs</strong> (Toll-Like Receptors / Receptores Toll-Like)</td><td>Superfície celular e endossomas</td><td>PAMPs bacterianos e virais</td></tr>
+            <tr><td><strong>NLRs</strong> (NOD-Like Receptors)</td><td>Citoplasma</td><td>PAMPs e DAMPs intracelulares</td></tr>
+            <tr><td><strong>RLRs</strong> (RIG-I-Like Receptors)</td><td>Citoplasma</td><td>RNA viral de dupla fita</td></tr>
+            <tr><td><strong>CLRs</strong> (C-type Lectin Receptors)</td><td>Superfície celular</td><td>Carboidratos de fungos e bactérias</td></tr>
+            <tr><td><strong>cGAS-STING</strong></td><td>Citoplasma</td><td>DNA citoplasmático (vírus, bactérias)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Via do TLR-4 — Receptor do LPS</h3>
+      <div class="pathway">
+<span class="molecule">LPS</span> <span class="arrow">→</span> liga-se a <span class="molecule">CD14</span> e <span class="molecule">MD-2</span> (co-receptores)
+<span class="arrow">→</span> complexo <span class="molecule">LPS-CD14-MD-2-TLR4</span>
+<span class="arrow">→</span> ativação de <span class="enzyme">MyD88</span> (proteína adaptadora)
+<span class="arrow">→</span> ativação de <span class="enzyme">IRAK</span> (IL-1 Receptor-Associated Kinase) e <span class="enzyme">TRAF6</span>
+<span class="arrow">→</span> ativação de <span class="molecule">NF-κB</span> (Nuclear Factor kappa B)
+<span class="arrow">→</span> transcrição: <span class="effect">TNF-α, IL-1β, IL-6, IL-8, COX-2</span>
+      </div>
+      <p>(<a href="https://www.nature.com/articles/nri1785" target="_blank">Nature Reviews Immunology, 2005</a>)</p>
+
+      <h3>PAMPs — Pathogen-Associated Molecular Patterns</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>PAMP</th><th>Origem</th><th>Receptor (PRR)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>LPS</strong> (Lipopolissacarídeo)</td><td>Parede celular de gram-negativos</td><td>TLR-4</td></tr>
+            <tr><td><strong>Peptidoglicano</strong></td><td>Parede celular de gram-positivos</td><td>TLR-2</td></tr>
+            <tr><td><strong>Flagelina</strong></td><td>Flagelos bacterianos</td><td>TLR-5</td></tr>
+            <tr><td><strong>dsRNA</strong></td><td>Vírus de RNA</td><td>TLR-3, RIG-I</td></tr>
+            <tr><td><strong>ssRNA</strong></td><td>Vírus de RNA</td><td>TLR-7, TLR-8</td></tr>
+            <tr><td><strong>CpG DNA</strong></td><td>DNA bacteriano não metilado</td><td>TLR-9</td></tr>
+            <tr><td><strong>β-glucana</strong></td><td>Parede celular fúngica</td><td>Dectina-1 (CLR)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>DAMPs — Damage-Associated Molecular Patterns</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>DAMP</th><th>Origem</th><th>Efeito</th></tr></thead>
+          <tbody>
+            <tr><td><strong>HMGB1</strong> (High Mobility Group Box 1)</td><td>Núcleo celular</td><td>Liga-se a TLR-4 e RAGE → inflamação intensa</td></tr>
+            <tr><td><strong>ATP extracelular</strong></td><td>Mitocôndrias e citoplasma</td><td>Receptores P2X/P2Y → ativa inflamassoma</td></tr>
+            <tr><td><strong>Ácido úrico</strong> (cristais)</td><td>Degradação de purinas</td><td>Ativa inflamassoma NLRP3 → IL-1β → gota</td></tr>
+            <tr><td><strong>DNA mitocondrial</strong></td><td>Mitocôndrias</td><td>Parecido com DNA bacteriano → TLR-9</td></tr>
+            <tr><td><strong>HSPs</strong> (Heat Shock Proteins)</td><td>Citoplasma</td><td>TLR-4 e TLR-2</td></tr>
+            <tr><td><strong>Cristais de colesterol</strong></td><td>LDL oxidado</td><td>NLRP3 → aterosclerose</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>O Inflamassoma NLRP3 — A "Bomba Molecular"</h3>
+      <p>Descoberto por <strong>Jürg Tschopp em 2002</strong> (<a href="https://www.nature.com/articles/nature00893" target="_blank">Nature, 2002</a>), o inflamassoma é um complexo multiproteico que ativa a caspase-1.</p>
+      <div class="pathway">
+<strong>SINAL 1</strong> (Priming): <span class="molecule">NF-κB</span> ativado por TLRs
+<span class="arrow">→</span> ↑ expressão de <span class="molecule">NLRP3</span> e <span class="molecule">pró-IL-1β</span>
+
+<strong>SINAL 2</strong> (Ativação): cristais de urato, ATP, β-amiloide, cristais de colesterol
+<span class="arrow">→</span> formação do complexo <span class="molecule">NLRP3 + ASC + pró-caspase-1</span>
+<span class="arrow">→</span> autoclivagem → ativação da <span class="enzyme">CASPASE-1</span>
+
+<span class="enzyme">Caspase-1</span> ativa cliva:
+<span class="arrow">→</span> <span class="molecule">pró-IL-1β</span> <span class="arrow">→</span> <span class="effect">IL-1β ativa</span> (poderoso pirógeno)
+<span class="arrow">→</span> <span class="molecule">pró-IL-18</span> <span class="arrow">→</span> <span class="effect">IL-18 ativa</span>
+<span class="arrow">→</span> <span class="molecule">Gasdermin D</span> <span class="arrow">→</span> poros na membrana → <span class="effect">PIROPTOSE</span>
+      </div>
+
+      <div class="callout callout-clinical">
+        <div class="callout-label">🏥 Importância Clínica do NLRP3</div>
+        <ul>
+          <li><strong>Gota:</strong> cristais de urato ativam NLRP3 → crise inflamatória aguda</li>
+          <li><strong>Alzheimer:</strong> β-amiloide ativa NLRP3 → neuroinflamação</li>
+          <li><strong>Aterosclerose:</strong> cristais de colesterol ativam NLRP3</li>
+          <li><strong>Diabetes tipo 2:</strong> ácidos graxos saturados ativam NLRP3 → inflamação de ilhotas</li>
+        </ul>
+        <p style="margin-top:10px;">(<a href="https://www.nature.com/articles/s41573-019-0032-7" target="_blank">Nature Reviews Drug Discovery, 2019</a>)</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 6 ═══════════════════════════════ -->
+    <section class="section" id="sec6">
+      <div class="section-header">
+        <div class="section-number">6</div>
+        <h2><span class="emoji">🌊</span> Fases da Inflamação Aguda</h2>
+      </div>
+      <pre>
+FASE 1: Reconhecimento do agente lesivo (segundos)
+         ↓
+FASE 2: Ativação de mastócitos e macrófagos residentes (segundos a minutos)
+         ↓
+FASE 3: Resposta vascular — vasodilatação + aumento de permeabilidade (minutos)
+         ↓
+FASE 4: Recrutamento leucocitário — marginação, rolamento, adesão, transmigração (horas)
+         ↓
+FASE 5: Fagocitose e destruição do agente lesivo (horas a dias)
+         ↓
+FASE 6: Resolução ou progressão para cronicidade (dias)</pre>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 7 ═══════════════════════════════ -->
+    <section class="section" id="sec7">
+      <div class="section-header">
+        <div class="section-number">7</div>
+        <h2><span class="emoji">🩸</span> Eventos Vasculares — Detalhe Molecular Completo</h2>
+      </div>
+
+      <h3>Sequência Temporal</h3>
+      <ul>
+        <li><strong>Fase 1 — Vasoconstrição transitória (0–segundos):</strong> Reflexo axonal imediato — dura apenas 3–5 segundos.</li>
+        <li><strong>Fase 2 — Vasodilatação arteriolar (segundos a minutos):</strong> Mediada por histamina, bradicinina, PGE2, PGI2, NO → ↑ fluxo sanguíneo → <strong>Rubor + Calor</strong>.</li>
+        <li><strong>Fase 3 — Estase (minutos a horas):</strong> Proteínas saem dos vasos → ↑ viscosidade → ↓ velocidade → marginação leucocitária.</li>
+      </ul>
+
+      <h3>Lei de Poiseuille — A Física do Rubor</h3>
+      <div class="formula-block">
+        <div class="formula-title">Lei de Poiseuille — Fluxo em Vasos</div>
+        <div class="formula-math">Q = (π · r⁴ · ΔP) / (8 · η · L)</div>
+      </div>
+      <p><strong>Q</strong> = fluxo · <strong>r</strong> = raio (elevado à 4ª potência!) · <strong>ΔP</strong> = gradiente de pressão · <strong>η</strong> = viscosidade · <strong>L</strong> = comprimento</p>
+
+      <div class="exercise">
+        <div class="exercise-header">📐 Exercício 1 — Lei de Poiseuille na Inflamação</div>
+        <div class="exercise-body">
+          <p>Se o raio de uma arteríola aumenta <strong>25%</strong> durante a inflamação, qual o aumento proporcional no fluxo sanguíneo?</p>
+          <details class="answer">
+            <summary>▶ Ver Resposta</summary>
+            <div class="answer-content">
+              <p>Q ∝ r⁴. Se r aumenta 25% (r_novo = 1,25r):</p>
+              <p><strong>Q_novo/Q_original = (1,25r)⁴/r⁴ = (1,25)⁴ = 2,44</strong></p>
+              <p>O fluxo aumenta <strong>~144%</strong> — quase 2,5 vezes — com apenas 25% de aumento no raio! Isso explica porque a vasodilatação da inflamação é tão visível clinicamente.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <h3>Equação de Starling — O Edema Inflamatório</h3>
+      <div class="formula-block">
+        <div class="formula-title">Equação de Starling — Troca de Fluidos no Capilar</div>
+        <div class="formula-math">Jᵥ = Kf [(Pc − Pi) − σ(πc − πi)]</div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parâmetro</th><th>Valor Normal</th><th>Na Inflamação</th><th>Consequência</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Pc</strong> (pressão hidrostática capilar)</td><td>35 mmHg (arterial)</td><td>↑ 45 mmHg</td><td>↑ filtração</td></tr>
+            <tr><td><strong>σ</strong> (coeficiente de reflexão)</td><td>1,0</td><td>↓ 0,3</td><td>Proteínas saem facilmente</td></tr>
+            <tr><td><strong>πc</strong> (pressão oncótica capilar)</td><td>28 mmHg</td><td>↓ 20 mmHg</td><td>↓ retenção de água</td></tr>
+            <tr><td><strong>πi</strong> (pressão oncótica intersticial)</td><td>8 mmHg</td><td>↑ 18 mmHg</td><td>↑ atração de água para o interstício</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">📐 Exercício 2 — Transudato vs. Exsudato (Critérios de Light)</div>
+        <div class="exercise-body">
+          <p>Diferencie transudato de exsudato e aplique os Critérios de Light para derrame pleural.</p>
+          <details class="answer">
+            <summary>▶ Ver Resposta</summary>
+            <div class="answer-content">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Característica</th><th>Transudato</th><th>Exsudato</th></tr></thead>
+                  <tbody>
+                    <tr><td>Mecanismo</td><td>Desequilíbrio de Starling puro</td><td>↑ Permeabilidade vascular</td></tr>
+                    <tr><td>Proteínas</td><td>&lt; 3 g/dL</td><td>&gt; 3 g/dL</td></tr>
+                    <tr><td>DHL (Desidrogenase Lática)</td><td>Baixa</td><td>Alta</td></tr>
+                    <tr><td>Aspecto</td><td>Claro, amarelo-palha</td><td>Turvo, pode ser purulento</td></tr>
+                    <tr><td>Causas</td><td>ICC, cirrose, síndrome nefrótica</td><td>Pneumonia, TB, câncer, TEP</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p><strong>Critérios de Light</strong> — É exsudato se ≥ 1 critério:</p>
+              <ul>
+                <li>Proteína pleural/proteína sérica &gt; 0,5</li>
+                <li>DHL pleural/DHL sérica &gt; 0,6</li>
+                <li>DHL pleural &gt; 2/3 do limite superior normal sérico</li>
+              </ul>
+              <p>(<a href="https://www.acpjournals.org/doi/10.7326/0003-4819-77-4-507" target="_blank">Light RW, et al. Ann Intern Med. 1972</a>)</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 8 ═══════════════════════════════ -->
+    <section class="section" id="sec8">
+      <div class="section-header">
+        <div class="section-number">8</div>
+        <h2><span class="emoji">🏃</span> Eventos Celulares — Recrutamento Leucocitário</h2>
+      </div>
+
+      <h3>Qual leucócito chega primeiro?</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Leucócito</th><th>Chegada</th><th>Pico</th><th>Função</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Neutrófilos (PMN)</strong></td><td>30–60 min</td><td>6–24h</td><td>Fagocitose, NETs, destruição bacteriana</td></tr>
+            <tr><td><strong>Monócitos → Macrófagos</strong></td><td>24–48h</td><td>48–72h</td><td>Fagocitose, apresentação de antígenos, reparo</td></tr>
+            <tr><td><strong>Linfócitos</strong></td><td>Dias</td><td>4–7 dias</td><td>Resposta adaptativa</td></tr>
+            <tr><td><strong>Eosinófilos</strong></td><td>Horas–dias</td><td>Variável</td><td>Parasitas, alergia</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>As 6 Etapas do Recrutamento Leucocitário</h3>
+
+      <h4>ETAPA 1 — MARGINAÇÃO (Passiva)</h4>
+      <p>Eritrócitos (grandes, deformáveis) acumulam-se no centro (fluxo axial). Leucócitos (mais rígidos) são deslocados para a periferia. Mecanismo: diferença de tamanho e deformabilidade em regime de fluxo laminar com ↑ viscosidade.</p>
+
+      <h4>ETAPA 2 — ROLAMENTO (Rolling)</h4>
+      <p>Endotélio ativado expressa <strong>selectinas</strong>: <strong>P-selectina</strong> (Corpos de Weibel-Palade, liberação imediata por histamina) e <strong>E-selectina</strong> (síntese de novo por TNF-α e IL-1β, horas). Neutrófilos expressam <strong>PSGL-1</strong> (P-Selectin Glycoprotein Ligand-1). Interação fraca e transitória → rolamento lento.</p>
+
+      <div class="callout callout-clinical">
+        <div class="callout-label">🏥 LAD II — Deficiência de Adesão Leucocitária Tipo II</div>
+        <p>Deficiência de <strong>sialil-Lewis X</strong> (ligante de selectina nos neutrófilos) → rolamento prejudicado → infecções bacterianas recorrentes graves desde a infância. Leucocitose marcada pois neutrófilos não conseguem sair dos vasos.</p>
+      </div>
+
+      <h4>ETAPA 3 — ATIVAÇÃO LEUCOCITÁRIA</h4>
+      <p>Quimiocinas apresentadas na superfície endotelial (ligadas a proteoglicanos): <strong>IL-8/CXCL8</strong> (recruta neutrófilos), <strong>MCP-1/CCL2</strong> (recruta monócitos), <strong>RANTES/CCL5</strong> (recruta eosinófilos e linfócitos T). Ligam-se a <strong>GPCRs</strong> (receptores acoplados à proteína G) nos leucócitos → ↑ Ca²⁺ intracelular → mudança conformacional das integrinas de "dobrada" (baixa afinidade) para "estendida" (alta afinidade) = <em>inside-out signaling</em>.</p>
+
+      <h4>ETAPA 4 — ADESÃO FIRME (Firm Adhesion)</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Integrina leucocitária</th><th>Ligante endotelial</th><th>Nome completo</th></tr></thead>
+          <tbody>
+            <tr><td><strong>LFA-1</strong> (αLβ2)</td><td>ICAM-1, ICAM-2</td><td>Lymphocyte Function-associated Antigen 1</td></tr>
+            <tr><td><strong>Mac-1</strong> (αMβ2, CD11b/CD18)</td><td>ICAM-1, iC3b</td><td>Macrophage-1 antigen</td></tr>
+            <tr><td><strong>VLA-4</strong> (α4β1)</td><td>VCAM-1</td><td>Very Late Antigen-4</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-danger">
+        <div class="callout-label">⚠️ LAD I — Deficiência de Adesão Leucocitária Tipo I</div>
+        <p>Mutação no gene da subunidade β2 das integrinas (CD18) → sem LFA-1, sem Mac-1 → sem adesão firme → <strong>leucocitose extrema (&gt;100.000/mm³) + infecções bacterianas/fúngicas graves desde o nascimento + ausência de pus nas infecções</strong>. (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2818163/" target="_blank">PMC2818163</a>)</p>
+      </div>
+
+      <h4>ETAPA 5 — TRANSMIGRAÇÃO / DIAPEDESE</h4>
+      <p>O leucócito intercala-se entre células endoteliais. Requer: <strong>PECAM-1 (CD31)</strong> nas junções endoteliais, degradação da membrana basal por colagenases leucocitárias (MMP-2, MMP-9), e contração das células endoteliais. Ocorre preferencialmente nas <strong>vênulas pós-capilares</strong>.</p>
+
+      <h4>ETAPA 6 — QUIMIOTAXIA</h4>
+      <p>Leucócito segue gradiente de concentração de quimioatraentes em direção ao foco inflamatório:</p>
+      <ul>
+        <li><strong>N-formil peptídeos bacterianos (fMLP):</strong> produzidos por bactérias e mitocôndrias → receptores FPR</li>
+        <li><strong>C5a:</strong> fragmento do complemento</li>
+        <li><strong>LTB4</strong> (Leucotrieno B4): produzido por macrófagos</li>
+        <li><strong>IL-8/CXCL8:</strong> quimiocina de macrófagos e células epiteliais</li>
+      </ul>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 9 ═══════════════════════════════ -->
+    <section class="section" id="sec9">
+      <div class="section-header">
+        <div class="section-number">9</div>
+        <h2><span class="emoji">🍽️</span> Fagocitose &amp; NETs — Mecânica Molecular Completa</h2>
+      </div>
+
+      <h3>Opsonização</h3>
+      <p><strong>Opsonização</strong> (do grego <em>opsonin</em> = "preparar para o jantar"): revestir a partícula com <strong>opsoninas</strong> para facilitar o reconhecimento pelo fagócito.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Opsonina</th><th>Receptor no fagócito</th><th>Eficiência</th></tr></thead>
+          <tbody>
+            <tr><td><strong>IgG</strong> (IgG1 e IgG3)</td><td>FcγRI, FcγRII, FcγRIII</td><td>Alta</td></tr>
+            <tr><td><strong>C3b</strong> (complemento)</td><td>CR1 (Complement Receptor 1)</td><td>Alta</td></tr>
+            <tr><td><strong>iC3b</strong></td><td>CR3 (Mac-1)</td><td>Moderada</td></tr>
+            <tr><td><strong>MBL</strong> (Lectina ligadora de manose)</td><td>Receptores de colectinas</td><td>Moderada</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Burst Oxidativo — Sistema NADPH Oxidase</h3>
+      <div class="pathway">
+<span class="molecule">2O₂</span> + <span class="molecule">NADPH</span> <span class="enzyme">→[NADPH oxidase]→</span> <span class="effect">2O₂•⁻</span> (superóxido) + NADP⁺ + H⁺
+
+<span class="effect">2O₂•⁻</span> + 2H⁺ <span class="enzyme">→[SOD — Superóxido Dismutase]→</span> <span class="effect">H₂O₂</span> + O₂
+
+<span class="effect">H₂O₂</span> + Cl⁻ <span class="enzyme">→[MPO — Mieloperoxidase]→</span> <span class="effect">HOCl</span> (ácido hipocloroso — bactericida máximo)
+
+<span class="effect">H₂O₂</span> + Fe²⁺ <span class="enzyme">→[Reação de Fenton]→</span> <span class="effect">OH•</span> (radical hidroxila — mais reativo)
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">📐 Exercício 3 — Doença Granulomatosa Crônica (CGD)</div>
+        <div class="exercise-body">
+          <p>Por que o teste da dihidrorodamina (DHR) ou do NBT detecta a <strong>Doença Granulomatosa Crônica</strong>?</p>
+          <details class="answer">
+            <summary>▶ Ver Resposta</summary>
+            <div class="answer-content">
+              <p><strong>CGD</strong> (Chronic Granulomatous Disease / Doença Granulomatosa Crônica): mutações na NADPH oxidase (mais comum: gene CYBB no cromossomo X — subunidade gp91phox). Sem NADPH oxidase funcional → sem burst oxidativo → neutrófilos engolfam mas não matam bactérias.</p>
+              <p><strong>Teste do NBT:</strong> neutrófilos normais convertem NBT amarelo em formazana azul/roxa durante o burst oxidativo. Em CGD, o NBT permanece amarelo.</p>
+              <p>Pacientes com CGD: infecções recorrentes por organismos <strong>catalase-positivos</strong> (destroem o H₂O₂ endógeno): <em>Staphylococcus aureus, Aspergillus spp., Nocardia spp., Burkholderia cepacia</em>. (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3511901/" target="_blank">PMC3511901</a>)</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <h3>NETs — Neutrophil Extracellular Traps (Armadilhas Extracelulares de Neutrófilos)</h3>
+      <p>Descoberta revolucionária de <strong>Volker Brinkmann e Arturo Zychlinsky em 2004</strong> (<a href="https://www.science.org/doi/10.1126/science.1092385" target="_blank">Science, 2004</a>). Neutrófilos liberam seu DNA nuclear + proteínas de grânulos (MPO, elastase, histonas) formando uma <strong>rede extracelular</strong> que captura e mata bactérias grandes demais para fagocitose.</p>
+
+      <div class="callout callout-warning">
+        <div class="callout-label">⚠️ Lado Sombrio das NETs</div>
+        <ul>
+          <li><strong>Trombose:</strong> NETs ativam plaquetas e a cascata de coagulação — relevante em COVID-19 grave, IAM, TEP</li>
+          <li><strong>Lúpus (LES):</strong> NETs são fonte de autoantígenos (DNA e histonas citrulinadas) → anti-dsDNA e anti-histonas</li>
+          <li><strong>Artrite reumatoide:</strong> ACPA reconhecem histonas citrulinadas das NETs</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 10a ═══════════════════════════════ -->
+    <section class="section" id="sec10a">
+      <div class="section-header">
+        <div class="section-number">10a</div>
+        <h2><span class="emoji">🧪</span> Mediadores — Histamina</h2>
+      </div>
+
+      <p><strong>Etimologia:</strong> do grego <em>histos</em> (tecido) + <em>amine</em> (composto nitrogenado). Literalmente "amina dos tecidos".</p>
+      <p><strong>Síntese:</strong> L-Histidina → (Histidina Descarboxilase / HDC) → Histamina — usando piridoxal fosfato (vitamina B6) como cofator.</p>
+
+      <h3>Receptores da Histamina</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Receptor</th><th>Localização</th><th>Efeito</th><th>Bloqueador</th></tr></thead>
+          <tbody>
+            <tr><td><strong>H1</strong></td><td>Endotélio, músculo liso brônquico/vascular, SNC</td><td>Vasodilatação, ↑ permeabilidade, broncoespasmo, prurido</td><td>Difenidramina, loratadina, cetirizina</td></tr>
+            <tr><td><strong>H2</strong></td><td>Células parietais gástricas, coração</td><td>↑ secreção ácida gástrica, ↑ FC</td><td>Ranitidina, famotidina</td></tr>
+            <tr><td><strong>H3</strong></td><td>Pré-sináptico no SNC</td><td>Autorreceptor — ↓ síntese de histamina</td><td>—</td></tr>
+            <tr><td><strong>H4</strong></td><td>Mastócitos, eosinófilos</td><td>Quimiotaxia de mastócitos/eosinófilos</td><td>Compostos em pesquisa</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-clinical">
+        <div class="callout-label">🏥 Anti-histamínicos na Prática</div>
+        <p><strong>1ª geração</strong> (difenidramina, clorfeniramina, hidroxizina): lipofílicos → passam BHE → sedação + efeitos anticolinérgicos (boca seca, retenção urinária). Úteis em anafilaxia aguda IV.</p>
+        <p><strong>2ª geração</strong> (loratadina, cetirizina, fexofenadina, bilastina): menos lipofílicos → menor sedação. Indicados em rinite alérgica crônica, urticária. (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6142065/" target="_blank">PMC6142065</a>)</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 10b ═══════════════════════════════ -->
+    <section class="section" id="sec10b">
+      <div class="section-header">
+        <div class="section-number">10b</div>
+        <h2><span class="emoji">🧪</span> Mediadores — Eicosanoides</h2>
+      </div>
+
+      <p><strong>Etimologia:</strong> do grego <em>eikosi</em> = vinte. São ácidos graxos com <strong>20 carbonos</strong> derivados do ácido araquidônico (AA).</p>
+
+      <pre>
+Fosfolipídeos de membrana
+         ↓ (Fosfolipase A2 — ativada por lesão, citocinas, C5a)
+    Ácido Araquidônico (AA)
+         ↓
+    ┌────────────────┬─────────────────┐
+    ↓                ↓                 ↓
+  Via COX          Via LOX          Via CYP450
+(Cicloxigenase) (Lipoxigenase)   (Citocromo P450)
+    ↓                ↓                 ↓
+Prostaglandinas  Leucotrienos    Ácidos EET
+Tromboxanos      Lipoxinas
+Prostaciclina    Hepoxilinas</pre>
+
+      <div class="callout callout-tip">
+        <div class="callout-label">💊 Mecanismo do Corticoide</div>
+        <p>Corticosteroides → ↑ síntese de <strong>Lipocortina-1 (Anexina A1)</strong> → Inibe Fosfolipase A2 → ↓↓ Ácido Araquidônico → ↓↓ <strong>TODOS os eicosanoides</strong>. Por isso o corticoide é o anti-inflamatório mais potente — bloqueia a fonte de todos os mediadores lipídicos.</p>
+      </div>
+
+      <h3>Produtos da COX e seus Efeitos</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Produto</th><th>Fonte</th><th>Efeitos</th></tr></thead>
+          <tbody>
+            <tr><td><strong>PGE2</strong></td><td>Macrófagos, mastócitos</td><td>Vasodilatação, ↑ permeabilidade, <strong>febre</strong>, dor (sensibilização)</td></tr>
+            <tr><td><strong>PGI2</strong> (prostaciclina)</td><td>Endotélio</td><td>Vasodilatação, inibe agregação plaquetária</td></tr>
+            <tr><td><strong>TXA2</strong> (Tromboxano A2)</td><td>Plaquetas</td><td>Vasoconstrição, agregação plaquetária</td></tr>
+            <tr><td><strong>PGD2</strong></td><td>Mastócitos</td><td>Vasodilatação, broncoespasmo, quimiotaxia de eosinófilos</td></tr>
+            <tr><td><strong>PGF2α</strong></td><td>Útero, pulmão</td><td>Contração uterina, broncoconstrição</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Leucotrienos — Via LOX</h3>
+      <pre>
+AA + 5-LOX → 5-HPETE → LTA4
+
+LTA4 → (LTA4 hidrolase) → LTB4 [quimiotaxia de neutrófilos]
+
+LTA4 → (LTC4 sintase) → LTC4 → LTD4 → LTE4
+[Leucotrienos cisteinílicos — 1000x mais potentes que histamina no broncoespasmo]</pre>
+
+      <div class="callout callout-clinical">
+        <div class="callout-label">🏥 Bloqueio Terapêutico dos Leucotrienos</div>
+        <ul>
+          <li><strong>Montelucaste, zafirlucaste:</strong> antagonistas de CysLT1 → asma e rinite alérgica</li>
+          <li><strong>Zileutona:</strong> inibidor da 5-LOX → bloqueia síntese de todos os leucotrienos</li>
+        </ul>
+        <p>(<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4979546/" target="_blank">PMC4979546</a>)</p>
+      </div>
+
+      <h3>SPMs — Specialized Pro-resolving Mediators (Mediadores Pró-resolução)</h3>
+      <p>Derivados de ácidos graxos ω-3 (EPA e DHA): <strong>Resolvinas</strong> (E1/D1), <strong>Protectinas</strong> (neuroprotectina D1), <strong>Maresinas</strong>. Inibem recrutamento de neutrófilos, estimulam eferocitose e reprogramam macrófagos M1 → M2. Esta é a base mecanicista do efeito anti-inflamatório do <strong>óleo de peixe</strong>. (<a href="https://www.cell.com/cell/fulltext/S0092-8674(14)01322-X" target="_blank">Cell, 2014</a>)</p>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 10c ═══════════════════════════════ -->
+    <section class="section" id="sec10c">
+      <div class="section-header">
+        <div class="section-number">10c</div>
+        <h2><span class="emoji">🧪</span> Mediadores — Citocinas</h2>
+      </div>
+
+      <p><strong>Etimologia:</strong> do grego <em>kytos</em> (célula) + <em>kinein</em> (mover). "Aquilo que move células." São glicoproteínas sinalizadoras com propriedades de pleiotropia, redundância, sinergia, antagonismo e ação em cascata.</p>
+
+      <h3>TNF-α — Tumor Necrosis Factor-alpha (Fator de Necrose Tumoral-alfa)</h3>
+      <p>Descoberto em 1975 por Lloyd Old. Produzido principalmente por macrófagos ativados. LPS (via TLR4) é o mais potente estímulo.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Contexto</th><th>Efeitos do TNF-α</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Local (baixa concentração)</strong></td><td>↑ E-selectina, ICAM-1, VCAM-1 no endotélio; ↑ IL-1, IL-6, IL-8; ativação de neutrófilos; PGE2 e NO</td></tr>
+            <tr><td><strong>Sistêmico (moderado)</strong></td><td>Febre, leucocitose, proteínas de fase aguda, anorexia, caquexia</td></tr>
+            <tr><td><strong>Sepse (alto)</strong></td><td>Choque séptico (vasodilatação maciça), CID (coagulação intravascular disseminada), SDRA</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Biológicos Anti-TNF</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Droga</th><th>Mecanismo</th><th>Indicações</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Infliximabe</strong> (Remicade)</td><td>Anticorpo monoclonal quimérico anti-TNF</td><td>AR, Crohn, espondilite anquilosante, psoríase, RCU</td></tr>
+            <tr><td><strong>Adalimumabe</strong> (Humira)</td><td>Anticorpo monoclonal humano anti-TNF</td><td>Mesmas do infliximabe</td></tr>
+            <tr><td><strong>Etanercepte</strong> (Enbrel)</td><td>Proteína de fusão TNFR2-IgG1</td><td>AR, espondilite, psoríase</td></tr>
+            <tr><td><strong>Certolizumabe</strong></td><td>Fragmento Fab' peguilado anti-TNF</td><td>AR, Crohn — mais seguro na gravidez</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout callout-danger">
+        <div class="callout-label">⚠️ Riscos dos Anti-TNF</div>
+        <ul>
+          <li>Reativação de <strong>tuberculose latente</strong> → triagem obrigatória com PPD/IGRA antes de iniciar</li>
+          <li>Reativação de <strong>hepatite B</strong></li>
+          <li>↑ risco de infecções fúngicas (<em>Histoplasma, Coccidioides</em>)</li>
+          <li>Contraindicado em ICC grau III-IV</li>
+        </ul>
+      </div>
+
+      <h3>IL-1β — Interleucina-1 beta</h3>
+      <p>Requer dois sinais: (1) transcrição de pró-IL-1β via NF-κB, (2) clivagem pela <strong>caspase-1</strong> (inflamassoma NLRP3). <strong>IL-1Ra</strong> é o antagonista natural que limita a inflamação.</p>
+
+      <div class="callout callout-clinical">
+        <div class="callout-label">🏥 Bloqueadores de IL-1 e Aterosclerose (CANTOS)</div>
+        <ul>
+          <li><strong>Anakinra:</strong> IL-1Ra recombinante → AR, Síndrome de Still</li>
+          <li><strong>Canakinumabe:</strong> anticorpo anti-IL-1β → gota, FMF, síndromes CAPS</li>
+        </ul>
+        <p>O estudo <strong>CANTOS (2017, NEJM)</strong> mostrou que canakinumabe reduziu eventos cardiovasculares em pacientes com IAM prévio e PCR elevada — prova conceito de que inflamação via IL-1β contribui para aterosclerose. (<a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1707914" target="_blank">NEJM, 2017</a>)</p>
+      </div>
+
+      <h3>IL-6 — Interleucina-6</h3>
+      <p>Via JAK1/JAK2 → STAT3. Efeitos: ↑ proteínas de fase aguda hepáticas (PCR, fibrinogênio, ferritina), ↑ plaquetas, febre, diferenciação de Th17 (com TGF-β).</p>
+      <div class="callout callout-clinical">
+        <div class="callout-label">🏥 Bloqueadores de IL-6</div>
+        <ul>
+          <li><strong>Tocilizumabe</strong> (Actemra): anticorpo anti-IL-6R → AR, Arterite de Células Gigantes, Síndrome de Liberação de Citocinas, <strong>COVID-19 grave</strong> (<a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2100433" target="_blank">RECOVERY, NEJM 2021</a>)</li>
+          <li><strong>Sarilumabe</strong> (Kevzara): anticorpo anti-IL-6R → AR</li>
+          <li><strong>Siltuximabe</strong> (Sylvant): anticorpo anti-IL-6 → Doença de Castleman</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 10d ═══════════════════════════════ -->
+    <section class="section" id="sec10d">
+      <div class="section-header">
+        <div class="section-number">10d</div>
+        <h2><span class="emoji">🧪</span> Mediadores — Sistema Complemento</h2>
+      </div>
+
+      <p><strong>Etimologia:</strong> do latim <em>complementum</em> = aquilo que completa. Conjunto de &gt;30 proteínas plasmáticas e de superfície celular em cascata enzimática. Descoberto por Jules Bordet (Nobel 1919).</p>
+
+      <pre>
+VIA CLÁSSICA          VIA DAS LECTINAS         VIA ALTERNATIVA
+(anticorpos)          (lectinas)                (superfície bacteriana)
+     ↓                     ↓                         ↓
+C1q+C1r+C1s           MBL+MASP1+MASP2           C3 → C3b espontâneo
+     ↓                     ↓                    C3b + fator B + fator D
+C4b2a (C3 convertase)  C4b2a (C3 convertase)   C3bBb (C3 convertase)
+                    ↓
+              C3 → C3b + C3a
+                    ↓
+              C5 → C5b + C5a
+                    ↓
+     C5b + C6 + C7 + C8 + poly-C9
+                    ↓
+              MAC (C5b-9) — Complexo de Ataque à Membrana</pre>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fragmento</th><th>Função</th><th>Importância Clínica</th></tr></thead>
+          <tbody>
+            <tr><td><strong>C3a</strong></td><td>Anafilatoxina</td><td>Degranulação de mastócitos → histamina → vasodilatação</td></tr>
+            <tr><td><strong>C5a</strong></td><td>Anafilatoxina + quimioatraente</td><td>Quimiotaxia de neutrófilos; ativação do endotélio</td></tr>
+            <tr><td><strong>C3b</strong></td><td>Opsonina principal</td><td>Liga-se à superfície bacteriana → fagocitose via CR1</td></tr>
+            <tr><td><strong>MAC (C5b-9)</strong></td><td>Lise osmótica</td><td>Poros na membrana de gram-negativos e células-alvo</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Deficiência</th><th>Consequência Clínica</th></tr></thead>
+          <tbody>
+            <tr><td><strong>C1q</strong></td><td>↑ suscetibilidade a LES (C1q crucial para limpeza de células apoptóticas)</td></tr>
+            <tr><td><strong>C3</strong></td><td>Infecções recorrentes graves por bactérias encapsuladas (mais grave)</td></tr>
+            <tr><td><strong>C5–C9 (MAC)</strong></td><td>Infecções recorrentes por <em>Neisseria</em> (meningococo e gonococo)</td></tr>
+            <tr><td><strong>C1-INH</strong></td><td><strong>Angioedema Hereditário (HAE)</strong> — episódios de edema subcutâneo/mucosas (laríngeo fatal)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-clinical">
+        <div class="callout-label">🏥 Eculizumabe — Inibidor de C5</div>
+        <p><strong>Eculizumabe</strong> (Soliris): anticorpo monoclonal anti-C5 → sem C5a e sem MAC.</p>
+        <p>Indicações: <strong>HPN</strong> (Hemoglobinúria Paroxística Noturna), <strong>SHU atípico</strong>, Miastenia Gravis generalizada, NMOSD.</p>
+        <p>⚠️ ↑ risco de infecções por <em>Neisseria</em> → vacinação obrigatória contra meningococo antes de iniciar.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 10e ═══════════════════════════════ -->
+    <section class="section" id="sec10e">
+      <div class="section-header">
+        <div class="section-number">10e</div>
+        <h2><span class="emoji">🧪</span> Mediadores — Cininas &amp; Óxido Nítrico</h2>
+      </div>
+
+      <h3>Bradicinina — Sistema Calicreína-Cinina</h3>
+      <p><strong>Etimologia:</strong> do grego <em>bradys</em> = lento + <em>kinein</em> = mover. Causa contração lenta do músculo liso.</p>
+      <div class="pathway">
+<span class="enzyme">Fator XII</span> ativado (Hageman) <span class="arrow">→</span> ativa pré-calicreína <span class="arrow">→</span> <span class="molecule">calicreína</span>
+<span class="arrow">→</span> Cininogênio de alto peso molecular (HMWK) <span class="arrow">→</span> <span class="effect">BRADICININA</span> (9 aminoácidos)
+<span class="arrow">→</span> <span class="enzyme">Cininase II (= ECA / ACE)</span> <span class="arrow">→</span> Peptídeos inativos
+      </div>
+
+      <div class="callout callout-danger">
+        <div class="callout-label">⚠️ IECA e Bradicinina</div>
+        <p>A <strong>ECA (Enzima Conversora de Angiotensina)</strong> = Cininase II → degrada a bradicinina. Quando usamos <strong>IECA</strong> (captopril, enalapril, lisinopril, ramipril), bloqueamos a ECA → <strong>acúmulo de bradicinina</strong>.</p>
+        <p>Efeito colateral mais comum: <strong>tosse seca</strong> (bradicinina nos pulmões estimula fibras C → reflexo de tosse).</p>
+        <p>Angioedema por IECA = <strong>bradicinínico</strong> (não histamínico) → <strong>NÃO responde a anti-histamínicos ou adrenalina</strong>. Tratamento: suspender IECA + icatibanto (antagonista de bradicinina B2) ou plasma fresco. (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4157065/" target="_blank">PMC4157065</a>)</p>
+      </div>
+
+      <h3>Óxido Nítrico (NO)</h3>
+      <p>Furchgott, Ignarro e Murad ganharam o <strong>Nobel de Fisiologia/Medicina em 1998</strong>. (<a href="https://www.nobelprize.org/prizes/medicine/1998/press-release/" target="_blank">nobelprize.org</a>)</p>
+
+      <div class="formula-block">
+        <div class="formula-title">Síntese do NO — Sistema NOS</div>
+        <div class="formula-math">L-Arginina + O₂ →[NOS]→ Citrulina + NO</div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Isoforma</th><th>Expressão</th><th>Ca²⁺-dep.</th><th>Função</th></tr></thead>
+          <tbody>
+            <tr><td><strong>eNOS</strong> (NOS3)</td><td>Endotélio (constitutiva)</td><td>Sim</td><td>Vasodilatação tônica, antiagregação</td></tr>
+            <tr><td><strong>nNOS</strong> (NOS1)</td><td>Neurônios (constitutiva)</td><td>Sim</td><td>Neurotransmissão, memória</td></tr>
+            <tr><td><strong>iNOS</strong> (NOS2)</td><td>Macrófagos (induzível)</td><td><strong>Não</strong></td><td>Bactericida, vasodilatação na sepse</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-clinical">
+        <div class="callout-label">🏥 NO na Farmacologia</div>
+        <ul>
+          <li><strong>Nitratos</strong> (nitroglicerina, isossorbida): pró-drogas → NO → vasodilatação coronariana/venosa → angina, IC</li>
+          <li><strong>Sildenafil, Tadalafil:</strong> inibem PDE-5 → ↑ cGMP → vasodilatação (DE + hipertensão pulmonar)</li>
+          <li><strong>NO inalado:</strong> hipertensão pulmonar em RN e SDRA</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 11 ═══════════════════════════════ -->
+    <section class="section" id="sec11">
+      <div class="section-header">
+        <div class="section-number">11</div>
+        <h2><span class="emoji">🌡️</span> Os 5 Sinais Cardinais — Detalhe Molecular</h2>
+      </div>
+
+      <div class="mediator-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+        <div class="mediator-card">
+          <div class="mc-name" style="font-size:22px;">RUBOR</div>
+          <div class="mc-source">Eritema / Vermelhidão</div>
+          <div class="mc-effect">↑ Fluxo por vasodilatação arteriolar (histamina, NO, PGE2, bradicinina). Desaparece à vitropressão (diascopia).</div>
+        </div>
+        <div class="mediator-card">
+          <div class="mc-name" style="font-size:22px;">CALOR</div>
+          <div class="mc-source">Hipertermia Local</div>
+          <div class="mc-effect">↑ Fluxo de sangue arterial (37°C) para tecido periférico. Diferente da febre sistêmica — apenas local.</div>
+        </div>
+        <div class="mediator-card">
+          <div class="mc-name" style="font-size:22px;">TUMOR</div>
+          <div class="mc-source">Edema / Inchaço</div>
+          <div class="mc-effect">↑ Permeabilidade vascular → exsudato rico em proteínas no interstício → ↑ pressão oncótica intersticial + ↑ pressão hidrostática.</div>
+        </div>
+        <div class="mediator-card">
+          <div class="mc-name" style="font-size:22px;">DOLOR</div>
+          <div class="mc-source">Dor Inflamatória</div>
+          <div class="mc-effect">Bradicinina + substância P ativam nociceptores. PGE2/PGI2 diminuem o limiar (hiperalgesia). Sensibilização central → alodinia.</div>
+        </div>
+        <div class="mediator-card">
+          <div class="mc-name" style="font-size:22px;">FUNCTIO LAESA</div>
+          <div class="mc-source">Perda de Função</div>
+          <div class="mc-effect">Dor → inibição reflexa do movimento. Edema → restrição mecânica. Incapacidade funcional variável.</div>
+        </div>
+      </div>
+
+      <h3>Base Farmacológica da Dor Inflamatória</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Droga</th><th>Mecanismo</th><th>Local de Ação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>AINEs</strong> (ibuprofeno, naproxeno, cetorolaco)</td><td>Inibem COX-1/COX-2 → ↓ PGE2 → ↓ sensibilização periférica</td><td>Periférico (principalmente)</td></tr>
+            <tr><td><strong>Paracetamol</strong></td><td>Inibição de COX-3 + modulação endocanabinoide + vias serotoninérgicas</td><td>Central + periférico</td></tr>
+            <tr><td><strong>Opioides</strong></td><td>Receptores µ, δ, κ → ↓ transmissão da dor</td><td>Central (corno dorsal) + periférico</td></tr>
+            <tr><td><strong>Corticoides</strong></td><td>↓ PGE2 + ↓ bradicinina + ↓ edema compressivo</td><td>Periférico + central</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>(<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5551541/" target="_blank">PMC5551541</a>)</p>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 12 ═══════════════════════════════ -->
+    <section class="section" id="sec12">
+      <div class="section-header">
+        <div class="section-number">12</div>
+        <h2><span class="emoji">🌡️</span> Manifestações Sistêmicas da Inflamação Aguda</h2>
+      </div>
+
+      <h3>Febre — A Cascata Completa</h3>
+      <div class="pathway">
+<span class="molecule">Bactéria (LPS)</span> <span class="arrow">→</span> macrófagos/monócitos <span class="arrow">→</span> <span class="effect">Pirógenos Endógenos:</span>
+<span class="effect">IL-1β, TNF-α, IL-6, IFN-α/β</span>
+         <span class="arrow">↓</span>
+Circulação sistêmica → OVLT (Órgão Vasculoso da Lâmina Terminal)
+         <span class="arrow">↓</span>
+<span class="enzyme">COX-2</span> nos macrófagos perivasculares → <span class="molecule">PGE2</span>
+         <span class="arrow">↓</span>
+<span class="molecule">PGE2</span> → receptores <span class="molecule">EP3</span> no hipotálamo anterior → ↑ cAMP → <span class="effect">↑ set point</span>
+         <span class="arrow">↓</span>
+Vasoconstrição periférica + Tremores (calafrios) + ↑ termogênese adiposa marrom
+      </div>
+
+      <div class="callout callout-danger">
+        <div class="callout-label">⚠️ Síndrome de Reye</div>
+        <p>AAS em crianças com infecções virais (varicela, influenza) → lesão hepática e encefalopatia grave. Por isso AAS é <strong>contraindicado em crianças (&lt;16 anos)</strong> em contexto febril viral. Usar paracetamol ou ibuprofeno.</p>
+      </div>
+
+      <h3>Leucocitose</h3>
+      <p><strong>Fase imediata:</strong> TNF-α e IL-1β → mobilização do pool marginal de neutrófilos (nos pulmões) → ↑ 2–3x. <strong>Fase tardia:</strong> G-CSF e GM-CSF → ↑ produção medular. <strong>Desvio à esquerda</strong> = liberação de bastonetes e metamielócitos.</p>
+
+      <h3>Proteínas de Fase Aguda (PFAs / APPs)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Proteína</th><th>Função</th><th>↑/↓</th><th>Magnitude</th></tr></thead>
+          <tbody>
+            <tr><td><strong>PCR</strong> (Proteína C-Reativa)</td><td>Opsonina, ativa complemento</td><td>↑↑↑↑</td><td>1000x (0,1 → 100 mg/L)</td></tr>
+            <tr><td><strong>SAA</strong> (Proteína Amiloide A Sérica)</td><td>Opsonina, mobilização de lipídeos</td><td>↑↑↑↑</td><td>1000x</td></tr>
+            <tr><td><strong>Fibrinogênio</strong></td><td>Coagulação, opsonina</td><td>↑↑</td><td>2–4x</td></tr>
+            <tr><td><strong>Ferritina</strong></td><td>Armazenamento de ferro</td><td>↑↑</td><td>Variável</td></tr>
+            <tr><td><strong>Albumina</strong></td><td>Pressão oncótica, transporte</td><td>↓↓ (negativa)</td><td>—</td></tr>
+            <tr><td><strong>Pré-albumina</strong></td><td>Transporte T4 (meia-vida 2 dias)</td><td>↓ (negativa)</td><td>Marcador de desnutrição aguda</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-clinical">
+        <div class="callout-label">🏥 PCR e Risco Cardiovascular (JUPITER)</div>
+        <p><strong>hs-CRP</strong> (high-sensitivity CRP / PCR de alta sensibilidade): PCR &gt; 3 mg/L em assintomáticos → marcador de inflamação vascular de baixo grau → ↑ risco cardiovascular. O estudo <strong>JUPITER (2008, NEJM)</strong> mostrou que rosuvastatina reduziu eventos cardiovasculares em pacientes com LDL normal mas hs-CRP elevada. (<a href="https://www.nejm.org/doi/full/10.1056/NEJMoa0807646" target="_blank">NEJM, 2008</a>)</p>
+      </div>
+
+      <h3>VHS vs. PCR — Comparação</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Característica</th><th>PCR</th><th>VHS</th></tr></thead>
+          <tbody>
+            <tr><td>Início de subida</td><td>6h</td><td>24–48h</td></tr>
+            <tr><td>Normalização</td><td>Dias</td><td>Semanas</td></tr>
+            <tr><td>Especificidade</td><td>Maior</td><td>Menor</td></tr>
+            <tr><td>Falso ↑</td><td>Poucos</td><td>Anemia, gravidez, obesidade</td></tr>
+            <tr><td>Falso ↓</td><td>Poucos</td><td>Policitemia, anemia falciforme</td></tr>
+            <tr><td>Utilidade especial</td><td>Monitorar resposta ao tratamento</td><td>Arterite temporal, polimialgia reumática</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>(<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4582264/" target="_blank">PMC4582264</a>)</p>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 13 ═══════════════════════════════ -->
+    <section class="section" id="sec13">
+      <div class="section-header">
+        <div class="section-number">13</div>
+        <h2><span class="emoji">🔬</span> Morfologia &amp; Histologia da Inflamação Aguda</h2>
+      </div>
+
+      <h3>Padrões Morfológicos</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Padrão</th><th>Características</th><th>Exemplos Clínicos</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Serosa</strong></td><td>Exsudato aquoso, poucas proteínas e células</td><td>Bolha da queimadura, derrame pleural viral inicial</td></tr>
+            <tr><td><strong>Fibrinosa</strong></td><td>Rico em fibrinogênio → fibrina; aspecto de "couro" / "pão com manteiga"</td><td>Pericardite fibrinosa (IAM, uremia), pleurite (pneumonia)</td></tr>
+            <tr><td><strong>Supurativa (Purulenta)</strong></td><td>Neutrófilos + debris + bactérias = PUS</td><td>Abscesso, empiema, meningite bacteriana</td></tr>
+            <tr><td><strong>Ulcerativa</strong></td><td>Perda do epitélio → úlcera</td><td>Úlcera péptica, úlcera de córnea, úlcera de pressão</td></tr>
+            <tr><td><strong>Pseudomembranosa</strong></td><td>Membrana de fibrina + neutrófilos + células mortas na mucosa</td><td>Colite por <em>C. difficile</em>, difteria (<em>C. diphtheriae</em>)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Colorações Especiais em Anatomia Patológica</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Coloração</th><th>O que cora</th><th>Uso principal</th></tr></thead>
+          <tbody>
+            <tr><td><strong>HE</strong> (Hematoxilina-Eosina)</td><td>Núcleos: azul; citoplasma/fibrina: rosa</td><td>Padrão universal</td></tr>
+            <tr><td><strong>PAS</strong> (Ácido Periódico de Schiff)</td><td>Polissacarídeos, glicogênio, fungos</td><td>Fungos, membranas basais</td></tr>
+            <tr><td><strong>Ziehl-Neelsen</strong></td><td>BAAR (vermelho-rubi)</td><td><em>Mycobacterium</em> (TB, hanseníase)</td></tr>
+            <tr><td><strong>GMS</strong> (Grocott-Methenamine Silver)</td><td>Fungos (marrom-preto sobre verde)</td><td>Infecções fúngicas</td></tr>
+            <tr><td><strong>Giemsa</strong></td><td>Parasitas intracelulares</td><td>Leishmaniose, malária, mastócitos</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 14 ═══════════════════════════════ -->
+    <section class="section" id="sec14">
+      <div class="section-header">
+        <div class="section-number">14</div>
+        <h2><span class="emoji">🔄</span> Desfechos da Inflamação Aguda</h2>
+      </div>
+
+      <pre>
+AGENTE LESIVO ELIMINADO
+         ↓
+RESOLUÇÃO COMPLETA → Restauração da normalidade (parênquima regenerativo)
+         ↓
+CICATRIZAÇÃO/FIBROSE → Substituição por tecido conjuntivo (dano extenso)
+         ↓
+ABSCESSO → Pus encapsulado (bactérias piogênicas persistentes)
+         ↓
+PROGRESSÃO PARA INFLAMAÇÃO CRÔNICA → Falha de resolução (agente persistente, autoimune)</pre>
+
+      <h3>Mediadores Pró-Resolução</h3>
+      <ul>
+        <li><strong>Lipoxina A4 (LXA4):</strong> "Freia" recrutamento de neutrófilos; estimula eferocitose</li>
+        <li><strong>Resolvina E1/D1:</strong> Inibem transmigração neutrofílica; estimulam clearance</li>
+        <li><strong>Protectina D1:</strong> Inibe apoptose; proteção neurológica</li>
+        <li><strong>Maresinas:</strong> Reprogramam macrófagos M1 (pró-inflamatório) → M2 (pró-resolução)</li>
+      </ul>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 15 ═══════════════════════════════ -->
+    <section class="section" id="sec15">
+      <div class="section-header">
+        <div class="section-number">15</div>
+        <h2><span class="emoji">💊</span> Diagnóstico &amp; Terapêutica</h2>
+      </div>
+
+      <h3>Marcadores Laboratoriais</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Marcador</th><th>Normal</th><th>Interpretação</th></tr></thead>
+          <tbody>
+            <tr><td><strong>PCR</strong></td><td>&lt; 5 mg/L</td><td>&gt;100 mg/L → bacteriana grave; &lt;20 mg/L com febre → viral provável</td></tr>
+            <tr><td><strong>hs-CRP</strong></td><td>&lt; 1 mg/L</td><td>1–3 mg/L risco CV moderado; &gt;3 mg/L risco CV alto</td></tr>
+            <tr><td><strong>PCT</strong> (Procalcitonina)</td><td>&lt; 0,1 ng/mL</td><td>&gt;0,5 ng/mL → bacteriana provável; &gt;10 ng/mL → sepse grave</td></tr>
+            <tr><td><strong>Leucograma</strong></td><td>4.000–11.000</td><td>Neutrofilia + desvio esquerda → bacteriana; linfocitose → viral</td></tr>
+            <tr><td><strong>IL-6 sérica</strong></td><td>&lt; 7 pg/mL</td><td>Elevada em sepse, COVID grave, Síndrome de Liberação de Citocinas</td></tr>
+            <tr><td><strong>Ferritina</strong></td><td>12–300 ng/mL</td><td>&gt;500 → inflamação; &gt;10.000 → HLH/MAS</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Glicocorticoides — Potência Comparativa</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Glicocorticoide</th><th>Potência Anti-inflamatória</th><th>Potência Mineralocorticoide</th><th>Meia-vida</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Hidrocortisona</strong></td><td>1 (referência)</td><td>1</td><td>Curta (8–12h)</td></tr>
+            <tr><td><strong>Prednisona/Prednisolona</strong></td><td>4</td><td>0,8</td><td>Intermediária (12–36h)</td></tr>
+            <tr><td><strong>Metilprednisolona</strong></td><td>5</td><td>0,5</td><td>Intermediária</td></tr>
+            <tr><td><strong>Dexametasona</strong></td><td>25</td><td>~0</td><td>Longa (36–54h)</td></tr>
+            <tr><td><strong>Betametasona</strong></td><td>25</td><td>~0</td><td>Longa</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-label">⚠️ Efeitos Adversos dos Corticoides</div>
+        <ul>
+          <li><strong>Imunossupressão:</strong> infecções oportunistas (<em>Pneumocystis jirovecii, Candida, Aspergillus, CMV</em>)</li>
+          <li><strong>Osteoporose:</strong> usar sempre bisfosfonatos + Ca²⁺/vitamina D se uso prolongado</li>
+          <li><strong>Diabetes corticogênico:</strong> monitorar glicemia</li>
+          <li><strong>Supressão do eixo HPA:</strong> nunca suspender abruptamente → tapering gradual</li>
+          <li><strong>Úlcera gástrica:</strong> gastroproteção com IBP em uso prolongado</li>
+        </ul>
+      </div>
+
+      <div class="callout callout-clinical">
+        <div class="callout-label">🏥 Colchicina — Usos Contemporâneos (LoDoCo2, 2020)</div>
+        <p>Mecanismo: inibe polimerização de microtúbulos → inibe migração de neutrófilos + inibe inflamassoma NLRP3.</p>
+        <p>O estudo <strong>LoDoCo2 (2020, NEJM)</strong> mostrou que colchicina 0,5 mg/dia reduziu eventos cardiovasculares em doença coronariana estável — confirmando inflamação como alvo terapêutico. (<a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2021372" target="_blank">NEJM, 2020</a>)</p>
+        <p>⚠️ Interação: substrato de CYP3A4 e P-gp — cuidado com claritromicina, ciclosporina (risco de intoxicação).</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 16 ═══════════════════════════════ -->
+    <section class="section" id="sec16">
+      <div class="section-header">
+        <div class="section-number">16</div>
+        <h2><span class="emoji">📝</span> Casos Clínicos &amp; Exercícios</h2>
+      </div>
+
+      <div class="case-box">
+        <div class="case-header">
+          <span class="case-title">Caso 1 — João, 45 anos — Celulite Bacteriana</span>
+          <span class="case-badge">CASO CLÍNICO</span>
+        </div>
+        <div class="case-body">
+          <p>Diabético, machuca o pé direito no campo. 24h depois:</p>
+          <div class="case-vitals">
+            <div class="vital-item"><div class="vital-label">Temperatura</div><div class="vital-value">38,8°C</div></div>
+            <div class="vital-item"><div class="vital-label">Leucócitos</div><div class="vital-value">18.500</div></div>
+            <div class="vital-item"><div class="vital-label">Neutrófilos</div><div class="vital-value">85%</div></div>
+            <div class="vital-item"><div class="vital-label">Bastonetes</div><div class="vital-value">12%</div></div>
+            <div class="vital-item"><div class="vital-label">PCR</div><div class="vital-value">78 mg/L</div></div>
+          </div>
+          <p>Eritema com bordas mal definidas, calor, edema no pé direito.</p>
+
+          <details class="answer">
+            <summary>▶ Q1: Qual processo explica eritema e calor?</summary>
+            <div class="answer-content">LPS + PAMPs ativam macrófagos → TLR-4 → NF-κB → TNF-α, IL-1β, histamina → vasodilatação arteriolar (via NO e PGE2) → ↑ fluxo de sangue quente arterial → rubor + calor. Lei de Poiseuille: pequena ↑ no raio → grande ↑ no fluxo (Q ∝ r⁴).</div>
+          </details>
+          <details class="answer">
+            <summary>▶ Q2: Por que leucocitose com desvio à esquerda e febre?</summary>
+            <div class="answer-content">TNF-α e IL-1β sistêmicos → mobilização pool marginal neutrófilos + G-CSF → demarginação medular. Desvio à esquerda = demanda supera células maduras → liberação de bastonetes e metamielócitos. Febre: pirógenos endógenos → COX-2 no OVLT → PGE2 → ↑ set point hipotalâmico.</div>
+          </details>
+          <details class="answer">
+            <summary>▶ Q3: Por que a diabetes torna a infecção mais grave?</summary>
+            <div class="answer-content">(a) Hiperglicemia → glicosilação de PSGL-1 → ↓ rolamento e adesão leucocitária; (b) ↓ função quimiotática dos neutrófilos; (c) ↓ burst oxidativo → ↓ eficiência bactericida; (d) Neuropatia → lesão tardia percebida; (e) Angiopatia → ↓ aporte sanguíneo de leucócitos e antibióticos.</div>
+          </details>
+          <details class="answer">
+            <summary>▶ Q4: PCR de 78 mg/L confirma ou contradiz etiologia viral?</summary>
+            <div class="answer-content">Confirma etiologia bacteriana. Em infecções virais típicas, a PCR raramente excede 20–40 mg/L. PCR &gt;100 mg/L é quase exclusivamente bacteriana (exceção: COVID-19 grave pode superar 100 mg/L).</div>
+          </details>
+        </div>
+      </div>
+
+      <div class="case-box">
+        <div class="case-header">
+          <span class="case-title">Caso 2 — Maria, 22 anos — Anafilaxia por Amoxicilina</span>
+          <span class="case-badge">EMERGÊNCIA</span>
+        </div>
+        <div class="case-body">
+          <p>Alérgica a penicilina, recebe amoxicilina inadvertidamente. Minutos depois:</p>
+          <div class="case-vitals">
+            <div class="vital-item"><div class="vital-label">PA</div><div class="vital-value">70/40 mmHg</div></div>
+            <div class="vital-item"><div class="vital-label">SpO₂</div><div class="vital-value">92%</div></div>
+            <div class="vital-item"><div class="vital-label">Pele</div><div class="vital-value">Urticária</div></div>
+            <div class="vital-item"><div class="vital-label">Via aérea</div><div class="vital-value">Estridor</div></div>
+          </div>
+
+          <details class="answer">
+            <summary>▶ Q5: Qual mediador é responsável pela hipotensão e angioedema?</summary>
+            <div class="answer-content">Histamina (+ PAF, LTC4/LTD4, PGD2, triptase). Amoxicilina (hapteno) → antígeno completo → IgE específica → reage com FcεRI nos mastócitos → degranulação maciça. Histamina via H1 → vasodilatação maciça (↓ RVS → hipotensão) + ↑ permeabilidade (angioedema).</div>
+          </details>
+          <details class="answer">
+            <summary>▶ Q6: Tratamento de primeira linha e mecanismo de ação?</summary>
+            <div class="answer-content"><strong>Epinefrina (adrenalina) 0,3–0,5 mg IM (vastus lateralis).</strong> (a) Receptores α1 → vasoconstrição → ↑ PA; (b) β2 → broncodilatação; (c) β1 → ↑ FC e contratilidade; (d) β2 nos mastócitos → ↑ cAMP → inibe degranulação. Anti-histamínicos e corticoides são adjuvantes — NUNCA substituem a epinefrina na anafilaxia.</div>
+          </details>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">📐 Exercício 4 — Starling na Inflamação (Cálculo Completo)</div>
+        <div class="exercise-body">
+          <p>Calcule o desequilíbrio da equação de Starling em condições normais vs. inflamação.</p>
+          <details class="answer">
+            <summary>▶ Ver Solução</summary>
+            <div class="answer-content">
+              <p><strong>Normal:</strong> Jv = Kf[(35 − (−3)) − 1 × (28 − 8)] = Kf[38 − 20] = <strong>Kf × 18 mmHg</strong></p>
+              <p><strong>Na inflamação</strong> (Pc=45, πc=20, πi=18, σ=0,3):</p>
+              <p>Jv = Kf[(45 − (−3)) − 0,3 × (20 − 18)] = Kf[48 − 0,6] = <strong>Kf × 47,4 mmHg</strong></p>
+              <p>O fluxo de filtração aumenta de 18 para 47,4 × Kf — <strong>mais que o dobro</strong> — e como σ caiu de 1 para 0,3, o Kf efetivo também aumentou (maior permeabilidade hidráulica). Na prática, o edema inflamatório resulta de múltiplos fatores simultâneos.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SECTION 17 ═══════════════════════════════ -->
+    <section class="section" id="sec17">
+      <div class="section-header">
+        <div class="section-number">17</div>
+        <h2><span class="emoji">📚</span> Referências &amp; Fontes</h2>
+      </div>
+
+      <ul class="ref-list">
+        <li><span class="ref-num">[1]</span><span>Kumar V, Abbas AK, Aster JC. <strong>Robbins &amp; Cotran Pathologic Basis of Disease</strong>, 10th ed. Elsevier, 2021. <a href="https://www.elsevier.com/books/robbins-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9" target="_blank">elsevier.com</a></span></li>
+        <li><span class="ref-num">[2]</span><span>Medzhitov R. <strong>Origin and physiological roles of inflammation</strong>. Nature. 2008;454:428–435. <a href="https://www.nature.com/articles/nature07201" target="_blank">nature.com</a></span></li>
+        <li><span class="ref-num">[3]</span><span>Serhan CN. <strong>Pro-resolving lipid mediators are leads for resolution physiology</strong>. Nature. 2014;510:92–101. <a href="https://www.cell.com/cell/fulltext/S0092-8674(14)01322-X" target="_blank">cell.com</a></span></li>
+        <li><span class="ref-num">[4]</span><span>Martinon F, Burns K, Tschopp J. <strong>The inflammasome</strong>. Mol Cell. 2002;10:417–426. <a href="https://www.nature.com/articles/nature00893" target="_blank">nature.com</a></span></li>
+        <li><span class="ref-num">[5]</span><span>Brinkmann V, et al. <strong>Neutrophil extracellular traps kill bacteria</strong>. Science. 2004;303:1532–1535. <a href="https://www.science.org/doi/10.1126/science.1092385" target="_blank">science.org</a></span></li>
+        <li><span class="ref-num">[6]</span><span>Matzinger P. <strong>Tolerance, danger, and the extended family</strong>. Annu Rev Immunol. 1994. <a href="https://www.science.org/doi/10.1126/science.8009215" target="_blank">science.org</a></span></li>
+        <li><span class="ref-num">[7]</span><span>Ridker PM, et al. <strong>Antiinflammatory Therapy with Canakinumab (CANTOS)</strong>. NEJM. 2017;377:1119–1131. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1707914" target="_blank">nejm.org</a></span></li>
+        <li><span class="ref-num">[8]</span><span>Ridker PM, et al. <strong>Rosuvastatin and Elevated CRP (JUPITER)</strong>. NEJM. 2008;359:2195–2207. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa0807646" target="_blank">nejm.org</a></span></li>
+        <li><span class="ref-num">[9]</span><span>Nidorf SM, et al. <strong>Colchicine in Chronic Coronary Disease (LoDoCo2)</strong>. NEJM. 2020;383:1838–1847. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2021372" target="_blank">nejm.org</a></span></li>
+        <li><span class="ref-num">[10]</span><span>RECOVERY Collaborative Group. <strong>Tocilizumab in patients with COVID-19</strong>. NEJM. 2021;384:1491–1502. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2100433" target="_blank">nejm.org</a></span></li>
+        <li><span class="ref-num">[11]</span><span>Light RW, et al. <strong>Pleural effusions</strong>. Ann Intern Med. 1972;77:507–513. <a href="https://www.acpjournals.org/doi/10.7326/0003-4819-77-4-507" target="_blank">acpjournals.org</a></span></li>
+        <li><span class="ref-num">[12]</span><span>Anderson DC, Springer TA. <strong>Leukocyte adhesion deficiency</strong>. Annu Rev Med. 1987. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2818163/" target="_blank">PMC2818163</a></span></li>
+      </ul>
+    </section>
+
+    <!-- SUMMARY FINAL -->
+    <div class="summary-final">
+      <h3>📋 Resumo Esquemático Final</h3>
+      <pre>
+AGENTE LESIVO (bactéria, vírus, trauma, corpo estranho)
+        ↓
+RECONHECIMENTO (TLRs, NLRs, inflamassoma NLRP3)
+        ↓
+ATIVAÇÃO DE MACRÓFAGOS/MASTÓCITOS RESIDENTES
+        ↓
+MEDIADORES PRECOCES: Histamina, bradicinina, C5a, C3a
+        ↓
+RESPOSTA VASCULAR:
+  Vasodilatação → RUBOR + CALOR
+  ↑ Permeabilidade → EDEMA (TUMOR)
+  Estase → Marginação leucocitária
+        ↓
+MEDIADORES TARDIOS: TNF-α, IL-1β, IL-6, IL-8, LTB4
+        ↓
+RECRUTAMENTO LEUCOCITÁRIO:
+  Rolamento (selectinas) → Ativação (quimiocinas) →
+  Adesão (integrinas-ICAM) → Transmigração → Quimiotaxia
+        ↓
+NEUTRÓFILOS NO FOCO: Fagocitose, Burst oxidativo, NETs
+        ↓
+Dور (bradicinina, PGE2) + FUNCTIO LAESA
+        ↓
+SISTÊMICO: Febre (IL-1β, TNF-α → PGE2 hipotalâmica)
+           Leucocitose (G-CSF)
+           Fase aguda (IL-6 → PCR, fibrinogênio, ferritina)
+        ↓
+DESFECHO:
+  Resolução (SPMs, eferocitose) → Cura
+  Fibrose → Dano residual
+  Cronicidade → Inflamação crônica
+  Abscesso → Drenagem</pre>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- SCROLL TOP -->
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // Scroll top button
+  window.addEventListener('scroll', () => {
+    document.getElementById('scroll-top').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // Active nav link
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('#sidebar nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

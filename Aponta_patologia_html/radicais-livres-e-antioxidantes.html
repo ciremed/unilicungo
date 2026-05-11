@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radicais Livres & Sistemas Antioxidantes</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Code+Pro:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2430;
+    --accent-red: #e84040;
+    --accent-orange: #f07020;
+    --accent-yellow: #f0c030;
+    --accent-green: #30c070;
+    --accent-blue: #3090f0;
+    --accent-cyan: #20d0c0;
+    --accent-purple: #9060f0;
+    --text: #e8eaf0;
+    --text-dim: #7a8090;
+    --text-mid: #b0b8c8;
+    --glow-red: rgba(232,64,64,0.15);
+    --glow-green: rgba(48,192,112,0.15);
+    --glow-blue: rgba(48,144,240,0.15);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lato', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 24px;
+    position: relative;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(232,64,64,0.18), transparent),
+      radial-gradient(ellipse 60% 40% at 20% 110%, rgba(48,144,240,0.10), transparent);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(255,255,255,0.018) 60px),
+      repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(255,255,255,0.018) 60px);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent-red);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 7vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.4s forwards;
+  }
+
+  .hero h1 span.rx { color: var(--accent-red); }
+  .hero h1 span.ax { color: var(--accent-green); }
+
+  .hero-sub {
+    max-width: 680px;
+    color: var(--text-mid);
+    font-size: 1.05rem;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.6s forwards;
+  }
+
+  .hero-badges {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.8s forwards;
+  }
+
+  .badge {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+  .badge.red   { border-color: var(--accent-red);    color: var(--accent-red);    background: rgba(232,64,64,0.07); }
+  .badge.orange{ border-color: var(--accent-orange); color: var(--accent-orange); background: rgba(240,112,32,0.07); }
+  .badge.green { border-color: var(--accent-green);  color: var(--accent-green);  background: rgba(48,192,112,0.07); }
+  .badge.blue  { border-color: var(--accent-blue);   color: var(--accent-blue);   background: rgba(48,144,240,0.07); }
+  .badge.cyan  { border-color: var(--accent-cyan);   color: var(--accent-cyan);   background: rgba(32,208,192,0.07); }
+  .badge.purple{ border-color: var(--accent-purple); color: var(--accent-purple); background: rgba(144,96,240,0.07); }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(18px); }
+    to   { opacity:1; transform: translateY(0);    }
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── NAV / TOC ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 48px auto;
+    max-width: 900px;
+  }
+  .toc h3 {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 16px;
+  }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px 24px; }
+  .toc a {
+    color: var(--text-mid);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+  }
+  .toc a:hover { color: var(--text); }
+  .toc a .num {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    min-width: 22px;
+  }
+
+  /* ── SECTION ── */
+  section { margin-bottom: 72px; }
+  section:last-child { margin-bottom: 48px; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding-top: 6px;
+    white-space: nowrap;
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  /* ── CARDS ── */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .card-grid-2 { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 10px 10px 0 0;
+  }
+  .card:hover { border-color: #2a3040; box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
+
+  .card.red::before   { background: var(--accent-red); }
+  .card.orange::before{ background: var(--accent-orange); }
+  .card.yellow::before{ background: var(--accent-yellow); }
+  .card.green::before { background: var(--accent-green); }
+  .card.blue::before  { background: var(--accent-blue); }
+  .card.cyan::before  { background: var(--accent-cyan); }
+  .card.purple::before{ background: var(--accent-purple); }
+
+  .card.red:hover   { box-shadow: 0 4px 28px var(--glow-red); }
+  .card.green:hover { box-shadow: 0 4px 28px var(--glow-green); }
+  .card.blue:hover  { box-shadow: 0 4px 28px var(--glow-blue); }
+
+  .card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .card .tag {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .card .tag.red    { background: rgba(232,64,64,0.15);    color: var(--accent-red); }
+  .card .tag.orange { background: rgba(240,112,32,0.15);   color: var(--accent-orange); }
+  .card .tag.green  { background: rgba(48,192,112,0.15);   color: var(--accent-green); }
+  .card .tag.blue   { background: rgba(48,144,240,0.15);   color: var(--accent-blue); }
+  .card .tag.cyan   { background: rgba(32,208,192,0.15);   color: var(--accent-cyan); }
+  .card .tag.purple { background: rgba(144,96,240,0.15);   color: var(--accent-purple); }
+  .card .tag.yellow { background: rgba(240,192,48,0.15);   color: var(--accent-yellow); }
+
+  .card p { color: var(--text-mid); font-size: 13.5px; line-height: 1.65; }
+  .card ul { color: var(--text-mid); font-size: 13.5px; padding-left: 16px; line-height: 1.8; }
+
+  /* ── REACTION BLOCKS ── */
+  .reaction-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+  }
+
+  .reaction-block .eq {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    color: var(--accent-yellow);
+    background: rgba(240,192,48,0.07);
+    border: 1px solid rgba(240,192,48,0.15);
+    border-radius: 6px;
+    padding: 8px 14px;
+    margin: 10px 0;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .reaction-block .label {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .reaction-block h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .reaction-block p { color: var(--text-mid); font-size: 13px; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    background: var(--surface2);
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: rgba(255,255,255,0.02); }
+  .cell-hl { color: var(--text); font-weight: 600; }
+  .mono { font-family: 'Source Code Pro', monospace; font-size: 12px; color: var(--accent-yellow); }
+
+  /* ── PATHWAY FLOW ── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 16px 0;
+  }
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    position: relative;
+  }
+  .flow-step:first-child { border-radius: 10px 10px 0 0; }
+  .flow-step:last-child  { border-radius: 0 0 10px 10px; border-top: none; }
+  .flow-step:not(:first-child):not(:last-child) { border-top: none; }
+
+  .flow-step-num {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .flow-step-num.red   { background: var(--glow-red);   color: var(--accent-red);    border: 1px solid var(--accent-red); }
+  .flow-step-num.orange{ background: rgba(240,112,32,0.15); color: var(--accent-orange); border: 1px solid var(--accent-orange); }
+  .flow-step-num.blue  { background: var(--glow-blue);  color: var(--accent-blue);   border: 1px solid var(--accent-blue); }
+
+  .flow-step-body h5 { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .flow-step-body p  { font-size: 12.5px; color: var(--text-mid); }
+  .flow-step-body .eq { font-family: 'Source Code Pro', monospace; font-size: 12px; color: var(--accent-yellow); margin-top: 5px; display: block; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-left: 3px solid;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    font-size: 13.5px;
+  }
+  .callout.danger  { border-color: var(--accent-red);    background: rgba(232,64,64,0.06);    color: var(--text-mid); }
+  .callout.warning { border-color: var(--accent-orange); background: rgba(240,112,32,0.06);   color: var(--text-mid); }
+  .callout.info    { border-color: var(--accent-blue);   background: rgba(48,144,240,0.06);   color: var(--text-mid); }
+  .callout.success { border-color: var(--accent-green);  background: rgba(48,192,112,0.06);   color: var(--text-mid); }
+  .callout.pearl   { border-color: var(--accent-yellow); background: rgba(240,192,48,0.06);   color: var(--text-mid); }
+  .callout strong  { color: var(--text); }
+  .callout .label  {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .callout.danger .label  { color: var(--accent-red); }
+  .callout.warning .label { color: var(--accent-orange); }
+  .callout.info .label    { color: var(--accent-blue); }
+  .callout.success .label { color: var(--accent-green); }
+  .callout.pearl .label   { color: var(--accent-yellow); }
+
+  /* ── SUMMARY BOX ── */
+  .summary-box {
+    background: linear-gradient(135deg, rgba(48,192,112,0.07), rgba(48,144,240,0.07));
+    border: 1px solid rgba(48,192,112,0.2);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 32px 0;
+  }
+  .summary-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--accent-green);
+    margin-bottom: 14px;
+  }
+  .summary-box ul { color: var(--text-mid); font-size: 13.5px; padding-left: 18px; line-height: 1.9; }
+  .summary-box ul li::marker { color: var(--accent-green); }
+
+  /* ── MNEMONIC ── */
+  .mnemonic {
+    background: rgba(144,96,240,0.08);
+    border: 1px solid rgba(144,96,240,0.25);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .mnemonic .label {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-purple);
+    margin-bottom: 10px;
+  }
+  .mnemonic h4 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--accent-purple); margin-bottom: 8px; }
+  .mnemonic ul { font-size: 13px; color: var(--text-mid); padding-left: 16px; line-height: 1.9; }
+  .mnemonic .letter { color: var(--accent-purple); font-weight: 700; }
+
+  /* ── QUIZ ── */
+  .quiz {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin: 10px 0;
+  }
+  .quiz .q-label {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    margin-bottom: 8px;
+  }
+  .quiz .q { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+  .quiz .answer {
+    display: none;
+    font-size: 13.5px;
+    color: var(--text-mid);
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    margin-top: 4px;
+  }
+  .quiz .answer.show { display: block; }
+  .quiz button {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    background: rgba(32,208,192,0.08);
+    border: 1px solid rgba(32,208,192,0.25);
+    color: var(--accent-cyan);
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .quiz button:hover { background: rgba(32,208,192,0.15); }
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 680px) { .two-col { grid-template-columns: 1fr; } .card-grid-2 { grid-template-columns: 1fr; } }
+
+  /* ── MISC ── */
+  strong { color: var(--text); }
+  .text-red    { color: var(--accent-red); }
+  .text-orange { color: var(--accent-orange); }
+  .text-yellow { color: var(--accent-yellow); }
+  .text-green  { color: var(--accent-green); }
+  .text-blue   { color: var(--accent-blue); }
+  .text-cyan   { color: var(--accent-cyan); }
+
+  h3.sub {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 28px 0 14px;
+    padding-left: 10px;
+    border-left: 3px solid var(--accent-red);
+  }
+  h3.sub.green { border-left-color: var(--accent-green); }
+  h3.sub.blue  { border-left-color: var(--accent-blue); }
+  h3.sub.orange{ border-left-color: var(--accent-orange); }
+  h3.sub.cyan  { border-left-color: var(--accent-cyan); }
+  h3.sub.purple{ border-left-color: var(--accent-purple); }
+
+  p.lead { font-size: 15px; color: var(--text-mid); margin-bottom: 20px; line-height: 1.75; }
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 28px 24px;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: 'Source Code Pro', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  sup { font-size: 10px; color: var(--accent-yellow); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+<div class="hero">
+  <p class="hero-eyebrow">Patologia Celular Avançada</p>
+  <h1><span class="rx">Radicais Livres</span><br>&amp; <span class="ax">Sistemas Antioxidantes</span></h1>
+  <p class="hero-sub">
+    Reações de geração de EROs/ERNs, alvos moleculares da lesão oxidativa e
+    mecanismos endógenos de defesa antioxidante — do princípio bioquímico à relevância clínica.
+  </p>
+  <div class="hero-badges">
+    <span class="badge red">Espécies Reativas de Oxigênio</span>
+    <span class="badge orange">Cadeia Mitocondrial</span>
+    <span class="badge yellow">Reação de Fenton</span>
+    <span class="badge blue">Peroxidação Lipídica</span>
+    <span class="badge green">Sistemas Antioxidantes</span>
+    <span class="badge cyan">SOD · Catalase · GSH</span>
+    <span class="badge purple">Clínica &amp; Farmacologia</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TOC -->
+  <nav class="toc">
+    <h3>// Índice</h3>
+    <div class="toc-grid">
+      <a href="#s1"><span class="num">01.</span>Conceitos Fundamentais</a>
+      <a href="#s2"><span class="num">02.</span>Fontes Endógenas de EROs</a>
+      <a href="#s3"><span class="num">03.</span>Reações de Fenton e Haber-Weiss</a>
+      <a href="#s4"><span class="num">04.</span>Espécies Reativas de Nitrogênio</span></a>
+      <a href="#s5"><span class="num">05.</span>Peroxidação Lipídica</a>
+      <a href="#s6"><span class="num">06.</span>Lesão de Proteínas e DNA</a>
+      <a href="#s7"><span class="num">07.</span>Fontes Exógenas</a>
+      <a href="#s8"><span class="num">08.</span>Sistemas Antioxidantes Enzimáticos</a>
+      <a href="#s9"><span class="num">09.</span>Antioxidantes Não-Enzimáticos</a>
+      <a href="#s10"><span class="num">10.</span>Reparo e Sinalização Redox</a>
+      <a href="#s11"><span class="num">11.</span>Clínica &amp; Farmacologia</a>
+      <a href="#s12"><span class="num">12.</span>Revisão &amp; Active Recall</a>
+    </div>
+  </nav>
+
+  <!-- ─────────────────────────────────────────
+       1. CONCEITOS FUNDAMENTAIS
+  ───────────────────────────────────────── -->
+  <section id="s1">
+    <div class="section-header">
+      <span class="section-num">01 //</span>
+      <h2>Conceitos Fundamentais</h2>
+    </div>
+
+    <p class="lead">
+      Um <strong>radical livre</strong> é qualquer espécie química com um ou mais elétrons desemparelhados
+      em seu orbital externo, tornando-a altamente reativa e capaz de propagar reações em cadeia.
+      Nem toda espécie reativa é um radical livre — o peróxido de hidrogênio (H₂O₂) e o oxigênio
+      singlete (¹O₂), por exemplo, são <em>não-radicais</em> mas igualmente lesivos.
+    </p>
+
+    <div class="card-grid">
+      <div class="card red">
+        <span class="tag red">RADICAL LIVRE</span>
+        <h3>Espécies Reativas de Oxigênio (EROs)</h3>
+        <ul>
+          <li><strong>Radical superóxido (O₂•⁻)</strong> — produto primário da redução univalente do O₂</li>
+          <li><strong>Radical hidroxila (•OH)</strong> — o mais reativo e danoso</li>
+          <li><strong>Radical peroxila (ROO•)</strong> e <strong>alcoxila (RO•)</strong> — propagadores da lipoperoxidação</li>
+          <li><strong>Radical hidroperoxila (HOO•)</strong> — forma protonada do O₂•⁻, mais lipofílico</li>
+        </ul>
+      </div>
+      <div class="card orange">
+        <span class="tag orange">NÃO-RADICAL REATIVO</span>
+        <h3>Outras Espécies Reativas de Oxigênio</h3>
+        <ul>
+          <li><strong>Peróxido de hidrogênio (H₂O₂)</strong> — atravessa membranas; precursor do •OH</li>
+          <li><strong>Oxigênio singlete (¹O₂)</strong> — gerado na fotooxidação e por MPO</li>
+          <li><strong>Ácido hipocloroso (HOCl)</strong> — gerado por mieloperoxidase (MPO)</li>
+          <li><strong>Ozônio (O₃)</strong> — exógeno; reage com ácidos graxos insaturados</li>
+        </ul>
+      </div>
+      <div class="card blue">
+        <span class="tag blue">ERN</span>
+        <h3>Espécies Reativas de Nitrogênio (ERNs)</h3>
+        <ul>
+          <li><strong>Óxido nítrico (NO•)</strong> — radical; sinalização e toxicidade</li>
+          <li><strong>Peroxinitrito (ONOO⁻)</strong> — produto da reação NO• + O₂•⁻; extremamente reativo</li>
+          <li><strong>Dióxido de nitrogênio (NO₂•)</strong></li>
+          <li><strong>Ácido nitroso (HNO₂) e nitrosoperoxiácido</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="label">// Conceito-chave</span>
+      O estado de <strong>estresse oxidativo</strong> ocorre quando a produção de EROs/ERNs supera a capacidade dos sistemas antioxidantes, gerando lesão celular. Contudo, em baixas concentrações, EROs participam de <strong>sinalização redox fisiológica</strong> (ex.: ativação de NF-κB, ativação de HIF-1α, proliferação celular).
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       2. FONTES ENDÓGENAS DE EROs
+  ───────────────────────────────────────── -->
+  <section id="s2">
+    <div class="section-header">
+      <span class="section-num">02 //</span>
+      <h2>Fontes Endógenas de EROs</h2>
+    </div>
+
+    <h3 class="sub">2.1 — Cadeia Transportadora de Elétrons (CTE) Mitocondrial</h3>
+    <p class="lead">A mitocôndria é a maior fonte endógena de EROs (≈ 1–2% do O₂ consumido escapa como O₂•⁻).</p>
+
+    <div class="flow">
+      <div class="flow-step">
+        <span class="flow-step-num red">I</span>
+        <div class="flow-step-body">
+          <h5>Complexo I (NADH:ubiquinona oxidorredutase)</h5>
+          <p>Principal sítio de "vazamento" eletrônico. O elétron foge do ubisemiquinone para o O₂.</p>
+          <span class="eq">NADH + H⁺ + O₂ → NAD⁺ + O₂•⁻ (+ H₂O — via normal)</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <span class="flow-step-num orange">III</span>
+        <div class="flow-step-body">
+          <h5>Complexo III (ubiquinol:citocromo c oxidorredutase) — Ciclo Q</h5>
+          <p>Geração de O₂•⁻ tanto para a matriz quanto para o espaço intermembrana. Potencializado por antimoniacinas.</p>
+          <span class="eq">QH• (semiquinone) + O₂ → Q + O₂•⁻</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <span class="flow-step-num blue">II</span>
+        <div class="flow-step-body">
+          <h5>Complexo II (succinato desidrogenase) e ETF</h5>
+          <p>Contribuição menor, mas relevante em condições de fluxo reverso de elétrons (<em>reverse electron transport</em>).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout pearl">
+      <span class="label">// Pérola Clínica</span>
+      <strong>Reperfusão pós-isquemia:</strong> Durante isquemia, HAX accumula-se. Na reperfusão, a xantina oxidase converte HAX + O₂ em ácido úrico + O₂•⁻ em grande quantidade — base da <strong>lesão de isquemia-reperfusão</strong> (síndrome pós-IAM, transplante, reimplante de membros).
+    </div>
+
+    <h3 class="sub orange">2.2 — Principais Fontes Enzimáticas Endógenas</h3>
+
+    <div class="card-grid card-grid-2">
+      <div class="card orange">
+        <span class="tag orange">ENZIMA</span>
+        <h3>NADPH Oxidase (NOX)</h3>
+        <p><strong>Localização:</strong> fagócitos (NOX2), endotélio, rim, coração (NOX1/4).<br>
+        <strong>Função fisiológica:</strong> "burst oxidativo" — geração intencional de O₂•⁻ para matar patógenos (vacúolo fagolisossomal).<br>
+        <strong>Patológica:</strong> ativação crônica causa dano vascular, inflamação, hipertensão, insuficiência cardíaca.<br>
+        <span class="eq">2 O₂ + NADPH → 2 O₂•⁻ + NADP⁺ + H⁺</span></p>
+      </div>
+      <div class="card red">
+        <span class="tag red">ENZIMA</span>
+        <h3>Xantina Oxidase (XO)</h3>
+        <p><strong>Substrato:</strong> Hipoxantina → xantina → ácido úrico.<br>
+        <strong>Geração:</strong> O₂•⁻ e H₂O₂.<br>
+        <strong>Relevância clínica:</strong> lesão de isquemia-reperfusão, gota. A xantina desidrogenase (forma fisiológica) converte-se em xantina oxidase pela proteólise/oxidação na isquemia.<br>
+        <span class="eq">Hipoxantina + O₂ + H₂O → Xantina + O₂•⁻ + H₂O₂</span></p>
+      </div>
+      <div class="card blue">
+        <span class="tag blue">ENZIMA</span>
+        <h3>Ciclooxigenase (COX) e Lipoxigenase (LOX)</h3>
+        <p><strong>COX:</strong> durante síntese de prostaglandinas, gera radicais intermediários e H₂O₂.<br>
+        <strong>LOX:</strong> na síntese de leucotrienos, gera radicais lipídicos (HPETE → HETE).<br>
+        <strong>Importância:</strong> contribui para EROs na inflamação — daí o efeito antioxidante indireto dos AINEs.</p>
+      </div>
+      <div class="card cyan">
+        <span class="tag cyan">ENZIMA</span>
+        <h3>Mieloperoxidase (MPO)</h3>
+        <p><strong>Localização:</strong> grânulos primários de neutrófilos e monócitos.<br>
+        <strong>Reação:</strong> H₂O₂ + Cl⁻ → <strong>HOCl</strong> (ácido hipocloroso) — altamente microbicida e tecidotóxico.<br>
+        <strong>Também gera:</strong> ¹O₂, radicais tirosila, cloraminas.<br>
+        <strong>Clínica:</strong> deficiência de MPO → predisposição a candidíase sistêmica.</p>
+      </div>
+      <div class="card purple">
+        <span class="tag purple">ENZIMA</span>
+        <h3>Citocromo P450 (CYP)</h3>
+        <p><strong>RE liso e mitocôndria.</strong> Metabolismo de xenobióticos pode gerar O₂•⁻ e H₂O₂ por "desacoplamento" (uncoupling) — especialmente com indutores como álcool etílico e fármacos.<br>
+        <strong>Exemplo:</strong> paracetamol → NAPQI (metabólito tóxico via CYP2E1) → depleção de GSH → estresse oxidativo hepático.</p>
+      </div>
+      <div class="card yellow">
+        <span class="tag yellow">ENZIMA</span>
+        <h3>Óxido Nítrico Sintase (NOS) Desacoplada</h3>
+        <p>Quando há deficiência do cofator <strong>BH₄</strong> (tetraidrobiopterina) ou do substrato L-arginina, a NOS gera <strong>O₂•⁻</strong> em vez de NO•.<br>
+        <strong>Relevância:</strong> disfunção endotelial na hipertensão, diabetes e aterosclerose — o O₂•⁻ ainda reage com o NO• residual formando ONOO⁻.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       3. REAÇÕES DE FENTON E HABER-WEISS
+  ───────────────────────────────────────── -->
+  <section id="s3">
+    <div class="section-header">
+      <span class="section-num">03 //</span>
+      <h2>Reações de Fenton e Haber-Weiss</h2>
+    </div>
+
+    <p class="lead">
+      O radical hidroxila (•OH) é a espécie mais reativa conhecida na biologia — reage com qualquer molécula
+      orgânica a velocidades próximas ao limite difusional. Sua formação depende de <strong>metais de transição livres</strong> (Fe²⁺, Cu⁺).
+    </p>
+
+    <h3 class="sub">3.1 — Reação de Fenton</h3>
+    <div class="reaction-block">
+      <p class="label">// Reação Central</p>
+      <h4>Fe²⁺ + H₂O₂ → Fe³⁺ + •OH + OH⁻</h4>
+      <p>O Fe²⁺ reduz o H₂O₂, gerando o radical •OH e OH⁻. O Fe³⁺ resultante pode ser re-reduzido a Fe²⁺ pelo O₂•⁻ (reação de Haber-Weiss), perpetuando o ciclo.</p>
+    </div>
+    <div class="reaction-block">
+      <p class="label">// Reação Análoga — Cobre</p>
+      <h4>Cu⁺ + H₂O₂ → Cu²⁺ + •OH + OH⁻</h4>
+      <p>Cobre livre (como na Doença de Wilson) catalisa a mesma reação. A ceruloplasmina e a albumina quelam o Cu²⁺ fisiologicamente.</p>
+    </div>
+
+    <h3 class="sub orange">3.2 — Reação de Haber-Weiss (Catalisada por Ferro)</h3>
+    <div class="reaction-block">
+      <p class="label">// Reação Global</p>
+      <h4>O₂•⁻ + H₂O₂ → O₂ + •OH + OH⁻</h4>
+      <span class="eq">Passo 1: Fe³⁺ + O₂•⁻ → Fe²⁺ + O₂ (redução do Fe³⁺ pelo superóxido)</span>
+      <span class="eq">Passo 2: Fe²⁺ + H₂O₂ → Fe³⁺ + •OH + OH⁻ (Fenton)</span>
+      <p>A reação de Haber-Weiss <em>não ocorre eficientemente sem catalisador metálico</em>. Na célula, o Fe²⁺ libre — liberado de ferritina por O₂•⁻ ou no trauma tecidual com hemólise — é o elo crítico.</p>
+    </div>
+
+    <div class="callout danger">
+      <span class="label">// Armadilha Clínica</span>
+      <strong>Sobrecarga de ferro (hemocromatose, transfusões múltiplas):</strong> excesso de ferro livre catalisa continuamente a reação de Fenton → lesão hepática, cardíaca e pancreática (cirrose + diabetes + miocardiopatia = "diabetes bronze"). Quelantes (deferoxamina, deferasirox) atuam exatamente removendo o Fe²⁺/Fe³⁺ livre.
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Espécie</th>
+            <th>Radical?</th>
+            <th>Reatividade</th>
+            <th>Meia-vida aproximada</th>
+            <th>Principal alvo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-hl">O₂•⁻ (superóxido)</td>
+            <td>Sim</td>
+            <td>Moderada</td>
+            <td>~1–10 µs</td>
+            <td>Fe-S clusters, ascorbato</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">H₂O₂</td>
+            <td>Não</td>
+            <td>Baixa (per se), alta via Fenton</td>
+            <td>Minutos a horas</td>
+            <td>Tiois (-SH), Fenton</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">•OH (hidroxila)</td>
+            <td>Sim</td>
+            <td><strong>MÁXIMA</strong></td>
+            <td>~1 ns</td>
+            <td>DNA, lipídios, proteínas (tudo)</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">¹O₂ (singlete)</td>
+            <td>Não</td>
+            <td>Alta</td>
+            <td>~1–4 µs</td>
+            <td>Ácidos graxos insaturados, guanina</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">HOCl (hipocloroso)</td>
+            <td>Não</td>
+            <td>Alta</td>
+            <td>Segundos</td>
+            <td>Tiois, aminas, Fe-S</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">ONOO⁻ (peroxinitrito)</td>
+            <td>Não (mas forma •OH e NO₂•)</td>
+            <td>Muito alta</td>
+            <td>~10 ms</td>
+            <td>Tirosina (nitrosilação), DNA</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       4. ESPÉCIES REATIVAS DE NITROGÊNIO
+  ───────────────────────────────────────── -->
+  <section id="s4">
+    <div class="section-header">
+      <span class="section-num">04 //</span>
+      <h2>Espécies Reativas de Nitrogênio (ERNs)</h2>
+    </div>
+
+    <h3 class="sub blue">4.1 — Síntese do Óxido Nítrico</h3>
+    <div class="reaction-block">
+      <p class="label">// NOS (NOS1/nNOS, NOS2/iNOS, NOS3/eNOS)</p>
+      <h4>L-Arginina + O₂ + NADPH → L-Citrulina + <span class="text-blue">NO•</span> + NADP⁺</h4>
+      <p>O NO• possui múltiplos papéis: vasodilatação (cGMP via guanilato ciclase), defesa antimicrobiana (iNOS em macrófagos) e neurotransmissão. Em excesso ou na presença de O₂•⁻, torna-se tóxico.</p>
+    </div>
+
+    <h3 class="sub red">4.2 — Formação do Peroxinitrito (ONOO⁻) — A Reação Mais Rápida da Biologia</h3>
+    <div class="reaction-block">
+      <p class="label">// Reação Ultrarrápida (k ≈ 1,9 × 10¹⁰ M⁻¹s⁻¹)</p>
+      <h4>NO• + O₂•⁻ → ONOO⁻</h4>
+      <p>Esta reação é tão rápida que compete com a SOD pela captura do O₂•⁻. O peroxinitrito é um oxidante e nitrosante potente.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card red">
+        <span class="tag red">MECANISMO</span>
+        <h3>Ações do ONOO⁻</h3>
+        <ul>
+          <li><strong>Nitração de tirosina</strong> → 3-nitrotirosina (biomarcador de estresse nitrosativo)</li>
+          <li><strong>Oxidação de tiois</strong> (–SH → –S–S–, ácido sulfênico)</li>
+          <li><strong>Decompõe-se em •OH + NO₂•</strong> → lesão de DNA (8-OHdG) e peroxidação lipídica</li>
+          <li><strong>Inativa SOD-Mn</strong> e proteínas Fe-S</li>
+          <li><strong>Nitrosação do DNA</strong> → deaminação de bases (citosina → uracil)</li>
+        </ul>
+      </div>
+      <div class="card purple">
+        <span class="tag purple">ERN → PATOLOGIA</span>
+        <h3>Relevância Clínica das ERNs</h3>
+        <ul>
+          <li><strong>Sepse:</strong> iNOS hiperproduzida → NO• → vasoplegia + ONOO⁻ → disfunção mitocondrial</li>
+          <li><strong>Aterosclerose:</strong> ONOO⁻ oxida LDL e inativa eNOS (nitração de BH₄)</li>
+          <li><strong>Neurodegenera­ção:</strong> nNOS + estresse oxidativo → ONOO⁻ → lesão neuronal (ELA, Parkinson)</li>
+          <li><strong>Isquemia-reperfusão:</strong> NO• + burst de O₂•⁻ → ONOO⁻ abundante</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       5. PEROXIDAÇÃO LIPÍDICA
+  ───────────────────────────────────────── -->
+  <section id="s5">
+    <div class="section-header">
+      <span class="section-num">05 //</span>
+      <h2>Peroxidação Lipídica (Lipoperoxidação)</h2>
+    </div>
+
+    <p class="lead">
+      Ácidos graxos <strong>poli-insaturados (AGPIs)</strong> — ácido araquidônico, linoleico, docosa-hexaenoico (DHA) —
+      são os principais alvos da peroxidação. A reação progride em cadeia e pode destruir a membrana celular.
+    </p>
+
+    <h3 class="sub">5.1 — Fases da Peroxidação Lipídica</h3>
+
+    <div class="flow">
+      <div class="flow-step">
+        <span class="flow-step-num red">1</span>
+        <div class="flow-step-body">
+          <h5>INICIAÇÃO</h5>
+          <p>Um radical iniciador (•OH, ROO•, ¹O₂) abstrai um átomo de hidrogênio do carbono bis-alílico do AGPI, gerando um radical carbono lipídico (L•).</p>
+          <span class="eq">•OH + LH (AGPI) → H₂O + L•</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <span class="flow-step-num orange">2</span>
+        <div class="flow-step-body">
+          <h5>PROPAGAÇÃO (reação em cadeia)</h5>
+          <p>L• reage com O₂ formando radical peroxila (LOO•), que abstrai H• de outro AGPI, gerando lipídio hidroperóxido (LOOH) e novo L•. <strong>A cadeia se autoperpetua.</strong></p>
+          <span class="eq">L• + O₂ → LOO•</span>
+          <span class="eq">LOO• + LH → LOOH + L•  (propagação)</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <span class="flow-step-num blue">3</span>
+        <div class="flow-step-body">
+          <h5>TERMINAÇÃO</h5>
+          <p>Dois radicais se combinam formando produtos não-radicais. A vitamina E (α-tocoferol) e o β-caroteno são os principais terminadores fisiológicos. A GPx também rompe a cadeia ao reduzir LOOH.</p>
+          <span class="eq">LOO• + Vitamina E-H → LOOH + Vitamina E•  (radical tocoferila estável)</span>
+          <span class="eq">2 LOO• → LOOL + O₂  (terminação direta)</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub orange">5.2 — Produtos Finais Lesivos</h3>
+    <div class="card-grid">
+      <div class="card red">
+        <span class="tag red">PRODUTO FINAL</span>
+        <h3>Malondialdeído (MDA)</h3>
+        <p>Produto de degradação de LOOH. Forma adutos com DNA (bases guanina e adenina) e proteínas (lisina). <strong>Biomarcador clássico de estresse oxidativo</strong> (medido pelo teste TBARS). Implicado em mutagênese e progressão aterosclerótica.</p>
+      </div>
+      <div class="card orange">
+        <span class="tag orange">PRODUTO FINAL</span>
+        <h3>4-Hidroxinonenal (4-HNE)</h3>
+        <p>Produto da peroxidação de ω-6 AGPIs (ácido linoleico, araquidônico). Altamente eletrofílico — reage com grupamentos –SH, –NH₂ e –OH de proteínas. <strong>Ativa caspases e apoptose</strong>. Adutos de 4-HNE detectados na doença de Alzheimer, Parkinson e DHGNA/NASH.</p>
+      </div>
+      <div class="card yellow">
+        <span class="tag yellow">PRODUTO FINAL</span>
+        <h3>Isoprostanos (F2-IsoPs)</h3>
+        <p>Formados <em>in situ</em> por peroxidação não-enzimática do ácido araquidônico. <strong>Biomarcador mais sensível e específico de peroxidação lipídica in vivo</strong>. Biologicamente ativos: vasoconstritores, pró-inflamatórios. Detectados na urina/plasma.</p>
+      </div>
+    </div>
+
+    <div class="callout pearl">
+      <span class="label">// Pérola de Prova</span>
+      A <strong>oxidação do LDL</strong> por peroxidação lipídica é o evento central da aterogênese: LDL-ox é captado por receptores <em>scavenger</em> dos macrófagos (sem feedback negativo) → acúmulo de colesterol → células espumosas (<em>foam cells</em>) → estria gordurosa → placa aterosclerótica.
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       6. LESÃO DE PROTEÍNAS E DNA
+  ───────────────────────────────────────── -->
+  <section id="s6">
+    <div class="section-header">
+      <span class="section-num">06 //</span>
+      <h2>Lesão Oxidativa de Proteínas e DNA</h2>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3 class="sub">Lesão de Proteínas</h3>
+        <div class="reaction-block">
+          <p class="label">// Oxidação de Aminoácidos</p>
+          <p>Resíduos mais suscetíveis: <strong>cisteína</strong> (–SH → –S–S–, –SOH, –SO₂H, –SO₃H), <strong>metionina</strong> (→ metionina sulfóxido), <strong>triptofano</strong>, <strong>tirosina</strong> (→ dityrosina, nitrotirosina).<br><br>
+          Consequências: alteração da estrutura quaternária, perda de função enzimática, formação de agregados insolúveis (carbonilação — marca de proteínas para degradação proteassomal).</p>
+        </div>
+        <div class="reaction-block">
+          <p class="label">// Carbonilação de Proteínas</p>
+          <h4>Proteína-NH₂ + aldeído (MDA, 4-HNE) → Proteína-C=O (carbonil)</h4>
+          <p>Biomarcador mensurável por DNPH (dinitrofenilhidrazina). Aumentado no envelhecimento, diabetes e DPOC. Proteínas carboniladas são resistentes ao proteasoma → acúmulo → disfunção celular.</p>
+        </div>
+        <div class="callout warning">
+          <span class="label">// Atenção</span>
+          <strong>Inativação de enzimas críticas:</strong> aconitase mitocondrial (Fe-S), GAPDH, proteínas fosfatases (Cys catalítico), Na⁺/K⁺-ATPase, receptores de membrana (alteração de conformação por pontes S-S aberrantes).
+        </div>
+      </div>
+      <div>
+        <h3 class="sub blue">Lesão Oxidativa do DNA</h3>
+        <div class="reaction-block">
+          <p class="label">// Oxidação da Guanina</p>
+          <h4>Guanina + •OH → 8-oxo-7,8-diidroguanina (8-OHdG)</h4>
+          <p>A guanina é a base nitrogenada mais oxidável. O <strong>8-OHdG</strong> é o biomarcador padrão-ouro de lesão oxidativa do DNA — detectado na urina, plasma e tecidos. Parea erroneamente com adenina → transversão G:C → T:A (mutagênica).</p>
+        </div>
+        <div class="reaction-block">
+          <p class="label">// Outros tipos de lesão</p>
+          <ul style="font-size:13px; color: var(--text-mid); padding-left:16px; line-height:1.9;">
+            <li><strong>Quebras de fita simples (SSB)</strong> — por •OH na desoxirribose</li>
+            <li><strong>Quebras de fita dupla (DSB)</strong> — mais pró-apoptóticas</li>
+            <li><strong>Sítios abásicos (AP sites)</strong> — perda de base por oxidação</li>
+            <li><strong>Adutos de DNA-aldeído</strong> (MDA, 4-HNE) → mutações</li>
+            <li><strong>Cross-links DNA-proteína</strong> — bloqueiam transcrição/replicação</li>
+            <li><strong>Deaminação de citosina</strong> pelo ONOO⁻ → citosina → uracil → transição C:G → T:A</li>
+          </ul>
+        </div>
+        <div class="callout danger">
+          <span class="label">// Carcinogênese</span>
+          A acumulação de lesões oxidativas no DNA, quando não reparadas pelos sistemas BER/NER, leva a mutações em proto-oncogenes e genes supressores de tumor. O estresse oxidativo crônico é mecanismo central na <strong>hepatocarcinogênese</strong> (cirrose), <strong>colangiocarcinoma</strong> e <strong>câncer colorretal</strong>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       7. FONTES EXÓGENAS
+  ───────────────────────────────────────── -->
+  <section id="s7">
+    <div class="section-header">
+      <span class="section-num">07 //</span>
+      <h2>Fontes Exógenas de Radicais Livres</h2>
+    </div>
+
+    <div class="card-grid">
+      <div class="card red">
+        <span class="tag red">RADIAÇÃO</span>
+        <h3>Radiação Ionizante (RX, γ, partículas)</h3>
+        <p>Radiolise da água: <span style="font-family:'Source Code Pro',monospace;font-size:12px;color:var(--accent-yellow)">H₂O → •OH + H• (+ H₂O₂, O₂•⁻)</span>. Causa DSBs no DNA. Base da radioterapia e do dano por exposição acidental. Proteção: glutationa, amifostina (WR-2721).</p>
+      </div>
+      <div class="card orange">
+        <span class="tag orange">AMBIENTAL</span>
+        <h3>Tabaco (Fumaça de Cigarro)</h3>
+        <p>Contém > 10¹⁷ radicais/tragada (fase gasosa: NO•, NO₂•, superóxido) + fase particulada (semiquinonas que reduzem ciclicamente O₂). Depleção de vitamina C, ativação de neutrófilos/macrófagos. Base fisiopatológica da DPOC e carcinoma pulmonar.</p>
+      </div>
+      <div class="card yellow">
+        <span class="tag yellow">FÁRMACO</span>
+        <h3>Doxorrubicina (Adriamicina)</h3>
+        <p>Ciclo redox: doxorrubicina é reduzida a semiquinone → reoxidada pelo O₂ gerando O₂•⁻. Acúmulo de EROs na mitocôndria cardíaca (baixa catalase) → cardiotoxicidade dose-dependente (<em>cardiomiopatia dilatada</em>). Dexrazoxano quelante previne.</p>
+      </div>
+      <div class="card blue">
+        <span class="tag blue">FÁRMACO</span>
+        <h3>Paracetamol (acetaminofeno) — Overdose</h3>
+        <p>CYP2E1/CYP3A4 → NAPQI (N-acetil-p-benzoquinonaimina) → depleção de GSH → ligação covalente a proteínas hepáticas + estresse oxidativo → necrose hepática centrolobular. Tratamento: N-acetilcisteína (NAC — repõe GSH).</p>
+      </div>
+      <div class="card cyan">
+        <span class="tag cyan">AMBIENTAL</span>
+        <h3>Herbicidas: Paraquat e Diquat</h3>
+        <p>Ciclo redox mitocondrial: aceita elétrons do NADPH/CTE → forma radical cátion → doa elétron ao O₂ → O₂•⁻. Destrói pneumócitos tipo I e II → fibrose pulmonar progressiva e fatal. Toxicidade é potencializada por O₂ suplementar — antídoto: N-acetilcisteína, não O₂ hiperbar.</p>
+      </div>
+      <div class="card purple">
+        <span class="tag purple">METAL PESADO</span>
+        <h3>Metais: Ferro (Fenton), Cobre, Cromo, Chumbo, Arsênio</h3>
+        <p>Cromo VI: reduzido a Cr III → gera •OH via Fenton. Chumbo: depleta GSH e inibe enzimas antioxidantes. Arsênio: gera dimetilarsina radical, inibe GPx e tiorredoxina. Todos amplificam EROs via Fenton ou inibição de defesas.</p>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="label">// UV e Fotooxidação</span>
+      UV-A (320–400 nm) gera <strong>¹O₂</strong> e radicais via fotossensibilizadores endógenos (porfirina, flavinas, riboflavina). UV-B (280–320 nm) induz dímeros de pirimidina no DNA (CPD, 6-4PP) — reparo por NER. A combinação UV + psoralenos (PUVA) é usada terapeuticamente mas também é carcinogênica.
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       8. SISTEMAS ANTIOXIDANTES ENZIMÁTICOS
+  ───────────────────────────────────────── -->
+  <section id="s8">
+    <div class="section-header">
+      <span class="section-num">08 //</span>
+      <h2>Sistemas Antioxidantes Enzimáticos</h2>
+    </div>
+
+    <p class="lead">
+      A célula dispõe de um arsenal enzimático hierarquizado: primeiro neutraliza O₂•⁻ (SOD), depois H₂O₂ (catalase, GPx), e finalmente restaura os oxidantes reduzidos (GR, Trx, Prx).
+    </p>
+
+    <!-- SOD -->
+    <h3 class="sub green">8.1 — Superóxido Dismutase (SOD)</h3>
+    <div class="reaction-block">
+      <p class="label">// Reação Central — Dismutação</p>
+      <h4>2 O₂•⁻ + 2 H⁺ → H₂O₂ + O₂</h4>
+      <p>A SOD catalisa a dismutação do O₂•⁻ a H₂O₂ (ainda reativo, mas menos) e O₂. É uma das enzimas mais eficientes conhecidas (k ≈ 2 × 10⁹ M⁻¹s⁻¹ — praticamente limitada por difusão).</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Isoforma</th><th>Localização</th><th>Metal no sítio ativo</th><th>Gene</th><th>Relevância Clínica</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-hl">SOD1 (Cu/Zn-SOD)</td>
+            <td>Citoplasma, espaço intermembrana mit., núcleo</td>
+            <td>Cu²⁺ / Zn²⁺</td>
+            <td>SOD1</td>
+            <td><strong>Mutação em ~20% da ELA familiar.</strong> Ganho de função tóxica (agregados, atividade peroxidásica)</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">SOD2 (Mn-SOD)</td>
+            <td>Matriz mitocondrial</td>
+            <td>Mn³⁺</td>
+            <td>SOD2</td>
+            <td>Knockout letal em camundongos. Induzida por NF-κB. Polimorfismo Ala16Val: ↑ risco câncer, diabetes</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">SOD3 (EC-SOD)</td>
+            <td>Extracelular (MEC, superfície endotelial)</td>
+            <td>Cu²⁺ / Zn²⁺</td>
+            <td>SOD3</td>
+            <td>Protege NO• endotelial da inativação por O₂•⁻; ↓ na hipertensão e aterosclerose</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CATALASE -->
+    <h3 class="sub green">8.2 — Catalase</h3>
+    <div class="reaction-block">
+      <p class="label">// Reação Central</p>
+      <h4>2 H₂O₂ → 2 H₂O + O₂</h4>
+      <p><strong>Cofator:</strong> heme (protoporfirina IX + Fe³⁺) — 4 subunidades.<br>
+      <strong>Localização principal:</strong> peroxissomos (alta concentração), eritrócitos, fígado, rim.<br>
+      <strong>Cinética:</strong> funciona melhor a concentrações <em>altas</em> de H₂O₂; a GPx é mais eficiente em concentrações baixas.<br>
+      <strong>Clínica:</strong> acatalasemia (deficiência rara) → úlceras orais progressivas (doença de Takahara). Ausência de catalase eritrocitária = resistência diminuída ao H₂O₂ dos fagócitos.</p>
+    </div>
+
+    <!-- GPx -->
+    <h3 class="sub green">8.3 — Glutationa Peroxidase (GPx)</h3>
+    <div class="reaction-block">
+      <p class="label">// Reação Central (GPx1)</p>
+      <h4>H₂O₂ + 2 GSH → 2 H₂O + GSSG &nbsp;&nbsp;&nbsp;(ou:  LOOH + 2 GSH → LOH + H₂O + GSSG)</h4>
+      <p><strong>Cofator único:</strong> selênio (selenocisteína no sítio ativo — por isso Se é micronutriente essencial).<br>
+      <strong>Isoformas:</strong> GPx1 (citosol/mit.), GPx2 (GI), GPx3 (plasma), GPx4 (fosfolipídio-HPO — protege membranas).<br>
+      <strong>GPx4:</strong> única capaz de reduzir hidroperóxidos de fosfolipídios incorporados à membrana; sua inativação leva a <em>ferroptose</em> (morte celular regulada por acúmulo de LOOH dependente de ferro).<br>
+      <strong>Deficiência de Se:</strong> doença de Keshan (miocardiopatia endêmica), doença de Kashin-Beck (osteoartropatia).</p>
+    </div>
+
+    <!-- GR -->
+    <h3 class="sub cyan">8.4 — Glutationa Redutase (GR) e o Ciclo da Glutationa</h3>
+    <div class="reaction-block">
+      <p class="label">// Regeneração da GSH</p>
+      <h4>GSSG + NADPH + H⁺ → 2 GSH + NADP⁺</h4>
+      <p>O NADPH é o "combustível" do sistema antioxidante citosólico. A <strong>via das pentoses-fosfato (G6PD)</strong> é a principal fonte de NADPH.<br>
+      <strong>Deficiência de G6PD:</strong> em eritrócitos sem mitocôndria, o único NADPH vem da via das pentoses. Sem G6PD → NADPH ↓ → GSSG não é regenerado → anemia hemolítica precipitada por oxidantes (primaquina, fava, infecções). <em>Doença ligada ao X mais prevalente no mundo (> 400 milhões de pessoas).</em></p>
+    </div>
+
+    <!-- THIOREDOXIN / PEROXIREDOXIN -->
+    <h3 class="sub cyan">8.5 — Sistema Tiorredoxina / Peroxirredoxina (Trx/Prx)</h3>
+    <div class="card-grid">
+      <div class="card cyan">
+        <span class="tag cyan">ENZIMA</span>
+        <h3>Tiorredoxina (Trx1/Trx2)</h3>
+        <p>Pequena proteína com par de cisteínas no sítio ativo que reduz pontes dissulfeto em proteínas-alvo. Regenerada pela <strong>tiorredoxina redutase (TrxR)</strong>, que usa NADPH. Regula a atividade de fatores de transcrição (NF-κB, AP-1, p53) via estado redox de cisteínas.<br>
+        <strong>Inibida por:</strong> ouro (auranofina — uso em artrite reumatoide; base do efeito antiproliferativo em câncer).</p>
+      </div>
+      <div class="card blue">
+        <span class="tag blue">ENZIMA</span>
+        <h3>Peroxirredoxinas (Prx I–VI)</h3>
+        <p>Família de 6 peroxidases sem heme ou selênio — usam cisteína catalítica. Reduzem H₂O₂, LOOH e ONOO⁻. Prx3 e Prx5 são mitocondriais; Prx6 é a única com atividade fosfolipase A₂. Prx2 é a terceira proteína mais abundante no eritrócito. Regeneradas pelo sistema Trx/TrxR ou pela sulfirredoxina (Srxn1) após hiperoxidação.</p>
+      </div>
+    </div>
+
+    <!-- SOD-CAT-GPx summary diagram -->
+    <div class="summary-box">
+      <h3>📊 Hierarquia e Integração dos Sistemas Enzimáticos Antioxidantes</h3>
+      <ul>
+        <li><strong>SOD (linha 1):</strong> dismuta O₂•⁻ → H₂O₂ + O₂. Impede formação de ONOO⁻ ao competir com NO• pelo O₂•⁻.</li>
+        <li><strong>Catalase (linha 2a):</strong> dismuta H₂O₂ → H₂O + O₂, especialmente nos peroxissomos e eritrócitos. Não consome cofatores.</li>
+        <li><strong>GPx (linha 2b):</strong> reduz H₂O₂ e LOOH usando GSH — mais eficiente em baixas concentrações de H₂O₂ (µM). GPx4 específica para fosfolipídios de membrana.</li>
+        <li><strong>Prx (linha 2c):</strong> reduz H₂O₂ e ONOO⁻ via Trx. Sensores redox intracelulares.</li>
+        <li><strong>GR:</strong> regenera GSH a partir de GSSG usando NADPH.</li>
+        <li><strong>G6PD:</strong> fonte de NADPH → sustenta GR, TrxR e biossíntese de novo de GSH.</li>
+        <li><strong>γ-Glutamilcisteína sintetase (GCS/GCLC):</strong> etapa limitante da síntese de GSH. Induzida pelo Nrf2.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       9. ANTIOXIDANTES NÃO-ENZIMÁTICOS
+  ───────────────────────────────────────── -->
+  <section id="s9">
+    <div class="section-header">
+      <span class="section-num">09 //</span>
+      <h2>Antioxidantes Não-Enzimáticos</h2>
+    </div>
+
+    <div class="card-grid card-grid-2">
+      <div class="card green">
+        <span class="tag green">TRIPEPTÍDEO</span>
+        <h3>Glutationa (GSH) — γ-Glu-Cys-Gly</h3>
+        <p><strong>Mais abundante antioxidante intracelular</strong> (1–10 mM intracelular). Reduz H₂O₂/LOOH (via GPx), regenera vitaminas C e E, conjuga eletrófilos (via GST), mantém tiois proteicos reduzidos, quelante de metais.<br>
+        <strong>Síntese:</strong> fígado → exportada p/ plasma.<br>
+        <strong>Depletada por:</strong> paracetamol-overdose, paraquat, isquemia, etanol.<br>
+        <strong>Farmacologia:</strong> N-acetilcisteína (NAC) → cisteína → GSH; usado em paracetamol-overdose, SDRA, hepatite alcoólica.</p>
+      </div>
+      <div class="card orange">
+        <span class="tag orange">VITAMINA LIPOSSOLÚVEL</span>
+        <h3>Vitamina E (α-Tocoferol)</h3>
+        <p><strong>Principal antioxidante de membrana.</strong> Localizado na bicamada fosfolipídica, doa H• aos radicais LOO•, terminando a cadeia de peroxidação. Gera radical tocoferila (Vit E•), relativamente estável, regenerado pela vitamina C.<br>
+        <strong>Deficiência:</strong> neuropatia axonal, anemia hemolítica (eritrócitos prematuros — prematuridade), retinite pigmentosa, ataxia.<br>
+        <strong>Superdosagem:</strong> interferência com vitamina K → ↑ RNI.</p>
+      </div>
+      <div class="card blue">
+        <span class="tag blue">VITAMINA HIDROSSOLÚVEL</span>
+        <h3>Vitamina C (Ácido Ascórbico)</h3>
+        <p><strong>Principal antioxidante aquoso.</strong> Doa H• a radicais livres, regenera vitamina E•, reduz Fe³⁺ → Fe²⁺ (atenção: pode ser pró-oxidante em excesso com Fe livre — "paradoxo do ascorbato"). Essencial para síntese de colágeno (cofator prolil/lisil hidroxilase).<br>
+        <strong>Deficiência:</strong> escorbuto (fragilidade vascular, petéquias, gengivorragia).<br>
+        <strong>Regenerada por:</strong> NADPH-dependente (semideidroascorbato → ascorbato).</p>
+      </div>
+      <div class="card cyan">
+        <span class="tag cyan">CAROTENÓIDE</span>
+        <h3>β-Caroteno e Licopeno</h3>
+        <p>Excelente captador de <strong>oxigênio singlete (¹O₂)</strong> — transfere energia por dissipação térmica. β-Caroteno também capta radicais peroxila em baixas pressões de O₂. <strong>ATENÇÃO:</strong> em fumantes, suplementação com altas doses de β-caroteno <em>aumenta</em> risco de carcinoma pulmonar (estudos ATBC e CARET) — mecanismo obscuro, possivelmente pró-oxidante em alta pO₂.</p>
+      </div>
+      <div class="card yellow">
+        <span class="tag yellow">MINERAL ESSENCIAL</span>
+        <h3>Selênio (Se)</h3>
+        <p>Cofator das GPx (selenocisteína no sítio ativo) e tiorredoxina redutase. <strong>Deficiência:</strong> doença de Keshan (miocardiopatia + arritmia, endêmica na China), doença de Kashin-Beck.<br>
+        <strong>Toxicidade:</strong> selenose — alopecia, neuropatia, halitose de alho (dimetilselênio expirado).<br>
+        <strong>Dose terapêutica estreita:</strong> 55–400 µg/dia.</p>
+      </div>
+      <div class="card purple">
+        <span class="tag purple">METAL ESSENCIAL</span>
+        <h3>Zinco (Zn²⁺)</h3>
+        <p>Componente estrutural da SOD1 (Cu/Zn-SOD). Não redox-ativo — não catalisa Fenton. Desloca Fe²⁺ e Cu⁺ de sítios de ligação (competição). Mantém grupos tiol reduzidos. Indutor da síntese de metalotioneínas (proteínas quelantes de metais pesados). Cofator da Cu/Zn-SOD.</p>
+      </div>
+      <div class="card red">
+        <span class="tag red">PROTEÍNA</span>
+        <h3>Albumina, Transferrina, Ferritina, Ceruloplasmina</h3>
+        <p><strong>Albumina:</strong> principal sequestrador de Cu²⁺ e captador de •OH no plasma; resíduo Cys34 é o tiol livre mais abundante do sangue.<br>
+        <strong>Transferrina:</strong> mantém Fe³⁺ ligado (sem Fe²⁺ livre = sem Fenton extracelular).<br>
+        <strong>Ferritina:</strong> armazena até 4500 átomos de Fe³⁺ no núcleo mineral — sequestra Fe²⁺.<br>
+        <strong>Ceruloplasmina:</strong> ferroxidase — oxida Fe²⁺ → Fe³⁺ (previne Fenton); transporta 90% do Cu plasmático.</p>
+      </div>
+      <div class="card green">
+        <span class="tag green">ANTIOXIDANTE</span>
+        <h3>Ácido Úrico</h3>
+        <p>Produto final do catabolismo das purinas nos primatas (perdemos uricase). <strong>Paradoxo:</strong> intracelularmente e no plasma é antioxidante potente (capta •OH, ¹O₂, •NO₂) — hipótese de que a evolução manteve uricemia alta para compensar a perda de capacidade de síntese de vitamina C. <strong>Mas:</strong> dentro da célula em estresse oxidativo, urato pode ser oxidante → oxonato → pró-inflamatório.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       10. REPARO E SINALIZAÇÃO REDOX
+  ───────────────────────────────────────── -->
+  <section id="s10">
+    <div class="section-header">
+      <span class="section-num">10 //</span>
+      <h2>Reparo Oxidativo e Sinalização Redox</h2>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <h3 class="sub green">Reparo do DNA Oxidado</h3>
+        <div class="reaction-block">
+          <p class="label">// BER — Base Excision Repair</p>
+          <h4>Principal via de reparo de 8-OHdG e AP sites</h4>
+          <p><strong>OGG1 (8-oxoguanina DNA glicosilase):</strong> reconhece e excisa 8-OHdG → sítio abásico → APE1 (endonuclease) → pol β + XRCC1 + ligase III preenche e selan o gap.<br>
+          <strong>Importância:</strong> mutações em OGG1 associadas a câncer de pulmão, rim e fígado.</p>
+        </div>
+        <div class="reaction-block">
+          <p class="label">// Reparo de Proteínas Oxidadas</p>
+          <p>
+          • <strong>Metionina sulfóxido redutase (MsrA/B):</strong> restaura metionina oxidada usando Trx.<br>
+          • <strong>Proteasoma 20S:</strong> degrada proteínas carboniladas em condições de estresse oxidativo moderado (independente de ubiquitina).<br>
+          • <strong>Autofagia (mitofagia):</strong> remove mitocôndrias danificadas com alta produção de EROs (Parkin/PINK1).
+          </p>
+        </div>
+      </div>
+      <div>
+        <h3 class="sub blue">Sinalização Redox — Nrf2/KEAP1</h3>
+        <div class="reaction-block">
+          <p class="label">// Eixo Central de Resposta ao Estresse Oxidativo</p>
+          <h4>Nrf2 (Nuclear factor erythroid 2-related factor 2)</h4>
+          <p>Em condições basais, Nrf2 é sequestrado por <strong>KEAP1</strong> (ubiquitina ligase E3) no citoplasma e degradado no proteasoma.<br><br>
+          EROs/eletrófilos modificam cisteínas-sensor de KEAP1 (Cys151, Cys273, Cys288) → KEAP1 não consegue ubiquitinar Nrf2 → Nrf2 acumula-se → transloca ao núcleo → heterodimeriza com sMaf → liga ao <strong>ARE (Antioxidant Response Element)</strong> → ativa transcrição de:
+          <br><br>
+          GCL (síntese de GSH), NQO1, HO-1, SOD2, catalase, GPx2, Prx1/3, TrxR, ferritina.
+          </p>
+        </div>
+        <div class="callout success">
+          <span class="label">// Farmacologia Nrf2</span>
+          <strong>Sulforafano</strong> (brócolis), <strong>curcumina</strong>, <strong>CDDO-Me</strong> (bardoxolona), <strong>dimetil fumarato</strong> (Tecfidera — EM): todos ativam Nrf2 ao modificar KEAP1. Bardoxolona em estudo para DRC. Dimetil fumarato: ativação de Nrf2 + inibição de NF-κB.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       11. CLÍNICA E FARMACOLOGIA
+  ───────────────────────────────────────── -->
+  <section id="s11">
+    <div class="section-header">
+      <span class="section-num">11 //</span>
+      <h2>Estresse Oxidativo na Clínica</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Doença</th>
+            <th>Mecanismo Central</th>
+            <th>Biomarcador</th>
+            <th>Intervenção Antioxidante</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cell-hl">Aterosclerose</td>
+            <td>LDL-ox, disfunção endotelial, NOX ativada</td>
+            <td>LDL-ox, F₂-isoprostanos, MPO</td>
+            <td>Estatinas ↓ NOX; vitaminas C/E (benefício modesto); n-3 PUFAs</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">Lesão I/R (IAM, AVC, transplante)</td>
+            <td>Xantina oxidase, CTE reversa, NOX2, ONOO⁻</td>
+            <td>MDA, 8-OHdG, troponina</td>
+            <td>Alopurinol (XO), edaravona (AVC — Japão), ciclosporina (poro mPTP)</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">Diabetes mellitus</td>
+            <td>Autoxidação de glicose, AGEs, NOS desacoplada, mitocôndria</td>
+            <td>8-isoprostanos, nitrotirosina, HbA1c</td>
+            <td>Metformina ↓ CTE; vitamina E (nefropatia DM1 — algum benefício); NAC</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">ELA familiar (SOD1 mutante)</td>
+            <td>Ganho de função tóxica da SOD1 mutante → •OH via Fenton</td>
+            <td>8-OHdG no LCR, nitrotirosina</td>
+            <td>Riluzol (↓ glutamato excitotóxico); edaravona (scavenger •OH — aprovado EUA/Japão)</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">DPOC / tabagismo</td>
+            <td>Fumaça → ativação de neutrófilos/macrófagos → MPO → HOCl + EROs → destruição alveolar</td>
+            <td>8-isoprostanos urinários, H₂O₂ no ar exalado</td>
+            <td>NAC oral (↓ exacerbações em alguns estudos); cessação tabágica (primária)</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">Cardiotoxicidade por Doxorrubicina</td>
+            <td>Ciclo redox → O₂•⁻ → H₂O₂ → •OH na mitocôndria cardíaca (baixa catalase)</td>
+            <td>Troponina, fração de ejeção</td>
+            <td>Dexrazoxano (quelante de Fe²⁺ intracelular — profilaxia aprovada)</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">Paracetamol-overdose</td>
+            <td>NAPQI depleção de GSH → EROs + ligação covalente proteínas</td>
+            <td>ALT/AST, RNI, NAPQI-adutos</td>
+            <td>N-acetilcisteína IV (até 72h; mais efetivo < 8h) — repõe GSH e cistina</td>
+          </tr>
+          <tr>
+            <td class="cell-hl">Hemocromatose / Talassemia</td>
+            <td>Fe²⁺ livre → Fenton → lesão hepática, cardíaca, pancreática</td>
+            <td>Ferritina, saturação de transferrina, biópsia hepática</td>
+            <td>Flebotomia; quelantes: deferoxamina IV, deferasirox VO, deferiprona VO</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warning">
+      <span class="label">// Paradoxo dos Antioxidantes em Oncologia</span>
+      Estudos como ATBC (β-caroteno), HOPE (vitamina E), SELECT (vitamina E + Se) <strong>não demonstraram benefício</strong> e alguns mostraram dano na prevenção de câncer. Hipótese: EROs são necessários para apoptose de células neoplásicas; antioxidantes exógenos podem proteger células tumorais. Além disso, o contexto pró-oxidante do tumor difere do tecido normal → suplementação indiscriminada é questionável.
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────
+       12. REVISÃO E ACTIVE RECALL
+  ───────────────────────────────────────── -->
+  <section id="s12">
+    <div class="section-header">
+      <span class="section-num">12 //</span>
+      <h2>Revisão · Active Recall · High-Yield</h2>
+    </div>
+
+    <div class="mnemonic">
+      <p class="label">// Mnemônico</p>
+      <h4>Fontes Endógenas de EROs: <span class="letter">MIXIN</span></h4>
+      <ul>
+        <li><span class="letter">M</span>itocôndria (CTE — Complexos I e III)</li>
+        <li><span class="letter">I</span>nflamação / NADPH oxidase (NOX)</li>
+        <li><span class="letter">X</span>antina oxidase (isquemia-reperfusão)</li>
+        <li><span class="letter">I</span>rradia­ção UV / Ionizante</li>
+        <li><span class="letter">N</span>OS desacoplada + CYP450 desacoplado</li>
+      </ul>
+    </div>
+
+    <div class="mnemonic">
+      <p class="label">// Mnemônico</p>
+      <h4>Sistemas Antioxidantes Enzimáticos: <span class="letter">SOD-CAT-GPx-GR + Trx/Prx</span></h4>
+      <ul>
+        <li><span class="letter">S</span>OD → O₂•⁻ → H₂O₂ (usa Cu/Zn ou Mn)</li>
+        <li><span class="letter">C</span>atalase → H₂O₂ → H₂O (heme-Fe³⁺, peroxissomo)</li>
+        <li><span class="letter">G</span>Px → H₂O₂ + LOOH → H₂O (selênio! usa GSH)</li>
+        <li><span class="letter">R</span>egeneração: GR = GSSG → GSH (usa NADPH de G6PD)</li>
+        <li><span class="letter">T</span>riorredoxina / Prx → reduz H₂O₂ + ONOO⁻ (usa NADPH via TrxR)</li>
+      </ul>
+    </div>
+
+    <h3 class="sub cyan" style="margin-top:32px;">Active Recall — Questões Board-Style</h3>
+
+    <div class="quiz">
+      <p class="q-label">// QUESTÃO 01</p>
+      <p class="q">Um paciente com deficiência de G6PD sofre hemólise grave após usar primaquina para tratamento de malária por P. vivax. Qual é o elo fisiopatológico direto entre a deficiência de G6PD e a lesão oxidativa do eritrócito?</p>
+      <button onclick="this.nextElementSibling.classList.toggle('show')">Revelar Resposta</button>
+      <div class="answer">
+        A G6PD é a enzima limitante da via das pentoses-fosfato, única fonte de NADPH nos eritrócitos (que não têm mitocôndria). Sem NADPH, a glutationa redutase não consegue regenerar GSH a partir de GSSG. Sem GSH, a GPx não pode neutralizar H₂O₂ gerado pelo metabolismo oxidativo da primaquina (via CYP eritrocitário ou auto-oxidação). O acúmulo de H₂O₂ oxida proteínas da membrana (banda 3, espectrina) e a hemoglobina → metahemoglobina + corpos de Heinz (precipitados de Hb oxidada) → hemólise extravascular (baço) e intravascular.
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="q-label">// QUESTÃO 02</p>
+      <p class="q">Por que a lesão de isquemia-reperfusão produz mais radicais livres do que a isquemia isolada? Qual enzima está no centro desse mecanismo?</p>
+      <button onclick="this.nextElementSibling.classList.toggle('show')">Revelar Resposta</button>
+      <div class="answer">
+        Durante a isquemia, ATP é degradado → ADP → AMP → adenosina → inosina → <strong>hipoxantina</strong> (acúmulo). Paralelamente, a xantina desidrogenase (XDH) é convertida em <strong>xantina oxidase (XO)</strong> por proteólise e oxidação de tiois. Na isquemia sem O₂, a XO não atua. Na <strong>reperfusão</strong>, o O₂ retorna abruptamente: a XO catalisa hipoxantina + O₂ → xantina → ácido úrico, gerando grandes quantidades de O₂•⁻ e H₂O₂. O O₂•⁻ reduz Fe³⁺ → Fe²⁺ (liberado de ferritina danificada) → Fenton → •OH → dano catastrófico. O alopurinol (inibidor da XO) e a deferoxamina (quelante de Fe) têm efeito protetor experimental nesse contexto.
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="q-label">// QUESTÃO 03</p>
+      <p class="q">Explique por que a deficiência de selênio predispõe a cardiomiopatia e como isso se relaciona com a peroxidação lipídica mitocondrial.</p>
+      <button onclick="this.nextElementSibling.classList.toggle('show')">Revelar Resposta</button>
+      <div class="answer">
+        O selênio é incorporado como <strong>selenocisteína</strong> no sítio ativo de todas as isoformas de GPx e da tiorredoxina redutase (TrxR). A <strong>GPx4</strong> (fosfolipídio-hidroperóxido GPx) é a única enzima capaz de reduzir LOOH diretamente incorporado às membranas mitocondriais (e do retículo). Sem selênio → GPx4 não funcional → acúmulo de LOOH nas membranas → peroxidação em cadeia → disfunção da CTE → queda de ATP → morte de cardiomiócitos. Além disso, a TrxR inativa → acúmulo de Prx oxidadas + depleção de Trx → maior estresse redox mitocondrial. A doença de Keshan manifesta-se exatamente como cardiomiopatia dilatada/arritmia em áreas selenodeficientes (China).
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="q-label">// QUESTÃO 04</p>
+      <p class="q">Uma paciente faz uso crônico de doxorrubicina para linfoma. Após dose cumulativa de 450 mg/m², desenvolve insuficiência cardíaca. Qual o mecanismo e qual fármaco poderia ter prevenido?</p>
+      <button onclick="this.nextElementSibling.classList.toggle('show')">Revelar Resposta</button>
+      <div class="answer">
+        A doxorrubicina sofre redução enzimática (por NADH desidrogenase — Complexo I) ao radical semiquinone, que doa seu elétron ao O₂ → O₂•⁻ → H₂O₂ → via Fenton intracelular → •OH. Essa geração de EROs ocorre em todas as células, mas o cardiomiócito é especialmente vulnerável porque: (1) tem baixa catalase mitocondrial, (2) tem alto consumo mitocondrial de O₂ e (3) não se regenera. Além disso, doxorrubicina se intercala no DNA mitocondrial, inibindo transcrição dos componentes da CTE. O <strong>dexrazoxano</strong> é um quelante intracelular de Fe²⁺ (análogo do EDTA, pró-fármaco hidrolisado a ICRF-198) que previne a reação de Fenton nos cardiomiócitos — aprovado pela FDA como cardioprotector em dose cumulativa > 300 mg/m² em adultas com câncer de mama.
+      </div>
+    </div>
+
+    <div class="quiz">
+      <p class="q-label">// QUESTÃO 05</p>
+      <p class="q">Qual é a diferença entre a ação do •OH gerado pela reação de Fenton e a do O₂•⁻? Por que não existe um antioxidante enzimático específico para •OH?</p>
+      <button onclick="this.nextElementSibling.classList.toggle('show')">Revelar Resposta</button>
+      <div class="answer">
+        O O₂•⁻ é moderadamente reativo, tem meia-vida de µs a ms, difunde alguma distância e é desintoxicado pela SOD. Já o •OH tem meia-vida de ~1 ns e reage com qualquer molécula orgânica próxima (DNA, proteínas, lipídios) a velocidades limitadas apenas por difusão — não existe seletividade. Por isso, não é possível criar uma enzima que neutralize especificamente o •OH: ele reagiria com a própria enzima antes de chegar ao sítio catalítico. A estratégia biológica é impedir a sua <strong>formação</strong> — quelando o Fe²⁺ livre (transferrina, ferritina, quelantes farmacológicos) e eliminando H₂O₂ (catalase, GPx) e O₂•⁻ (SOD) — os substratos da reação de Fenton. Compostos "sequestradores" inespecíficos como manitol (usado em edema cerebral), DMSO e edaravona captam •OH mas com eficiência limitada in vivo.
+      </div>
+    </div>
+
+    <!-- HIGH YIELD SUMMARY -->
+    <div class="summary-box" style="margin-top:32px;">
+      <h3>⚡ Pontos de Alto Rendimento — Frequentemente Cobrados</h3>
+      <ul>
+        <li>Radical mais reativo: <strong>•OH</strong> (t½ ~1 ns) — formado pela reação de Fenton (Fe²⁺ + H₂O₂)</li>
+        <li>Reação mais rápida da biologia: <strong>NO• + O₂•⁻ → ONOO⁻</strong> (k ≈ 1,9 × 10¹⁰ M⁻¹s⁻¹)</li>
+        <li>Principal fonte endógena de O₂•⁻: <strong>Complexos I e III da CTE mitocondrial</strong></li>
+        <li>Enzima dependente de selênio: <strong>GPx</strong> — deficiência → doença de Keshan (cardiomiopatia)</li>
+        <li>Biomarcador de peroxidação lipídica mais específico: <strong>F₂-isoprostanos</strong></li>
+        <li>Biomarcador de lesão oxidativa do DNA: <strong>8-OHdG</strong></li>
+        <li>Deficiência de G6PD → ↓ NADPH → ↓ GR → ↓ GSH → hemólise por oxidantes</li>
+        <li>Cardiotoxicidade por doxorrubicina: ciclo redox → Fe²⁺ livre → Fenton; prevenção: <strong>dexrazoxano</strong></li>
+        <li>Paracetamol-overdose: NAPQI depleta GSH → NAC repõe (doador de cisteína)</li>
+        <li>Hemocromatose: Fe²⁺ livre → Fenton → "cirrose + diabetes + cardiopatia" → quelantes</li>
+        <li>Nrf2/KEAP1: eixo master de resposta antioxidante — ativado por sulforafano, dimetil fumarato</li>
+        <li>ELA familiar: mutação SOD1 → perda de função <em>e</em> ganho de função tóxica (pró-oxidante)</li>
+        <li>Ferroptose: morte celular por acúmulo de LOOH dependente de Fe²⁺ quando GPx4 é inativada</li>
+        <li>Beta-caroteno em fumantes: <strong>aumenta</strong> risco de carcinoma pulmonar (paradoxo antioxidante)</li>
+      </ul>
+    </div>
+
+  </section>
+
+</div><!-- /container -->
+
+<footer>
+  ✦ Patologia Celular — Radicais Livres &amp; Sistemas Antioxidantes ✦ &nbsp;|&nbsp;
+  Medicina Interna · Medicina Baseada em Evidências &nbsp;|&nbsp;
+  Conteúdo para fins educacionais
+</footer>
+
+<script>
+  // Smooth reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.05 });
+
+  document.querySelectorAll('section').forEach(s => {
+    s.style.opacity = '0';
+    s.style.transform = 'translateY(20px)';
+    s.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(s);
+  });
+</script>
+
+</body>
+</html>

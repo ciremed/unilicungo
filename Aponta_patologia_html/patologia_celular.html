@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patologia Celular — Lesão, Morte e Adaptação</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --bg2: #12151c;
+    --bg3: #181c26;
+    --surface: #1e2330;
+    --surface2: #252b3a;
+    --border: #2e3548;
+    --accent: #c8a96e;
+    --accent2: #7eb8d4;
+    --accent3: #e07070;
+    --accent4: #7ed4a0;
+    --text: #e8e4dc;
+    --text2: #b0aaa0;
+    --text3: #757070;
+    --heading: #f0ead8;
+    --red: #e07070;
+    --blue: #7eb8d4;
+    --green: #7ed4a0;
+    --gold: #c8a96e;
+    --purple: #b07eb8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.85;
+    font-weight: 300;
+  }
+
+  /* SIDEBAR */
+  #sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 280px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    padding: 0 0 40px 0;
+    transition: transform 0.3s ease;
+  }
+
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-header {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg2);
+    z-index: 1;
+  }
+
+  .sidebar-header .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+
+  .sidebar-header .subtitle {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.05em;
+  }
+
+  .nav-section {
+    padding: 20px 0 8px;
+  }
+
+  .nav-section-title {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 0 24px;
+    margin-bottom: 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .nav-item {
+    display: block;
+    padding: 7px 24px;
+    font-size: 12.5px;
+    color: var(--text2);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+
+  .nav-item:hover {
+    color: var(--text);
+    background: var(--surface);
+    border-left-color: var(--gold);
+  }
+
+  .nav-item.active {
+    color: var(--gold);
+    border-left-color: var(--gold);
+    background: rgba(200,169,110,0.06);
+  }
+
+  .nav-sub {
+    padding-left: 36px;
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  .nav-sub:hover { color: var(--text2); }
+
+  /* MAIN */
+  #main {
+    margin-left: 280px;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 80px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: rgba(200,169,110,0.1);
+    border: 1px solid rgba(200,169,110,0.25);
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--heading);
+    line-height: 1.15;
+    margin-bottom: 16px;
+    max-width: 700px;
+  }
+
+  .hero h1 em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--text2);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+  .hero-meta strong { color: var(--text2); }
+
+  /* CONTENT */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 80px 100px;
+  }
+
+  /* PARTS */
+  .part-divider {
+    margin: 80px 0 0;
+    padding: 0;
+  }
+
+  .part-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+
+  .part-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--heading);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 48px;
+    line-height: 1.3;
+  }
+
+  .part-title .accent { color: var(--gold); }
+
+  /* HEADINGS */
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--heading);
+    margin: 56px 0 20px;
+    line-height: 1.3;
+    scroll-margin-top: 24px;
+  }
+
+  h2::before {
+    content: attr(data-num);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 0.1em;
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin: 36px 0 14px;
+    line-height: 1.4;
+    scroll-margin-top: 24px;
+  }
+
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gold);
+    margin: 28px 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text2);
+    margin: 20px 0 8px;
+    font-style: italic;
+  }
+
+  /* PARAGRAPHS */
+  p {
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  /* EMPHASIS */
+  strong { color: var(--heading); font-weight: 600; }
+  em { color: var(--gold); font-style: italic; }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--surface);
+    color: var(--accent2);
+    padding: 2px 7px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  /* LINKS */
+  a {
+    color: var(--accent2);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(126,184,212,0.3);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  a:hover { color: var(--gold); border-color: var(--gold); }
+
+  /* BLOCKQUOTE */
+  blockquote {
+    border-left: 3px solid var(--gold);
+    background: var(--surface);
+    padding: 16px 20px 16px 24px;
+    margin: 24px 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  blockquote p { color: var(--text2); font-style: italic; margin: 0; }
+
+  /* CALLOUTS */
+  .callout {
+    border-radius: 4px;
+    padding: 18px 22px;
+    margin: 28px 0;
+    border: 1px solid;
+  }
+
+  .callout-clinical {
+    background: rgba(126,212,160,0.06);
+    border-color: rgba(126,212,160,0.25);
+  }
+
+  .callout-mechanism {
+    background: rgba(126,184,212,0.06);
+    border-color: rgba(126,184,212,0.25);
+  }
+
+  .callout-warning {
+    background: rgba(224,112,112,0.06);
+    border-color: rgba(224,112,112,0.25);
+  }
+
+  .callout-etymology {
+    background: rgba(200,169,110,0.06);
+    border-color: rgba(200,169,110,0.25);
+  }
+
+  .callout-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .callout-clinical .callout-title { color: var(--green); }
+  .callout-mechanism .callout-title { color: var(--blue); }
+  .callout-warning .callout-title { color: var(--red); }
+  .callout-etymology .callout-title { color: var(--gold); }
+
+  .callout p { margin: 0; font-size: 15px; line-height: 1.7; }
+
+  /* CODE BLOCKS — reaction cascades */
+  .cascade {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 2;
+    color: var(--text2);
+    overflow-x: auto;
+  }
+
+  .cascade .step { color: var(--text); }
+  .cascade .arrow { color: var(--gold); }
+  .cascade .molecule { color: var(--accent2); }
+  .cascade .result { color: var(--green); }
+  .cascade .danger { color: var(--red); }
+
+  /* TABLES */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 28px 0;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead tr {
+    background: var(--surface2);
+  }
+
+  thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text2);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface); }
+
+  td {
+    padding: 11px 16px;
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  td:first-child { color: var(--gold); font-weight: 600; font-size: 13px; }
+
+  /* LISTS */
+  ul, ol {
+    padding-left: 24px;
+    margin: 12px 0 20px;
+  }
+
+  li {
+    margin-bottom: 6px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  li::marker { color: var(--gold); }
+
+  /* EXERCISE BOX */
+  .exercise {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    border-radius: 0 0 4px 4px;
+    padding: 28px 32px;
+    margin: 40px 0;
+  }
+
+  .exercise-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .exercise h3 {
+    color: var(--heading);
+    font-size: 17px;
+    margin: 0 0 16px;
+  }
+
+  .exercise-q {
+    background: var(--surface);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 15px;
+    border-left: 2px solid var(--blue);
+  }
+
+  .exercise-a {
+    background: rgba(126,212,160,0.05);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 14px;
+    border-left: 2px solid var(--green);
+    color: var(--text2);
+  }
+
+  .exercise-a strong { color: var(--green); }
+
+  /* REFERENCE BOX */
+  .ref-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 16px;
+    margin: 6px 0;
+    font-size: 13px;
+    color: var(--text2);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .ref-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    white-space: nowrap;
+    min-width: 28px;
+  }
+
+  /* SECTION DIVIDER */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 60px 0;
+  }
+
+  /* TOC */
+  .toc-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin: 40px 0;
+  }
+
+  .toc-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 32px;
+  }
+
+  .toc-entry {
+    font-size: 13.5px;
+    color: var(--text2);
+    text-decoration: none;
+    border-bottom: none;
+    padding: 3px 0;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s;
+    display: flex;
+    gap: 10px;
+  }
+
+  .toc-entry:hover { color: var(--gold); }
+  .toc-entry .toc-num { color: var(--text3); font-family: 'JetBrains Mono', monospace; font-size: 11px; min-width: 28px; }
+
+  /* PRINT */
+  @media print {
+    #sidebar { display: none; }
+    #main { margin-left: 0; }
+    .hero { padding: 40px; }
+    .content { padding: 40px; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    #sidebar { transform: translateX(-100%); }
+    #main { margin-left: 0; }
+    .hero { padding: 40px 32px; }
+    .hero h1 { font-size: 32px; }
+    .content { padding: 40px 32px; }
+    .toc-grid { grid-template-columns: 1fr; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--surface2); }
+
+  /* HIGHLIGHT ROW VARIANTS */
+  .row-red td:first-child { color: var(--red); }
+  .row-blue td:first-child { color: var(--blue); }
+  .row-green td:first-child { color: var(--green); }
+  .row-purple td:first-child { color: var(--purple); }
+
+  /* BACK TO TOP */
+  #back-top {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 42px;
+    height: 42px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text2);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 200;
+    text-decoration: none;
+  }
+
+  #back-top:hover {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">Patologia Celular</div>
+    <div class="subtitle">Medicina Interna &amp; Intensiva</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Parte I</div>
+    <a href="#parte1" class="nav-item">Fundamentos Conceituais</a>
+    <a href="#homeostase" class="nav-item nav-sub">Homeostase Celular</a>
+    <a href="#membrana" class="nav-item nav-sub">Membrana Plasmática</a>
+    <a href="#atp" class="nav-item nav-sub">Produção de ATP</a>
+    <a href="#calcio" class="nav-item nav-sub">Regulação do Cálcio</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Parte II</div>
+    <a href="#parte2" class="nav-item">Adaptações Celulares</a>
+    <a href="#hipertrofia" class="nav-item nav-sub">Hipertrofia</a>
+    <a href="#hiperplasia" class="nav-item nav-sub">Hiperplasia</a>
+    <a href="#atrofia" class="nav-item nav-sub">Atrofia</a>
+    <a href="#metaplasia" class="nav-item nav-sub">Metaplasia</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Parte III</div>
+    <a href="#parte3" class="nav-item">Lesão Celular</a>
+    <a href="#isquemia" class="nav-item nav-sub">Hipóxia e Isquemia</a>
+    <a href="#reperfusao" class="nav-item nav-sub">Lesão de Reperfusão</a>
+    <a href="#ccl4" class="nav-item nav-sub">Lesão Química — CCl₄</a>
+    <a href="#eros" class="nav-item nav-sub">Espécies Reativas (EROs)</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Parte IV</div>
+    <a href="#parte4" class="nav-item">Morte Celular</a>
+    <a href="#necrose" class="nav-item nav-sub">Necrose</a>
+    <a href="#apoptose" class="nav-item nav-sub">Apoptose</a>
+    <a href="#piroptose" class="nav-item nav-sub">Piroptose</a>
+    <a href="#ferroptose" class="nav-item nav-sub">Ferroptose</a>
+    <a href="#necroptose" class="nav-item nav-sub">Necroptose</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Partes V–X</div>
+    <a href="#parte5" class="nav-item">Acúmulos Intracelulares</a>
+    <a href="#parte6" class="nav-item">Calcificações Patológicas</a>
+    <a href="#parte7" class="nav-item">Envelhecimento Celular</a>
+    <a href="#parte8" class="nav-item">Exercícios Clínicos</a>
+    <a href="#parte9" class="nav-item">Integração Clínico-Patológica</a>
+    <a href="#referencias" class="nav-item">Referências</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- HERO -->
+  <div class="hero" id="top">
+    <div class="hero-tag">Patologia Geral · Nível Avançado</div>
+    <h1>Patologia Celular:<br><em>Lesão, Morte e Adaptação</em></h1>
+    <p class="hero-sub">Uma abordagem molecular, histológica, anatômica e fisiológica para medicina interna e intensiva — com correlação clínica, meios diagnósticos e aplicações terapêuticas.</p>
+    <div class="hero-meta">
+      <span>📚 <strong>Referência base:</strong> Robbins &amp; Cotran, 10ª ed.</span>
+      <span>🧬 <strong>Nível:</strong> Avançado / Pós-graduação</span>
+      <span>🏥 <strong>Foco:</strong> UTI + Medicina Interna</span>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- TOC -->
+    <div class="toc-box">
+      <div class="toc-title">Sumário Geral</div>
+      <div class="toc-grid">
+        <a href="#parte1" class="toc-entry"><span class="toc-num">I</span> Fundamentos e Homeostase</a>
+        <a href="#parte6" class="toc-entry"><span class="toc-num">VI</span> Calcificações Patológicas</a>
+        <a href="#parte2" class="toc-entry"><span class="toc-num">II</span> Adaptações Celulares</a>
+        <a href="#parte7" class="toc-entry"><span class="toc-num">VII</span> Envelhecimento Celular</a>
+        <a href="#parte3" class="toc-entry"><span class="toc-num">III</span> Lesão Celular</a>
+        <a href="#parte8" class="toc-entry"><span class="toc-num">VIII</span> Exercícios Clínicos</a>
+        <a href="#parte4" class="toc-entry"><span class="toc-num">IV</span> Morte Celular</a>
+        <a href="#parte9" class="toc-entry"><span class="toc-num">IX</span> Integração Clínica</a>
+        <a href="#parte5" class="toc-entry"><span class="toc-num">V</span> Acúmulos Intracelulares</a>
+        <a href="#referencias" class="toc-entry"><span class="toc-num">✦</span> Referências</a>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PARTE I -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="part-divider" id="parte1">
+      <div class="part-label">Parte I</div>
+      <div class="part-title">Fundamentos <span class="accent">Conceituais e Etimológicos</span></div>
+    </div>
+
+    <h2 id="etimologia" data-num="1.1">Etimologia e Conceito de Patologia Celular</h2>
+
+    <div class="callout callout-etymology">
+      <div class="callout-title">Etimologia</div>
+      <p><strong>Patologia</strong> = grego <em>πάθος (páthos)</em> (sofrimento) + <em>λόγος (lógos)</em> (estudo). Literalmente: <em>"o estudo do sofrimento"</em>.</p>
+    </div>
+
+    <p>A <strong>Patologia Celular</strong> estuda como a célula — unidade básica da vida — responde a agressões, adapta-se, sofre lesões reversíveis, entra em processos de morte programada ou não-programada, e como essas alterações se traduzem em doença clínica.</p>
+
+    <p><strong>Rudolf Virchow (1821–1902)</strong>, pai da Patologia Celular moderna, postulou em sua obra <em>"Die Cellularpathologie"</em> (1858) que <em>"omnis cellula e cellula"</em> — toda célula origina-se de outra célula — e que a doença é, fundamentalmente, uma <strong>doença da célula</strong>. Essa visão revolucionou a medicina ao deslocar o foco da patologia dos humores para o nível celular. <a href="https://archive.org/details/dieCellularpathologie" target="_blank">(Virchow R, 1858)</a></p>
+
+    <hr class="section-divider">
+
+    <h2 id="homeostase" data-num="1.2">O Estado de Homeostase Celular</h2>
+
+    <p>Para entender a lesão, precisamos primeiro entender o <strong>estado basal de equilíbrio celular</strong>, chamado de <strong>homeostase</strong> (do grego <em>homoios</em> = semelhante + <em>stasis</em> = estabilidade).</p>
+
+    <h3 id="membrana">Integridade da Membrana Plasmática</h3>
+
+    <p>A membrana plasmática é uma <strong>bicamada lipídica</strong> composta de:</p>
+    <ul>
+      <li><strong>Fosfolipídios</strong> — cabeça polar hidrofílica + caudas apolares hidrofóbicas</li>
+      <li><strong>Colesterol</strong> — regula a fluidez da membrana (↑ colesterol = ↓ fluidez)</li>
+      <li><strong>Proteínas integrais e periféricas</strong> — receptores, canais, bombas iônicas, proteínas estruturais</li>
+      <li><strong>Glicocálice</strong> — camada de glicolipídios e glicoproteínas na face externa, fundamental para reconhecimento celular, adesão e imunidade</li>
+    </ul>
+
+    <p>A membrana mantém um <strong>gradiente eletroquímico</strong> essencial:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Íon</th><th>Extracelular</th><th>Intracelular</th><th>Gradiente</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Na⁺</td><td>142 mEq/L</td><td>10 mEq/L</td><td>14:1 (fora &gt;&gt; dentro)</td></tr>
+          <tr><td>K⁺</td><td>4 mEq/L</td><td>140 mEq/L</td><td>35:1 (dentro &gt;&gt; fora)</td></tr>
+          <tr><td>Ca²⁺</td><td>2,5 mM</td><td>~100 nM</td><td>~20.000:1 (fora &gt;&gt; dentro)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Esse gradiente é mantido pela <strong>Na⁺/K⁺-ATPase</strong> (bomba de sódio-potássio), que consome <strong>1/3 de todo o ATP celular</strong> em repouso:</p>
+
+    <blockquote><p>Por cada molécula de ATP consumida: <strong>3 Na⁺ saem</strong> da célula e <strong>2 K⁺ entram</strong></p></blockquote>
+
+    <p><a href="https://www.ncbi.nlm.nih.gov/books/NBK21054/" target="_blank">(Alberts B et al., Molecular Biology of the Cell, 6th ed.)</a></p>
+
+    <h3 id="atp">Produção de ATP — A Moeda Energética Celular</h3>
+
+    <p>O <strong>ATP</strong> (Adenosine Triphosphate / Trifosfato de Adenosina) é produzido predominantemente pela <strong>fosforilação oxidativa mitocondrial</strong>:</p>
+
+    <div class="cascade">
+<span class="step">Glicose</span> <span class="arrow">→</span> <span class="molecule">Glicólise (citoplasma)</span> <span class="arrow">→</span> <span class="result">2 ATP</span> + 2 Piruvato
+<span class="arrow">↓</span>
+Piruvato <span class="arrow">→</span> <span class="molecule">Acetil-CoA</span> <span class="arrow">→</span> <span class="molecule">Ciclo de Krebs</span> (matriz mitocondrial)
+<span class="arrow">↓</span>
+NADH + FADH₂ <span class="arrow">→</span> <span class="molecule">Cadeia Respiratória</span> (membrana interna mitocondrial) <span class="arrow">→</span> <span class="result">28–30 ATP</span>
+<span class="arrow">↓</span>
+<span class="result">Total: ~30–32 ATP por molécula de glicose (aerobiose)</span>
+
+<span class="danger">Anaeróbio:</span> Glicose <span class="arrow">→</span> Glicólise <span class="arrow">→</span> <span class="danger">2 ATP</span> + Lactato
+    </div>
+
+    <h3 id="calcio">Regulação do Cálcio Intracelular</h3>
+
+    <p>O <strong>Ca²⁺</strong> é um segundo mensageiro universal. Sua concentração intracelular (~100 nM) é mantida ~20.000 vezes menor que a extracelular pelos sistemas:</p>
+
+    <ul>
+      <li><strong>SERCA</strong> (Sarco/Endoplasmic Reticulum Ca²⁺-ATPase) — bombeia Ca²⁺ de volta para o RE</li>
+      <li><strong>PMCA</strong> (Plasma Membrane Ca²⁺ ATPase) — expulsa Ca²⁺ da célula</li>
+      <li><strong>NCX</strong> (Na⁺/Ca²⁺ Exchanger / Trocador Na⁺/Ca²⁺) — usa o gradiente de Na⁺ para expulsar Ca²⁺</li>
+    </ul>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ Elevação Patológica do Ca²⁺ Intracelular Ativa</div>
+      <p><strong>Fosfolipases</strong> → degradação da membrana · <strong>Proteases (calpaínas)</strong> → degradação do citoesqueleto · <strong>ATPases</strong> → depleção de ATP · <strong>Endonucleases</strong> → fragmentação do DNA · <strong>Mitocôndrias</strong> → abertura do mPTP → liberação de citocromo c → apoptose</p>
+    </div>
+
+    <p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8954648/" target="_blank">(Bhardwaj A et al., 2022)</a></p>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PARTE II -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="part-divider" id="parte2">
+      <div class="part-label">Parte II</div>
+      <div class="part-title">Adaptações <span class="accent">Celulares</span></div>
+    </div>
+
+    <h2 id="conceito-adaptacao" data-num="2.1">Conceito e Lógica das Adaptações</h2>
+
+    <p>Quando a célula é submetida a <strong>estresse subletal</strong> (abaixo do limiar de lesão irreversível), ela pode se <strong>adaptar morfológica e funcionalmente</strong> para sobreviver em condições adversas. Essas adaptações são <strong>respostas ativas, reversíveis</strong> e teleologicamente protetoras.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Adaptação</th><th>Definição</th><th>Células Afetadas</th><th>Exemplos</th></tr></thead>
+        <tbody>
+          <tr><td>Hipertrofia</td><td>↑ tamanho celular</td><td>Perenes (cardiomiócitos, neurônios)</td><td>HAS, exercício físico</td></tr>
+          <tr><td>Hiperplasia</td><td>↑ número de células</td><td>Lábeis e estáveis</td><td>HBP, hiperplasia endometrial</td></tr>
+          <tr><td>Atrofia</td><td>↓ tamanho e/ou número celular</td><td>Todas</td><td>Desuso, desnervação, desnutrição</td></tr>
+          <tr><td>Metaplasia</td><td>Substituição de um tipo celular por outro</td><td>Células com capacidade de reprogramação</td><td>Barrett, metaplasia escamosa brônquica</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="hipertrofia" data-num="2.2">Hipertrofia</h2>
+
+    <div class="callout callout-etymology">
+      <div class="callout-title">Etimologia</div>
+      <p><strong>Hyper</strong> (grego) = acima, excesso + <strong>trophé</strong> = nutrição, crescimento. <em>Aumento do tamanho celular</em> → aumento do órgão <strong>sem</strong> aumento do número de células.</p>
+    </div>
+
+    <p>Ocorre em células com <strong>capacidade proliferativa limitada ou ausente</strong> (cardiomiócitos, neurônios — células perenes/permanentes). O estímulo hipertrófico ativa cascatas de sinalização intracelular:</p>
+
+    <h4>Cascata Molecular da Hipertrofia Cardíaca</h4>
+
+    <div class="cascade">
+<span class="step">Sobrecarga de pressão</span> (ex.: HAS)
+<span class="arrow">↓</span>
+Estresse mecânico <span class="arrow">→</span> ativação de <span class="molecule">Integrinas</span> + <span class="molecule">Receptor AT1 (angiotensina II)</span>
+<span class="arrow">↓</span>
+<span class="molecule">Gαq</span> <span class="arrow">→</span> <span class="molecule">PLC (Fosfolipase C)</span> <span class="arrow">→</span> <span class="molecule">IP3</span> (Trifosfato de Inositol) + <span class="molecule">DAG</span> (Diacilglicerol)
+<span class="arrow">↓</span>
+IP3 <span class="arrow">→</span> liberação de Ca²⁺ do RE <span class="arrow">→</span> ativação da <span class="molecule">Calcineurina</span>
+<span class="arrow">↓</span>
+Calcineurina desfosforila <span class="molecule">NFAT</span> (Nuclear Factor of Activated T-cells)
+<span class="arrow">↓</span>
+NFAT <span class="arrow">→</span> núcleo <span class="arrow">→</span> ativa genes fetais:
+<span class="result">β-MHC · ANP (Peptídeo Natriurético Atrial) · BNP (Peptídeo Natriurético Cerebral)</span>
+<span class="arrow">↓</span>
+<span class="result">↑ síntese proteica → ↑ tamanho do cardiomiócito</span>
+    </div>
+
+    <p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1624868/" target="_blank">(Heineke J &amp; Molkentin JD, 2006)</a></p>
+
+    <h4>Tipos de Hipertrofia Cardíaca</h4>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tipo</th><th>Estímulo</th><th>Geometria</th><th>Exemplo</th><th>Consequência</th></tr></thead>
+        <tbody>
+          <tr><td>Concêntrica</td><td>Sobrecarga de pressão</td><td>↑ espessura, ↓ lúmen</td><td>HAS, estenose aórtica</td><td>Disfunção diastólica</td></tr>
+          <tr><td>Excêntrica</td><td>Sobrecarga de volume</td><td>↑ lúmen, ↑ espessura</td><td>Insuficiência aórtica, ICC</td><td>Disfunção sistólica</td></tr>
+          <tr><td>Fisiológica</td><td>Exercício aeróbio</td><td>↑ lúmen proporcional</td><td>Atletas de endurance</td><td>Sem consequência patológica</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 Aplicação Clínica — Biomarcadores Cardíacos na UTI</div>
+      <p>O <strong>BNP</strong> e <strong>NT-proBNP</strong> são marcadores da sobrecarga/hipertrofia cardíaca: BNP &gt; 100 pg/mL → sugestivo de ICC · NT-proBNP &gt; 300 pg/mL → ICC aguda. Usados na estratificação de ICC e no diagnóstico diferencial de dispneia na UTI. <a href="https://doi.org/10.1093/eurheartj/ehab368" target="_blank">(ESC Guidelines 2021)</a></p>
+    </div>
+
+    <h4>Histologia da Hipertrofia Cardíaca</h4>
+    <ul>
+      <li>Aumento do <strong>diâmetro</strong> das fibras (normal: 10–20 µm; hipertrofia: até 40 µm)</li>
+      <li>Núcleos <strong>aumentados, hipercromáticos</strong> — "núcleos caixa de vagão" (<em>box-car nuclei</em>)</li>
+      <li>↑ quantidade de miofibrilas e mitocôndrias</li>
+      <li><strong>Fibrose intersticial</strong> em estágios avançados — colágeno produzido por fibroblastos ativados</li>
+    </ul>
+
+    <h2 id="hiperplasia" data-num="2.3">Hiperplasia</h2>
+
+    <div class="callout callout-etymology">
+      <div class="callout-title">Etimologia</div>
+      <p><strong>Hyper</strong> = excesso + <strong>plasis</strong> (grego) = formação, moldagem. <em>Aumento do número de células</em> → aumento do órgão. Ocorre apenas em células com capacidade proliferativa mantida.</p>
+    </div>
+
+    <h4>Cascata Molecular — Via RAS/MAPK</h4>
+
+    <div class="cascade">
+<span class="molecule">EGF, IGF-1, TGF-α</span> <span class="arrow">→</span> <span class="molecule">RTK (Receptor Tirosina Quinase)</span> <span class="arrow">→</span> <span class="molecule">RAS → RAF → MEK → ERK</span>
+<span class="arrow">↓</span>
+Ativação de: <span class="molecule">c-Myc, c-Fos, c-Jun</span>
+<span class="arrow">↓</span>
+Transcrição de <span class="molecule">Ciclinas (D, E)</span> + <span class="molecule">CDKs (Quinases Dependentes de Ciclinas)</span>
+<span class="arrow">↓</span>
+Fosforilação de <span class="molecule">Rb (Proteína Retinoblastoma)</span> <span class="arrow">→</span> liberação de <span class="molecule">E2F</span>
+<span class="arrow">↓</span>
+E2F ativa genes da fase S <span class="arrow">→</span> <span class="result">Síntese de DNA → Divisão Celular</span>
+    </div>
+
+    <p><a href="https://www.nature.com/articles/35077213" target="_blank">(Evan GI &amp; Vousden KH, 2001)</a></p>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 Exemplos Clínicos</div>
+      <p><strong>HBP</strong> (Hiperplasia Benigna da Próstata): estrogênio + DHT → hiperplasia da zona de transição → obstrução uretral. Diagnóstico: PSA + biópsia guiada por USTR. <strong>Hiperplasia Endometrial</strong>: ↑ estrogênio sem progesterona → risco de adenocarcinoma. <strong>Hiperplasia Mamária na Gestação</strong>: estrogênio + progesterona → proliferação ductal/acinar.</p>
+    </div>
+
+    <h2 id="atrofia" data-num="2.4">Atrofia</h2>
+
+    <div class="callout callout-etymology">
+      <div class="callout-title">Etimologia</div>
+      <p><strong>A</strong> (grego) = ausência + <strong>trophé</strong> = nutrição. <em>Redução do tamanho celular</em> (e/ou número de células) → redução do órgão. Processo <strong>ativo</strong>, não passivo.</p>
+    </div>
+
+    <h4>Via do Proteassoma (Ubiquitina-Proteassoma)</h4>
+
+    <div class="cascade">
+Proteína-alvo <span class="arrow">→</span> Ubiquitinação por <span class="molecule">E1 (ativadora) + E2 (conjugadora) + E3 (ligase)</span>
+<span class="arrow">↓</span>
+Poliubiquitinação (cadeia ≥4 ubiquitinas em Lys48)
+<span class="arrow">↓</span>
+<span class="molecule">Proteassoma 26S</span> = <span class="molecule">20S</span> (câmara catalítica) + <span class="molecule">19S</span> (tampas regulatórias)
+<span class="arrow">↓</span>
+<span class="result">Peptídeos de 7–25 aa → apresentados pelo MHC I ou reciclados</span>
+
+<strong>Na atrofia muscular, E3 ligases principais:</strong>
+<span class="molecule">MAFbx/Atrogin-1</span> e <span class="molecule">MuRF-1</span>
+Induzidas por <span class="molecule">FoxO</span> (ativo quando PI3K/Akt está inativo — ausência de IGF-1/insulina)
+    </div>
+
+    <p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC423155/" target="_blank">(Sandri M et al., 2004)</a></p>
+
+    <h4>Tipos de Atrofia</h4>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tipo</th><th>Causa</th><th>Mecanismo Principal</th><th>Exemplo</th></tr></thead>
+        <tbody>
+          <tr><td>Por desuso</td><td>Imobilização</td><td>↓ IGF-1 → ↑ FoxO → ↑ Atrogin-1/MuRF-1</td><td>Membro engessado</td></tr>
+          <tr><td>Por desnervação</td><td>Lesão nervosa</td><td>↓ fator neurotrófico → ↓ síntese proteica</td><td>SLA, poliomielite</td></tr>
+          <tr><td>Por desnutrição</td><td>Marasmo, caquexia</td><td>↓ IGF-1, ↑ cortisol → catabolismo</td><td>Caquexia neoplásica</td></tr>
+          <tr><td>Endócrina</td><td>↓ hormônio trófico</td><td>↓ sinalização hormonal</td><td>Atrofia suprarrenal pós-corticoterapia</td></tr>
+          <tr><td>Senil</td><td>Envelhecimento</td><td>↓ GH/IGF-1, ↑ estresse oxidativo</td><td>Sarcopenia do idoso</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 UTI — Fraqueza Adquirida na UTI (ICU-AW)</div>
+      <p>Pacientes críticos perdem até <strong>2% da massa muscular por dia</strong>. Mecanismos: imobilização (↑ Atrogin-1/MuRF-1), inflamação (TNF-α, IL-6 → catabolismo), corticoterapia (↑ FoxO), hiperglicemia (↓ Akt). Estratégias: mobilização precoce (24–48h), controle glicêmico (alvo 140–180 mg/dL — NICE-SUGAR Trial), suporte nutricional enteral precoce. <a href="https://doi.org/10.1016/S0140-6736(15)60607-X" target="_blank">(Hermans G &amp; Van den Berghe G, 2015)</a></p>
+    </div>
+
+    <h2 id="metaplasia" data-num="2.5">Metaplasia</h2>
+
+    <div class="callout callout-etymology">
+      <div class="callout-title">Etimologia</div>
+      <p><strong>Meta</strong> (grego) = mudança, transformação + <strong>plasis</strong> = formação. Substituição de um tipo celular diferenciado por outro — via <strong>reprogramação epigenética</strong> de células-tronco locais, não transformação direta.</p>
+    </div>
+
+    <h4>Esôfago de Barrett — Modelo Clássico</h4>
+
+    <div class="cascade">
+<span class="step">Epitélio escamoso estratificado normal do esôfago distal</span>
+<span class="arrow">↓</span> Exposição crônica a refluxo ácido-bilioso (DRGE)
+<span class="arrow">↓</span>
+Ativação de <span class="molecule">CDX2</span> (Caudal Type Homeobox 2 — master regulator intestinal)
+<span class="arrow">↓</span>
+Reprogramação das células-tronco basais
+<span class="arrow">↓</span>
+<span class="result">Metaplasia intestinal especializada</span>
+Epitélio colunar + células caliciformes + células de Paneth
+<span class="arrow">↓</span>
+<span class="danger">Risco: Barrett → Displasia BG → Displasia AG → Adenocarcinoma esofágico</span>
+    </div>
+
+    <p><a href="https://doi.org/10.1056/NEJMra1314704" target="_blank">(Spechler SJ &amp; Souza RF, N Engl J Med, 2014)</a></p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Metaplasia</th><th>Estímulo</th><th>De → Para</th><th>Risco Oncológico</th></tr></thead>
+        <tbody>
+          <tr><td>Barrett</td><td>Refluxo ácido-bilioso</td><td>Escamoso → Colunar intestinal</td><td>Adenocarcinoma esofágico</td></tr>
+          <tr><td>Brônquica</td><td>Fumaça de tabaco</td><td>Colunar ciliado → Escamoso</td><td>Carcinoma epidermoide pulmonar</td></tr>
+          <tr><td>Apocrina mamária</td><td>Alteração hormonal</td><td>Ductal → Apócrino</td><td>Baixo risco</td></tr>
+          <tr><td>Mieloide</td><td>Mielofibrose</td><td>MO → Fígado/baço (hematopoiese)</td><td>Transformação leucêmica</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PARTE III -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="part-divider" id="parte3">
+      <div class="part-label">Parte III</div>
+      <div class="part-title">Lesão <span class="accent">Celular</span></div>
+    </div>
+
+    <h2 id="causas" data-num="3.1">Causas de Lesão Celular — Etiologia</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Categoria</th><th>Exemplos</th></tr></thead>
+        <tbody>
+          <tr><td>Hipóxia/Isquemia</td><td>Trombose, embolia, choque, anemia grave</td></tr>
+          <tr><td>Agentes físicos</td><td>Trauma, calor, frio, radiação ionizante, pressão</td></tr>
+          <tr><td>Agentes químicos</td><td>Toxinas, drogas, poluentes, etanol, CCl₄</td></tr>
+          <tr><td>Agentes infecciosos</td><td>Vírus, bactérias, fungos, parasitas, príons</td></tr>
+          <tr><td>Reações imunológicas</td><td>Autoimunidade, hipersensibilidade, rejeição</td></tr>
+          <tr><td>Distúrbios genéticos</td><td>Mutações, deleções, amplificações</td></tr>
+          <tr><td>Desequilíbrios nutricionais</td><td>Deficiências vitamínicas, obesidade, desnutrição</td></tr>
+          <tr><td>Envelhecimento</td><td>Encurtamento de telômeros, acúmulo de EROs</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="isquemia" data-num="3.2">Lesão por Hipóxia e Isquemia</h2>
+
+    <div class="callout callout-mechanism">
+      <div class="callout-title">Distinção Fundamental</div>
+      <p><strong>Hipóxia</strong> = ↓ oferta de O₂ com fluxo sanguíneo preservado (ex.: anemia, IRA) → glicólise anaeróbia ainda possível. <strong>Isquemia</strong> = ↓ fluxo sanguíneo → privação de O₂ <em>e</em> glicose + acúmulo de metabólitos → <strong>muito mais lesiva!</strong></p>
+    </div>
+
+    <h4>Cronologia Molecular da Isquemia</h4>
+
+    <div class="cascade">
+<strong>⏱️ 0–2 min: Queda de ATP</strong>
+↓ O₂ <span class="arrow">→</span> ↓ fosforilação oxidativa <span class="arrow">→</span> <span class="danger">↓ ATP</span>
+<span class="arrow">→</span> ↓ Na⁺/K⁺-ATPase <span class="arrow">→</span> ↑ Na⁺ intracelular <span class="arrow">→</span> tumefação celular
+<span class="arrow">→</span> ↓ SERCA <span class="arrow">→</span> ↑ Ca²⁺ citosólico
+<span class="arrow">→</span> ↓ síntese proteica (ribossomos se desprendem do RER)
+
+<strong>⏱️ 2–5 min: Acidose Lática</strong>
+Glicólise anaeróbia <span class="arrow">→</span> ↑ lactato <span class="arrow">→</span> ↓ pH intracelular
+↑ Ca²⁺ <span class="arrow">→</span> ativação de fosfolipases, calpaínas, ATPases, endonucleases
+
+<strong>⏱️ 5–20 min: Disfunção Mitocondrial</strong>
+↑ Ca²⁺ + ↑ EROs + ↓ pH <span class="arrow">→</span> abertura do <span class="danger">mPTP</span>
+<span class="arrow">→</span> colapso do ΔΨm <span class="arrow">→</span> edema mitocondrial <span class="arrow">→</span> ruptura da membrana externa
+<span class="arrow">→</span> liberação de <span class="molecule">Citocromo c</span> <span class="arrow">→</span> apoptose/necrose
+
+<strong>⏱️ 20–40 min: Lesão Irreversível</strong>
+<span class="danger">Densidades amorfas mitocondriais · Defeitos graves de membrana · Ruptura lisossomal</span>
+    </div>
+
+    <h2 id="reperfusao" data-num="3.2.2">Lesão de Isquemia-Reperfusão</h2>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ Paradoxo da Reperfusão</div>
+      <p>A <strong>reperfusão do tecido isquêmico causa lesão adicional paradoxal</strong>. Até 50% da área de necrose no IAM pode ser devida à reperfusão. Mecanismos principais: explosão de EROs, sobrecarga de Ca²⁺, ativação de neutrófilos.</p>
+    </div>
+
+    <h4>Mecanismos da Lesão de Reperfusão</h4>
+
+    <div class="cascade">
+<strong>1. Explosão de EROs (Burst Oxidativo)</strong>
+Reentrada de O₂ <span class="arrow">→</span> Cadeia respiratória disfuncional <span class="arrow">→</span> ↑↑ <span class="danger">O₂•⁻</span> (complexos I e III)
+<span class="molecule">Xantina oxidase</span>: hipoxantina + O₂ <span class="arrow">→</span> <span class="danger">O₂•⁻ + H₂O₂</span>
+Reação de Fenton: Fe²⁺ + H₂O₂ <span class="arrow">→</span> <span class="danger">OH•</span> (radical hidroxila — mais deletério)
+
+<strong>2. Sobrecarga de Ca²⁺</strong>
+↑ pH (lavagem do H⁺) <span class="arrow">→</span> reativa trocador Na⁺/H⁺ <span class="arrow">→</span> ↑ Na⁺
+<span class="arrow">→</span> NCX reverso <span class="arrow">→</span> <span class="danger">↑↑ Ca²⁺</span> <span class="arrow">→</span> abertura massiva do mPTP
+
+<strong>3. Inflamação</strong>
+DAMPs liberados <span class="arrow">→</span> ativação de complemento <span class="arrow">→</span> C3a, C5a
+<span class="arrow">→</span> recrutamento de neutrófilos <span class="arrow">→</span> "no-reflow" + EROs + proteases
+    </div>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 Aplicações Clínicas — IAM e Transplante</div>
+      <p><strong>IAM:</strong> abertura da coronária (trombolítico ou ICP) salva miocárdio mas causa lesão de reperfusão. Estratégias: pré/pós-condicionamento isquêmico, Ciclosporina A (bloqueia CypD/mPTP em estudos clínicos). <strong>Transplante de órgãos:</strong> síndrome de reimplante. <strong>Pós-PCR:</strong> injúria cerebral de reperfusão → hipotermia terapêutica (33–36°C). <a href="https://doi.org/10.1056/NEJMra071667" target="_blank">(Yellon DM &amp; Hausenloy DJ, NEJM 2007)</a></p>
+    </div>
+
+    <h2 id="ccl4" data-num="3.3">Lesão por Agentes Químicos — CCl₄ como Modelo</h2>
+
+    <div class="cascade">
+<span class="molecule">CCl₄</span> <span class="arrow">→</span> metabolizado pelo <span class="molecule">CYP2E1</span> (hepatócitos zona 3 — centrolobular)
+<span class="arrow">→</span> radical livre <span class="danger">CCl₃•</span> (triclorometil)
+<span class="arrow">→</span> CCl₃• + O₂ <span class="arrow">→</span> <span class="danger">CCl₃OO•</span> (triclorometilperoxil)
+
+<span class="danger">CCl₃OO•</span> causa:
+1. <strong>Peroxidação lipídica</strong> do RER <span class="arrow">→</span> ↓ síntese proteica <span class="arrow">→</span> ↓ lipoproteínas <span class="arrow">→</span> <span class="danger">esteatose</span>
+2. <strong>Lesão mitocondrial</strong> <span class="arrow">→</span> ↓ ATP <span class="arrow">→</span> influxo de Ca²⁺
+3. <strong>Ligação covalente a proteínas</strong> <span class="arrow">→</span> desnaturação
+    </div>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 Análogo Clínico — Paracetamol (Acetaminofeno)</div>
+      <p>CYP2E1 + CYP3A4 → <strong>NAPQI</strong> (N-acetyl-p-benzoquinone imine). Normalmente conjugado com glutationa (GSH). Em superdosagem ou alcoolistas (↑ CYP2E1): esgotamento de GSH → NAPQI liga-se a proteínas hepáticas → <strong>necrose centrolobular</strong>. Antídoto: <strong>N-acetilcisteína (NAC)</strong> — repõe GSH. <a href="https://doi.org/10.1056/NEJMra021844" target="_blank">(Lee WM, NEJM 2003)</a></p>
+    </div>
+
+    <h2 id="eros" data-num="3.4">Espécies Reativas de Oxigênio (EROs / ROS)</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ERO</th><th>Nome</th><th>Produção</th><th>Reatividade</th></tr></thead>
+        <tbody>
+          <tr><td>O₂•⁻</td><td>Ânion superóxido</td><td>Cadeia respiratória, NADPH oxidase</td><td>Moderada</td></tr>
+          <tr><td>H₂O₂</td><td>Peróxido de hidrogênio</td><td>Dismutação de O₂•⁻ pela SOD</td><td>Baixa (mas atravessa membranas!)</td></tr>
+          <tr><td>OH•</td><td>Radical hidroxila</td><td>Reação de Fenton/Haber-Weiss</td><td>Extremamente alta</td></tr>
+          <tr><td>ONOO⁻</td><td>Peroxinitrito</td><td>O₂•⁻ + NO•</td><td>Muito alta</td></tr>
+          <tr><td>¹O₂</td><td>Oxigênio singlete</td><td>Radiação UV, fotoquímica</td><td>Alta</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Sistemas Antioxidantes Endógenos</h4>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Sistema</th><th>Reação</th><th>Localização</th></tr></thead>
+        <tbody>
+          <tr><td>SOD (CuZn / Mn)</td><td>2 O₂•⁻ + 2H⁺ → H₂O₂ + O₂</td><td>Citoplasma (CuZn) / Mitocôndria (Mn)</td></tr>
+          <tr><td>Catalase</td><td>H₂O₂ → H₂O + ½O₂</td><td>Peroxissomos</td></tr>
+          <tr><td>GPx (Glutationa Peroxidase)</td><td>H₂O₂ + 2GSH → GSSG + 2H₂O</td><td>Citoplasma, mitocôndria</td></tr>
+          <tr><td>Tiorredoxina</td><td>Reduz proteínas oxidadas</td><td>Universal</td></tr>
+          <tr><td>Vitamina E (tocoferol)</td><td>Quebra cadeias de peroxidação lipídica</td><td>Membrana (lipossolúvel)</td></tr>
+          <tr><td>Vitamina C (ácido ascórbico)</td><td>Regenera Vitamina E</td><td>Citosol (hidrossolúvel)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>A via <strong>Nrf2</strong> (Nuclear factor erythroid 2-Related Factor 2) é o maestro da resposta antioxidante. Normalmente sequestrado por <strong>Keap1</strong>. EROs modificam cisteínas de Keap1 → liberação de Nrf2 → núcleo → liga-se ao <strong>ARE</strong> (Antioxidant Response Element) → transcrição de HO-1, NQO1, GST, GCLC, ferritina. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC84175/" target="_blank">(Itoh K et al., 1999)</a></p>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PARTE IV -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="part-divider" id="parte4">
+      <div class="part-label">Parte IV</div>
+      <div class="part-title">Morte <span class="accent">Celular</span></div>
+    </div>
+
+    <h2 id="visao-geral" data-num="4.1">Visão Geral dos Tipos de Morte Celular</h2>
+
+    <p>Nomenclatura formalmente padronizada pelo <strong>NCCD</strong> (Nomenclature Committee on Cell Death). <a href="https://doi.org/10.1038/s41418-017-0012-4" target="_blank">(Galluzzi L et al., 2018)</a></p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tipo</th><th>Regulação</th><th>Morfologia</th><th>Inflamação</th><th>Moléculas-Chave</th></tr></thead>
+        <tbody>
+          <tr><td>Necrose</td><td>Não programada</td><td>Tumefação, ruptura</td><td>Intensa</td><td>Ca²⁺, EROs</td></tr>
+          <tr><td>Apoptose</td><td>Programada</td><td>Retração, fragmentação</td><td>Ausente</td><td>Bcl-2, Caspases, Citocromo c</td></tr>
+          <tr><td>Piroptose</td><td>Programada</td><td>Poros + tumefação</td><td>Intensa</td><td>NLRP3, GSDMD, IL-1β</td></tr>
+          <tr><td>Ferroptose</td><td>Programada</td><td>Mitocôndrias menores</td><td>Moderada</td><td>GPx4, GSH, Fe²⁺</td></tr>
+          <tr><td>Necroptose</td><td>Programada</td><td>Necrótica</td><td>Intensa</td><td>RIPK1/3, MLKL</td></tr>
+          <tr><td>NETose</td><td>Programada</td><td>Extrusão de cromatina</td><td>Intensa</td><td>PAD4, Elastase</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="necrose" data-num="4.2">Necrose — Análise Detalhada</h2>
+
+    <h3>Alterações Morfológicas Nucleares</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Alteração</th><th>Etimologia</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td>Picnose</td><td>grego pyknos = denso</td><td>Núcleo retraído, hipercromático, cromatina condensada</td></tr>
+          <tr><td>Cariorrexe</td><td>karyon + rhexis = ruptura</td><td>Fragmentação do núcleo picnótico</td></tr>
+          <tr><td>Cariólise</td><td>karyon + lysis = dissolução</td><td>Dissolução do núcleo pela DNase, desaparecimento</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Tipos Morfológicos de Necrose</h3>
+
+    <h4>1. Necrose de Coagulação</h4>
+    <p><strong>Mecanismo:</strong> desnaturação proteica predomina sobre digestão enzimática. O pH ácido da isquemia inibe as hidrolases ácidas dos lisossomos → arquitetura tecidual preservada por 1–4 dias ("espectros" celulares). <strong>Consistência:</strong> firme, amarelo-esbranquiçada.</p>
+    <p><strong>Exemplos:</strong> IAM (infarto do miocárdio), infarto renal (cunha pálida), infarto esplênico.</p>
+
+    <h4>Histologia do IAM em Diferentes Momentos</h4>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tempo</th><th>Achado Histológico</th></tr></thead>
+        <tbody>
+          <tr><td>0–12h</td><td>Sem alterações à MO (diagnóstico por ME ou imunohistoquímica)</td></tr>
+          <tr><td>12–24h</td><td>Fibras com citoplasma eosinofílico, picnose nuclear</td></tr>
+          <tr><td>1–3 dias</td><td>Neutrófilos abundantes na borda do infarto</td></tr>
+          <tr><td>3–7 dias</td><td>Macrófagos dominam, removendo debris</td></tr>
+          <tr><td>1–3 semanas</td><td>Tecido de granulação (fibroblastos + neovascularização)</td></tr>
+          <tr><td>&gt;6 semanas</td><td>Cicatriz fibrosa (colágeno — branco ao Masson)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>2. Necrose de Liquefação</h4>
+    <p><strong>Mecanismo:</strong> digestão enzimática predomina — enzimas hidrolíticas liquefazem o tecido. Parênquima cerebral tem baixo teor de proteínas estruturais + alto teor de lipídios (mielina) + abundância de enzimas → liquefação supera coagulação.</p>
+    <p><strong>Exemplos:</strong> infarto cerebral, abscessos bacterianos (pus = debris + neutrófilos mortos + bactérias).</p>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 TC de Crânio — Evolução</div>
+      <p><strong>Fase aguda (0–7 dias):</strong> hipodensidade (edema) · <strong>Subaguda:</strong> isodensa ("fogging effect") · <strong>Crônica (&gt;2 semanas):</strong> hipodensidade líquida (encefalomalácia / porencefalia)</p>
+    </div>
+
+    <h4>3. Necrose Caseosa</h4>
+    <p>Material amorfo branco-amarelado, semelhante a queijo (do latim <em>caseum</em>). Mistura de coagulação e liquefação parcial com reação granulomatosa. <strong>Exemplo clássico: tuberculose.</strong></p>
+
+    <h5>O Granuloma Tuberculoso</h5>
+    <div class="cascade">
+<span class="molecule">M. tuberculosis</span> fagocitado por macrófagos alveolares
+<span class="arrow">↓</span>
+Resistência ao killing: inibição da fusão fagossomo-lisossomo via <span class="molecule">ManLAM</span>
+<span class="arrow">↓</span>
+Ativação de <span class="molecule">LT CD4⁺ Th1</span> <span class="arrow">→</span> <span class="molecule">IFN-γ</span> <span class="arrow">→</span> ativação de macrófagos → <span class="molecule">células epitelioides</span>
+<span class="arrow">↓</span>
+Fusão de macrófagos <span class="arrow">→</span> <span class="molecule">células gigantes de Langhans</span> (núcleos em ferradura)
+<span class="arrow">↓</span>
+Centro: <span class="danger">necrose caseosa</span> (hipóxia + EROs + TNF-α + FasL)
+    </div>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 Diagnóstico de Tuberculose</div>
+      <p><strong>Ziehl-Neelsen:</strong> BAAR vermelhos em fundo azul · <strong>Auramina-rodamina:</strong> fluorescência (mais sensível) · <strong>GeneXpert MTB/RIF:</strong> detecta M. tuberculosis E resistência à rifampicina em 2h (PCR em tempo real) <a href="https://doi.org/10.1038/nri3099" target="_blank">(Ramakrishnan L, 2012)</a></p>
+    </div>
+
+    <h4>4. Necrose Gordurosa (Esteatonecrose)</h4>
+    <p><strong>Enzimática (pancreática):</strong> pancreatite → lipase extravasada → saponificação com Ca²⁺ → "manchas de giz" no mesentério (calcificação distrófica in situ).</p>
+    <p><strong>Traumática (mamária):</strong> trauma → ruptura de adipócitos → macrófagos espumosos → nódulo espiculado + calcificações à mamografia — pode mimetizar carcinoma! Biópsia necessária.</p>
+
+    <h4>5. Necrose Fibrinoide</h4>
+    <p>Material amorfo eosinofílico em paredes de arteríolas. Mecanismo: imunocomplexos → complemento → neutrófilos → destruição da parede vascular. <strong>Exemplos:</strong> hipertensão maligna, vasculites (LES, PAN), nódulos reumatoides.</p>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 Diagnóstico — Biópsia Renal</div>
+      <p><strong>Imunofluorescência direta (IFD):</strong> padrões de depósito de IgG, IgA, IgM, C3, C1q · <strong>ME:</strong> depósitos elétron-densos subepiteliais (LES), subendoteliais, mesangiais · <strong>IHQ:</strong> distinção entre vasculite ANCA+ e imunocomplexos.</p>
+    </div>
+
+    <h4>6. Gangrena Gasosa</h4>
+    <p><em>Clostridium perfringens</em> → <strong>α-toxina</strong> (lecitinase) → hidrolisa fosfolipídios → necrose muscular + gás (H₂ + CO₂) → crepitação à palpação. TC: gás nos planos musculares. <strong>Emergência cirúrgica:</strong> desbridamento amplo ± amputação + penicilina G + oxigenoterapia hiperbárica.</p>
+
+    <h2 id="apoptose" data-num="4.3">Apoptose — Análise Detalhada</h2>
+
+    <div class="callout callout-etymology">
+      <div class="callout-title">Etimologia e História</div>
+      <p><strong>Apoptose</strong> = grego <em>apo</em> (de, para longe) + <em>ptōsis</em> (queda) — literalmente <em>"queda de folhas"</em>. Termo cunhado por <strong>Kerr, Wyllie e Currie em 1972</strong>. Nobel de Medicina 2002: Brenner, Sulston e Horvitz pelos estudos dos genes da apoptose em <em>C. elegans</em>. <a href="https://doi.org/10.1002/bjes.100140103" target="_blank">(Kerr JFR et al., 1972)</a></p>
+    </div>
+
+    <h3>Características Morfológicas</h3>
+    <ul>
+      <li><strong>Retração celular</strong> (encolhimento — oposto da tumefação na necrose)</li>
+      <li>Citoplasma mais <strong>eosinofílico</strong> (por concentração proteica)</li>
+      <li><strong>Condensação da cromatina</strong> — marginalização periférica, "crescentes"</li>
+      <li><strong>Fragmentação nuclear</strong> (cariorrexe sem cariólise)</li>
+      <li>Formação de <strong>corpos apoptóticos</strong> (blebs com organelas e fragmentos nucleares)</li>
+      <li><strong>Sem ruptura da membrana</strong> → sem inflamação (fagocitose silenciosa via efferocytosis)</li>
+    </ul>
+
+    <h3>Família Bcl-2 — Controle Central da Apoptose Intrínseca</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Grupo</th><th>Proteínas</th><th>Função</th></tr></thead>
+        <tbody>
+          <tr><td>Anti-apoptóticas</td><td>Bcl-2, Bcl-XL, Mcl-1, Bcl-W</td><td>Bloqueiam MOMP</td></tr>
+          <tr><td>Pro-apoptóticas efetoras</td><td>Bax, Bak</td><td>Formam poros na MME → MOMP</td></tr>
+          <tr><td>Pro-apoptóticas BH3-only</td><td>Bid, Bad, Bim, Puma, Noxa</td><td>Ativam Bax/Bak; inibem anti-apoptóticas</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Via Intrínseca (Mitocondrial)</h4>
+
+    <div class="cascade">
+Estímulo de estresse (dano DNA, EROs, privação de fatores de crescimento)
+<span class="arrow">↓</span>
+Ativação de proteínas <span class="molecule">BH3-only</span> (Bim, Puma, Noxa)
+<span class="arrow">↓</span>
+Neutralização de <span class="molecule">Bcl-2/Bcl-XL</span> → liberação de <span class="molecule">Bax/Bak</span>
+<span class="arrow">↓</span>
+<span class="molecule">Bax</span> oligomeriza → insere-se na MME
+<span class="molecule">Bak</span> oligomeriza na MME
+<span class="arrow">↓</span>
+<span class="danger">MOMP</span> (Permeabilização da Membrana Mitocondrial Externa)
+<span class="arrow">↓</span>
+Liberação de: <span class="molecule">Citocromo c · SMAC/DIABLO · AIF · Endonuclease G</span>
+<span class="arrow">↓</span>
+Citocromo c + <span class="molecule">Apaf-1</span> + dATP <span class="arrow">→</span> <span class="molecule">Apoptossomo</span> (7 unidades)
+<span class="arrow">↓</span>
+Recrutamento de <span class="molecule">Pró-Caspase 9</span> <span class="arrow">→</span> <span class="molecule">Caspase 9</span> (iniciadora)
+<span class="arrow">↓</span>
+<span class="molecule">Caspase 9</span> cliva <span class="arrow">→</span> <span class="result">Caspases 3 e 7 (efetoras)</span>
+    </div>
+
+    <p><a href="https://doi.org/10.1038/nrm2988" target="_blank">(Tait SW &amp; Green DR, Nat Rev Mol Cell Biol, 2010)</a></p>
+
+    <h4>Via Extrínseca (Receptor de Morte)</h4>
+
+    <div class="cascade">
+<span class="molecule">FasL</span> <span class="arrow">→</span> <span class="molecule">FAS (CD95)</span> trimeriza <span class="arrow">→</span> recrutamento de <span class="molecule">FADD</span>
+<span class="arrow">↓</span>
+FADD recruta <span class="molecule">Pró-Caspase 8</span> <span class="arrow">→</span> complexo <span class="molecule">DISC</span>
+<span class="arrow">↓</span>
+<span class="molecule">Caspase 8</span> ativa (iniciadora)
+<span class="arrow">↓</span>
+<strong>Tipo I (direto):</strong> Caspase 8 <span class="arrow">→</span> <span class="result">Caspase 3/7</span>
+<strong>Tipo II (amplificado):</strong> Caspase 8 <span class="arrow">→</span> cliva Bid <span class="arrow">→</span> <span class="danger">tBid</span> <span class="arrow">→</span> Bax/Bak <span class="arrow">→</span> MOMP <span class="arrow">→</span> via intrínseca
+    </div>
+
+    <h4>Detecção de Apoptose na Prática</h4>
+    <ul>
+      <li><strong>Citometria de fluxo Anexina V/PI:</strong> V+/PI- = apoptose precoce · V+/PI+ = apoptose tardia ou necrose</li>
+      <li><strong>TUNEL</strong> (Terminal deoxynucleotidyl transferase dUTP Nick End Labeling) — marca quebras de DNA in situ</li>
+      <li><strong>Western blot:</strong> PARP clivado, Caspase 3 clivada</li>
+      <li><strong>IHQ</strong> para Caspase 3 ativada no tecido</li>
+    </ul>
+
+    <h2 id="piroptose" data-num="4.4">Piroptose</h2>
+
+    <div class="callout callout-etymology">
+      <div class="callout-title">Etimologia</div>
+      <p><strong>Pyro</strong> (grego <em>pyr</em>) = fogo + <strong>ptōsis</strong> = queda. Morte celular inflamatória mediada por gasderminas e caspases inflamatórias (Caspase-1, 4, 5 em humanos).</p>
+    </div>
+
+    <div class="cascade">
+PAMPs ou DAMPs
+<span class="arrow">↓</span>
+Ativação do <span class="molecule">Inflamassomo NLRP3</span>
+(NLRP3 + ASC + Pró-Caspase 1)
+Ativado por: cristais de urato (gota!), colesterol (aterosclerose!), ATP, silício, asbesto, LPS, β-amiloide
+<span class="arrow">↓</span>
+Oligomerização <span class="arrow">→</span> <span class="molecule">Caspase-1</span> ativa
+<span class="arrow">↓</span>
+Caspase-1 cliva:
+• <span class="molecule">Pró-IL-1β</span> <span class="arrow">→</span> <span class="result">IL-1β</span> (pirógeno, pró-inflamatório)
+• <span class="molecule">Pró-IL-18</span> <span class="arrow">→</span> <span class="result">IL-18</span>
+• <span class="molecule">Gasdermina D (GSDMD)</span> <span class="arrow">→</span> N-terminal oligomeriza <span class="arrow">→</span> <span class="danger">poros de 10–20 nm</span>
+<span class="arrow">→</span> influxo de água/íons <span class="arrow">→</span> <span class="danger">tumefação + ruptura celular</span>
+    </div>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 Aplicações Terapêuticas do Inflamassomo</div>
+      <p><strong>Gota:</strong> cristais de urato → NLRP3 → IL-1β → artrite aguda. Trat.: <strong>Anakinra</strong> (antagonista IL-1R), <strong>Canakinumab</strong> (anti-IL-1β), Colchicina (↓ migração de neutrófilos + ↓ NLRP3). <strong>Aterosclerose:</strong> Trial CANTOS — Canakinumab ↓ eventos cardiovasculares. <strong>Sepse:</strong> piroptose de macrófagos → IL-1β/IL-18 → SIRS. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4547968/" target="_blank">(He WT et al., 2015)</a></p>
+    </div>
+
+    <h2 id="ferroptose" data-num="4.5">Ferroptose</h2>
+
+    <div class="callout callout-etymology">
+      <div class="callout-title">Etimologia</div>
+      <p><strong>Ferro</strong> (latim) = ferro (Fe) + <strong>ptōsis</strong> = queda. Morte celular dependente de ferro caracterizada por peroxidação lipídica exacerbada de PUFAs. Descrita por <a href="https://doi.org/10.1016/j.cell.2012.03.042" target="_blank">Dixon et al. em 2012</a>.</p>
+    </div>
+
+    <div class="cascade">
+<strong>Mecanismo Central:</strong>
+
+<span class="molecule">Sistema Xc⁻</span> importa cistina <span class="arrow">→</span> cisteína <span class="arrow">→</span> <span class="molecule">GSH</span>
+<span class="molecule">GSH</span> + <span class="molecule">GPx4</span> <span class="arrow">→</span> reduz PUFA-OOH <span class="arrow">→</span> PUFA-OH (inócuo)
+
+<strong>Na Ferroptose:</strong>
+↓ Sistema Xc⁻ (erastin, glutamato) <span class="arrow">→</span> ↓ cistina <span class="arrow">→</span> ↓ GSH <span class="arrow">→</span> ↓ GPx4
+OU inibição direta de <span class="molecule">GPx4</span> (RSL3)
+<span class="arrow">↓</span>
+<span class="danger">PUFA-OOH</span> acumula + <span class="danger">Fe²⁺</span> (Fenton) <span class="arrow">→</span> <span class="danger">OH•</span>
+<span class="arrow">→</span> Reação em cadeia de peroxidação lipídica
+<span class="arrow">→</span> <span class="danger">Ruptura da membrana</span>
+    </div>
+
+    <p><a href="https://doi.org/10.1016/j.cell.2017.09.021" target="_blank">(Stockwell BR et al., Cell, 2017)</a></p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Contexto Clínico</th><th>Papel da Ferroptose</th></tr></thead>
+        <tbody>
+          <tr><td>AVC isquêmico</td><td>Morte neuronal (neurônios ricos em PUFAs)</td></tr>
+          <tr><td>IAM / IR</td><td>Ferroptose em cardiomiócitos durante reperfusão</td></tr>
+          <tr><td>IRA (Insuficiência Renal Aguda)</td><td>Células tubulares proximais</td></tr>
+          <tr><td>Câncer</td><td>Células resistentes à apoptose vulneráveis à ferroptose</td></tr>
+          <tr><td>Neurodegeneração</td><td>Parkinson, Alzheimer, Huntington</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="necroptose" data-num="4.6">Necroptose</h2>
+
+    <div class="cascade">
+<span class="molecule">TNF-α</span> <span class="arrow">→</span> <span class="molecule">TNFR1</span> → normalmente → apoptose via Caspase 8
+
+<strong>SE Caspase 8 está inibida</strong> (ex.: proteínas virais):
+<span class="molecule">RIPK1</span> + <span class="molecule">RIPK3</span> <span class="arrow">→</span> formam o <span class="molecule">Necrossomo</span>
+<span class="arrow">↓</span>
+RIPK3 fosforila <span class="molecule">MLKL</span> (Mixed Lineage Kinase domain-Like protein)
+<span class="arrow">↓</span>
+MLKL oligomeriza <span class="arrow">→</span> <span class="danger">poros na membrana</span> <span class="arrow">→</span> <span class="danger">influxo iônico</span>
+<span class="arrow">→</span> <span class="danger">ruptura + DAMPs + inflamação</span>
+    </div>
+
+    <p><strong>Relevância clínica:</strong> pancreatite aguda, DII (Doença Inflamatória Intestinal), NASH (Esteato-hepatite Não Alcoólica), IR. <a href="https://doi.org/10.1038/ncb3480" target="_blank">(Galluzzi L et al., 2017)</a></p>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PARTE V -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="part-divider" id="parte5">
+      <div class="part-label">Parte V</div>
+      <div class="part-title">Acúmulos <span class="accent">Intracelulares</span></div>
+    </div>
+
+    <h2 id="logica-acumulos" data-num="5.1">Lógica dos Acúmulos</h2>
+
+    <p>Os acúmulos intracelulares resultam de: <strong>↑ produção</strong> além da capacidade de processamento · <strong>↓ catabolismo</strong> (doenças lisossomais) · <strong>↓ exportação</strong> · <strong>↑ ingesta</strong> + metabolismo anormal · Substâncias anormais <strong>não degradáveis</strong>.</p>
+
+    <h3>Esteatose Hepática</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mecanismo</th><th>Causa</th><th>Exemplo</th></tr></thead>
+        <tbody>
+          <tr><td>↑ AGL chegando ao fígado</td><td>Lipólise periférica excessiva</td><td>Diabetes, obesidade, jejum</td></tr>
+          <tr><td>↓ β-oxidação mitocondrial</td><td>Etanol, hipóxia, deficiência de carnitina</td><td>Alcoolismo</td></tr>
+          <tr><td>↑ síntese de TG</td><td>Hiperinsulinismo, excesso de substrato</td><td>NASH</td></tr>
+          <tr><td>↓ síntese de Apo-B</td><td>CCl₄, etanol, desnutrição proteica</td><td>Marasmo</td></tr>
+          <tr><td>↓ exportação de VLDL</td><td>Disfunção do Golgi</td><td>Etanol</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Doenças de Depósito Lisossomal</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Doença</th><th>Enzima Deficiente</th><th>Substrato</th><th>Órgãos Afetados</th></tr></thead>
+        <tbody>
+          <tr><td>Gaucher</td><td>β-glucocerebrosidase</td><td>Glicocerebrosídeo</td><td>Baço, fígado, MO, ossos</td></tr>
+          <tr><td>Niemann-Pick A/B</td><td>Esfingomielinase ácida</td><td>Esfingomielina</td><td>SNC (A), vísceras</td></tr>
+          <tr><td>Tay-Sachs</td><td>Hexosaminidase A</td><td>GM2-gangliosídeo</td><td>SNC</td></tr>
+          <tr><td>Fabry</td><td>α-galactosidase A</td><td>Globotriaosilceramida</td><td>Rins, coração, SNC</td></tr>
+          <tr><td>Pompe</td><td>α-1,4-glucosidase ácida</td><td>Glicogênio</td><td>Músculo, coração</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 Terapia de Reposição Enzimática (TRE)</div>
+      <p><strong>Gaucher:</strong> Imiglicerase · <strong>Pompe:</strong> Alglucosidase alfa · <strong>Fabry:</strong> Agalsidase alfa/beta. Diagnóstico: atividade enzimática em leucócitos/fibroblastos + análise genética. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3891929/" target="_blank">(NCBi, 2014)</a></p>
+    </div>
+
+    <h3>Corpos de Inclusão Proteicos</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Inclusão</th><th>Proteína Acumulada</th><th>Doença</th></tr></thead>
+        <tbody>
+          <tr><td>Corpúsculos de Mallory-Denk</td><td>Citoqueratinas 8/18 + HSP70 + ubiquitina</td><td>Hepatite alcoólica, NASH</td></tr>
+          <tr><td>Corpos de Lewy</td><td>α-sinucleína hiperfosforilada + ubiquitina</td><td>Doença de Parkinson, DLB</td></tr>
+          <tr><td>Tranças neurofibrilares (NFT)</td><td>Proteína tau hiperfosforilada (PHF)</td><td>Doença de Alzheimer</td></tr>
+          <tr><td>Corpos de Hirano</td><td>Actina + proteínas associadas</td><td>Alzheimer, outras neurodegenerações</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PARTE VI -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="part-divider" id="parte6">
+      <div class="part-label">Parte VI</div>
+      <div class="part-title">Calcificações <span class="accent">Patológicas</span></div>
+    </div>
+
+    <h2 id="calc-distrofica" data-num="6.1">Calcificação Distrófica</h2>
+
+    <p><strong>Definição:</strong> deposição de sais de cálcio em <strong>tecidos mortos ou moribundos</strong>, com <strong>cálcio sérico normal</strong>. Mecanismo: fosfolipídios de membrana danificados + proteínas com ácido glutâmico/aspártico → nucleação → crescimento de <strong>hidroxiapatita</strong> [Ca₁₀(PO₄)₆(OH)₂].</p>
+
+    <p><strong>Exemplos:</strong> ateromas calcificados · valvas cardíacas reumáticas · cáseo tuberculoso calcificado · necrose gordurosa pancreática · <strong>Corpos de Psammoma</strong> (calcificações lameladas em câncer papilífero de ovário, meningioma, carcinoma papilífero de tireoide).</p>
+
+    <h2 id="calc-metastatica" data-num="6.2">Calcificação Metastática</h2>
+
+    <p><strong>Definição:</strong> deposição em <strong>tecidos normais</strong> por <strong>hipercalcemia sistêmica</strong>. Locais preferidos: pulmão, rins, estômago, artérias sistêmicas, córnea — locais que secretam ácidos → pH local mais alcalino → ↓ solubilidade do cálcio.</p>
+
+    <div class="callout callout-clinical">
+      <div class="callout-title">🏥 Causas de Hipercalcemia</div>
+      <p><strong>Hiperparatireoidismo primário:</strong> ↑ PTH → ↑ reabsorção óssea · <strong>Malignidade:</strong> PTHrP (pulmão, mama, rim) · <strong>Intox. Vit. D · Sarcoidose:</strong> macrófagos convertem 25-OH-D → 1,25-OH₂-D ectopicamente · <strong>Diagnóstico:</strong> Ca²⁺ total + ionizado + PTH + PTHrP + 25-OH-D + 1,25-OH₂-D + densitometria óssea.</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PARTE VII -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="part-divider" id="parte7">
+      <div class="part-label">Parte VII</div>
+      <div class="part-title">Envelhecimento <span class="accent">Celular</span></div>
+    </div>
+
+    <h2 id="telomeros" data-num="7.1">Teoria dos Telômeros — Relógio Mitótico de Hayflick</h2>
+
+    <p><strong>Telômeros</strong> são sequências repetitivas de DNA <code>(TTAGGG)</code> que protegem as extremidades dos cromossomos. Perdem <strong>~50–200 pb por divisão celular</strong> (problema da replicação terminal — DNA polimerase não copia o fragmento primer da extremidade 5' do lagging strand).</p>
+
+    <p>Após <strong>~50–70 divisões</strong> (Limite de Hayflick): telômeros críticos → <strong>senescência celular</strong> (parada permanente do ciclo) ou apoptose.</p>
+
+    <p>Células senescentes secretam o <strong>SASP</strong> (Senescence-Associated Secretory Phenotype): IL-6, IL-8, MMPs, PAI-1 → <em>inflammaging</em> (inflamação crônica de baixo grau do envelhecimento).</p>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">⚠️ Telomerase e Câncer</div>
+      <p><strong>90% dos tumores malignos reativam a telomerase</strong> — mecanismo de imortalidade celular. TERT (Telomerase Reverse Transcriptase) + RNA molde (TERC). Nobel 2009: Elizabeth Blackburn, Carol Greider e Jack Szostak. <a href="https://www.nobelprize.org/prizes/medicine/2009/blackburn/facts/" target="_blank">(Nobel Prize, 2009)</a></p>
+    </div>
+
+    <h2 id="hallmarks" data-num="7.2">Os Hallmarks do Envelhecimento (López-Otín 2013/2023)</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Categoria</th><th>Hallmarks</th></tr></thead>
+        <tbody>
+          <tr><td>Primários (causas)</td><td>Instabilidade genômica · Encurtamento de telômeros · Alterações epigenéticas · Perda de proteostase</td></tr>
+          <tr><td>Compensatórios (respostas)</td><td>Desregulação da detecção de nutrientes · Disfunção mitocondrial · Senescência celular</td></tr>
+          <tr><td>Integradores (consequências)</td><td>Exaustão de células-tronco · Alteração da comunicação intercelular</td></tr>
+          <tr><td>Novos 2023</td><td>Inflammaging · Disbiose · Disfunção autofágica · Disfunção lisossomal</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><a href="https://doi.org/10.1016/j.cell.2022.12.002" target="_blank">(López-Otín C et al., Cell, 2023)</a></p>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PARTE VIII — EXERCÍCIOS -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="part-divider" id="parte8">
+      <div class="part-label">Parte VIII</div>
+      <div class="part-title">Exercícios Clínicos <span class="accent">de Consolidação</span></div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-header">Exercício 1 — IAM e Lesão de Isquemia-Reperfusão</div>
+      <h3>Caso Clínico</h3>
+      <p>Homem, 58 anos, diabético e hipertenso, dor precordial opressiva há 2 horas irradiada para o braço esquerdo. ECG: supradesnivelamento de ST em D2, D3, aVF (IAM inferior). Decidido ICP primária. Coronária direita ocluída → balão → reperfusão.</p>
+
+      <div class="exercise-q"><strong>a)</strong> No momento da oclusão, qual foi a sequência molecular dos primeiros 5 minutos? Discuta ATP, Na⁺/K⁺-ATPase e Ca²⁺.</div>
+      <div class="exercise-a"><strong>Resposta:</strong> Oclusão → ↓O₂ → ↓fosforilação oxidativa → ↓ATP (segundos). ↓ATP → Na⁺/K⁺-ATPase falha → Na⁺ acumula → osmose → tumefação celular. ↓SERCA → ↑Ca²⁺ citosólico → fosfolipases, calpaínas, ATPases, endonucleases. Glicólise anaeróbia → ↑lactato → ↓pH intracelular → acidose.</div>
+
+      <div class="exercise-q"><strong>b)</strong> Após 2h de oclusão, a reperfusão causará lesão adicional. Explique o papel das EROs e do mPTP.</div>
+      <div class="exercise-a"><strong>Resposta:</strong> Reperfusão → O₂ reentrada → burst de EROs (O₂•⁻, OH•) por cadeia respiratória disfuncional e xantina oxidase. Restauração do pH → ativação do trocador Na⁺/H⁺ → ↑Na⁺ → NCX reverso → ↑↑Ca²⁺. Ca²⁺ + EROs → abertura massiva do mPTP → colapso do ΔΨm → liberação de citocromo c → apoptose/necrose adicional.</div>
+
+      <div class="exercise-q"><strong>c)</strong> Que biomarcadores serão liberados e em que tempo? (Troponina I, CK-MB, Mioglobina)</div>
+      <div class="exercise-a"><strong>Resposta:</strong> <strong>Mioglobina:</strong> pico 1–4h, normaliza em 24h — mais precoce, pouco específico. <strong>CK-MB:</strong> pico 12–24h, normaliza 48–72h — moderada especificidade cardíaca. <strong>cTnI/cTnT:</strong> pico 12–24h, permanece elevada 5–14 dias — altíssima especificidade. <strong>hs-cTn:</strong> detectável em 1–3h do início dos sintomas.</div>
+
+      <div class="exercise-q"><strong>d)</strong> Cite 2 estratégias para minimizar a lesão de reperfusão com seus mecanismos.</div>
+      <div class="exercise-a"><strong>Resposta:</strong> (1) <strong>Pós-condicionamento isquêmico:</strong> ciclos breves de reperfusão/isquemia antes da reperfusão completa → ativa PI3K/Akt e PKC-ε → ↓ abertura do mPTP. (2) <strong>Ciclosporina A:</strong> inibe CypD → ↓ abertura do mPTP → ↓ liberação de citocromo c. (3) Hipotermia terapêutica moderada → ↓ metabolismo → ↓ EROs.</div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-header">Exercício 2 — Apoptose vs. Necrose (Biópsia Hepática)</div>
+      <h3>Caso Clínico</h3>
+      <p><strong>Paciente A:</strong> Hepatite viral aguda (VHB). Histologia: hepatócitos arredondados, eosinofílicos, homogêneos, sem núcleo, isolados. Sem inflamação local. <strong>Paciente B:</strong> Hepatite isquêmica pós-choque. Histologia: necrose centrolobular extensa, cariorrexe, cariólise, infiltrado neutrofílico abundante.</p>
+
+      <div class="exercise-q"><strong>a)</strong> O Paciente A apresenta qual tipo de morte celular? Como se chamam essas células? Qual via foi ativada?</div>
+      <div class="exercise-a"><strong>Resposta:</strong> <strong>Apoptose.</strong> Células = <strong>Corpúsculos de Councilman</strong> (ou Corpos Acidofílicos). Na VHB: LT CD8⁺ → FasL ou perforina/granzima B → via extrínseca (Fas/FADD/Caspase 8) e/ou via intrínseca (granzima B cliva Bid → tBid → Bax/Bak → citocromo c).</div>
+
+      <div class="exercise-q"><strong>b)</strong> Por que no Paciente A não há inflamação, mas no Paciente B há neutrófilos?</div>
+      <div class="exercise-a"><strong>Resposta:</strong> Apoptose (A): membrana íntegra → corpos apoptóticos fagocitados silenciosamente (<em>efferocytosis</em>) → <strong>sem liberação de DAMPs → sem inflamação</strong>. Necrose (B): ruptura da membrana → HMGB1, ATP extracelular, DNA mitocondrial, urato → ativação de TLRs e NLRP3 → IL-1β, IL-8 → recrutamento de neutrófilos.</div>
+
+      <div class="exercise-q"><strong>c)</strong> Como diferenciar laboratorialmente as duas lesões?</div>
+      <div class="exercise-a"><strong>Resposta:</strong> <strong>TUNEL:</strong> fragmentação oligonucleossômica em "escada" (apoptose) vs. aleatória (necrose). <strong>Citometria Anexina V/PI:</strong> V+/PI- (apoptose precoce) vs. V+/PI+ (necrose). <strong>WB:</strong> Caspase 3 e PARP clivados (apoptose). <strong>Enzimas hepáticas:</strong> AST/ALT maciçamente elevadas na necrose isquêmica.</div>
+    </div>
+
+    <div class="exercise">
+      <div class="exercise-header">Exercício 3 — Metaplasia e Oncogênese</div>
+      <h3>Caso Clínico</h3>
+      <p>Mulher, 35 anos, tabagista (30 maços-ano). Broncoscopia por tosse crônica. Histologia: epitélio escamoso estratificado no brônquio principal.</p>
+
+      <div class="exercise-q"><strong>a)</strong> Que adaptação está ocorrendo? Como se denomina?</div>
+      <div class="exercise-a"><strong>Resposta:</strong> <strong>Metaplasia escamosa brônquica</strong> — substituição do epitélio colunar pseudoestratificado ciliado por epitélio escamoso estratificado, em resposta à fumaça do tabaco (hidrocarbonetos policíclicos aromáticos, acroleína, etc.).</div>
+
+      <div class="exercise-q"><strong>b)</strong> Quais as consequências funcionais imediatas?</div>
+      <div class="exercise-a"><strong>Resposta:</strong> Perda das células ciliadas → ↓ clearance mucociliar → acúmulo de muco + bactérias → ↑ suscetibilidade a infecções respiratórias (bronquite crônica, pneumonia). As glândulas submucosas podem hiperplasiar compensatoriamente → hipersecreção mucosa.</div>
+
+      <div class="exercise-q"><strong>c)</strong> Qual o risco oncológico e qual marcador IHQ é útil?</div>
+      <div class="exercise-a"><strong>Resposta:</strong> Metaplasia escamosa → displasia → carcinoma in situ → <strong>carcinoma epidermoide pulmonar</strong>. Mutações: TP53, KRAS, CDKN2A (p16). Marcadores: <strong>CK5/6 e p63</strong> (escamoso, positivos) vs. <strong>TTF-1 e Napsina A</strong> (adenocarcinoma, negativos aqui). Ki-67 ↑ = ↑ proliferação = displasia/neoplasia.</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PARTE IX -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="part-divider" id="parte9">
+      <div class="part-label">Parte IX</div>
+      <div class="part-title">Integração <span class="accent">Clínico-Patológica Avançada</span></div>
+    </div>
+
+    <h2 id="reversivel-irreversivel" data-num="9.1">Limiar de Irreversibilidade por Órgão</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Órgão</th><th>Marcadores de Irreversibilidade</th><th>Tempo de Isquemia Tolerado</th></tr></thead>
+        <tbody>
+          <tr><td>Cérebro</td><td>Pupilas fixas, EEG isoelétrico, ausência de reflexos de tronco</td><td>4–6 min (temperatura normal)</td></tr>
+          <tr><td>Coração</td><td>Ondas Q ao ECG, ↑↑ Troponina, acinesia segmentar</td><td>20–40 minutos</td></tr>
+          <tr><td>Rim</td><td>Creatinina ↑ 1,5x, débito urinário &lt;0,5 ml/kg/h por 6h (KDIGO), NTA</td><td>30–60 minutos</td></tr>
+          <tr><td>Fígado</td><td>AST/ALT &gt;1000 U/L ("shock liver"), INR &gt;1,5</td><td>30–45 minutos (quente)</td></tr>
+          <tr><td>Intestino</td><td>Lactato persistentemente ↑, pneumatose intestinal à TC</td><td>~6 horas (variável)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="patologo-uti" data-num="9.2">O Papel do Patologista na UTI</h2>
+
+    <ol>
+      <li><strong>Biópsias renais em IRA</strong> — diferencia NTA de GN rapidamente progressiva → muda tratamento (imunossupressão vs. suporte)</li>
+      <li><strong>Biópsia hepática transjugular</strong> — em coagulopatas com disfunção hepática aguda grave</li>
+      <li><strong>Lavado broncoalveolar (LBA)</strong> — citologia + culturas em pneumonia do imunossuprimido</li>
+      <li><strong>Autópsias clínicas</strong> — taxa de discordância diagnóstica de <strong>20–30%</strong> com diagnóstico clínico. A autópsia é o padrão-ouro de auditoria diagnóstica. <a href="https://doi.org/10.1056/NEJM198308183090704" target="_blank">(Goldman L et al., 1983)</a></li>
+    </ol>
+
+    <h2 id="tabela-morte" data-num="9.3">Tabela Comparativa Final — Morte Celular</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Característica</th><th>Necrose</th><th>Apoptose</th><th>Piroptose</th><th>Ferroptose</th><th>Necroptose</th></tr></thead>
+        <tbody>
+          <tr><td>Regulação</td><td>Não programada</td><td>Programada</td><td>Programada</td><td>Programada</td><td>Programada</td></tr>
+          <tr><td>Volume celular</td><td>↑ (tumefação)</td><td>↓ (retração)</td><td>↑</td><td>Variável</td><td>↑</td></tr>
+          <tr><td>Membrana plasmática</td><td>Ruptura precoce</td><td>Íntegra até o fim</td><td>Poros → ruptura</td><td>Ruptura</td><td>Ruptura</td></tr>
+          <tr><td>Inflamação</td><td>Intensa</td><td>Ausente</td><td>Intensa</td><td>Moderada</td><td>Intensa</td></tr>
+          <tr><td>Caspases envolvidas</td><td>Não</td><td>3, 7, 8, 9</td><td>1, 4, 5</td><td>Não</td><td>Não</td></tr>
+          <tr><td>Marcador diagnóstico</td><td>LDH, AST, necrose à biópsia</td><td>Caspase 3 clivada, Anexina V</td><td>IL-1β, IL-18, GSDMD-N</td><td>4-HNE, MDA, ↓GSH</td><td>RIPK3, p-MLKL</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- REFERÊNCIAS -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="part-divider" id="referencias">
+      <div class="part-label">Referências</div>
+      <div class="part-title">Fontes <span class="accent">Bibliográficas</span></div>
+    </div>
+
+    <div class="ref-box"><span class="ref-num">01</span><span>Kumar V, Abbas AK, Aster JC. <strong>Robbins &amp; Cotran Pathologic Basis of Disease</strong>, 10th ed. Elsevier, 2021. <a href="https://www.elsevier.com/books/robbins-cotran-pathologic-basis-of-disease/kumar/978-0-323-53113-9" target="_blank">elsevier.com</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">02</span><span>Galluzzi L et al. <strong>Molecular mechanisms of cell death: NCCD 2018.</strong> Cell Death Differ. 2018. <a href="https://doi.org/10.1038/s41418-017-0012-4" target="_blank">doi.org/10.1038/s41418-017-0012-4</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">03</span><span>López-Otín C et al. <strong>The Hallmarks of Aging.</strong> Cell. 2013. <a href="https://doi.org/10.1016/j.cell.2013.05.039" target="_blank">doi.org/10.1016/j.cell.2013.05.039</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">04</span><span>López-Otín C et al. <strong>Hallmarks of aging: An expanding universe.</strong> Cell. 2023. <a href="https://doi.org/10.1016/j.cell.2022.12.002" target="_blank">doi.org/10.1016/j.cell.2022.12.002</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">05</span><span>Tait SW, Green DR. <strong>Mitochondria and cell death: outer membrane permeabilization and beyond.</strong> Nat Rev Mol Cell Biol. 2010. <a href="https://doi.org/10.1038/nrm2988" target="_blank">doi.org/10.1038/nrm2988</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">06</span><span>Stockwell BR et al. <strong>Ferroptosis: A Regulated Cell Death Nexus.</strong> Cell. 2017. <a href="https://doi.org/10.1016/j.cell.2017.09.021" target="_blank">doi.org/10.1016/j.cell.2017.09.021</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">07</span><span>Yellon DM, Hausenloy DJ. <strong>Myocardial Reperfusion Injury.</strong> N Engl J Med. 2007. <a href="https://doi.org/10.1056/NEJMra071667" target="_blank">doi.org/10.1056/NEJMra071667</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">08</span><span>Sandri M et al. <strong>Foxo Transcription Factors Induce the Atrophy-Related Ubiquitin Ligase Atrogin-1.</strong> Cell. 2004. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC423155/" target="_blank">PMC423155</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">09</span><span>Spechler SJ, Souza RF. <strong>Barrett's Esophagus.</strong> N Engl J Med. 2014. <a href="https://doi.org/10.1056/NEJMra1314704" target="_blank">doi.org/10.1056/NEJMra1314704</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">10</span><span>Heineke J, Molkentin JD. <strong>Regulation of cardiac hypertrophy by intracellular signalling pathways.</strong> Nat Rev Mol Cell Biol. 2006. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1624868/" target="_blank">PMC1624868</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">11</span><span>Hermans G, Van den Berghe G. <strong>Clinical review: ICU acquired weakness.</strong> Crit Care. 2015. <a href="https://doi.org/10.1016/S0140-6736(15)60607-X" target="_blank">doi.org/10.1016/S0140-6736(15)60607-X</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">12</span><span>Levine B, Kroemer G. <strong>Autophagy in the Pathogenesis of Disease.</strong> Cell. 2008. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2696814/" target="_blank">PMC2696814</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">13</span><span>Ramakrishnan L. <strong>Revisiting the role of the granuloma in tuberculosis.</strong> Nat Rev Immunol. 2012. <a href="https://doi.org/10.1038/nri3099" target="_blank">doi.org/10.1038/nri3099</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">14</span><span>Dixon SJ et al. <strong>Ferroptosis: an iron-dependent form of nonapoptotic cell death.</strong> Cell. 2012. <a href="https://doi.org/10.1016/j.cell.2012.03.042" target="_blank">doi.org/10.1016/j.cell.2012.03.042</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">15</span><span>Goldman L et al. <strong>The value of the autopsy in three medical eras.</strong> N Engl J Med. 1983. <a href="https://doi.org/10.1056/NEJM198308183090704" target="_blank">doi.org/10.1056/NEJM198308183090704</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">16</span><span>Lee WM. <strong>Drug-induced hepatotoxicity.</strong> N Engl J Med. 2003. <a href="https://doi.org/10.1056/NEJMra021844" target="_blank">doi.org/10.1056/NEJMra021844</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">17</span><span>Itoh K et al. <strong>Keap1 represses nuclear activation of antioxidant responsive elements by Nrf2.</strong> Mol Cell Biol. 1999. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC84175/" target="_blank">PMC84175</a></span></div>
+
+    <div class="ref-box"><span class="ref-num">18</span><span>Kerr JFR, Wyllie AH, Currie AR. <strong>Apoptosis: a basic biological phenomenon.</strong> Br J Cancer. 1972. <a href="https://doi.org/10.1002/bjes.100140103" target="_blank">doi.org/10.1002/bjes.100140103</a></span></div>
+
+    <div style="margin-top: 60px; padding: 28px 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; text-align: center;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px;">Próximos Temas Sugeridos</div>
+      <p style="color: var(--text2); font-size: 15px; margin: 0;">Inflamação Aguda e Crônica com ênfase em Sepse · Oncogênese Molecular · Reparo Tecidual e Fibrose</p>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<a href="#top" id="back-top" title="Voltar ao topo">↑</a>
+
+<script>
+  // Active nav item on scroll
+  const sections = document.querySelectorAll('[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(item => {
+          item.classList.remove('active');
+          if (item.getAttribute('href') === '#' + entry.target.id) {
+            item.classList.add('active');
+          }
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(section => observer.observe(section));
+
+  // Back to top visibility
+  const backTop = document.getElementById('back-top');
+  window.addEventListener('scroll', () => {
+    backTop.style.opacity = window.scrollY > 400 ? '1' : '0';
+  });
+  backTop.style.opacity = '0';
+  backTop.style.transition = 'opacity 0.3s';
+</script>
+</body>
+</html>
