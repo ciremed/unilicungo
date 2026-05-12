@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Med Notes — Biblioteca de Estudos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0d0f14;
+    --surface:   #13161e;
+    --surface2:  #1a1e2a;
+    --border:    #252a38;
+    --accent:    #c8a96e;
+    --accent2:   #7eb8c9;
+    --accent3:   #a87db8;
+    --danger:    #d4685a;
+    --success:   #6aab82;
+    --text:      #e8e4dc;
+    --text-muted:#8a8fa0;
+    --text-dim:  #5a5f72;
+    --gold:      #d4a843;
+    --teal:      #4db8b0;
+    --shadow:    rgba(0,0,0,0.4);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── WRAPPER ── */
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 40px 100px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    padding: 72px 0 56px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(200,169,110,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-eyebrow::before,
+  .header-eyebrow::after {
+    content: '';
+    display: inline-block;
+    height: 1px;
+    width: 32px;
+    background: rgba(200,169,110,0.35);
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  .header-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .meta-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  /* ── CONTROLS BAR ── */
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover {
+    background: var(--surface2);
+    color: var(--accent);
+    border-color: rgba(200,169,110,0.4);
+  }
+
+  .filter-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .search-wrap { position: relative; }
+
+  .search-input {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 7px 14px 7px 34px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 2px;
+    width: 220px;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .search-input::placeholder { color: var(--text-dim); }
+  .search-input:focus { border-color: rgba(200,169,110,0.5); background: var(--surface2); }
+
+  .search-icon {
+    position: absolute;
+    left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  /* ── CARD GRID ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px 26px 22px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    cursor: pointer;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--border);
+    transition: background 0.25s;
+  }
+
+  .card[data-cat="anatomy"]::before   { background: var(--accent); }
+  .card[data-cat="physio"]::before    { background: var(--accent2); }
+  .card[data-cat="pharma"]::before    { background: var(--gold); }
+  .card[data-cat="clinic"]::before    { background: var(--success); }
+  .card[data-cat="emergency"]::before { background: var(--danger); }
+  .card[data-cat="pathology"]::before { background: var(--accent3); }
+
+  .card:hover {
+    background: var(--surface2);
+    border-color: rgba(200,169,110,0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px var(--shadow);
+    z-index: 2;
+  }
+
+  .card-cat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card[data-cat="anatomy"]   .card-cat { color: var(--accent); }
+  .card[data-cat="physio"]    .card-cat { color: var(--accent2); }
+  .card[data-cat="pharma"]    .card-cat { color: var(--gold); }
+  .card[data-cat="clinic"]    .card-cat { color: var(--success); }
+  .card[data-cat="emergency"] .card-cat { color: var(--danger); }
+  .card[data-cat="pathology"] .card-cat { color: var(--accent3); }
+
+  .card-cat::before {
+    content: '';
+    display: inline-block;
+    width: 14px; height: 1px;
+    background: currentColor;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 8px;
+    transition: color 0.2s;
+  }
+
+  .card:hover .card-title { color: var(--accent); }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin-bottom: 18px;
+    font-style: italic;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .card-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 2px 7px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .card-arrow {
+    font-size: 14px;
+    color: var(--text-dim);
+    transition: all 0.2s;
+  }
+
+  .card:hover .card-arrow { color: var(--accent); transform: translateX(4px); }
+
+  /* ── PLACEHOLDER CARD ── */
+  .card.placeholder {
+    border-style: dashed;
+    border-color: var(--border);
+    background: transparent;
+    cursor: default;
+    opacity: 0.45;
+  }
+
+  .card.placeholder::before { display: none; }
+
+  .card.placeholder:hover {
+    background: rgba(255,255,255,0.01);
+    border-color: var(--border);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .card.placeholder .card-title { color: var(--text-dim); font-style: italic; font-weight: 400; }
+  .card.placeholder .card-desc  { color: var(--border); }
+  .card.placeholder .card-arrow { opacity: 0; }
+
+  .placeholder-icon {
+    width: 30px; height: 30px;
+    border: 1px dashed var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--border);
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+
+  /* ── HOW TO USE BOX ── */
+  .howto {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 28px 32px;
+    margin-bottom: 40px;
+    border-radius: 4px;
+  }
+
+  .howto-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .howto-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .howto-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+
+  .howto-step { display: flex; gap: 14px; align-items: flex-start; }
+
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: var(--border);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 30px;
+  }
+
+  .step-head {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+
+  .step-text {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .step-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--accent2);
+  }
+
+  /* ── STATS BAR ── */
+  .stats {
+    display: flex;
+    border: 1px solid var(--border);
+    margin-bottom: 36px;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .stat {
+    flex: 1;
+    padding: 18px 20px;
+    border-right: 1px solid var(--border);
+    text-align: center;
+    background: var(--surface);
+  }
+
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+
+  .footer-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── CATEGORY LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .legend-item:hover { color: var(--accent); }
+
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── HIDDEN ── */
+  .card.hidden { display: none; }
+
+  /* ── ANIMATIONS ── */
+  .card { animation: riseIn 0.4s ease both; }
+
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:nth-child(1)  { animation-delay: 0.05s; }
+  .card:nth-child(2)  { animation-delay: 0.10s; }
+  .card:nth-child(3)  { animation-delay: 0.15s; }
+  .card:nth-child(4)  { animation-delay: 0.20s; }
+  .card:nth-child(5)  { animation-delay: 0.25s; }
+  .card:nth-child(6)  { animation-delay: 0.30s; }
+  .card:nth-child(7)  { animation-delay: 0.35s; }
+  .card:nth-child(8)  { animation-delay: 0.40s; }
+  .card:nth-child(9)  { animation-delay: 0.45s; }
+  .card:nth-child(10) { animation-delay: 0.50s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .wrap { padding: 0 16px 60px; }
+    header { padding: 48px 0 36px; }
+    .stats { flex-wrap: wrap; }
+    .stat { min-width: 50%; }
+    .search-input { width: 100%; }
+    .controls { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* ══════════════════════════════════════
+     AUTH OVERLAY
+  ══════════════════════════════════════ */
+  #auth-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  #auth-overlay::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
+  #auth-overlay::after {
+    content: '';
+    position: absolute;
+    top: -100px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .auth-box {
+    position: relative;
+    z-index: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 48px 44px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    animation: riseIn 0.4s ease both;
+  }
+
+  .auth-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .auth-logo::before {
+    content: '';
+    display: inline-block;
+    width: 20px; height: 1px;
+    background: rgba(200,169,110,0.4);
+  }
+
+  .auth-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  .auth-title em { color: var(--accent); font-style: italic; font-weight: 400; }
+
+  .auth-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 36px;
+    line-height: 1.5;
+  }
+
+  /* tabs */
+  .auth-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .auth-tab {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 10px;
+    text-align: center;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+
+  .auth-tab:hover { color: var(--text-muted); }
+
+  .auth-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* form */
+  .auth-form { display: flex; flex-direction: column; gap: 14px; }
+  .auth-form.hidden { display: none; }
+
+  .auth-field { display: flex; flex-direction: column; gap: 6px; }
+
+  .auth-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .auth-input {
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .auth-input::placeholder { color: var(--text-dim); font-style: italic; }
+  .auth-input:focus { border-color: rgba(200,169,110,0.5); background: #1e2230; }
+
+  .auth-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+
+  .auth-btn:hover { background: #d4b87a; transform: translateY(-1px); }
+  .auth-btn:active { transform: translateY(0); }
+  .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* divider */
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0;
+  }
+
+  .auth-divider::before,
+  .auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .auth-divider span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* GitHub button */
+  .auth-github {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 11px 20px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .auth-github:hover {
+    border-color: rgba(200,169,110,0.4);
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  .auth-github svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+
+  /* error / success messages */
+  .auth-msg {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 10px 14px;
+    border-radius: 3px;
+    display: none;
+    line-height: 1.5;
+  }
+
+  .auth-msg.error {
+    display: block;
+    background: rgba(212,104,90,0.1);
+    border: 1px solid rgba(212,104,90,0.3);
+    color: #e09b90;
+  }
+
+  .auth-msg.success {
+    display: block;
+    background: rgba(106,171,130,0.1);
+    border: 1px solid rgba(106,171,130,0.3);
+    color: #90c8a8;
+  }
+
+  /* ── USER BAR (shown after login) ── */
+  #user-bar {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    position: fixed;
+    top: 16px; right: 16px;
+    z-index: 500;
+    animation: riseIn 0.3s ease both;
+  }
+
+  #user-bar.visible { display: flex; }
+
+  .user-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    object-fit: cover;
+    background: var(--surface2);
+  }
+
+  .user-avatar-placeholder {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .user-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .user-logout {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .user-logout:hover { color: var(--danger); border-color: var(--danger); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     AUTH OVERLAY — shown until logged in
+══════════════════════════════════════ -->
+<div id="auth-overlay">
+  <div class="auth-box">
+    <div class="auth-logo">Med Notes · Biblioteca</div>
+    <h1 class="auth-title">Bem-vindo<br>de <em>volta</em></h1>
+    <p class="auth-sub">Acesso restrito. Inicia sessão para entrar na biblioteca.</p>
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchTab('login')">Entrar</div>
+      <div class="auth-tab" onclick="switchTab('register')">Registar</div>
+    </div>
+
+    <!-- MESSAGE -->
+    <div class="auth-msg" id="auth-msg"></div>
+
+    <!-- LOGIN FORM -->
+    <div class="auth-form" id="form-login">
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input class="auth-input" type="email" id="login-email" placeholder="o.teu@email.com" />
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <input class="auth-input" type="password" id="login-pass" placeholder="••••••••" />
+      </div>
+      <button class="auth-btn" id="btn-login" onclick="doLogin()">Entrar</button>
+
+      <div class="auth-divider"><span>ou</span></div>
+
+      <button class="auth-github" onclick="doGithubLogin()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        Continuar com GitHub
+      </button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div class="auth-form hidden" id="form-register">
+      <div class="auth-field">
+        <label class="auth-label">Nome</label>
+        <input class="auth-input" type="text" id="reg-name" placeholder="O teu nome" />
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input class="auth-input" type="email" id="reg-email" placeholder="o.teu@email.com" />
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Password</label>
+        <input class="auth-input" type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" />
+      </div>
+      <button class="auth-btn" id="btn-register" onclick="doRegister()">Criar Conta</button>
+
+      <div class="auth-divider"><span>ou</span></div>
+
+      <button class="auth-github" onclick="doGithubLogin()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        Continuar com GitHub
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- USER BAR (fixed top-right after login) -->
+<div id="user-bar">
+  <div class="user-avatar-placeholder" id="user-initial">?</div>
+  <span class="user-name" id="user-name-label">—</span>
+  <button class="user-logout" onclick="doLogout()">Sair</button>
+</div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-eyebrow">Medicina Interna & Intensiva</div>
+    <h1 class="header-title">Med <em>Notes</em><br>Biblioteca</h1>
+    <div class="header-meta">
+      <div class="meta-item"><span class="meta-dot"></span> Medicina Baseada em Evidências</div>
+      <div class="meta-item"><span class="meta-dot"></span> Alto Rendimento Clínico</div>
+      <div class="meta-item"><span class="meta-dot"></span> Residência & Prática</div>
+    </div>
+  </header>
+
+  <!-- STATS -->
+  <div class="stats" style="margin-top:32px;">
+    <div class="stat">
+      <span class="stat-num" id="total-count">30</span>
+      <div class="stat-label">Notas Visíveis</div>
+    </div>
+    <div class="stat">
+      <span class="stat-num">8</span>
+      <div class="stat-label">Pastas</div>
+    </div>
+    <div class="stat">
+      <span class="stat-num">6</span>
+      <div class="stat-label">Categorias</div>
+    </div>
+    <div class="stat">
+      <span class="stat-num">∞</span>
+      <div class="stat-label">Expansível</div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="filter-tabs">
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="anatomy">Anatomia</button>
+      <button class="filter-btn" data-filter="embryology">Embriologia</button>
+      <button class="filter-btn" data-filter="physio">Fisiologia</button>
+      <button class="filter-btn" data-filter="epidemio">Epidemiologia</button>
+      <button class="filter-btn" data-filter="pathology">Patologia</button>
+      <button class="filter-btn" data-filter="micro">Microbiologia</button>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" type="text" id="search" placeholder="Buscar nota..." />
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item" onclick="setFilter('anatomy')">
+      <div class="legend-dot" style="background:#c8a96e"></div> Anatomia
+    </div>
+    <div class="legend-item" onclick="setFilter('embryology')">
+      <div class="legend-dot" style="background:#d4685a"></div> Embriologia
+    </div>
+    <div class="legend-item" onclick="setFilter('physio')">
+      <div class="legend-dot" style="background:#7eb8c9"></div> Fisiologia
+    </div>
+    <div class="legend-item" onclick="setFilter('epidemio')">
+      <div class="legend-dot" style="background:#d4a843"></div> Epidemiologia
+    </div>
+    <div class="legend-item" onclick="setFilter('pathology')">
+      <div class="legend-dot" style="background:#a87db8"></div> Patologia
+    </div>
+    <div class="legend-item" onclick="setFilter('micro')">
+      <div class="legend-dot" style="background:#6aab82"></div> Microbiologia
+    </div>
+  </div>
+
+  <!-- CARD GRID -->
+  <div class="card-grid" id="grid">
+
+    <!-- ══════════════════════════════════════════
+         PASTA: Html_Anatomia
+         ══════════════════════════════════════════ -->
+
+    <a class="card" href="Html_Anatomia/mapa_mental_sistema_nervoso.html"
+       data-cat="anatomy"
+       data-search="sistema nervoso mapa mental snc snp neurônio encéfalo medula">
+      <div class="card-cat">Anatomia</div>
+      <div class="card-title">Mapa Mental — Sistema Nervoso</div>
+      <div class="card-desc">Visão geral organizada do sistema nervoso central e periférico em formato de mapa mental.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">SNC</span>
+          <span class="card-tag">SNP</span>
+          <span class="card-tag">Mapa Mental</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_Anatomia/nervos_cranianos_completo.html"
+       data-cat="anatomy"
+       data-search="nervos cranianos nc1 nc2 nc3 nc4 nc5 nc6 nc7 nc8 nc9 nc10 nc11 nc12 olfatório óptico oculomotor troclear trigêmeo abducente facial vestibulococlear glossofaríngeo vago acessório hipoglosso">
+      <div class="card-cat">Anatomia</div>
+      <div class="card-title">Nervos Cranianos — Completo</div>
+      <div class="card-desc">Os 12 pares de nervos cranianos: origem, trajeto, função, núcleos e correlações clínicas.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">NC I–XII</span>
+          <span class="card-tag">Base do Crânio</span>
+          <span class="card-tag">Neurologia</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_Anatomia/osso_temporal.html"
+       data-cat="anatomy"
+       data-search="osso temporal rochedo petrosa mastóide nc7 nc8 facial auditivo labirinto fratura ptérion">
+      <div class="card-cat">Anatomia</div>
+      <div class="card-title">Osso Temporal</div>
+      <div class="card-desc">Faces, margens, partes, acidentes ósseos e importância clínica. NC VII, NC VIII, canal carotídeo, forame jugular.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Rochedo</span>
+          <span class="card-tag">NC VII</span>
+          <span class="card-tag">NC VIII</span>
+          <span class="card-tag">Petrosa</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_Anatomia/musculo_esqueletico_humano.html"
+       data-cat="anatomy"
+       data-search="músculo esquelético fibra muscular contração sarcômero miofibril actina miosina">
+      <div class="card-cat">Anatomia</div>
+      <div class="card-title">Músculo Esquelético Humano</div>
+      <div class="card-desc">Estrutura, organização e função do músculo esquelético. Sarcômero, fibras e mecanismo de contração.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Sarcômero</span>
+          <span class="card-tag">Contração</span>
+          <span class="card-tag">Miologia</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_Anatomia/vasculatura_humana_completa.htm"
+       data-cat="anatomy"
+       data-search="vasculatura vasos artérias veias circulação sistêmica pulmonar aorta veia cava">
+      <div class="card-cat">Anatomia</div>
+      <div class="card-title">Vasculatura Humana Completa</div>
+      <div class="card-desc">Mapeamento completo da vasculatura humana: artérias, veias e circulações sistêmica e pulmonar.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Artérias</span>
+          <span class="card-tag">Veias</span>
+          <span class="card-tag">Circulação</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ══════════════════════════════════════════
+         PASTA: Html_Embriologia_humana
+         ══════════════════════════════════════════ -->
+
+    <a class="card" href="Html_Embriologia_humana/embriologia_humana_semana_a_semana-2.html"
+       data-cat="embryology"
+       data-search="embriologia semana fecundação implantação nidação gastrulação neurulação organogênese feto embrião">
+      <div class="card-cat">Embriologia</div>
+      <div class="card-title">Embriologia Humana — Semana a Semana</div>
+      <div class="card-desc">Desenvolvimento embrionário semana a semana: fecundação, clivagem, implantação, gastrulação e organogênese.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Semanas 1–8</span>
+          <span class="card-tag">Organogênese</span>
+          <span class="card-tag">Feto</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ══════════════════════════════════════════
+         PASTA: html_optimized_physiology_quiz
+         ══════════════════════════════════════════ -->
+
+    <a class="card" href="html_optimized_physiology_quiz/Fisiologia_Interleucinas_OPTIMIZED.html"
+       data-cat="physio"
+       data-search="interleucinas il-1 il-2 il-4 il-6 il-10 quiz fisiologia imunologia citocinas">
+      <div class="card-cat">Fisiologia · Quiz</div>
+      <div class="card-title">Quiz — Interleucinas</div>
+      <div class="card-desc">Questões optimizadas sobre interleucinas: funções, células produtoras e relevância clínica.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">ILs</span>
+          <span class="card-tag">Quiz</span>
+          <span class="card-tag">Imunologia</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="html_optimized_physiology_quiz/Fisiologia_Proteinas_Plasmatica1_OPTIMIZED.html"
+       data-cat="physio"
+       data-search="proteínas plasmáticas albumina globulina fibrinogênio quiz plasma oncótica">
+      <div class="card-cat">Fisiologia · Quiz</div>
+      <div class="card-title">Quiz — Proteínas Plasmáticas I</div>
+      <div class="card-desc">Questões sobre proteínas plasmáticas: albumina, globulinas, pressão oncótica e funções clínicas.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Albumina</span>
+          <span class="card-tag">Plasma</span>
+          <span class="card-tag">Quiz</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="html_optimized_physiology_quiz/Fisiologia_Proteinas_Plasmaticas_OPTIMIZED.html"
+       data-cat="physio"
+       data-search="proteínas plasmáticas quiz eletroforese proteínas transporte plasma">
+      <div class="card-cat">Fisiologia · Quiz</div>
+      <div class="card-title">Quiz — Proteínas Plasmáticas II</div>
+      <div class="card-desc">Continuação do estudo de proteínas plasmáticas com questões de alta densidade e revisão.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Proteínas</span>
+          <span class="card-tag">Plasma</span>
+          <span class="card-tag">Quiz</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="html_optimized_physiology_quiz/Fisiologia_citocinas_OPTIMIZED.html"
+       data-cat="physio"
+       data-search="citocinas tnf interferon il quiz imunologia inflamação mediadores">
+      <div class="card-cat">Fisiologia · Quiz</div>
+      <div class="card-title">Quiz — Citocinas</div>
+      <div class="card-desc">Questões sobre citocinas pró e anti-inflamatórias, TNF, interferons e mediadores imunológicos.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">TNF</span>
+          <span class="card-tag">Interferons</span>
+          <span class="card-tag">Quiz</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="html_optimized_physiology_quiz/Fisiologia_eritropoiese_OPTIMIZED.html"
+       data-cat="physio"
+       data-search="eritropoiese eritrócito hemoglobina eritropoietina medula óssea quiz hematopoiese anemia">
+      <div class="card-cat">Fisiologia · Quiz</div>
+      <div class="card-title">Quiz — Eritropoiese</div>
+      <div class="card-desc">Formação dos glóbulos vermelhos, eritropoietina, hemoglobina e distúrbios da eritropoiese.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">EPO</span>
+          <span class="card-tag">Hemoglobina</span>
+          <span class="card-tag">Quiz</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="html_optimized_physiology_quiz/Fisiologia_ictericia_OPTIMIZED.html"
+       data-cat="physio"
+       data-search="icterícia bilirrubina direta indireta conjugada hepática pré-hepática pós-hepática quiz">
+      <div class="card-cat">Fisiologia · Quiz</div>
+      <div class="card-title">Quiz — Icterícia</div>
+      <div class="card-desc">Metabolismo da bilirrubina, tipos de icterícia, diagnóstico diferencial e abordagem clínica.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Bilirrubina</span>
+          <span class="card-tag">Fígado</span>
+          <span class="card-tag">Quiz</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="html_optimized_physiology_quiz/Fisiologia_imunidade_OPTIMIZED.html"
+       data-cat="physio"
+       data-search="imunidade imune quiz linfócito célula b t anticorpo resposta imune adaptativa inata">
+      <div class="card-cat">Fisiologia · Quiz</div>
+      <div class="card-title">Quiz — Imunidade</div>
+      <div class="card-desc">Questões sobre imunidade inata e adaptativa, linfócitos T e B, anticorpos e resposta imune.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Imunidade</span>
+          <span class="card-tag">Linfócitos</span>
+          <span class="card-tag">Quiz</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="html_optimized_physiology_quiz/Fisiologia_leucocito_OPTIMIZED.html"
+       data-cat="physio"
+       data-search="leucócito glóbulo branco neutrófilo linfócito monócito eosinófilo basófilo quiz leucograma">
+      <div class="card-cat">Fisiologia · Quiz</div>
+      <div class="card-title">Quiz — Leucócitos</div>
+      <div class="card-desc">Tipos de leucócitos, funções, leucograma e distúrbios relacionados aos glóbulos brancos.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Neutrófilo</span>
+          <span class="card-tag">Leucograma</span>
+          <span class="card-tag">Quiz</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="html_optimized_physiology_quiz/Fisiologia_plaquetas_OPTIMIZED.html"
+       data-cat="physio"
+       data-search="plaquetas trombócito hemostasia coagulação trombose trombocitopenia quiz">
+      <div class="card-cat">Fisiologia · Quiz</div>
+      <div class="card-title">Quiz — Plaquetas</div>
+      <div class="card-desc">Hemostasia primária, função plaquetária, coagulação e distúrbios trombóticos e hemorrágicos.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Hemostasia</span>
+          <span class="card-tag">Coagulação</span>
+          <span class="card-tag">Quiz</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ══════════════════════════════════════════
+         PASTA: Html_apontamentos_fisiologia
+         ══════════════════════════════════════════ -->
+
+    <a class="card" href="Html_apontamentos_fisiologia/cardiovascular_system.html"
+       data-cat="physio"
+       data-search="sistema cardiovascular coração débito cardíaco pressão arterial ciclo cardíaco eletrocardiograma">
+      <div class="card-cat">Fisiologia</div>
+      <div class="card-title">Sistema Cardiovascular</div>
+      <div class="card-desc">Fisiologia cardíaca completa: débito cardíaco, ciclo cardíaco, regulação da pressão arterial e ECG.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Coração</span>
+          <span class="card-tag">Débito Cardíaco</span>
+          <span class="card-tag">ECG</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_apontamentos_fisiologia/citocinas-mapa-mental.html"
+       data-cat="physio"
+       data-search="citocinas mapa mental tnf il inflamação imunologia mediadores">
+      <div class="card-cat">Fisiologia</div>
+      <div class="card-title">Citocinas — Mapa Mental</div>
+      <div class="card-desc">Mapa mental das principais citocinas, seus receptores, vias de sinalização e papel na inflamação.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Citocinas</span>
+          <span class="card-tag">Mapa Mental</span>
+          <span class="card-tag">Inflamação</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_apontamentos_fisiologia/citocinas.html"
+       data-cat="physio"
+       data-search="citocinas tnf interferon interleucinas inflamação imunidade mediadores">
+      <div class="card-cat">Fisiologia</div>
+      <div class="card-title">Citocinas — Apontamentos</div>
+      <div class="card-desc">Apontamentos aprofundados sobre citocinas: classificação, funções, receptores e relevância clínica.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">TNF</span>
+          <span class="card-tag">Interferons</span>
+          <span class="card-tag">Apontamentos</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_apontamentos_fisiologia/fisiologia_respiratoria.html"
+       data-cat="physio"
+       data-search="respiração pulmão ventilação difusão troca gasosa espirometria compliance surfactante">
+      <div class="card-cat">Fisiologia</div>
+      <div class="card-title">Fisiologia Respiratória</div>
+      <div class="card-desc">Mecânica respiratória, volumes pulmonares, trocas gasosas, controlo da respiração e espirometria.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Pulmão</span>
+          <span class="card-tag">Ventilação</span>
+          <span class="card-tag">Difusão</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_apontamentos_fisiologia/ciclo_celular_mitose_meiose.html"
+       data-cat="physio"
+       data-search="ciclo celular mitose meiose g1 s g2 m interfase cromossomo divisão celular">
+      <div class="card-cat">Fisiologia</div>
+      <div class="card-title">Ciclo Celular — Mitose & Meiose</div>
+      <div class="card-desc">Fases do ciclo celular, checkpoints, mitose, meiose e relevância oncológica e reprodutiva.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Mitose</span>
+          <span class="card-tag">Meiose</span>
+          <span class="card-tag">Ciclo Celular</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_apontamentos_fisiologia/imunidade_inata_adquirida.html"
+       data-cat="physio"
+       data-search="imunidade inata adquirida adaptativa linfócito macrófago nk célula dendrítica anticorpo">
+      <div class="card-cat">Fisiologia</div>
+      <div class="card-title">Imunidade Inata & Adquirida</div>
+      <div class="card-desc">Comparação e integração entre imunidade inata e adaptativa: células, mediadores e respostas.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Imunidade Inata</span>
+          <span class="card-tag">Adaptativa</span>
+          <span class="card-tag">Linfócitos</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_apontamentos_fisiologia/interleucinas.html"
+       data-cat="physio"
+       data-search="interleucinas il-1 il-2 il-4 il-6 il-10 il-17 il-23 função imunologia">
+      <div class="card-cat">Fisiologia</div>
+      <div class="card-title">Interleucinas — Apontamentos</div>
+      <div class="card-desc">Guia completo das principais interleucinas, suas fontes celulares, receptores e funções imunológicas.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">IL-1 a IL-23</span>
+          <span class="card-tag">Imunologia</span>
+          <span class="card-tag">Apontamentos</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_apontamentos_fisiologia/mapa_mental_imunologia.html"
+       data-cat="physio"
+       data-search="imunologia mapa mental sistema imune células órgãos linfoides baço timo">
+      <div class="card-cat">Fisiologia</div>
+      <div class="card-title">Mapa Mental — Imunologia</div>
+      <div class="card-desc">Visão panorâmica do sistema imune em mapa mental: órgãos linfoides, células e cascatas imunológicas.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Sistema Imune</span>
+          <span class="card-tag">Mapa Mental</span>
+          <span class="card-tag">Timo · Baço</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Html_apontamentos_fisiologia/tropismo_cardiaco_receptores.html"
+       data-cat="physio"
+       data-search="tropismo cardíaco receptores adrenérgicos beta alfa coração farmacologia autonômica">
+      <div class="card-cat">Fisiologia</div>
+      <div class="card-title">Tropismo Cardíaco & Receptores</div>
+      <div class="card-desc">Receptores adrenérgicos e colinérgicos no coração, regulação autonômica e farmacologia cardiovascular.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Receptores β</span>
+          <span class="card-tag">SNA</span>
+          <span class="card-tag">Coração</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ══════════════════════════════════════════
+         PASTA: Html_epidemiologia
+         ══════════════════════════════════════════ -->
+
+    <a class="card" href="Html_epidemiologia/epidemiologia_metodos_estudos-2.html"
+       data-cat="epidemio"
+       data-search="epidemiologia métodos estudos coorte caso controle transversal rct ensaio clínico viés odds ratio risco relativo">
+      <div class="card-cat">Epidemiologia</div>
+      <div class="card-title">Métodos de Estudos Epidemiológicos</div>
+      <div class="card-desc">Tipos de estudos, medidas de associação (OR, RR), vieses, causalidade e evidência científica.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Coorte</span>
+          <span class="card-tag">Caso-Controle</span>
+          <span class="card-tag">OR · RR</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ══════════════════════════════════════════
+         PASTA: Aponta_patologia_html
+         ══════════════════════════════════════════ -->
+
+    <a class="card" href="Aponta_patologia_html/mapa-mental-inflamacao1.html"
+       data-cat="pathology"
+       data-search="inflamação mapa mental aguda crônica mediadores vasodilatação exsudato neutrófilo">
+      <div class="card-cat">Patologia</div>
+      <div class="card-title">Mapa Mental — Inflamação I</div>
+      <div class="card-desc">Primeira parte do mapa mental da inflamação: tipos, mediadores, células e fases da resposta inflamatória.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Inflamação Aguda</span>
+          <span class="card-tag">Mediadores</span>
+          <span class="card-tag">Mapa Mental</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Aponta_patologia_html/mapa-mental-inflamacao.html"
+       data-cat="pathology"
+       data-search="inflamação mapa mental crônica granuloma macrófago linfócito resolução">
+      <div class="card-cat">Patologia</div>
+      <div class="card-title">Mapa Mental — Inflamação II</div>
+      <div class="card-desc">Segunda parte: inflamação crónica, granulomas, resolução, regeneração e fibrose.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Inflamação Crónica</span>
+          <span class="card-tag">Granuloma</span>
+          <span class="card-tag">Fibrose</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Aponta_patologia_html/mapa_mental_cicatrizacao.html"
+       data-cat="pathology"
+       data-search="cicatrização regeneração fibrose colágeno fibroblasto angiogênese kelóide">
+      <div class="card-cat">Patologia</div>
+      <div class="card-title">Mapa Mental — Cicatrização</div>
+      <div class="card-desc">Fases da cicatrização: hemostasia, inflamação, proliferação e remodelação. Complicações e fatores.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Colágeno</span>
+          <span class="card-tag">Angiogénese</span>
+          <span class="card-tag">Quelóide</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Aponta_patologia_html/mapa_mental_disturbios_metabolicos.html"
+       data-cat="pathology"
+       data-search="distúrbios metabólicos dislipidemia diabetes obesidade gota amiloidose lipídios carboidratos">
+      <div class="card-cat">Patologia</div>
+      <div class="card-title">Mapa Mental — Distúrbios Metabólicos</div>
+      <div class="card-desc">Patologia dos distúrbios metabólicos: diabetes, dislipidemias, obesidade, gota e amiloidose.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Diabetes</span>
+          <span class="card-tag">Dislipidemia</span>
+          <span class="card-tag">Amiloidose</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Aponta_patologia_html/mapa_mental_transtornos_hidricos_hemodinamicos.html"
+       data-cat="pathology"
+       data-search="transtornos hídricos hemodinâmicos edema choque trombose embolia congestão isquemia infarto">
+      <div class="card-cat">Patologia</div>
+      <div class="card-title">Transtornos Hídricos & Hemodinâmicos</div>
+      <div class="card-desc">Edema, choque, trombose, embolia, congestão, isquemia e infarto — fisiopatologia e morfologia.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Edema</span>
+          <span class="card-tag">Choque</span>
+          <span class="card-tag">Trombose</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Aponta_patologia_html/patologia.html"
+       data-cat="pathology"
+       data-search="patologia geral apontamentos doença lesão necrose apoptose adaptação atrofia hipertrofia">
+      <div class="card-cat">Patologia</div>
+      <div class="card-title">Patologia Geral — Apontamentos</div>
+      <div class="card-desc">Apontamentos gerais de patologia: adaptação celular, lesão, morte celular, necrose e apoptose.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Necrose</span>
+          <span class="card-tag">Apoptose</span>
+          <span class="card-tag">Adaptação</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Aponta_patologia_html/patologia_celular.html"
+       data-cat="pathology"
+       data-search="patologia celular lesão celular hipóxia isquemia radicais livres estresse oxidativo mitocôndria">
+      <div class="card-cat">Patologia</div>
+      <div class="card-title">Patologia Celular</div>
+      <div class="card-desc">Mecanismos de lesão celular: hipóxia, isquemia, radicais livres, estresse oxidativo e dano mitocondrial.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Lesão Celular</span>
+          <span class="card-tag">Hipóxia</span>
+          <span class="card-tag">Radicais Livres</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Aponta_patologia_html/radicais-livres-e-antioxidantes.html"
+       data-cat="pathology"
+       data-search="radicais livres antioxidantes eros estresse oxidativo superóxido peróxido vitamina e c glutationa">
+      <div class="card-cat">Patologia</div>
+      <div class="card-title">Radicais Livres & Antioxidantes</div>
+      <div class="card-desc">EROs, espécies reativas de oxigênio, mecanismos de dano oxidativo e sistemas antioxidantes endógenos.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">EROs</span>
+          <span class="card-tag">Antioxidantes</span>
+          <span class="card-tag">Estresse Oxidativo</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ══════════════════════════════════════════
+         PASTA: Microbiologia_question_html
+         ══════════════════════════════════════════ -->
+
+    <a class="card" href="Microbiologia_question_html/Microbiologia_html_Bacterias_OPTIMIZED.html"
+       data-cat="micro"
+       data-search="microbiologia bactérias quiz gram positivo negativo cocos bacilos espiroquetas anaeróbio">
+      <div class="card-cat">Microbiologia · Quiz</div>
+      <div class="card-title">Quiz — Bactérias</div>
+      <div class="card-desc">Questões optimizadas sobre bacteriologia: gram, morfologia, virulência e patologias associadas.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Gram +/−</span>
+          <span class="card-tag">Virulência</span>
+          <span class="card-tag">Quiz</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="card" href="Microbiologia_question_html/Microbiologia_html_OPTIMIZED.html"
+       data-cat="micro"
+       data-search="microbiologia quiz geral fungos vírus parasitas bactérias infecção antimicrobiano">
+      <div class="card-cat">Microbiologia · Quiz</div>
+      <div class="card-title">Quiz — Microbiologia Geral</div>
+      <div class="card-desc">Quiz geral de microbiologia abrangendo bactérias, vírus, fungos e parasitas clinicamente relevantes.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Vírus</span>
+          <span class="card-tag">Fungos</span>
+          <span class="card-tag">Quiz</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ══════════════════════════════════════════
+         PASTA: Microbiologia_aponta_html
+         ══════════════════════════════════════════ -->
+
+    <a class="card" href="Microbiologia_aponta_html/fluxograma_microbiologia.html"
+       data-cat="micro"
+       data-search="microbiologia fluxograma identificação bactéria cultura antibiograma diagnóstico laboratorial">
+      <div class="card-cat">Microbiologia</div>
+      <div class="card-title">Fluxograma — Microbiologia</div>
+      <div class="card-desc">Fluxograma de identificação microbiológica: coleta, cultura, coloração de Gram, antibiograma e diagnóstico.</div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="card-tag">Fluxograma</span>
+          <span class="card-tag">Cultura</span>
+          <span class="card-tag">Antibiograma</span>
+        </div>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div><!-- /#grid -->
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">Med Notes · Biblioteca</div>
+    <div class="footer-note">Medicina Interna & Intensiva — Uso Pessoal</div>
+  </footer>
+
+</div><!-- /.wrap -->
+
+<script type="module">
+  import { initializeApp }                         from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
+           createUserWithEmailAndPassword, signOut, updateProfile,
+           GithubAuthProvider, signInWithPopup }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  // ── Firebase config ──
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAMHBPyNLSavmxOFB4gs6U-a_iIcoVh0k8",
+    authDomain:        "cireneu-af832.firebaseapp.com",
+    projectId:         "cireneu-af832",
+    storageBucket:     "cireneu-af832.firebasestorage.app",
+    messagingSenderId: "264908952051",
+    appId:             "1:264908952051:web:63c5a65b7745e46b220286",
+    measurementId:     "G-HLSNR4VHBV"
+  };
+
+  const app      = initializeApp(firebaseConfig);
+  const auth     = getAuth(app);
+  const provider = new GithubAuthProvider();
+
+  // ── Auth state observer ──
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      showApp(user);
+    } else {
+      hideApp();
+    }
+  });
+
+  function showApp(user) {
+    document.getElementById('auth-overlay').style.display = 'none';
+    document.getElementById('user-bar').classList.add('visible');
+
+    const name  = user.displayName || user.email || 'Utilizador';
+    const initial = name.charAt(0).toUpperCase();
+    document.getElementById('user-name-label').textContent = name;
+    document.getElementById('user-initial').textContent    = initial;
+
+    // replace avatar with photo if available
+    if (user.photoURL) {
+      const bar = document.getElementById('user-bar');
+      const placeholder = document.getElementById('user-initial');
+      const img = document.createElement('img');
+      img.src = user.photoURL;
+      img.className = 'user-avatar';
+      img.alt = name;
+      bar.replaceChild(img, placeholder);
+    }
+  }
+
+  function hideApp() {
+    document.getElementById('auth-overlay').style.display = 'flex';
+    document.getElementById('user-bar').classList.remove('visible');
+  }
+
+  // ── Helpers ──
+  function showMsg(text, type) {
+    const el = document.getElementById('auth-msg');
+    el.textContent = text;
+    el.className   = 'auth-msg ' + type;
+  }
+
+  function clearMsg() {
+    const el = document.getElementById('auth-msg');
+    el.className = 'auth-msg';
+    el.textContent = '';
+  }
+
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.disabled    = loading;
+    btn.textContent = loading ? 'A processar...' : (btnId === 'btn-login' ? 'Entrar' : 'Criar Conta');
+  }
+
+  function firebaseErrorMsg(code) {
+    const map = {
+      'auth/invalid-email':          'Email inválido.',
+      'auth/user-not-found':         'Utilizador não encontrado.',
+      'auth/wrong-password':         'Password incorrecta.',
+      'auth/email-already-in-use':   'Este email já está registado.',
+      'auth/weak-password':          'A password deve ter pelo menos 6 caracteres.',
+      'auth/too-many-requests':      'Demasiadas tentativas. Tente mais tarde.',
+      'auth/popup-closed-by-user':   'Janela fechada antes de completar o login.',
+      'auth/cancelled-popup-request':'Pedido cancelado.',
+      'auth/invalid-credential':     'Credenciais inválidas. Verifique o email e a password.',
+    };
+    return map[code] || 'Erro: ' + code;
+  }
+
+  // ── Login ──
+  window.doLogin = async function() {
+    clearMsg();
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-pass').value;
+    if (!email || !pass) { showMsg('Preenche todos os campos.', 'error'); return; }
+    setLoading('btn-login', true);
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch(e) {
+      showMsg(firebaseErrorMsg(e.code), 'error');
+      setLoading('btn-login', false);
+    }
+  };
+
+  // ── Register ──
+  window.doRegister = async function() {
+    clearMsg();
+    const name  = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass  = document.getElementById('reg-pass').value;
+    if (!name || !email || !pass) { showMsg('Preenche todos os campos.', 'error'); return; }
+    setLoading('btn-register', true);
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(cred.user, { displayName: name });
+      showMsg('Conta criada com sucesso!', 'success');
+    } catch(e) {
+      showMsg(firebaseErrorMsg(e.code), 'error');
+      setLoading('btn-register', false);
+    }
+  };
+
+  // ── GitHub OAuth ──
+  window.doGithubLogin = async function() {
+    clearMsg();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch(e) {
+      showMsg(firebaseErrorMsg(e.code), 'error');
+    }
+  };
+
+  // ── Logout ──
+  window.doLogout = async function() {
+    await signOut(auth);
+  };
+
+  // ── Tab switch ──
+  window.switchTab = function(tab) {
+    clearMsg();
+    document.querySelectorAll('.auth-tab').forEach((t, i) => {
+      t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+    });
+    document.getElementById('form-login').classList.toggle('hidden',    tab !== 'login');
+    document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+  };
+
+  // ── Enter key on inputs ──
+  document.getElementById('login-pass').addEventListener('keydown',  e => { if(e.key==='Enter') window.doLogin(); });
+  document.getElementById('reg-pass').addEventListener('keydown',    e => { if(e.key==='Enter') window.doRegister(); });
+
+  // ── Filter & Search ──
+  const btns    = document.querySelectorAll('.filter-btn');
+  const allCards = () => document.querySelectorAll('.card-grid .card');
+
+  window.setFilter = function(cat) {
+    btns.forEach(b => b.classList.toggle('active', b.dataset.filter === cat));
+    applyFilters();
+  };
+
+  function applyFilters() {
+    const activeBtn = document.querySelector('.filter-btn.active');
+    const cat   = activeBtn ? activeBtn.dataset.filter : 'all';
+    const query = document.getElementById('search').value.toLowerCase().trim();
+    let visible = 0;
+    allCards().forEach(card => {
+      const catMatch    = cat === 'all' || card.dataset.cat === cat;
+      const searchable  = (card.dataset.search || '') + ' ' + (card.querySelector('.card-title')?.textContent || '').toLowerCase();
+      const searchMatch = !query || searchable.includes(query);
+      const show = catMatch && searchMatch;
+      card.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+    document.getElementById('total-count').textContent = visible;
+  }
+
+  btns.forEach(btn => btn.addEventListener('click', () => {
+    btns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  }));
+
+  document.getElementById('search').addEventListener('input', applyFilters);
+  applyFilters();
+</script>
+</body>
+</html>
