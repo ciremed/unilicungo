@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fisiologia Respiratória Interativa</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Code+Pro:wght@300;400;600&family=Lato:wght@300;400;700&display=swap');
+
+  :root {
+    --bg: #050d1a;
+    --panel: #0a1628;
+    --panel2: #0d1f35;
+    --accent1: #00d4ff;
+    --accent2: #ff4d6d;
+    --accent3: #39ff14;
+    --accent4: #ffb703;
+    --o2: #4fc3f7;
+    --co2: #ef5350;
+    --hb: #ce93d8;
+    --text: #e0f0ff;
+    --muted: #7a9bbf;
+    --border: rgba(0,212,255,0.15);
+    --glow: 0 0 20px rgba(0,212,255,0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: radial-gradient(ellipse at 50% 30%, #051832 0%, #050d1a 70%);
+    text-align: center;
+    padding: 40px 20px;
+    overflow: hidden;
+  }
+
+  .hero-bg-canvas {
+    position: absolute; inset: 0;
+    pointer-events: none;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero h1 span { color: var(--accent1); }
+
+  .hero p {
+    font-family: 'Source Code Pro', monospace;
+    font-size: clamp(0.75rem, 1.5vw, 1rem);
+    color: var(--muted);
+    margin-top: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    position: relative; z-index: 2;
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 30px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.65rem; color: var(--muted); letter-spacing: 3px;
+    animation: bounce 2s infinite;
+  }
+  .scroll-hint::after { content:''; width:1px; height:40px; background: var(--accent1); display:block; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  /* ─── NAV ─── */
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(5,13,26,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;
+    padding: 10px 16px;
+  }
+  .sticky-nav button {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--muted);
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.7rem; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 6px 14px;
+    border-radius: 3px; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sticky-nav button:hover,
+  .sticky-nav button.active {
+    border-color: var(--accent1); color: var(--accent1);
+    box-shadow: 0 0 12px rgba(0,212,255,0.2);
+  }
+
+  /* ─── SECTIONS ─── */
+  section {
+    max-width: 1100px; margin: 0 auto;
+    padding: 80px 24px;
+  }
+
+  .section-label {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.65rem; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--accent1);
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 700; color: #fff;
+    line-height: 1.2; margin-bottom: 24px;
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; color: var(--accent1);
+    margin: 28px 0 10px;
+  }
+
+  p { color: var(--text); margin-bottom: 14px; font-size: 0.97rem; }
+
+  strong { color: var(--accent4); font-weight: 700; }
+  em { color: var(--accent1); font-style: normal; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    margin: 20px 0;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px; margin: 20px 0;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent1);
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.7rem; letter-spacing: 1px;
+    padding: 3px 10px; border-radius: 20px;
+    margin: 3px;
+  }
+
+  .formula-box {
+    background: #020912;
+    border-left: 3px solid var(--accent1);
+    border-radius: 0 8px 8px 0;
+    padding: 18px 24px; margin: 16px 0;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 1.05rem; color: var(--accent1);
+    line-height: 1.8;
+  }
+
+  .formula-box .label {
+    color: var(--muted); font-size: 0.7rem;
+    text-transform: uppercase; letter-spacing: 2px;
+    display: block; margin-bottom: 6px;
+  }
+
+  .clinical-box {
+    background: rgba(255,77,109,0.06);
+    border: 1px solid rgba(255,77,109,0.25);
+    border-radius: 8px; padding: 20px; margin: 16px 0;
+  }
+  .clinical-box .ct { color: var(--accent2); font-family: 'Source Code Pro', monospace;
+    font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; display: block; }
+
+  /* ─── LUNG ANIMATION ─── */
+  .lung-scene {
+    width: 100%; max-width: 700px; margin: 0 auto;
+    position: relative; height: 400px;
+  }
+
+  .lung-svg { width: 100%; height: 100%; }
+
+  /* ─── MOLECULE CANVAS WRAPPERS ─── */
+  .canvas-wrapper {
+    position: relative; width: 100%; border-radius: 12px;
+    overflow: hidden; background: #020912;
+    border: 1px solid var(--border);
+    margin: 24px 0;
+  }
+  .canvas-wrapper canvas { display: block; width: 100%; }
+  .canvas-label {
+    position: absolute; top: 12px; left: 16px;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.65rem; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  /* ─── SLIDER CONTROLS ─── */
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    margin: 16px 0; align-items: center;
+  }
+  .ctrl-group { display: flex; flex-direction: column; gap: 4px; }
+  .ctrl-group label {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.65rem; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .ctrl-group span {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.85rem; color: var(--accent1);
+  }
+  input[type=range] {
+    -webkit-appearance: none; height: 4px;
+    background: rgba(0,212,255,0.15); border-radius: 2px;
+    width: 160px; cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 14px; height: 14px;
+    background: var(--accent1); border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent1);
+  }
+
+  /* ─── INFO TABS ─── */
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tab-btn {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.68rem; letter-spacing: 1px;
+    padding: 7px 16px; border-radius: 4px; transition: all 0.2s;
+  }
+  .tab-btn.active { background: rgba(0,212,255,0.1); border-color: var(--accent1); color: var(--accent1); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ─── QUIZ ─── */
+  .quiz-btn {
+    background: rgba(0,212,255,0.08);
+    border: 1px solid var(--accent1);
+    color: var(--accent1); padding: 12px 24px;
+    border-radius: 6px; cursor: pointer;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 0.8rem; letter-spacing: 1px;
+    transition: all 0.2s; margin: 6px;
+  }
+  .quiz-btn:hover { background: rgba(0,212,255,0.18); }
+  .quiz-btn.correct { background: rgba(57,255,20,0.15); border-color: var(--accent3); color: var(--accent3); }
+  .quiz-btn.wrong { background: rgba(255,77,109,0.15); border-color: var(--accent2); color: var(--accent2); }
+  #quiz-feedback { margin-top: 12px; font-family: 'Source Code Pro', monospace; font-size: 0.8rem; min-height: 20px; }
+
+  /* ─── TIMELINE ─── */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 28px; }
+  .tl-item::before { content:''; position:absolute; left:-25px; top:6px; width:10px; height:10px;
+    border-radius: 50%; background: var(--accent1); box-shadow: 0 0 10px var(--accent1); }
+  .tl-item h4 { color: var(--accent4); font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+
+  /* ─── RESPONSIVE TABLES ─── */
+  .rtable { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.88rem; }
+  .rtable th { background: rgba(0,212,255,0.08); color: var(--accent1);
+    font-family: 'Source Code Pro', monospace; font-size: 0.68rem;
+    letter-spacing: 1.5px; text-transform: uppercase; padding: 10px 14px; text-align: left;
+    border-bottom: 1px solid var(--border); }
+  .rtable td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text); }
+  .rtable tr:hover td { background: rgba(0,212,255,0.04); }
+
+  /* ─── PROGRESS / READOUT ─── */
+  .readout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 14px; margin: 16px 0; }
+  .readout {
+    background: var(--panel2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px; text-align: center;
+  }
+  .readout .val { font-family: 'Source Code Pro', monospace; font-size: 1.5rem; color: var(--accent1); }
+  .readout .unit { font-size: 0.65rem; color: var(--muted); letter-spacing: 1px; }
+  .readout .name { font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+
+  /* ─── SEPARATOR ─── */
+  .sep { border: none; border-top: 1px solid var(--border); margin: 60px 0; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center; padding: 40px 20px;
+    font-family: 'Source Code Pro', monospace; font-size: 0.65rem;
+    color: var(--muted); letter-spacing: 2px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════ -->
+<div class="hero">
+  <canvas class="hero-bg-canvas" id="heroCanvas"></canvas>
+  <div style="position:relative;z-index:2">
+    <p class="section-label" style="margin-bottom:20px">Medicina Interna · Fisiologia</p>
+    <h1>A <span>Respiração</span><br>por Dentro</h1>
+    <p style="margin-top:18px">Do alveolo à mitocôndria — interativo, molecular, clínico</p>
+    <div style="margin-top:30px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+      <span class="badge">O₂ & CO₂</span>
+      <span class="badge">Hemoglobina</span>
+      <span class="badge">Equilíbrio Ácido-Base</span>
+      <span class="badge">Ventilação/Perfusão</span>
+      <span class="badge">Mecânica Pulmonar</span>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     NAV
+════════════════════════════════════════════════ -->
+<nav class="sticky-nav">
+  <button onclick="scrollTo('sec-overview')">Visão Geral</button>
+  <button onclick="scrollTo('sec-mechanics')">Mecânica</button>
+  <button onclick="scrollTo('sec-alveolo')">Alvéolo</button>
+  <button onclick="scrollTo('sec-transport')">Transporte</button>
+  <button onclick="scrollTo('sec-hb')">Hemoglobina</button>
+  <button onclick="scrollTo('sec-acidbase')">Ácido-Base</button>
+  <button onclick="scrollTo('sec-vq')">V/Q</button>
+  <button onclick="scrollTo('sec-clinical')">Clínica</button>
+  <button onclick="scrollTo('sec-quiz')">Quiz</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     1 · VISÃO GERAL
+════════════════════════════════════════════════ -->
+<section id="sec-overview">
+  <p class="section-label">01 · Fundamentos</p>
+  <h2>O Sistema Respiratório<br>de Ponta a Ponta</h2>
+
+  <p>A respiração (<em>do latim respiratio</em> — re + spirare, "soprar de volta") envolve quatro processos inseparáveis que devem ser compreendidos como um contínuo:</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3 style="margin-top:0">① Ventilação</h3>
+      <p>Movimento de ar entre a atmosfera e os alvéolos. Depende de gradiente de pressão criado pelos músculos respiratórios. <strong>Inspiração = processo ativo</strong>; expiração em repouso = processo passivo (retorno elástico).</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">② Difusão</h3>
+      <p>Passagem de O₂ e CO₂ através da <strong>membrana alveolocapilar</strong> (espessura ≈ 0,5 µm), regida pela <em>Lei de Fick</em>. Área total: ~70 m² em adulto.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">③ Transporte Sanguíneo</h3>
+      <p>O₂ ligado à hemoglobina (97%) e dissolvido (3%). CO₂ como bicarbonato (70%), carbaminohemoglobina (23%) e dissolvido (7%).</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">④ Respiração Celular</h3>
+      <p>Consumo de O₂ e produção de CO₂ nas mitocôndrias. <strong>VO₂</strong> em repouso ≈ 250 mL/min; <strong>VCO₂</strong> ≈ 200 mL/min → Quociente Respiratório (QR/RQ) = 0,8.</p>
+    </div>
+  </div>
+
+  <!-- Animated lung scene -->
+  <div class="canvas-wrapper" style="height:320px; margin-top:32px;">
+    <canvas id="overviewCanvas" height="320"></canvas>
+    <div class="canvas-label">Ciclo Respiratório — Tempo Real</div>
+    <div style="position:absolute;bottom:14px;right:16px;display:flex;gap:14px;font-family:'Source Code Pro',monospace;font-size:0.7rem;">
+      <span style="color:var(--o2)">● O₂</span>
+      <span style="color:var(--co2)">● CO₂</span>
+      <span style="color:var(--hb)">● Hb</span>
+    </div>
+  </div>
+
+  <div class="readout-grid" id="overview-readouts" style="margin-top:20px;">
+    <div class="readout"><div class="val" id="ro-fr">14</div><div class="unit">rpm</div><div class="name">FR (Freq. Resp.)</div></div>
+    <div class="readout"><div class="val" id="ro-tv">500</div><div class="unit">mL</div><div class="name">VC (Vol. Corrente)</div></div>
+    <div class="readout"><div class="val" id="ro-ve">7.0</div><div class="unit">L/min</div><div class="name">VE (Vent. Min.)</div></div>
+    <div class="readout"><div class="val" id="ro-pao2">100</div><div class="unit">mmHg</div><div class="name">PaO₂</div></div>
+    <div class="readout"><div class="val" id="ro-paco2">40</div><div class="unit">mmHg</div><div class="name">PaCO₂</div></div>
+    <div class="readout"><div class="val" id="ro-sao2">98</div><div class="unit">%</div><div class="name">SaO₂</div></div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ═══════════════════════════════════════════════
+     2 · MECÂNICA PULMONAR
+════════════════════════════════════════════════ -->
+<section id="sec-mechanics">
+  <p class="section-label">02 · Mecânica Pulmonar</p>
+  <h2>Pressões, Volumes<br>e Complacência</h2>
+
+  <h3>Lei de Boyle na Respiração</h3>
+  <p>Durante a inspiração, o diafragma contrai, aumentando o volume torácico. Pela Lei de Boyle (P₁V₁ = P₂V₂), o aumento de volume gera queda de pressão intraalveolar abaixo da pressão atmosférica (760 mmHg), criando o gradiente que força a entrada de ar.</p>
+
+  <div class="formula-box">
+    <span class="label">Lei de Boyle</span>
+    P₁ · V₁ = P₂ · V₂ &nbsp;(T constante)<br><br>
+    <span style="color:var(--muted)">Exemplo:</span><br>
+    V₁ = 2L, P₁ = 760 mmHg → V₂ = 2,5L<br>
+    P₂ = (760 × 2) / 2,5 = <strong style="color:#fff">608 mmHg</strong> → gradiente de −152 mmHg
+  </div>
+
+  <h3>Equação do Movimento Respiratório</h3>
+  <div class="formula-box">
+    <span class="label">Equação de Pressão — Mecânica Respiratória</span>
+    P<sub>mus</sub> + P<sub>vent</sub> = (V̇ × R<sub>aw</sub>) + (V<sub>T</sub> / C<sub>rs</sub>)<br><br>
+    <span style="color:var(--muted)">onde:</span><br>
+    P<sub>mus</sub> = pressão muscular (cmH₂O)<br>
+    P<sub>vent</sub> = pressão do ventilador<br>
+    R<sub>aw</sub> = resistência das vias aéreas (cmH₂O·s/L)<br>
+    V<sub>T</sub> = volume corrente (L)<br>
+    C<sub>rs</sub> = complacência do sistema respiratório (L/cmH₂O)
+  </div>
+
+  <h3>Complacência Pulmonar</h3>
+  <div class="formula-box">
+    <span class="label">Complacência</span>
+    C = ΔV / ΔP &nbsp;(L/cmH₂O)<br><br>
+    Normal: C<sub>pulmão</sub> ≈ 0,2 L/cmH₂O<br>
+    Normal: C<sub>parede torácica</sub> ≈ 0,2 L/cmH₂O<br>
+    C<sub>sistema</sub> = 1 / (1/C<sub>L</sub> + 1/C<sub>T</sub>) ≈ <strong style="color:#fff">0,1 L/cmH₂O</strong>
+  </div>
+
+  <!-- Interactive Pressure-Volume Loop -->
+  <div class="canvas-wrapper" style="height:380px; margin-top:24px;">
+    <canvas id="pvCanvas" height="380"></canvas>
+    <div class="canvas-label">Curva Pressão-Volume — Clique para Animar</div>
+  </div>
+
+  <div class="controls" style="margin-top:16px;">
+    <div class="ctrl-group">
+      <label>Complacência</label>
+      <input type="range" id="sliderC" min="0.03" max="0.25" step="0.01" value="0.1">
+      <span id="valC">0.10 L/cmH₂O</span>
+    </div>
+    <div class="ctrl-group">
+      <label>Resistência</label>
+      <input type="range" id="sliderR" min="1" max="20" step="1" value="5">
+      <span id="valR">5 cmH₂O·s/L</span>
+    </div>
+  </div>
+
+  <!-- Volumes Pulmonares -->
+  <h3>Volumes e Capacidades Pulmonares</h3>
+  <div class="canvas-wrapper" style="height:280px;">
+    <canvas id="volCanvas" height="280"></canvas>
+    <div class="canvas-label">Espirometria Interativa — Arraste o Slider</div>
+  </div>
+
+  <table class="rtable" style="margin-top:20px;">
+    <thead><tr><th>Parâmetro</th><th>Sigla</th><th>Valor Normal</th><th>Significado Clínico</th></tr></thead>
+    <tbody>
+      <tr><td>Volume Corrente</td><td style="color:var(--accent1);font-family:'Source Code Pro',monospace">VT / TV</td><td>500 mL</td><td>Volume em repouso</td></tr>
+      <tr><td>Volume de Reserva Inspiratória</td><td style="color:var(--accent1);font-family:'Source Code Pro',monospace">VRI / IRV</td><td>3.000 mL</td><td>Reserva máx. inspiratória</td></tr>
+      <tr><td>Volume de Reserva Expiratória</td><td style="color:var(--accent1);font-family:'Source Code Pro',monospace">VRE / ERV</td><td>1.200 mL</td><td>Reserva máx. expiratória</td></tr>
+      <tr><td>Volume Residual</td><td style="color:var(--accent1);font-family:'Source Code Pro',monospace">VR / RV</td><td>1.200 mL</td><td>Não mensurável por espiro</td></tr>
+      <tr><td>Capacidade Vital</td><td style="color:var(--accent1);font-family:'Source Code Pro',monospace">CV / VC</td><td>4.700 mL</td><td>VT+VRI+VRE — ↓ restrição</td></tr>
+      <tr><td>Capacidade Pulmonar Total</td><td style="color:var(--accent1);font-family:'Source Code Pro',monospace">CPT / TLC</td><td>5.900 mL</td><td>CV+VR — ↑ enfisema</td></tr>
+      <tr><td>Capacidade Residual Funcional</td><td style="color:var(--accent1);font-family:'Source Code Pro',monospace">CRF / FRC</td><td>2.400 mL</td><td>VRE+VR — pulmão em repouso</td></tr>
+    </tbody>
+  </table>
+
+  <div class="clinical-box">
+    <span class="ct">🩺 Aplicação Clínica</span>
+    <p>Na <strong>DPOC (Doença Pulmonar Obstrutiva Crônica)</strong>, a destruição alveolar (enfisema) aumenta a complacência (o pulmão fica "flácido"), mas a hiperinsuflação eleva o VR e a CPT. O VEF₁/CVF (Índice de Tiffeneau) < 70% confirma obstrução. Na <strong>fibrose pulmonar</strong>, a complacência cai drasticamente — precisa de grande ΔP para gerar pequeno ΔV.</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ═══════════════════════════════════════════════
+     3 · TROCAS GASOSAS NO ALVÉOLO
+════════════════════════════════════════════════ -->
+<section id="sec-alveolo">
+  <p class="section-label">03 · Difusão Alveolar</p>
+  <h2>O Alvéolo:<br>A Fronteira do Gás</h2>
+
+  <p>A membrana alveolocapilar mede <strong>~0,3–2,5 µm</strong> e é composta por:</p>
+  <div class="timeline">
+    <div class="tl-item"><h4>① Pneumócito Tipo I (95% da superfície)</h4><p>Células planas, escamosas. Promovem difusão passiva. Não se regeneram diretamente.</p></div>
+    <div class="tl-item"><h4>② Pneumócito Tipo II (5% da superfície)</h4><p>Células cuboides. Produzem <strong>surfactante</strong> (dipalmitoilfosfatidilcolina — DPPC) que reduz tensão superficial de ~70 para ~25 mN/m, prevenindo colapso alveolar (Lei de Laplace: P = 2T/r).</p></div>
+    <div class="tl-item"><h4>③ Membrana Basal</h4><p>Colágeno IV e laminina — barreira física ao edema.</p></div>
+    <div class="tl-item"><h4>④ Endotélio Capilar</h4><p>Permeabilidade seletiva. Shunts anatômicos normais ≈ 2-3% do débito cardíaco.</p></div>
+  </div>
+
+  <!-- Animated alveolus -->
+  <div class="canvas-wrapper" style="height:420px; margin-top:24px;">
+    <canvas id="alveoloCanvas" height="420"></canvas>
+    <div class="canvas-label">Difusão Molecular em Tempo Real — Interaja com o Mouse</div>
+  </div>
+
+  <h3>Lei de Fick da Difusão</h3>
+  <div class="formula-box">
+    <span class="label">Fick — Taxa de Difusão Gasosa</span>
+    V̇gas = (A × D × ΔP) / T<br><br>
+    <span style="color:var(--muted)">onde:</span><br>
+    A = área de superfície (~70 m²)<br>
+    D = coeficiente de difusão (∝ solubilidade / √peso molecular)<br>
+    ΔP = gradiente de pressão parcial<br>
+    T = espessura da membrana<br><br>
+    <span style="color:var(--accent4)">D(CO₂) ≈ 20× D(O₂)</span> — CO₂ difunde MUITO mais rápido apesar de maior peso molecular (44 vs 32 g/mol) porque é ~24× mais solúvel em água
+  </div>
+
+  <h3>Equação do Gás Alveolar (Equação A-a)</h3>
+  <div class="formula-box">
+    <span class="label">Equação do Gás Alveolar</span>
+    P<sub>A</sub>O₂ = (PB − PH₂O) × FiO₂ − (PaCO₂ / QR)<br><br>
+    <span style="color:var(--muted)">Exemplo ar ambiente (nível do mar):</span><br>
+    P<sub>A</sub>O₂ = (760 − 47) × 0,21 − (40 / 0,8)<br>
+    P<sub>A</sub>O₂ = 713 × 0,21 − 50<br>
+    P<sub>A</sub>O₂ = 149,7 − 50 = <strong style="color:#fff">≈ 100 mmHg</strong><br><br>
+    Gradiente A-a = P<sub>A</sub>O₂ − PaO₂ → Normal &lt; 15 mmHg (jovem)<br>
+    <span style="color:var(--accent2)">Gradiente A-a elevado = problema de difusão, shunt ou V/Q mismatch</span>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-group">
+      <label>FiO₂ (Fração Inspirada de O₂)</label>
+      <input type="range" id="sliderFiO2" min="0.21" max="1.0" step="0.01" value="0.21">
+      <span id="valFiO2">21%</span>
+    </div>
+    <div class="ctrl-group">
+      <label>PaCO₂ (mmHg)</label>
+      <input type="range" id="sliderPaCO2" min="20" max="80" step="1" value="40">
+      <span id="valPaCO2">40 mmHg</span>
+    </div>
+    <div class="ctrl-group">
+      <label>Altitude (m)</label>
+      <input type="range" id="sliderAlt" min="0" max="5000" step="100" value="0">
+      <span id="valAlt">0 m (Nível do Mar)</span>
+    </div>
+  </div>
+  <div class="readout-grid" style="margin-top:12px;">
+    <div class="readout"><div class="val" id="pao2-calc">100</div><div class="unit">mmHg</div><div class="name">PAO₂ calculado</div></div>
+    <div class="readout"><div class="val" id="pb-calc">760</div><div class="unit">mmHg</div><div class="name">PB (Pressão Baro.)</div></div>
+    <div class="readout"><div class="val" id="aa-calc">10</div><div class="unit">mmHg</div><div class="name">Gradiente A-a (est.)</div></div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ═══════════════════════════════════════════════
+     4 · TRANSPORTE DE O₂ e CO₂
+════════════════════════════════════════════════ -->
+<section id="sec-transport">
+  <p class="section-label">04 · Transporte Sanguíneo</p>
+  <h2>Como O₂ e CO₂<br>Viajam no Sangue</h2>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="openTab(event,'tab-o2')">Transporte de O₂</button>
+    <button class="tab-btn" onclick="openTab(event,'tab-co2')">Transporte de CO₂</button>
+    <button class="tab-btn" onclick="openTab(event,'tab-haldane')">Efeito Haldane</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-o2">
+    <h3>O₂ no Sangue: Duas Formas</h3>
+    <p><strong>1. Dissolvido no plasma:</strong> 0,003 mL O₂ / dL sangue / mmHg de PO₂ → A PaO₂ = 100 mmHg → apenas 0,3 mL/dL (insignificante).</p>
+    <p><strong>2. Ligado à Hemoglobina:</strong> Cada Hb tem 4 grupos heme que se ligam reversivelmente ao O₂. Com Hb normal = 15 g/dL e saturação de 98% → <em>≈ 20,1 mL O₂/dL</em>.</p>
+    <div class="formula-box">
+      <span class="label">Conteúdo Arterial de O₂ — CaO₂</span>
+      CaO₂ = (Hb × 1,34 × SaO₂) + (0,003 × PaO₂)<br><br>
+      <span style="color:var(--muted)">Exemplo normal:</span><br>
+      CaO₂ = (15 × 1,34 × 0,98) + (0,003 × 100)<br>
+      CaO₂ = 19,67 + 0,30 = <strong style="color:#fff">≈ 20 mL/dL</strong><br><br>
+      <span style="color:var(--accent4)">1,34 = capacidade de ligação de O₂ por grama de Hb (mL/g)</span>
+    </div>
+    <div class="formula-box">
+      <span class="label">Transporte de O₂ — DO₂ (Oxygen Delivery)</span>
+      DO₂ = CaO₂ × DC × 10<br><br>
+      Normal: DO₂ = 20 × 5 × 10 = <strong style="color:#fff">1000 mL/min</strong><br>
+      VO₂ normal = 250 mL/min → extração = 25%<br>
+      <span style="color:var(--accent2)">DO₂ crítico ≈ 300 mL/min → metabolismo anaeróbio</span>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-co2">
+    <h3>CO₂: Três Formas de Transporte</h3>
+    <div class="card-grid">
+      <div class="card">
+        <h3 style="margin-top:0;color:var(--co2)">① Bicarbonato (70%)</h3>
+        <p>CO₂ + H₂O ⇌ H₂CO₃ ⇌ H⁺ + HCO₃⁻</p>
+        <p>Catalisado pela <strong>anidrase carbônica (AC)</strong> nos eritrócitos (10.000× mais rápido). H⁺ é tamponado pela Hb; HCO₃⁻ sai para o plasma via <em>troca Cl⁻/HCO₃⁻ (Banda 3)</em>.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;color:var(--co2)">② Carbamino-Hb (23%)</h3>
+        <p>CO₂ + Hb-NH₂ → Hb-NH-COO⁻ + H⁺</p>
+        <p>Liga-se diretamente aos grupos amino terminais da globina. Desoxihemoglobina tem <strong>maior afinidade</strong> pelo CO₂ (Efeito Haldane).</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;color:var(--co2)">③ Dissolvido (7%)</h3>
+        <p>CO₂ dissolve-se 24× mais que O₂ no plasma. Apesar de ser minor contributor ao transporte, é o <strong>determinante da PaCO₂</strong> e do pH.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-haldane">
+    <h3>Efeito Haldane</h3>
+    <p>A desoxigenação da hemoglobina <strong>aumenta sua capacidade de transportar CO₂</strong> — tanto como carbamino-Hb quanto tamponando H⁺. Isso é crucial: nos tecidos, onde O₂ é liberado, a Hb fica mais ávida por CO₂; nos pulmões, onde O₂ é captado, CO₂ é liberado.</p>
+    <div class="card" style="background:rgba(207,147,216,0.08); border-color: rgba(207,147,216,0.3);">
+      <p><strong style="color:var(--hb)">Efeito Haldane</strong> ↔ <strong style="color:var(--accent4)">Efeito Bohr</strong> — são fenômenos recíprocos e complementares que funcionam simultaneamente para otimizar a troca gasosa:</p>
+      <p>• <em>Bohr</em>: O₂ é mais facilmente liberado em pH baixo/PCO₂ alto (tecidos)<br>
+         • <em>Haldane</em>: CO₂ é mais facilmente capturado quando Hb está desoxigenada (tecidos)</p>
+    </div>
+  </div>
+
+  <!-- O2-CO2 molecule animation -->
+  <div class="canvas-wrapper" style="height:360px; margin-top:24px;">
+    <canvas id="transportCanvas" height="360"></canvas>
+    <div class="canvas-label">Troca Capilar — Tecidos e Pulmões</div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ═══════════════════════════════════════════════
+     5 · CURVA DE DISSOCIAÇÃO DA HEMOGLOBINA
+════════════════════════════════════════════════ -->
+<section id="sec-hb">
+  <p class="section-label">05 · Hemoglobina</p>
+  <h2>A Curva de Dissociação<br>da Oxihemoglobina</h2>
+
+  <p>A relação entre a <strong>PO₂</strong> e a <strong>SaO₂</strong> não é linear — é uma curva <em>sigmoide</em> (forma de "S") resultado da <strong>cooperatividade</strong> entre as 4 subunidades da hemoglobina (modelo de Hill). Quando um heme liga O₂, os outros mudam de conformação (T→R) e ficam mais ávidos.</p>
+
+  <div class="canvas-wrapper" style="height:420px;">
+    <canvas id="hbCanvas" height="420"></canvas>
+    <div class="canvas-label">Curva de Dissociação — Interativa</div>
+  </div>
+
+  <div class="controls" style="margin-top:16px;">
+    <div class="ctrl-group">
+      <label>pH</label>
+      <input type="range" id="sliderPH" min="7.0" max="7.6" step="0.05" value="7.4">
+      <span id="valPH">7.40</span>
+    </div>
+    <div class="ctrl-group">
+      <label>Temperatura (°C)</label>
+      <input type="range" id="sliderTemp" min="34" max="42" step="0.5" value="37">
+      <span id="valTemp">37.0°C</span>
+    </div>
+    <div class="ctrl-group">
+      <label>2,3-DPG (rel.)</label>
+      <input type="range" id="sliderDPG" min="0.5" max="2" step="0.1" value="1">
+      <span id="valDPG">Normal (1.0×)</span>
+    </div>
+    <div class="ctrl-group">
+      <label>PaCO₂ (mmHg)</label>
+      <input type="range" id="sliderCO2hb" min="20" max="80" step="5" value="40">
+      <span id="valCO2hb">40 mmHg</span>
+    </div>
+  </div>
+
+  <div class="readout-grid">
+    <div class="readout"><div class="val" id="p50-val">27</div><div class="unit">mmHg</div><div class="name">P50 (Hb)</div></div>
+    <div class="readout"><div class="val" id="shift-dir">→</div><div class="unit"></div><div class="name">Desvio da Curva</div></div>
+    <div class="readout"><div class="val" id="sat100">98</div><div class="unit">%</div><div class="name">SaO₂ @ PO₂=100</div></div>
+    <div class="readout"><div class="val" id="sat60">89</div><div class="unit">%</div><div class="name">SaO₂ @ PO₂=60</div></div>
+  </div>
+
+  <h3>Fatores que Desviam a Curva</h3>
+  <table class="rtable">
+    <thead><tr><th>Fator</th><th>Desvio Direita (↓ afinidade)</th><th>Desvio Esquerda (↑ afinidade)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>pH</strong></td><td>pH ↓ (acidose) — Efeito Bohr</td><td>pH ↑ (alcalose)</td></tr>
+      <tr><td><strong>PCO₂</strong></td><td>PCO₂ ↑ (hipercapnia)</td><td>PCO₂ ↓</td></tr>
+      <tr><td><strong>Temperatura</strong></td><td>Temperatura ↑ (febre, exercício)</td><td>Temperatura ↓ (hipotermia)</td></tr>
+      <tr><td><strong>2,3-DPG</strong></td><td>2,3-DPG ↑ (altitude, anemia crônica)</td><td>2,3-DPG ↓ (sangue estocado)</td></tr>
+      <tr><td><strong>Hb Fetal (HbF)</strong></td><td>—</td><td>HbF tem maior afinidade (γ vs β)</td></tr>
+      <tr><td><strong>CO</strong></td><td>—</td><td>COHb — desvio esquerda + ↓ CaO₂</td></tr>
+    </tbody>
+  </table>
+
+  <div class="clinical-box">
+    <span class="ct">🩺 Clínica Essencial</span>
+    <p><strong>P50</strong> = PO₂ onde 50% da Hb está saturada (normal = 27 mmHg). <em>P50 ↑ = desvio direita = Hb libera O₂ mais facilmente nos tecidos (benéfico em alta demanda)</em>. Na <strong>intoxicação por CO</strong>, a Hb tem afinidade 240× maior por CO; além de reduzir sítios para O₂, desvia a curva para a ESQUERDA — duplo golpe. O oxímetro de pulso NÃO diferencia OxiHb de COHb — use <strong>cooximetria arterial</strong>.</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ═══════════════════════════════════════════════
+     6 · EQUILÍBRIO ÁCIDO-BASE
+════════════════════════════════════════════════ -->
+<section id="sec-acidbase">
+  <p class="section-label">06 · Equilíbrio Ácido-Base</p>
+  <h2>Henderson-Hasselbalch<br>e a Gasometria</h2>
+
+  <div class="formula-box">
+    <span class="label">Henderson-Hasselbalch — Sistema CO₂/HCO₃⁻</span>
+    pH = pKa + log([HCO₃⁻] / [H₂CO₃])<br>
+    pH = 6,1 + log([HCO₃⁻] / (0,0307 × PaCO₂))<br><br>
+    <span style="color:var(--muted)">Exemplo normal:</span><br>
+    pH = 6,1 + log(24 / (0,0307 × 40))<br>
+    pH = 6,1 + log(24 / 1,228) = 6,1 + log(19,5)<br>
+    pH = 6,1 + 1,29 = <strong style="color:#fff">7,40</strong>
+  </div>
+
+  <!-- ABG Interpreter -->
+  <h3>Gasômetro Interativo</h3>
+  <p>Insira os valores e interprete a gasometria arterial (ABG / Gasometria Arterial):</p>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:14px; margin:20px 0;">
+    <div class="ctrl-group">
+      <label>pH</label>
+      <input type="range" id="abg-ph" min="7.0" max="7.7" step="0.01" value="7.40" style="width:100%">
+      <span id="abg-ph-val" style="color:var(--accent1);font-family:'Source Code Pro',monospace">7.40</span>
+    </div>
+    <div class="ctrl-group">
+      <label>PaCO₂ (mmHg)</label>
+      <input type="range" id="abg-pco2" min="10" max="90" step="1" value="40" style="width:100%">
+      <span id="abg-pco2-val" style="color:var(--co2);font-family:'Source Code Pro',monospace">40</span>
+    </div>
+    <div class="ctrl-group">
+      <label>HCO₃⁻ (mEq/L)</label>
+      <input type="range" id="abg-hco3" min="5" max="45" step="1" value="24" style="width:100%">
+      <span id="abg-hco3-val" style="color:var(--accent4);font-family:'Source Code Pro',monospace">24</span>
+    </div>
+    <div class="ctrl-group">
+      <label>PaO₂ (mmHg)</label>
+      <input type="range" id="abg-po2" min="30" max="200" step="1" value="95" style="width:100%">
+      <span id="abg-po2-val" style="color:var(--o2);font-family:'Source Code Pro',monospace">95</span>
+    </div>
+  </div>
+
+  <div class="card" id="abg-result" style="background: rgba(0,212,255,0.05); border-color: var(--accent1);">
+    <div style="font-family:'Source Code Pro',monospace; font-size:0.8rem; line-height:2;" id="abg-text">
+      Mova os sliders para interpretar a gasometria...
+    </div>
+  </div>
+
+  <table class="rtable" style="margin-top:24px;">
+    <thead><tr><th>Distúrbio</th><th>pH</th><th>PaCO₂</th><th>HCO₃⁻</th><th>Compensação</th></tr></thead>
+    <tbody>
+      <tr><td>Acidose Respiratória</td><td style="color:var(--accent2)">↓</td><td style="color:var(--accent2)">↑</td><td>↑ (compensat.)</td><td>Renal: ↑ reabsorção HCO₃⁻ (dias)</td></tr>
+      <tr><td>Alcalose Respiratória</td><td style="color:var(--accent3)">↑</td><td style="color:var(--accent3)">↓</td><td>↓ (compensat.)</td><td>Renal: ↓ reabsorção HCO₃⁻</td></tr>
+      <tr><td>Acidose Metabólica</td><td style="color:var(--accent2)">↓</td><td>↓ (compensat.)</td><td style="color:var(--accent2)">↓</td><td>Respirat.: hiperventilação (Kussmaul)</td></tr>
+      <tr><td>Alcalose Metabólica</td><td style="color:var(--accent3)">↑</td><td>↑ (compensat.)</td><td style="color:var(--accent3)">↑</td><td>Respirat.: hipoventilação (limitada)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<hr class="sep">
+
+<!-- ═══════════════════════════════════════════════
+     7 · V/Q MISMATCH
+════════════════════════════════════════════════ -->
+<section id="sec-vq">
+  <p class="section-label">07 · Ventilação/Perfusão</p>
+  <h2>V/Q — A Relação<br>Mais Importante</h2>
+
+  <p>A relação <strong>V̇/Q̇ (V/Q Ratio)</strong> — Ventilação Alveolar / Perfusão Capilar — é o determinante central das trocas gasosas. O valor ideal é <em>V̇/Q̇ = 1</em>, mas o pulmão em posição ereta tem gradiente gravitacional:</p>
+
+  <div class="canvas-wrapper" style="height:380px;">
+    <canvas id="vqCanvas" height="380"></canvas>
+    <div class="canvas-label">Distribuição V/Q no Pulmão Ereto — Clique para Explorar</div>
+  </div>
+
+  <div class="card-grid" style="margin-top:20px;">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--accent3)">V̇/Q̇ = ∞ (Espaço Morto)</h3>
+      <p>Alvéolos ventilados mas NÃO perfundidos. Ar não participa da troca. <strong>Espaço morto anatômico</strong> (~150 mL) + fisiológico. Causa: TEP (Tromboembolismo Pulmonar).</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--accent1)">V̇/Q̇ = Normal (0,8)</h3>
+      <p>Equilíbrio ideal. Trocas gasosas eficientes. Encontrado principalmente nas zonas médias do pulmão.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--accent2)">V̇/Q̇ = 0 (Shunt)</h3>
+      <p>Alvéolos perfundidos mas NÃO ventilados. Sangue passa sem oxigenar. Causa: pneumonia, atelectasia. <strong>NÃO responde ao O₂ suplementar!</strong></p>
+    </div>
+  </div>
+
+  <h3>Zonas de West</h3>
+  <table class="rtable">
+    <thead><tr><th>Zona</th><th>Localização</th><th>Pressões</th><th>V̇/Q̇</th><th>Caracerística</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--accent1)">Zona 1</strong></td><td>Ápice</td><td>PA > Pa > Pv</td><td>↑↑</td><td>Espaço morto alveolar (pouca perfusão)</td></tr>
+      <tr><td><strong style="color:var(--accent4)">Zona 2</strong></td><td>Meio</td><td>Pa > PA > Pv</td><td>≈ 1</td><td>Fluxo intermitente, ideal</td></tr>
+      <tr><td><strong style="color:var(--co2)">Zona 3</strong></td><td>Base</td><td>Pa > Pv > PA</td><td>↓</td><td>Perfusão excessiva, shunt relativo</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.8rem; color:var(--muted)">PA = pressão alveolar; Pa = pressão arterial pulmonar; Pv = pressão venosa pulmonar</p>
+
+  <div class="clinical-box">
+    <span class="ct">🩺 V/Q na UTI</span>
+    <p>Na <strong>SDRA (Síndrome do Desconforto Respiratório Agudo / ARDS)</strong>, o colapso alveolar generalizado cria shunt intrapulmonar maciço. A hipoxemia é refratária ao O₂ porque sangue não ventilado dilui o sangue oxigenado. Estratégia protetora: PEEP (Pressão Expiratória Final Positiva) recruta alvéolos, reduz shunt. A relação <strong>PaO₂/FiO₂ (índice de Horowitz/Berlin)</strong> classifica a gravidade: &lt;100 grave, 100-200 moderado, 200-300 leve.</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ═══════════════════════════════════════════════
+     8 · CLÍNICA
+════════════════════════════════════════════════ -->
+<section id="sec-clinical">
+  <p class="section-label">08 · Aplicações Clínicas</p>
+  <h2>Da Fisiologia<br>ao Leito do Doente</h2>
+
+  <div class="card-grid">
+    <div class="clinical-box" style="margin:0">
+      <span class="ct">DPOC</span>
+      <h3 style="margin-top:8px;color:var(--accent2)">Doença Pulmonar Obstrutiva</h3>
+      <p>Obstrução ao fluxo → V̇/Q̇ mismatch → hipoxemia + hipercapnia. Enarmadilhamento de ar → hiperinsuflação → diafragma aplainado. Perigo da O₂ terapia irrestrita (perda do drive hipóxico em retentores crônicos).</p>
+    </div>
+    <div class="clinical-box" style="margin:0">
+      <span class="ct">SDRA / ARDS</span>
+      <h3 style="margin-top:8px;color:var(--accent2)">Insuficiência Respiratória Aguda</h3>
+      <p>Dano alveolar difuso → edema → shunt → hipoxemia grave. Ventilação protetora: VC 6 mL/kg IBW, Pplatô &lt; 30 cmH₂O, PEEP titulado, FiO₂ mínima para SpO₂ 88-95%.</p>
+    </div>
+    <div class="clinical-box" style="margin:0">
+      <span class="ct">TEP</span>
+      <h3 style="margin-top:8px;color:var(--accent2)">Tromboembolismo Pulmonar</h3>
+      <p>Oclusão arterial pulmonar → espaço morto ↑ → hipocapnia paradoxal (hiperventilação compensatória) + hipoxemia. Gradiente A-a ↑. D-dímero, angioTC, ecocardiograma.</p>
+    </div>
+    <div class="clinical-box" style="margin:0">
+      <span class="ct">Pneumonia</span>
+      <h3 style="margin-top:8px;color:var(--accent2)">Consolidação Pneumônica</h3>
+      <p>Alvéolos preenchidos por exsudato → shunt intrapulmonar → hipoxemia. PaO₂ melhora parcialmente com O₂ (shunt < 30%). Opacidade ao Rx/TC.</p>
+    </div>
+  </div>
+
+  <h3>Oxigenioterapia — Sistemas e Cálculos</h3>
+  <table class="rtable">
+    <thead><tr><th>Dispositivo</th><th>Fluxo (L/min)</th><th>FiO₂ estimada</th><th>Indicação</th></tr></thead>
+    <tbody>
+      <tr><td>Cateter Nasal / Cânula</td><td>1–6</td><td>24–44%</td><td>Hipoxemia leve</td></tr>
+      <tr><td>Máscara Simples</td><td>5–10</td><td>35–55%</td><td>Hipoxemia moderada</td></tr>
+      <tr><td>Máscara com Reservatório</td><td>10–15</td><td>60–90%</td><td>Hipoxemia grave</td></tr>
+      <tr><td>Venturi (Venti-mask)</td><td>Variable</td><td>24–50% (preciso)</td><td>DPOC (FiO₂ controlada)</td></tr>
+      <tr><td>CNAF (Cânula Nasal de Alto Fluxo)</td><td>20–70</td><td>21–100%</td><td>IRA, pós-extubação</td></tr>
+      <tr><td>VNI (CPAP/BiPAP)</td><td>—</td><td>21–100%</td><td>EPA, DPOC exacerbado</td></tr>
+    </tbody>
+  </table>
+
+  <div class="formula-box" style="margin-top:24px;">
+    <span class="label">Regra 4% — Estimativa FiO₂ com Cânula Nasal</span>
+    FiO₂ ≈ 21% + (4% × Fluxo em L/min)<br><br>
+    Ex: 2 L/min → FiO₂ ≈ 21 + 8 = <strong style="color:#fff">29%</strong><br>
+    Ex: 6 L/min → FiO₂ ≈ 21 + 24 = <strong style="color:#fff">45%</strong><br><br>
+    <span style="color:var(--muted)">⚠ Estimativa — varia com padrão respiratório do paciente</span>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ═══════════════════════════════════════════════
+     9 · QUIZ
+════════════════════════════════════════════════ -->
+<section id="sec-quiz">
+  <p class="section-label">09 · Consolidação</p>
+  <h2>Quiz Clínico<br>Interativo</h2>
+
+  <div class="card" id="quiz-container">
+    <div id="quiz-q" style="font-size:1rem; margin-bottom:20px; color:#fff; line-height:1.6;"></div>
+    <div id="quiz-options" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+    <div id="quiz-feedback" style="margin-top:16px; font-family:'Source Code Pro',monospace; font-size:0.82rem; line-height:1.6; min-height:24px;"></div>
+    <div style="margin-top:20px; display:flex; gap:10px;">
+      <button class="quiz-btn" onclick="nextQuestion()" id="btn-next" style="display:none">Próxima →</button>
+      <span id="quiz-score" style="font-family:'Source Code Pro',monospace; font-size:0.75rem; color:var(--muted); align-self:center;"></span>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<footer>
+  <p>Fisiologia Respiratória Interativa · Medicina Interna & Intensiva</p>
+  <p style="margin-top:8px; font-size:0.55rem; opacity:0.5">
+    Referências: West JB — Respiratory Physiology (10ª ed.) · Guyton & Hall — Tratado de Fisiologia Médica (14ª ed.)<br>
+    Murray & Nadel — Textbook of Respiratory Medicine · UpToDate · Harrison's Principles of Internal Medicine
+  </p>
+</footer>
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT — ALL INTERACTIONS & ANIMATIONS
+════════════════════════════════════════════════ -->
+<script>
+// ─── NAV SCROLL ───────────────────────────────
+function scrollTo(id) {
+  document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ─── HERO PARTICLE CANVAS ─────────────────────
+(function(){
+  const c = document.getElementById('heroCanvas');
+  const ctx = c.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = c.width = c.offsetWidth;
+    H = c.height = c.offsetHeight;
+  }
+
+  class Particle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.r = Math.random() * 3 + 1;
+      this.type = Math.random() < 0.5 ? 'o2' : 'co2';
+      this.vx = (Math.random() - 0.5) * 0.6;
+      this.vy = (Math.random() - 0.5) * 0.6;
+      this.alpha = Math.random() * 0.6 + 0.2;
+      this.pulse = Math.random() * Math.PI * 2;
+    }
+    update() {
+      this.x += this.vx; this.y += this.vy;
+      this.pulse += 0.03;
+      if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+    }
+    draw() {
+      const a = this.alpha * (0.7 + 0.3 * Math.sin(this.pulse));
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+      ctx.fillStyle = this.type === 'o2'
+        ? `rgba(79,195,247,${a})`
+        : `rgba(239,83,80,${a})`;
+      ctx.fill();
+    }
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+  function loop() {
+    ctx.clearRect(0,0,W,H);
+    // draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i+1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if (d < 80) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(0,212,255,${0.08*(1-d/80)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ─── OVERVIEW CANVAS — Lung breathing animation ────
+(function(){
+  const c = document.getElementById('overviewCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let W, H, t = 0;
+  let molecules = [];
+
+  function resize() {
+    W = c.width = c.offsetWidth;
+    H = c.height = 320;
+    c.height = H;
+  }
+  resize(); window.addEventListener('resize', resize);
+
+  class Mol {
+    constructor(type) {
+      this.type = type;
+      this.reset();
+    }
+    reset() {
+      // Start from left (lung side)
+      this.x = 80 + Math.random() * 60;
+      this.y = H/2 + (Math.random()-0.5)*120;
+      this.vx = (Math.random()*1.5 + 0.5) * (this.type === 'o2' ? 1 : -0.5);
+      this.vy = (Math.random()-0.5)*0.5;
+      this.r = 4;
+      this.alpha = 0;
+      this.life = 0;
+      this.maxLife = 120 + Math.random()*80;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life++;
+      this.alpha = Math.min(1, this.life/20) * Math.max(0, (this.maxLife-this.life)/20);
+      if (this.life > this.maxLife || this.x > W-50) this.reset();
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+      const col = this.type==='o2' ? `rgba(79,195,247,${this.alpha})`
+                : this.type==='co2' ? `rgba(239,83,80,${this.alpha})`
+                : `rgba(206,147,216,${this.alpha})`;
+      ctx.fillStyle = col;
+      ctx.fill();
+    }
+  }
+
+  for (let i=0;i<30;i++) molecules.push(new Mol('o2'));
+  for (let i=0;i<20;i++) { const m = new Mol('co2'); m.vx = -m.vx; m.x = W-100+Math.random()*60; molecules.push(m); }
+  for (let i=0;i<15;i++) { const m = new Mol('hb'); m.x = W/2; molecules.push(m); }
+
+  function drawLung(x, y, scale, phase) {
+    const s = scale;
+    ctx.save();
+    ctx.translate(x, y);
+    // Left lobe
+    ctx.beginPath();
+    ctx.ellipse(-30*s, 0, (40+10*Math.sin(phase))*s, (70+8*Math.sin(phase))*s, -0.2, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,160,122,0.15)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,140,90,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // Right lobe
+    ctx.beginPath();
+    ctx.ellipse(35*s, 0, (50+10*Math.sin(phase))*s, (75+8*Math.sin(phase))*s, 0.15, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,160,122,0.15)';
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function loop() {
+    ctx.clearRect(0,0,W,H);
+    t += 0.02;
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0,0,W,0);
+    bg.addColorStop(0,'rgba(5,13,26,0.9)');
+    bg.addColorStop(0.5,'rgba(10,22,40,0.9)');
+    bg.addColorStop(1,'rgba(5,13,26,0.9)');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    // Lung
+    drawLung(W*0.25, H/2, 1, t);
+
+    // Capillary vessel
+    ctx.beginPath();
+    ctx.moveTo(W*0.38, H/2-40);
+    ctx.bezierCurveTo(W*0.5, H/2-20, W*0.5, H/2+20, W*0.62, H/2+40);
+    ctx.strokeStyle = 'rgba(239,83,80,0.5)';
+    ctx.lineWidth = 14;
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(79,195,247,0.3)';
+    ctx.lineWidth = 8;
+    ctx.stroke();
+
+    // Body/tissue representation
+    ctx.beginPath();
+    ctx.roundRect(W*0.72, H/2-60, 80, 120, 12);
+    ctx.fillStyle = 'rgba(206,147,216,0.08)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(206,147,216,0.25)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Labels
+    ctx.font = '11px "Source Code Pro", monospace';
+    ctx.fillStyle = 'rgba(122,155,191,0.8)';
+    ctx.fillText('PULMÃO', W*0.22, H*0.15);
+    ctx.fillText('CAPILAR', W*0.46, H*0.15);
+    ctx.fillText('TECIDO', W*0.73, H*0.15);
+
+    molecules.forEach(m => { m.update(); m.draw(); });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ─── PRESSURE-VOLUME LOOP ─────────────────────
+(function(){
+  const c = document.getElementById('pvCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let W, H, animT = 0, running = false;
+
+  function resize() { W = c.width = c.offsetWidth; H = c.height = 380; }
+  resize(); window.addEventListener('resize', resize);
+
+  const slC = document.getElementById('sliderC');
+  const slR = document.getElementById('sliderR');
+  const vC = document.getElementById('valC');
+  const vR = document.getElementById('valR');
+
+  slC.addEventListener('input', () => { vC.textContent = parseFloat(slC.value).toFixed(2)+' L/cmH₂O'; draw(); });
+  slR.addEventListener('input', () => { vR.textContent = slR.value+' cmH₂O·s/L'; draw(); });
+  c.addEventListener('click', () => { running = !running; });
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    const C = parseFloat(slC.value);
+    const R = parseInt(slR.value);
+    const pad = 60, pw = W-pad*2, ph = H-pad*2;
+
+    // Grid
+    ctx.strokeStyle = 'rgba(0,212,255,0.08)';
+    ctx.lineWidth = 1;
+    for (let i=0;i<=5;i++) {
+      const x = pad + i*pw/5, y = pad + i*ph/5;
+      ctx.beginPath(); ctx.moveTo(x,pad); ctx.lineTo(x,H-pad); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
+    }
+
+    // Axes
+    ctx.strokeStyle = 'rgba(122,155,191,0.5)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+
+    ctx.font = '11px "Source Code Pro",monospace';
+    ctx.fillStyle = 'rgba(122,155,191,0.8)';
+    ctx.fillText('Pressão (cmH₂O)', W/2-50, H-12);
+    ctx.save(); ctx.translate(14, H/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('Volume (L)', -30, 0); ctx.restore();
+
+    // PV curve (lung) — sigmoid shape
+    const maxP = 30, maxV = 3;
+    function pvY(v) { return H-pad - (v/maxV)*ph; }
+    function pvX(p) { return pad + (p/maxP)*pw; }
+
+    // Static curve
+    ctx.beginPath();
+    for (let p=0; p<=30; p+=0.5) {
+      const v = maxV / (1 + Math.exp(-0.3*(p-15)));
+      const x = pvX(p), y = pvY(v);
+      p===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle = 'rgba(0,212,255,0.3)'; ctx.lineWidth = 2; ctx.stroke();
+
+    // Dynamic loop with compliance & resistance
+    if (running) animT += 0.025;
+    const phase = animT % (Math.PI*2);
+    const loopPts = [];
+    for (let i=0;i<=60;i++) {
+      const a = (i/60)*Math.PI*2;
+      const flow = Math.sin(a);
+      const vt = 0.5 * (1 - Math.cos(a)) / 2;
+      const p = vt/C + R*Math.abs(flow)*Math.sign(flow)*0.3;
+      loopPts.push({x: pvX(Math.max(0,p)), y: pvY(vt)});
+    }
+
+    ctx.beginPath();
+    loopPts.forEach((pt,i) => i===0 ? ctx.moveTo(pt.x,pt.y) : ctx.lineTo(pt.x,pt.y));
+    ctx.closePath();
+    ctx.strokeStyle = '#00d4ff'; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.fillStyle = 'rgba(0,212,255,0.05)'; ctx.fill();
+
+    // Current point
+    const ci = Math.floor(((animT%(Math.PI*2))/(Math.PI*2))*60);
+    if (loopPts[ci]) {
+      ctx.beginPath();
+      ctx.arc(loopPts[ci].x, loopPts[ci].y, 6, 0, Math.PI*2);
+      ctx.fillStyle = '#00d4ff';
+      ctx.shadowColor = '#00d4ff'; ctx.shadowBlur = 15;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // Labels
+    ctx.fillStyle = 'rgba(0,212,255,0.6)'; ctx.font = '11px "Source Code Pro",monospace';
+    ctx.fillText('Loop P-V (C='+parseFloat(slC.value).toFixed(2)+')', pad+8, pad+20);
+    ctx.fillStyle = 'rgba(122,155,191,0.5)';
+    ctx.fillText('Clique para animar/pausar', W-200, pad+20);
+
+    if (running) requestAnimationFrame(draw);
+  }
+  draw();
+  setInterval(() => { if(running) draw(); }, 16);
+})();
+
+// ─── LUNG VOLUME SPIROMETRY ─────────────────────
+(function(){
+  const c = document.getElementById('volCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let W, H;
+  function resize() { W = c.width = c.offsetWidth; H = c.height = 280; }
+  resize(); window.addEventListener('resize', resize);
+
+  const volumes = {
+    VR: 1200, VRE: 1200, VT: 500, VRI: 3000
+  };
+  const colors = {
+    VR: '#ef5350', VRE: '#ffb703', VT: '#00d4ff', VRI: '#39ff14'
+  };
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    const total = volumes.VR+volumes.VRE+volumes.VT+volumes.VRI;
+    const pad = {left:80, right:20, top:20, bottom:40};
+    const ph = H-pad.top-pad.bottom, pw = W-pad.left-pad.right;
+
+    // Draw stacked volumes
+    let y = H-pad.bottom;
+    Object.entries(volumes).forEach(([k,v]) => {
+      const h = (v/total)*ph;
+      ctx.fillStyle = colors[k]+'33';
+      ctx.fillRect(pad.left, y-h, pw, h);
+      ctx.strokeStyle = colors[k];
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(pad.left, y-h, pw, h);
+      // Label
+      ctx.font = '11px "Source Code Pro",monospace';
+      ctx.fillStyle = colors[k];
+      ctx.fillText(k+': '+v+'mL', 6, y-h/2+4);
+      y -= h;
+    });
+
+    // Total label
+    ctx.font = '10px "Source Code Pro",monospace';
+    ctx.fillStyle = 'rgba(122,155,191,0.7)';
+    ctx.fillText('CPT: '+(Object.values(volumes).reduce((a,b)=>a+b,0))+'mL', pad.left+pw/2-40, H-pad.bottom+18);
+  }
+  draw();
+})();
+
+// ─── ALVEOLUS MOLECULE CANVAS ─────────────────
+(function(){
+  const c = document.getElementById('alveoloCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let W, H, mouse = {x:0,y:0};
+  function resize() { W = c.width = c.offsetWidth; H = c.height = 420; }
+  resize(); window.addEventListener('resize', resize);
+  c.addEventListener('mousemove', e => {
+    const r = c.getBoundingClientRect();
+    mouse = {x: e.clientX - r.left, y: e.clientY - r.top};
+  });
+
+  class AlvMol {
+    constructor(side) {
+      this.side = side; // 'alveolus' or 'capillary'
+      this.reset();
+    }
+    reset() {
+      if (this.side === 'alveolus') {
+        this.x = W*0.1 + Math.random()*W*0.3;
+        this.y = 60 + Math.random()*160;
+        this.type = Math.random() < 0.7 ? 'o2' : 'n2';
+      } else {
+        this.x = W*0.5 + Math.random()*W*0.4;
+        this.y = 200 + Math.random()*160;
+        this.type = Math.random() < 0.5 ? 'co2' : 'hb';
+      }
+      this.vx = (Math.random()-0.5)*0.8;
+      this.vy = (Math.random()-0.5)*0.8;
+      this.r = 4 + Math.random()*2;
+      this.pulse = Math.random()*Math.PI*2;
+      this.crossing = false;
+      this.crossProgress = 0;
+    }
+    update() {
+      if (!this.crossing) {
+        this.x += this.vx; this.y += this.vy;
+        this.pulse += 0.04;
+        // Bounce
+        if (this.side === 'alveolus') {
+          if (this.x<W*0.05||this.x>W*0.42) this.vx*=-1;
+          if (this.y<50||this.y>230) this.vy*=-1;
+          // Chance to cross membrane
+          if (this.type==='o2' && Math.abs(this.x-W*0.42)<20 && Math.random()<0.002) {
+            this.crossing=true; this.crossTarget={x:W*0.55, y:this.y};
+          }
+        } else {
+          if (this.x<W*0.48||this.x>W*0.96) this.vx*=-1;
+          if (this.y<190||this.y>370) this.vy*=-1;
+          if (this.type==='co2' && Math.abs(this.x-W*0.48)<20 && Math.random()<0.002) {
+            this.crossing=true; this.crossTarget={x:W*0.35, y:this.y};
+          }
+        }
+        // Mouse repulsion
+        const dx = this.x-mouse.x, dy = this.y-mouse.y;
+        const d = Math.sqrt(dx*dx+dy*dy);
+        if (d<60) { this.vx += dx/d*0.5; this.vy += dy/d*0.5; }
+        // Speed limit
+        const spd = Math.sqrt(this.vx*this.vx+this.vy*this.vy);
+        if (spd>1.5) { this.vx*=1.5/spd; this.vy*=1.5/spd; }
+      } else {
+        this.crossProgress += 0.04;
+        this.x += (this.crossTarget.x - this.x)*0.08;
+        this.y += (this.crossTarget.y - this.y)*0.08;
+        if (this.crossProgress > 1) {
+          this.side = this.side==='alveolus'?'capillary':'alveolus';
+          this.type = this.side==='capillary'?'hb':'n2';
+          this.crossing=false; this.crossProgress=0;
+        }
+      }
+    }
+    draw() {
+      const a = 0.7 + 0.3*Math.sin(this.pulse);
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r*(this.crossing?1.4:1), 0, Math.PI*2);
+      const cols = {o2:`rgba(79,195,247,${a})`,co2:`rgba(239,83,80,${a})`,hb:`rgba(206,147,216,${a})`,n2:`rgba(180,180,180,${a*0.5})`};
+      ctx.fillStyle = cols[this.type]||cols.o2;
+      if (this.crossing) { ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 12; }
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  const mols = [];
+  for (let i=0;i<40;i++) mols.push(new AlvMol('alveolus'));
+  for (let i=0;i<30;i++) mols.push(new AlvMol('capillary'));
+
+  function loop() {
+    ctx.clearRect(0,0,W,H);
+    // Background
+    ctx.fillStyle = '#020912'; ctx.fillRect(0,0,W,H);
+
+    // Alveolus bubble
+    ctx.beginPath();
+    ctx.ellipse(W*0.25, H*0.42, W*0.22, H*0.35, 0, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(79,195,247,0.04)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(79,195,247,0.3)';
+    ctx.setLineDash([4,4]); ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]);
+
+    // Capillary region
+    ctx.beginPath();
+    ctx.ellipse(W*0.72, H*0.6, W*0.24, H*0.32, 0, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(239,83,80,0.04)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(239,83,80,0.3)';
+    ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+
+    // Membrane line
+    ctx.beginPath();
+    ctx.moveTo(W*0.43, 40); ctx.lineTo(W*0.43, H-20);
+    ctx.strokeStyle = 'rgba(255,183,3,0.3)';
+    ctx.lineWidth = 2; ctx.setLineDash([6,3]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.font = '10px "Source Code Pro",monospace';
+    ctx.fillStyle = 'rgba(255,183,3,0.6)';
+    ctx.fillText('MEMBRANA', W*0.44, 55);
+    ctx.fillText('ALVEOLOCAPILAR', W*0.44, 68);
+
+    // Labels
+    ctx.font = '12px "Source Code Pro",monospace';
+    ctx.fillStyle = 'rgba(79,195,247,0.6)';
+    ctx.fillText('ALVÉOLO', W*0.1, 35);
+    ctx.fillStyle = 'rgba(239,83,80,0.6)';
+    ctx.fillText('CAPILAR', W*0.65, H-10);
+
+    // Legend
+    const lg = [{c:'rgba(79,195,247,0.9)',t:'O₂'},{c:'rgba(239,83,80,0.9)',t:'CO₂'},{c:'rgba(206,147,216,0.9)',t:'Hb'},{c:'rgba(180,180,180,0.5)',t:'N₂'}];
+    lg.forEach((l,i) => {
+      ctx.beginPath(); ctx.arc(W-90, 30+i*22, 5, 0, Math.PI*2);
+      ctx.fillStyle = l.c; ctx.fill();
+      ctx.font='10px "Source Code Pro",monospace'; ctx.fillStyle='rgba(122,155,191,0.8)';
+      ctx.fillText(l.t, W-78, 34+i*22);
+    });
+
+    mols.forEach(m => { m.update(); m.draw(); });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ─── BLOOD TRANSPORT CANVAS ─────────────────────
+(function(){
+  const c = document.getElementById('transportCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let W, H, t=0;
+  function resize() { W = c.width = c.offsetWidth; H = c.height = 360; }
+  resize(); window.addEventListener('resize', resize);
+
+  class RBC {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = -30;
+      this.y = H/2 + (Math.random()-0.5)*40;
+      this.spd = 1.5 + Math.random();
+      this.sat = 1; // 1 = oxygenated
+      this.o2 = [];
+      this.co2 = [];
+      for (let i=0;i<4;i++) this.o2.push({a:i*Math.PI/2,r:8});
+    }
+    update() {
+      this.x += this.spd;
+      // At tissue zone, swap O2 for CO2
+      if (this.x > W*0.55 && this.x < W*0.8 && this.sat > 0.2) {
+        this.sat -= 0.01;
+        if (this.sat < 0.2) this.sat = 0.2;
+      }
+      if (this.x > W+40) this.reset();
+    }
+    draw() {
+      // RBC ellipse
+      ctx.save(); ctx.translate(this.x, this.y);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 18, 12, 0, 0, Math.PI*2);
+      const r = Math.floor(255*(1-this.sat)*0.7+100);
+      const b = Math.floor(200*this.sat);
+      ctx.fillStyle = `rgba(${r},80,${b},0.85)`;
+      ctx.fill();
+      ctx.strokeStyle = `rgba(${r+30},100,${b+30},0.5)`;
+      ctx.lineWidth = 1; ctx.stroke();
+      // O2 dots
+      for (let i=0;i<4;i++) {
+        const a = i*Math.PI/2 + t*0.05;
+        ctx.beginPath();
+        ctx.arc(Math.cos(a)*7, Math.sin(a)*5, 3, 0, Math.PI*2);
+        ctx.fillStyle = this.sat > 0.5
+          ? `rgba(79,195,247,${this.sat})`
+          : `rgba(239,83,80,${1-this.sat})`;
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  const rbcs = [];
+  for (let i=0;i<8;i++) { const r=new RBC(); r.x=i*W/8; rbcs.push(r); }
+
+  function loop() {
+    ctx.clearRect(0,0,W,H);
+    t++;
+    ctx.fillStyle='#020912'; ctx.fillRect(0,0,W,H);
+
+    // Vessel tube
+    const grad = ctx.createLinearGradient(0,0,W,0);
+    grad.addColorStop(0,'rgba(79,195,247,0.15)');
+    grad.addColorStop(0.5,'rgba(206,147,216,0.1)');
+    grad.addColorStop(1,'rgba(239,83,80,0.15)');
+    ctx.fillStyle=grad;
+    ctx.beginPath();
+    ctx.roundRect(0, H/2-35, W, 70, 35);
+    ctx.fill();
+    ctx.strokeStyle='rgba(122,155,191,0.2)'; ctx.lineWidth=1.5;
+    ctx.stroke();
+
+    // Lung zone label
+    ctx.fillStyle='rgba(79,195,247,0.5)';
+    ctx.font='11px "Source Code Pro",monospace';
+    ctx.fillText('← PULMÃO', 15, H/2-45);
+    ctx.fillStyle='rgba(206,147,216,0.5)';
+    ctx.fillText('TECIDO PERIFÉRICO →', W*0.52, H/2-45);
+
+    // Divider
+    ctx.beginPath(); ctx.moveTo(W*0.48,20); ctx.lineTo(W*0.48,H-20);
+    ctx.strokeStyle='rgba(255,183,3,0.25)'; ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]);
+
+    // O2 release arrows in tissue zone
+    for (let i=0;i<3;i++) {
+      const x = W*0.58+i*50, y = H/2;
+      ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y-35);
+      ctx.strokeStyle='rgba(79,195,247,0.4)'; ctx.lineWidth=1.5; ctx.setLineDash([]);
+      ctx.stroke();
+      ctx.fillStyle='rgba(79,195,247,0.6)'; ctx.font='9px sans-serif';
+      ctx.fillText('O₂', x-6, y-40);
+    }
+    // CO2 uptake arrows
+    for (let i=0;i<3;i++) {
+      const x = W*0.61+i*50, y = H/2;
+      ctx.beginPath(); ctx.moveTo(x,y+40); ctx.lineTo(x,y+5);
+      ctx.strokeStyle='rgba(239,83,80,0.4)'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle='rgba(239,83,80,0.6)'; ctx.font='9px sans-serif';
+      ctx.fillText('CO₂', x-10, y+55);
+    }
+
+    rbcs.forEach(r => { r.update(); r.draw(); });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ─── HEMOGLOBIN DISSOCIATION CURVE ─────────────
+(function(){
+  const c = document.getElementById('hbCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let W, H;
+  function resize() { W = c.width = c.offsetWidth; H = c.height = 420; }
+  resize(); window.addEventListener('resize', resize);
+
+  const inputs = {
+    ph: document.getElementById('sliderPH'),
+    temp: document.getElementById('sliderTemp'),
+    dpg: document.getElementById('sliderDPG'),
+    co2: document.getElementById('sliderCO2hb')
+  };
+  const displays = {
+    ph: document.getElementById('valPH'),
+    temp: document.getElementById('valTemp'),
+    dpg: document.getElementById('valDPG'),
+    co2: document.getElementById('valCO2hb')
+  };
+
+  Object.keys(inputs).forEach(k => {
+    inputs[k].addEventListener('input', () => {
+      if (k==='ph') displays[k].textContent = parseFloat(inputs[k].value).toFixed(2);
+      else if (k==='temp') displays[k].textContent = parseFloat(inputs[k].value).toFixed(1)+'°C';
+      else if (k==='dpg') displays[k].textContent = parseFloat(inputs[k].value).toFixed(1)+'×';
+      else displays[k].textContent = inputs[k].value+' mmHg';
+      draw();
+    });
+  });
+
+  function hillSat(pO2, p50) {
+    const n = 2.7; // Hill coefficient
+    return Math.pow(pO2, n) / (Math.pow(p50, n) + Math.pow(pO2, n));
+  }
+
+  function getP50() {
+    let p50 = 27;
+    const ph = parseFloat(inputs.ph.value);
+    const temp = parseFloat(inputs.temp.value);
+    const dpg = parseFloat(inputs.dpg.value);
+    const co2 = parseFloat(inputs.co2.value);
+    // Bohr effect: per 0.1 pH unit change, P50 changes ~3.5 mmHg
+    p50 += (7.4 - ph) * 35;
+    // Temperature: per degree above 37, P50 increases ~1 mmHg
+    p50 += (temp - 37) * 1.0;
+    // 2,3-DPG
+    p50 *= dpg;
+    // CO2
+    p50 += (co2 - 40) * 0.15;
+    return Math.max(15, Math.min(50, p50));
+  }
+
+  let mouseX = -1;
+  c.addEventListener('mousemove', e => {
+    const r = c.getBoundingClientRect();
+    mouseX = e.clientX - r.left;
+    draw();
+  });
+  c.addEventListener('mouseleave', () => { mouseX=-1; draw(); });
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#020912'; ctx.fillRect(0,0,W,H);
+
+    const pad = {l:65,r:30,t:30,b:55};
+    const pw = W-pad.l-pad.r, ph = H-pad.t-pad.b;
+    const maxPO2 = 140;
+
+    // Grid
+    ctx.strokeStyle='rgba(0,212,255,0.07)'; ctx.lineWidth=1;
+    for(let i=0;i<=7;i++){
+      const x=pad.l+i*pw/7;
+      ctx.beginPath(); ctx.moveTo(x,pad.t); ctx.lineTo(x,H-pad.b); ctx.stroke();
+      ctx.font='10px "Source Code Pro",monospace'; ctx.fillStyle='rgba(122,155,191,0.6)';
+      ctx.fillText(Math.round(i*maxPO2/7), x-8, H-pad.b+16);
+    }
+    for(let i=0;i<=5;i++){
+      const y=pad.t+i*ph/5;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+      ctx.fillText((100-i*20)+'%', 4, y+4);
+    }
+
+    // Axis labels
+    ctx.font='11px "Source Code Pro",monospace';
+    ctx.fillStyle='rgba(122,155,191,0.8)';
+    ctx.fillText('PO₂ (mmHg)', pad.l+pw/2-40, H-10);
+    ctx.save(); ctx.translate(14,pad.t+ph/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('SaO₂ (%)', -35, 0); ctx.restore();
+
+    // Normal curve (grey reference)
+    ctx.beginPath();
+    for(let p=0;p<=maxPO2;p+=1){
+      const sat = hillSat(p, 27)*100;
+      const x = pad.l + (p/maxPO2)*pw;
+      const y = H - pad.b - (sat/100)*ph;
+      p===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle='rgba(122,155,191,0.25)'; ctx.lineWidth=1.5; ctx.stroke();
+
+    // Current curve
+    const p50 = getP50();
+    const shiftRight = p50 > 27;
+    const gradient = ctx.createLinearGradient(pad.l, 0, W-pad.r, 0);
+    gradient.addColorStop(0, shiftRight ? '#ef5350' : '#00d4ff');
+    gradient.addColorStop(1, shiftRight ? '#ffb703' : '#39ff14');
+
+    ctx.beginPath();
+    for(let p=0;p<=maxPO2;p+=1){
+      const sat = hillSat(p, p50)*100;
+      const x = pad.l + (p/maxPO2)*pw;
+      const y = H - pad.b - (sat/100)*ph;
+      p===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=gradient; ctx.lineWidth=3;
+    ctx.shadowColor=shiftRight?'#ef5350':'#00d4ff'; ctx.shadowBlur=8;
+    ctx.stroke(); ctx.shadowBlur=0;
+
+    // P50 marker
+    const p50x = pad.l + (p50/maxPO2)*pw;
+    const p50y = H - pad.b - (0.5)*ph;
+    ctx.beginPath(); ctx.moveTo(p50x,pad.t); ctx.lineTo(p50x,H-pad.b);
+    ctx.strokeStyle='rgba(255,183,3,0.4)'; ctx.lineWidth=1; ctx.setLineDash([4,3]); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(pad.l, p50y); ctx.lineTo(W-pad.r,p50y);
+    ctx.strokeStyle='rgba(255,183,3,0.2)'; ctx.stroke();
+    ctx.font='11px "Source Code Pro",monospace';
+    ctx.fillStyle='rgba(255,183,3,0.9)';
+    ctx.fillText('P50='+p50.toFixed(0), p50x+4, pad.t+14);
+
+    // Mouse hover crosshair
+    if (mouseX > pad.l && mouseX < W-pad.r) {
+      const pO2 = (mouseX - pad.l)/pw * maxPO2;
+      const sat = hillSat(pO2, p50)*100;
+      const satY = H-pad.b-(sat/100)*ph;
+      ctx.beginPath(); ctx.arc(mouseX, satY, 5, 0, Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.font='11px "Source Code Pro",monospace';
+      ctx.fillStyle='#fff';
+      ctx.fillText('PO₂: '+pO2.toFixed(0)+' → SaO₂: '+sat.toFixed(1)+'%', mouseX+8, satY-8);
+    }
+
+    // Key points (arterial & venous)
+    [[100, 'Arterial', '#4fc3f7'], [40, 'Venoso', '#ef5350']].forEach(([po2, label, col]) => {
+      const sat = hillSat(po2, p50)*100;
+      const x = pad.l+(po2/maxPO2)*pw, y = H-pad.b-(sat/100)*ph;
+      ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2);
+      ctx.fillStyle=col; ctx.shadowColor=col; ctx.shadowBlur=10; ctx.fill(); ctx.shadowBlur=0;
+      ctx.font='10px "Source Code Pro",monospace'; ctx.fillStyle=col;
+      ctx.fillText(label+' '+sat.toFixed(0)+'%', x+8, y-4);
+    });
+
+    // Shift label
+    ctx.font='12px "Source Code Pro",monospace';
+    ctx.fillStyle = shiftRight ? '#ef5350' : '#00d4ff';
+    ctx.fillText(shiftRight ? '→ Desvio Direita (↓ afinidade, ↑ liberação O₂)' : p50===27 ? 'Curva Normal' : '← Desvio Esquerda (↑ afinidade, ↓ liberação O₂)', pad.l+8, H-pad.b-ph+20);
+
+    // Update readouts
+    document.getElementById('p50-val').textContent = p50.toFixed(0);
+    document.getElementById('shift-dir').textContent = shiftRight ? '→' : p50===27 ? '↔' : '←';
+    document.getElementById('sat100').textContent = (hillSat(100,p50)*100).toFixed(0);
+    document.getElementById('sat60').textContent = (hillSat(60,p50)*100).toFixed(0);
+  }
+  draw();
+})();
+
+// ─── ALVEOLAR GAS EQUATION CALCULATOR ─────────
+(function(){
+  const slFiO2 = document.getElementById('sliderFiO2');
+  const slCO2 = document.getElementById('sliderPaCO2');
+  const slAlt = document.getElementById('sliderAlt');
+
+  function calcPAO2() {
+    const fiO2 = parseFloat(slFiO2.value);
+    const paco2 = parseFloat(slCO2.value);
+    const alt = parseFloat(slAlt.value);
+    // Pb decreases with altitude: Pb = 760 * exp(-alt/7000)
+    const pb = 760 * Math.exp(-alt/7000);
+    const ph2o = 47;
+    const pAO2 = (pb - ph2o) * fiO2 - (paco2 / 0.8);
+    const aaGrad = Math.max(0, 10 + alt/500); // estimated
+    document.getElementById('valFiO2').textContent = Math.round(fiO2*100)+'%';
+    document.getElementById('valPaCO2').textContent = paco2+' mmHg';
+    document.getElementById('valAlt').textContent = alt===0 ? '0 m (Nível do Mar)' : alt+' m';
+    document.getElementById('pao2-calc').textContent = Math.max(0,pAO2).toFixed(0);
+    document.getElementById('pb-calc').textContent = pb.toFixed(0);
+    document.getElementById('aa-calc').textContent = aaGrad.toFixed(0);
+  }
+
+  [slFiO2, slCO2, slAlt].forEach(s => s.addEventListener('input', calcPAO2));
+  calcPAO2();
+})();
+
+// ─── ABG INTERPRETER ─────────────────────────
+(function(){
+  const inputs = {
+    ph: document.getElementById('abg-ph'),
+    pco2: document.getElementById('abg-pco2'),
+    hco3: document.getElementById('abg-hco3'),
+    po2: document.getElementById('abg-po2')
+  };
+  const displays = {
+    ph: document.getElementById('abg-ph-val'),
+    pco2: document.getElementById('abg-pco2-val'),
+    hco3: document.getElementById('abg-hco3-val'),
+    po2: document.getElementById('abg-po2-val')
+  };
+
+  function interpret() {
+    const ph = parseFloat(inputs.ph.value);
+    const pco2 = parseFloat(inputs.pco2.value);
+    const hco3 = parseFloat(inputs.hco3.value);
+    const po2 = parseFloat(inputs.po2.value);
+    displays.ph.textContent = ph.toFixed(2);
+    displays.pco2.textContent = pco2;
+    displays.hco3.textContent = hco3;
+    displays.po2.textContent = po2;
+
+    let lines = [];
+    // 1. pH
+    lines.push('pH: '+ph.toFixed(2)+' → '+(ph<7.35?'<span style="color:#ef5350">ACIDEMIA</span>':ph>7.45?'<span style="color:#39ff14">ALCALEMIA</span>':'<span style="color:#00d4ff">NORMAL</span>'));
+    // 2. Primary disturbance
+    let primary = '';
+    if (ph < 7.35) {
+      if (pco2 > 45) primary = '<span style="color:#ef5350">Acidose Respiratória</span>';
+      else if (hco3 < 22) primary = '<span style="color:#ef5350">Acidose Metabólica</span>';
+      else primary = 'Misto';
+    } else if (ph > 7.45) {
+      if (pco2 < 35) primary = '<span style="color:#39ff14">Alcalose Respiratória</span>';
+      else if (hco3 > 26) primary = '<span style="color:#39ff14">Alcalose Metabólica</span>';
+      else primary = 'Misto';
+    } else {
+      primary = '<span style="color:#00d4ff">Sem distúrbio primário (normal ou compensado)</span>';
+    }
+    lines.push('Distúrbio primário: '+primary);
+    // 3. Compensation check
+    if (ph < 7.35 && pco2 > 45) {
+      const expectedHCO3 = 24 + 0.1*(pco2-40);
+      lines.push('HCO₃⁻ esperado (compensação renal): '+expectedHCO3.toFixed(1)+' mEq/L | atual: '+hco3+' → '+(Math.abs(hco3-expectedHCO3)<3?'Compensação adequada':'<span style="color:#ffb703">Distúrbio misto?</span>'));
+    }
+    if (ph < 7.35 && hco3 < 22) {
+      const expectedPCO2 = 1.5*hco3 + 8;
+      lines.push('PCO₂ esperada (Winters): '+expectedPCO2.toFixed(0)+' mmHg | atual: '+pco2+' → '+(Math.abs(pco2-expectedPCO2)<3?'Compensação adequada':'<span style="color:#ffb703">Distúrbio misto?</span>'));
+    }
+    // 4. Oxygenation
+    lines.push('PaO₂: '+po2+' mmHg → '+(po2<60?'<span style="color:#ef5350">HIPOXEMIA GRAVE</span>':po2<80?'<span style="color:#ffb703">Hipoxemia</span>':'<span style="color:#00d4ff">Normal</span>'));
+    // Henderson-Hasselbalch check
+    const calcPH = 6.1 + Math.log10(hco3 / (0.0307*pco2));
+    lines.push('pH calculado H-H: '+calcPH.toFixed(2)+' (inserido: '+ph.toFixed(2)+') — '+(Math.abs(calcPH-ph)<0.05?'Consistente ✓':'Inconsistente ⚠'));
+
+    document.getElementById('abg-text').innerHTML = lines.join('<br>');
+  }
+
+  Object.values(inputs).forEach(i => i.addEventListener('input', interpret));
+  interpret();
+})();
+
+// ─── V/Q CANVAS ─────────────────────────────
+(function(){
+  const c = document.getElementById('vqCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let W, H, hoverZone = -1;
+  function resize() { W = c.width = c.offsetWidth; H = c.height = 380; }
+  resize(); window.addEventListener('resize', resize);
+
+  const zones = [
+    {name:'Ápice (Zona 1)', vq:'V/Q↑↑ ~3', desc:'Ventilação > Perfusão\nEspaço morto fisiológico', col:'#39ff14'},
+    {name:'Meio (Zona 2)', vq:'V/Q ≈ 1', desc:'Equilíbrio ideal\nMelhor troca gasosa', col:'#00d4ff'},
+    {name:'Base (Zona 3)', vq:'V/Q↓ ~0.6', desc:'Perfusão > Ventilação\nShunt relativo', col:'#ef5350'},
+  ];
+
+  c.addEventListener('mousemove', e => {
+    const r = c.getBoundingClientRect();
+    const y = e.clientY - r.top;
+    hoverZone = y < H*0.33 ? 0 : y < H*0.66 ? 1 : 2;
+    draw();
+  });
+  c.addEventListener('mouseleave', () => { hoverZone=-1; draw(); });
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#020912'; ctx.fillRect(0,0,W,H);
+
+    // Lung outline
+    const lx = 80, ly = 30, lw = 140, lh = H-60;
+    ctx.beginPath();
+    ctx.moveTo(lx+lw/2, ly);
+    ctx.bezierCurveTo(lx+lw, ly, lx+lw, ly+lh*0.3, lx+lw, ly+lh*0.5);
+    ctx.bezierCurveTo(lx+lw, ly+lh*0.85, lx+lw/2+20, ly+lh, lx+lw/2, ly+lh);
+    ctx.bezierCurveTo(lx+lw/2-20, ly+lh, lx, ly+lh*0.85, lx, ly+lh*0.5);
+    ctx.bezierCurveTo(lx, ly+lh*0.3, lx, ly, lx+lw/2, ly);
+    ctx.fillStyle='rgba(255,150,100,0.06)';
+    ctx.fill();
+    ctx.strokeStyle='rgba(255,150,100,0.3)'; ctx.lineWidth=2; ctx.stroke();
+
+    // Zone fills
+    zones.forEach((z,i) => {
+      const zy = ly + i*(lh/3);
+      const alpha = hoverZone===i ? 0.15 : 0.05;
+      ctx.fillStyle = z.col + Math.round(alpha*255).toString(16).padStart(2,'0');
+      ctx.fillRect(lx, zy, lw, lh/3);
+      ctx.font=`${hoverZone===i?'bold ':''}'11px "Source Code Pro",monospace`;
+      ctx.fillStyle=z.col;
+      ctx.fillText(z.vq, lx+5, zy+20);
+    });
+
+    // Zone labels and bars
+    zones.forEach((z,i) => {
+      const zy = ly+i*lh/3+lh/6;
+      // V bar
+      const vqVal = i===0?3:i===1?1:0.6;
+      const vRel = Math.min(vqVal,2)/2;
+      const qRel = Math.min(1/vqVal,1);
+      const barX = lx+lw+30;
+
+      ctx.fillStyle='rgba(79,195,247,0.7)';
+      ctx.fillRect(barX, zy-15, vRel*100, 12);
+      ctx.fillStyle='rgba(239,83,80,0.7)';
+      ctx.fillRect(barX, zy+3, qRel*100, 12);
+
+      ctx.font='9px "Source Code Pro",monospace';
+      ctx.fillStyle='rgba(79,195,247,0.8)'; ctx.fillText('V̇', barX+vRel*100+3, zy-5);
+      ctx.fillStyle='rgba(239,83,80,0.8)'; ctx.fillText('Q̇', barX+qRel*100+3, zy+13);
+
+      // Zone label
+      ctx.font='11px "Source Code Pro",monospace';
+      ctx.fillStyle=z.col;
+      ctx.fillText(z.name, barX+120, zy);
+
+      if (hoverZone===i) {
+        ctx.font='10px "Source Code Pro",monospace';
+        ctx.fillStyle='rgba(255,255,255,0.7)';
+        z.desc.split('\n').forEach((line,li) => ctx.fillText(line, barX+120, zy+16+li*14));
+      }
+    });
+
+    // Gravity arrow
+    ctx.beginPath();
+    ctx.moveTo(lx-25, ly+20); ctx.lineTo(lx-25, ly+lh-20);
+    ctx.strokeStyle='rgba(255,183,3,0.5)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.font='9px "Source Code Pro",monospace';
+    ctx.fillStyle='rgba(255,183,3,0.7)';
+    ctx.save(); ctx.translate(lx-35, ly+lh/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('GRAVIDADE', -40, 0); ctx.restore();
+
+    // Legend
+    ctx.font='10px "Source Code Pro",monospace';
+    ctx.fillStyle='rgba(79,195,247,0.8)'; ctx.fillText('■ Ventilação (V̇)', lx+lw+30, H-30);
+    ctx.fillStyle='rgba(239,83,80,0.8)'; ctx.fillText('■ Perfusão (Q̇)', lx+lw+160, H-30);
+  }
+  draw();
+})();
+
+// ─── TABS ─────────────────────────────────────
+function openTab(evt, id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  evt.target.classList.add('active');
+}
+
+// ─── QUIZ ─────────────────────────────────────
+const questions = [
+  {
+    q: 'Paciente com gasometria: pH 7.28, PaCO₂ 55 mmHg, HCO₃⁻ 26 mEq/L, PaO₂ 62 mmHg. Qual o distúrbio primário?',
+    opts: ['Acidose Metabólica', 'Acidose Respiratória', 'Alcalose Respiratória', 'Alcalose Metabólica'],
+    ans: 1,
+    explain: 'pH ↓ = acidemia. PaCO₂ ↑ = o problema é respiratório (retenção de CO₂). HCO₃⁻ levemente elevado indica compensação renal (adequada para crônico). PaO₂ 62 = hipoxemia moderada.'
+  },
+  {
+    q: 'O que desvia a curva de dissociação da Hb para a DIREITA, facilitando liberação de O₂ nos tecidos?',
+    opts: ['pH alto (alcalose)', 'Temperatura baixa', 'PCO₂ elevado (hipercapnia)', 'HbF (hemoglobina fetal)'],
+    ans: 2,
+    explain: 'Efeito Bohr: PCO₂ ↑ → pH ↓ → desvio direita → ↓ afinidade da Hb pelo O₂ → liberação nos tecidos. Perfeito nos capilares onde CO₂ é alto!'
+  },
+  {
+    q: 'Um paciente com SDRA (ARDS) grave tem PaO₂ de 48 mmHg com FiO₂ de 100%. O índice de Horowitz (P/F ratio) é?',
+    opts: ['240 (leve)', '48 (grave)', '100 (moderado)', '200 (limítrofe)'],
+    ans: 1,
+    explain: 'P/F = PaO₂/FiO₂ = 48/1.0 = 48 mmHg. Critério de Berlim: P/F < 100 = SDRA GRAVE. Esta hipoxemia refratária ao O₂ indica shunt intrapulmonar maciço.'
+  },
+  {
+    q: 'Qual é a principal forma de transporte de CO₂ no sangue?',
+    opts: ['Dissolvido no plasma', 'Carbamino-hemoglobina', 'Bicarbonato (HCO₃⁻)', 'Ligado à albumina'],
+    ans: 2,
+    explain: 'HCO₃⁻ = ~70% do transporte de CO₂. CO₂ + H₂O → H₂CO₃ → H⁺ + HCO₃⁻ (catalisado pela anidrase carbônica). Carbamino-Hb = 23%; dissolvido = 7%.'
+  },
+  {
+    q: 'Na Zona 1 de West (ápice pulmonar), qual é a relação pressória dominante?',
+    opts: ['Pa > Pv > PA', 'PA > Pa > Pv', 'Pa > PA > Pv', 'Pv > PA > Pa'],
+    ans: 1,
+    explain: 'Zona 1: Pressão Alveolar (PA) > Pressão arterial pulmonar (Pa) > Pressão venosa (Pv). O alvéolo comprime o capilar → pouca perfusão → espaço morto alveolar. Ocorre mais com PEEP alto ou hipovolemia.'
+  },
+  {
+    q: 'A equação do gás alveolar mostra PAO₂ = 100 mmHg em ar ambiente. Se FiO₂ sobe para 100%, a PAO₂ (nível do mar, PaCO₂=40) será aproximadamente?',
+    opts: ['200 mmHg', '400 mmHg', '663 mmHg', '760 mmHg'],
+    ans: 2,
+    explain: 'PAO₂ = (760-47)×1.0 - 40/0.8 = 713 - 50 = 663 mmHg. Isso é a base da prova de desnitrogenação antes da intubação (pré-oxigenação) — enche os pulmões de O₂ puro, aumentando a reserva.'
+  },
+];
+
+let qi = 0, score = 0, answered = false;
+
+function loadQuestion() {
+  const q = questions[qi];
+  document.getElementById('quiz-q').textContent = q.q;
+  document.getElementById('quiz-feedback').innerHTML = '';
+  document.getElementById('btn-next').style.display = 'none';
+  answered = false;
+  const opts = document.getElementById('quiz-options');
+  opts.innerHTML = '';
+  q.opts.forEach((o,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-btn';
+    btn.textContent = o;
+    btn.onclick = () => answer(i, btn);
+    opts.appendChild(btn);
+  });
+  document.getElementById('quiz-score').textContent = 'Questão '+(qi+1)+'/'+questions.length+' | Acertos: '+score;
+}
+
+function answer(i, btn) {
+  if (answered) return;
+  answered = true;
+  const q = questions[qi];
+  const btns = document.querySelectorAll('#quiz-options .quiz-btn');
+  btns.forEach((b,j) => {
+    b.classList.add(j===q.ans?'correct':'wrong');
+    b.disabled = true;
+  });
+  const correct = i===q.ans;
+  if (correct) score++;
+  document.getElementById('quiz-feedback').innerHTML =
+    (correct?'<span style="color:var(--accent3)">✓ Correto!</span> ':'<span style="color:var(--accent2)">✗ Incorreto.</span> ') +
+    '<br><span style="color:var(--muted)">'+q.explain+'</span>';
+  document.getElementById('btn-next').style.display = 'inline-block';
+  document.getElementById('quiz-score').textContent = 'Questão '+(qi+1)+'/'+questions.length+' | Acertos: '+score;
+}
+
+function nextQuestion() {
+  qi = (qi+1) % questions.length;
+  if (qi===0) score=0;
+  loadQuestion();
+}
+
+loadQuestion();
+
+// Animate readouts
+(function(){
+  const t0 = Date.now();
+  function updateReadouts() {
+    const t = (Date.now()-t0)/1000;
+    const phase = Math.sin(t*0.3);
+    document.getElementById('ro-fr').textContent = Math.round(14+2*phase);
+    document.getElementById('ro-tv').textContent = Math.round(500+50*phase);
+    document.getElementById('ro-ve').textContent = ((14+2*phase)*(500+50*phase)/1000).toFixed(1);
+    setTimeout(updateReadouts, 200);
+  }
+  updateReadouts();
+})();
+</script>
+</body>
+</html>
