@@ -1,0 +1,2193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiz · Anatomia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+:root {
+  --bg:        #0b0f1a;
+  --surface:   #111827;
+  --card:      #151e2e;
+  --border:    #1e2d42;
+  --border2:   #253044;
+  --primary:   #4f9cf9;
+  --primary2:  #2563eb;
+  --accent:    #f87171;
+  --gold:      #f59e0b;
+  --emerald:   #34d399;
+  --rose:      #fb7185;
+  --text:      #e2e8f0;
+  --muted:     #64748b;
+  --muted2:    #94a3b8;
+  --correct-bg:#0a2e1f;
+  --correct-b: #34d399;
+  --wrong-bg:  #2e0a14;
+  --wrong-b:   #fb7185;
+  --just-bg:   #0d1b2e;
+  --just-b:    #4f9cf9;
+  --radius:    14px;
+  --trans:     all .28s cubic-bezier(.4,0,.2,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.5rem 1rem 3rem;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND MESH ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(79,156,249,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 90%, rgba(248,113,113,.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 40%, rgba(52,211,153,.04) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  width:100%;max-width:820px;
+  text-align:center;
+  margin-bottom:2rem;
+  position:relative;z-index:1;
+}
+.header-badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  border-radius:50px;
+  padding:.3rem .9rem;
+  font-size:.75rem;font-weight:500;
+  color:var(--primary);
+  letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.header h1{
+  font-family:'Crimson Pro',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:700;
+  line-height:1.2;
+  color:#f1f5f9;
+  letter-spacing:-.02em;
+}
+.header h1 span{color:var(--primary);}
+.header p{
+  color:var(--muted2);
+  font-size:.92rem;
+  margin-top:.5rem;
+}
+
+/* ── QUIZ CONTAINER ── */
+#quiz-container{
+  width:100%;max-width:820px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:2.2rem 2rem;
+  position:relative;z-index:1;
+  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 1px 0 rgba(255,255,255,.04) inset;
+}
+
+/* top accent line */
+#quiz-container::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary2),var(--primary),var(--accent));
+  border-radius:22px 22px 0 0;
+}
+
+/* ── PROGRESS ── */
+.progress-wrapper{
+  display:flex;align-items:center;gap:.9rem;
+  margin-bottom:1.8rem;
+}
+.progress-track{
+  flex:1;height:6px;
+  background:var(--border2);
+  border-radius:50px;overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary2),var(--primary));
+  border-radius:50px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 10px rgba(79,156,249,.5);
+}
+.progress-label{
+  font-size:.78rem;font-weight:500;
+  color:var(--muted2);
+  white-space:nowrap;min-width:60px;text-align:right;
+  font-family:'DM Mono',monospace;
+}
+
+/* ── QUESTION CARD ── */
+.question-card{
+  display:none;flex-direction:column;align-items:stretch;
+  animation:slideIn .38s cubic-bezier(.4,0,.2,1);
+}
+.question-card.active{display:flex;}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.q-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.4rem;
+}
+.q-num{
+  font-family:'DM Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  color:var(--muted);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.q-type-badge{
+  font-size:.68rem;font-weight:600;
+  padding:.2rem .6rem;border-radius:50px;
+  letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-multi{background:rgba(79,156,249,.15);color:var(--primary);border:1px solid rgba(79,156,249,.3);}
+.badge-tf{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+.badge-fill{background:rgba(52,211,153,.12);color:var(--emerald);border:1px solid rgba(52,211,153,.3);}
+
+.question-text{
+  font-family:'Crimson Pro',serif;
+  font-size:1.28rem;font-weight:400;
+  line-height:1.6;
+  color:#f1f5f9;
+  margin-bottom:1.6rem;
+  padding-bottom:1.4rem;
+  border-bottom:1px solid var(--border);
+}
+
+/* ── OPTIONS ── */
+.options-container{display:flex;flex-direction:column;gap:.65rem;}
+.tf-options-container{display:flex;gap:.75rem;justify-content:center;}
+.fill-input-container{
+  display:flex;flex-direction:column;gap:.5rem;
+  margin-bottom:1rem;
+}
+.fill-input{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  color:var(--text);
+  font-size:.95rem;
+  font-family:'DM Sans',sans-serif;
+  width:100%;
+  transition:var(--trans);
+}
+.fill-input:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(79,156,249,.15);
+}
+.fill-input.disabled{
+  background:rgba(30,45,66,.5);
+  border-color:var(--border2);
+  color:var(--muted2);
+  cursor:not-allowed;
+}
+
+.mc-option{
+  display:flex;align-items:center;gap:.85rem;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:.9rem 1.1rem;
+  cursor:pointer;
+  transition:var(--trans);
+  color:var(--text);
+  font-size:.95rem;
+  text-align:left;
+  position:relative;overflow:hidden;
+}
+.mc-option::after{
+  content:'';position:absolute;inset:0;
+  background:var(--primary);
+  opacity:0;transition:opacity .2s;
+}
+.mc-option:hover:not(.disabled){
+  border-color:var(--primary);
+  transform:translateX(4px);
+  box-shadow:0 4px 16px rgba(79,156,249,.15);
+}
+.mc-option.selected{
+  border-color:var(--primary);
+  background:rgba(79,156,249,.08);
+}
+
+.tf-option{
+  flex:1;max-width:200px;
+  padding:1rem 1.5rem;
+  border-radius:var(--radius);
+  font-size:1rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.tf-option.tf-v{
+  background:rgba(52,211,153,.08);
+  border:1.5px solid rgba(52,211,153,.25);
+  color:var(--emerald);
+}
+.tf-option.tf-f{
+  background:rgba(251,113,133,.08);
+  border:1.5px solid rgba(251,113,133,.25);
+  color:var(--rose);
+}
+.tf-option:hover:not(.disabled){transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25);}
+.tf-option.selected{box-shadow:0 0 0 3px rgba(79,156,249,.4);}
+.tf-option.tf-v.selected{background:rgba(52,211,153,.18);border-color:var(--emerald);}
+.tf-option.tf-f.selected{background:rgba(251,113,133,.18);border-color:var(--rose);}
+
+/* correct / incorrect highlights */
+.mc-option.correct,.tf-option.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.mc-option.incorrect,.tf-option.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.fill-input.correct{
+  background:rgba(52,211,153,.1) !important;
+  border-color:var(--emerald) !important;
+  color:var(--emerald);
+}
+.fill-input.incorrect{
+  background:rgba(251,113,133,.1) !important;
+  border-color:var(--rose) !important;
+  color:var(--rose);
+}
+.mc-option.disabled,.tf-option.disabled,.fill-input.disabled{cursor:not-allowed;}
+
+.option-indicator{
+  min-width:28px;height:28px;
+  border-radius:8px;
+  background:var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;
+  font-size:.78rem;font-weight:600;
+  color:var(--muted2);
+  flex-shrink:0;
+  transition:var(--trans);
+}
+.mc-option.selected .option-indicator{background:var(--primary);color:#fff;}
+.mc-option.correct  .option-indicator{background:var(--emerald);color:#0a2e1f;}
+.mc-option.incorrect .option-indicator{background:var(--rose);color:#2e0a14;}
+
+/* ── FEEDBACK BOX ── */
+.feedback{
+  margin-top:1.4rem;
+  border-radius:var(--radius);
+  overflow:hidden;
+  display:none;
+  animation:slideIn .35s ease;
+}
+.feedback.correct{display:block;}
+.feedback.incorrect{display:block;}
+
+.feedback-verdict{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.75rem 1.1rem;
+  font-weight:600;font-size:.95rem;
+}
+.feedback.correct .feedback-verdict{
+  background:rgba(52,211,153,.15);
+  color:var(--emerald);
+  border-left:4px solid var(--emerald);
+}
+.feedback.incorrect .feedback-verdict{
+  background:rgba(251,113,133,.15);
+  color:var(--rose);
+  border-left:4px solid var(--rose);
+}
+
+/* ── JUSTIFICATION PANEL ── */
+.justification{
+  background:var(--just-bg);
+  border:1px solid rgba(79,156,249,.18);
+  border-top:none;
+  padding:1.1rem 1.3rem;
+}
+.just-label{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--primary);
+  margin-bottom:.65rem;
+  opacity:.8;
+}
+.just-label i{font-size:.8rem;}
+.just-text{
+  font-size:.9rem;
+  line-height:1.75;
+  color:#b8cce4;
+}
+.just-text strong{color:var(--primary);font-weight:600;}
+.just-text em{color:var(--gold);font-style:normal;}
+.just-text .correct-list{
+  margin-top:.6rem;padding-left:1rem;
+  list-style:none;
+}
+.just-text .correct-list li{
+  padding:.25rem 0;
+  padding-left:1.1rem;
+  position:relative;
+  color:#c7ddf4;
+}
+.just-text .correct-list li::before{
+  content:'✦';
+  position:absolute;left:0;
+  color:var(--emerald);font-size:.7rem;
+  top:.35rem;
+}
+.just-text .tag{
+  display:inline-block;
+  background:rgba(79,156,249,.12);
+  border:1px solid rgba(79,156,249,.25);
+  color:var(--primary);
+  border-radius:4px;
+  padding:.05rem .35rem;
+  font-family:'DM Mono',monospace;
+  font-size:.8em;
+}
+
+/* ── NAVIGATION BUTTONS ── */
+#navigation-buttons{
+  display:flex;justify-content:center;
+  gap:.75rem;flex-wrap:wrap;
+  margin-top:1.8rem;
+}
+.nav-btn{
+  display:none;align-items:center;gap:.5rem;
+  padding:.7rem 1.5rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+  border:none;
+}
+.nav-btn.show{display:flex;}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.nav-btn:hover:not(:disabled){transform:translateY(-2px);}
+
+#prev-btn{
+  background:transparent;
+  color:var(--primary);
+  border:1.5px solid rgba(79,156,249,.4);
+}
+#prev-btn:hover:not(:disabled){background:rgba(79,156,249,.08);}
+#answer-btn{
+  background:linear-gradient(135deg,var(--primary2),var(--primary));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(79,156,249,.35);
+}
+#answer-btn:hover:not(:disabled){box-shadow:0 6px 24px rgba(79,156,249,.5);}
+#next-btn{
+  background:var(--surface);
+  color:var(--text);
+  border:1.5px solid var(--border);
+}
+#next-btn:hover:not(:disabled){border-color:var(--primary);}
+#submit-btn{
+  background:linear-gradient(135deg,#7c3aed,var(--primary2));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(124,58,237,.35);
+}
+
+/* ── RESULTS ── */
+#results-container,#report-container{
+  display:none;flex-direction:column;align-items:center;
+}
+.score-ring-wrap{position:relative;margin:1rem auto 1.5rem;}
+.score-ring-wrap svg{display:block;}
+.score-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.score-pct{
+  font-family:'Crimson Pro',serif;
+  font-size:2.8rem;font-weight:700;
+  color:var(--primary);line-height:1;
+}
+.score-label{font-size:.75rem;color:var(--muted2);margin-top:.15rem;}
+.score-stat{
+  font-size:1.1rem;color:var(--muted2);margin-bottom:.5rem;
+}
+.score-stat strong{color:var(--text);}
+.feedback-msg{
+  font-family:'Crimson Pro',serif;
+  font-size:1.4rem;font-weight:400;
+  color:#e2e8f0;
+  margin-bottom:1.5rem;text-align:center;
+}
+.action-buttons{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;}
+.action-btn{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.7rem 1.4rem;
+  border-radius:50px;
+  font-size:.9rem;font-weight:600;
+  cursor:pointer;border:none;
+  transition:var(--trans);
+  font-family:'DM Sans',sans-serif;
+}
+.action-btn:hover{transform:translateY(-2px);}
+.btn-report{background:var(--surface);color:var(--text);border:1.5px solid var(--border);}
+.btn-retry{background:linear-gradient(135deg,var(--primary2),var(--primary));color:#fff;box-shadow:0 4px 16px rgba(79,156,249,.3);}
+
+/* ── REPORT ── */
+.report-item{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.1rem 1.3rem;
+  margin-bottom:.8rem;
+  text-align:left;
+  border-left:4px solid;
+}
+.report-item.correct{border-left-color:var(--emerald);}
+.report-item.incorrect{border-left-color:var(--rose);}
+.report-item p{font-size:.88rem;line-height:1.6;color:var(--muted2);}
+.report-item p strong{color:var(--text);}
+.report-item .ri-q{font-size:.95rem;color:var(--text);margin-bottom:.4rem;font-weight:500;}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:2rem;
+  font-size:.75rem;
+  color:var(--muted);
+  text-align:center;
+  position:relative;z-index:1;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #quiz-container{padding:1.4rem 1rem;}
+  .question-text{font-size:1.1rem;}
+  .tf-options-container{flex-direction:column;align-items:stretch;}
+  .tf-option{max-width:none;}
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><i class="fas fa-atom"></i> Medicina · Anatomia</div>
+  <h1>Relações vasculares</h1>
+  <p>Quiz de alta performance com justificativas</p>
+</div>
+
+<div id="quiz-container">
+  <div class="progress-wrapper">
+    <div class="progress-track"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 / 0</div>
+  </div>
+
+  <div id="quiz-content"></div>
+
+  <div id="navigation-buttons">
+    <button id="prev-btn"   class="nav-btn"><i class="fas fa-arrow-left"></i> Voltar</button>
+    <button id="answer-btn" class="nav-btn show">Responder <i class="fas fa-check"></i></button>
+    <button id="next-btn"   class="nav-btn">Próximo <i class="fas fa-arrow-right"></i></button>
+    <button id="submit-btn" class="nav-btn"><i class="fas fa-flag-checkered"></i> Ver Resultados</button>
+  </div>
+
+  <div id="results-container">
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="65" fill="none" stroke="#1e2d42" stroke-width="12"/>
+        <circle id="score-ring" cx="80" cy="80" r="65" fill="none"
+                stroke="url(#ringGrad)" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="408.4"
+                stroke-dashoffset="408.4"
+                transform="rotate(-90 80 80)"
+                style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#4f9cf9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-center">
+        <div class="score-pct" id="pct-display">0%</div>
+        <div class="score-label">acertos</div>
+      </div>
+    </div>
+    <div class="score-stat" id="score-display"></div>
+    <div class="feedback-msg" id="feedback-message"></div>
+    <div class="action-buttons">
+      <button id="show-report-btn" class="action-btn btn-report"><i class="fas fa-list-alt"></i> Ver Correção</button>
+      <button id="retry-btn"       class="action-btn btn-retry"><i class="fas fa-redo"></i> Tentar Novamente</button>
+    </div>
+  </div>
+
+  <div id="report-container">
+    <h3 style="color:var(--primary);margin-bottom:1.2rem;font-family:'Crimson Pro',serif;font-size:1.4rem;">
+      <i class="fas fa-clipboard-list"></i> Correção Detalhada
+    </h3>
+    <div id="report-list" style="width:100%"></div>
+    <div class="action-buttons" style="margin-top:1rem;">
+      <button id="back-btn" class="action-btn btn-report"><i class="fas fa-arrow-left"></i> Voltar ao Resultado</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Relações vasculares· Quiz gerado para estudo intensivo</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+
+/* ══════════════════════════════════════════════
+   BANCO DE QUESTÕES COM JUSTIFICATIVAS (coloque aqui seu JSON)
+══════════════════════════════════════════════ */
+const quizData = [
+  {
+    "question": "Qual estrutura se relaciona com a face POSTERIOR do coração?",
+    "options": [
+      "Esterno e cartilagens costais 3ª–6ª",
+      "Esôfago, aorta torácica descendente, veias ázigos/hemiázigos e coluna T5–T8",
+      "Diafragma",
+      "VCS, VCI e átrio direito"
+    ],
+    "answer": ["Esôfago, aorta torácica descendente, veias ázigos/hemiázigos e coluna T5–T8"],
+    "type": "multi",
+    "justification": "Relações do coração:<ul><li><strong>Anterior (esternal):</strong> esterno, cartilagens costais 3ª–6ª, pericárdio fibroso, gordura pericárdica</li><li><strong>Posterior:</strong> esôfago, aorta torácica descendente, veias ázigos/hemiázigos, coluna vertebral T5–T8</li><li><strong>Superior:</strong> grandes vasos (aorta ascendente, tronco pulmonar, VCS, veias pulmonares)</li><li><strong>Inferior (diafragmática):</strong> diafragma — principalmente ventrículo direito e parte do VE</li><li><strong>Direita:</strong> VCS, VCI, átrio direito, nervo frênico direito</li><li><strong>Esquerda:</strong> aorta ascendente, artéria pulmonar, apêndice auricular esquerdo, nervo frênico esquerdo</li></ul>"
+  },
+  {
+    "question": "Qual estrutura se relaciona com a face ANTERIOR (esternal) do coração?",
+    "options": [
+      "Esôfago e aorta torácica descendente",
+      "Esterno, cartilagens costais 3ª–6ª, pericárdio fibroso e gordura pericárdica",
+      "Diafragma e ventrículo direito",
+      "VCS, VCI e nervo frênico direito"
+    ],
+    "answer": ["Esterno, cartilagens costais 3ª–6ª, pericárdio fibroso e gordura pericárdica"],
+    "type": "multi",
+    "justification": "A face <strong>anterior (esternal)</strong> do coração relaciona-se com o <strong>esterno, cartilagens costais 3ª–6ª, pericárdio fibroso e gordura pericárdica</strong>.<br><br>Demais relações: Posterior = esôfago, aorta torácica descendente, ázigos, coluna T5–T8. Superior = grandes vasos. Inferior = diafragma. Direita = VCS, VCI, átrio direito, nervo frênico direito. Esquerda = aorta ascendente, a. pulmonar, apêndice auricular esquerdo, nervo frênico esquerdo."
+  },
+  {
+    "question": "O que se relaciona com a face DIREITA do coração?",
+    "options": [
+      "Aorta ascendente, artéria pulmonar e nervo frênico esquerdo",
+      "VCS, VCI, átrio direito e nervo frênico direito",
+      "Esôfago e veias ázigos",
+      "Diafragma e ventrículo direito"
+    ],
+    "answer": ["VCS, VCI, átrio direito e nervo frênico direito"],
+    "type": "multi",
+    "justification": "A face <strong>direita</strong> do coração relaciona-se com a <strong>VCS (veia cava superior), VCI (veia cava inferior), átrio direito e nervo frênico direito</strong>.<br><br>A face <em>esquerda</em> relaciona-se com a aorta ascendente, artéria pulmonar, apêndice auricular esquerdo e nervo frênico esquerdo."
+  },
+  {
+    "question": "Em relação à aorta ASCENDENTE, qual estrutura se situa à sua DIREITA?",
+    "options": [
+      "Tronco pulmonar",
+      "Átrio esquerdo",
+      "Veia cava superior (VCS)",
+      "Pericárdio e esterno"
+    ],
+    "answer": ["Veia cava superior (VCS)"],
+    "type": "multi",
+    "justification": "Relações da <strong>aorta ascendente</strong> (origem: valva aórtica / 3ª cartilagem costal esquerda; comprimento ~5 cm):<ul><li><strong>Anterior:</strong> tronco pulmonar (inicialmente), depois pericárdio, gordura pericárdica, esterno</li><li><strong>Posterior:</strong> átrio esquerdo, veia pulmonar direita superior</li><li><strong>Direita:</strong> veia cava superior (VCS)</li><li><strong>Esquerda:</strong> tronco pulmonar</li></ul>"
+  },
+  {
+    "question": "O que se relaciona com a face POSTERIOR da aorta ascendente?",
+    "options": [
+      "Tronco pulmonar e esterno",
+      "Veia cava superior (VCS)",
+      "Átrio esquerdo e veia pulmonar direita superior",
+      "Apêndice auricular esquerdo"
+    ],
+    "answer": ["Átrio esquerdo e veia pulmonar direita superior"],
+    "type": "multi",
+    "justification": "A face <strong>posterior</strong> da aorta ascendente relaciona-se com o <strong>átrio esquerdo e a veia pulmonar direita superior</strong>.<br><br>Demais relações: Anterior = tronco pulmonar, pericárdio, esterno. Direita = VCS. Esquerda = tronco pulmonar."
+  },
+  {
+    "question": "O que se relaciona com a face ANTERIOR/SUPERIOR do arco aórtico?",
+    "options": [
+      "Traqueia, esôfago e nervo laríngeo recorrente esquerdo",
+      "Artéria pulmonar principal e brônquio esquerdo",
+      "Veias braquiocefálicas, timo/gordura tímica e esterno",
+      "Nervo vago esquerdo e pleura mediastinal esquerda"
+    ],
+    "answer": ["Veias braquiocefálicas, timo/gordura tímica e esterno"],
+    "type": "multi",
+    "justification": "Relações do <strong>arco aórtico</strong> (de T4 anteriormente a T4 posteriormente):<ul><li><strong>Anterior/Superior:</strong> veias braquiocefálicas (a esquerda cruza anteriormente), timo/gordura tímica, esterno</li><li><strong>Posterior/Inferior:</strong> traqueia, esôfago, nervo laríngeo recorrente esquerdo, ducto torácico, ligamento arterioso</li><li><strong>Inferior:</strong> artéria pulmonar principal, bifurcação da a. pulmonar, brônquio principal esquerdo</li><li><strong>Esquerda (lateral):</strong> nervo vago esquerdo, nervo frênico esquerdo, pleura mediastinal esquerda</li></ul>"
+  },
+  {
+    "question": "O que se relaciona com a face POSTERIOR/INFERIOR do arco aórtico?",
+    "options": [
+      "Veias braquiocefálicas, timo e esterno",
+      "Traqueia, esôfago, nervo laríngeo recorrente esquerdo, ducto torácico e ligamento arterioso",
+      "Artéria pulmonar e brônquio principal esquerdo",
+      "Nervo vago e pleura mediastinal esquerda"
+    ],
+    "answer": ["Traqueia, esôfago, nervo laríngeo recorrente esquerdo, ducto torácico e ligamento arterioso"],
+    "type": "multi",
+    "justification": "A face <strong>posterior/inferior</strong> do arco aórtico relaciona-se com a <strong>traqueia, esôfago, nervo laríngeo recorrente esquerdo, ducto torácico e canal arterial (ligamento arterioso)</strong>.<br><br>É exatamente por contornar o ligamento arterioso que o nervo laríngeo recorrente esquerdo é vulnerável a tumores mediastinais → disfonia."
+  },
+  {
+    "question": "O que se relaciona com a face INFERIOR do arco aórtico?",
+    "options": [
+      "Traqueia e esôfago",
+      "Veias braquiocefálicas e timo",
+      "Artéria pulmonar principal, bifurcação da artéria pulmonar e brônquio principal esquerdo",
+      "Nervo vago e pleura mediastinal esquerda"
+    ],
+    "answer": ["Artéria pulmonar principal, bifurcação da artéria pulmonar e brônquio principal esquerdo"],
+    "type": "multi",
+    "justification": "A face <strong>inferior</strong> do arco aórtico relaciona-se com a <strong>artéria pulmonar principal, bifurcação da artéria pulmonar e brônquio principal esquerdo</strong>.<br><br>A face <em>esquerda (lateral)</em> relaciona-se com o nervo vago esquerdo, nervo frênico esquerdo e pleura mediastinal esquerda."
+  },
+  {
+    "question": "O que se relaciona com a face DIREITA da aorta torácica DESCENDENTE?",
+    "options": [
+      "Pleura mediastinal esquerda e pulmão esquerdo",
+      "Coluna vertebral T5–T12 e veias hemiázigos",
+      "Veia ázigos, ducto torácico e esôfago (parte superior)",
+      "Raiz do pulmão esquerdo e pericárdio"
+    ],
+    "answer": ["Veia ázigos, ducto torácico e esôfago (parte superior)"],
+    "type": "multi",
+    "justification": "Relações da <strong>aorta torácica descendente</strong> (T4–T12, hiato aórtico):<ul><li><strong>Anterior (superior):</strong> raiz do pulmão esquerdo, pericárdio, esôfago (cruza à frente na porção inferior)</li><li><strong>Posterior:</strong> coluna vertebral T5–T12, veias hemiázigos e hemiázigos acessória</li><li><strong>Direita:</strong> veia ázigos, ducto torácico, esôfago (parte superior)</li><li><strong>Esquerda:</strong> pleura mediastinal esquerda, pulmão esquerdo</li></ul>"
+  },
+  {
+    "question": "O que se relaciona com a face ANTERIOR da aorta ABDOMINAL?",
+    "options": [
+      "Corpos vertebrais L1–L4, discos intervertebrais e veias lombares",
+      "VCI, cisterna do quilo e ducto torácico",
+      "Veia hemiázigos e ureter esquerdo",
+      "Plexo celíaco, veia renal esquerda, pâncreas, veia esplênica, duodeno (3ª porção), raiz do mesentério e alças de jejuno-íleo"
+    ],
+    "answer": ["Plexo celíaco, veia renal esquerda, pâncreas, veia esplênica, duodeno (3ª porção), raiz do mesentério e alças de jejuno-íleo"],
+    "type": "multi",
+    "justification": "Relações da <strong>aorta abdominal</strong> (T12–L4):<ul><li><strong>Anterior:</strong> plexo celíaco (L1), veia renal esquerda (cruza anteriormente), pâncreas (corpo/cauda), veia esplênica, duodeno (3ª porção), raiz do mesentério, alças de jejuno-íleo</li><li><strong>Posterior:</strong> corpos vertebrais L1–L4, discos intervertebrais, veias lombares, pilar diafragmático esquerdo (nível T12)</li><li><strong>Direita:</strong> VCI, cisterna do quilo, ducto torácico (início)</li><li><strong>Esquerda:</strong> veia hemiázigos (superior), ureter esquerdo (inferior)</li></ul>"
+  },
+  {
+    "question": "O que se relaciona com a face DIREITA da aorta abdominal?",
+    "options": [
+      "Veia renal esquerda e pâncreas",
+      "Corpos vertebrais L1–L4 e veias lombares",
+      "VCI (veia cava inferior), cisterna do quilo e ducto torácico",
+      "Ureter esquerdo e veia hemiázigos"
+    ],
+    "answer": ["VCI (veia cava inferior), cisterna do quilo e ducto torácico"],
+    "type": "multi",
+    "justification": "A face <strong>direita</strong> da aorta abdominal relaciona-se com a <strong>VCI (veia cava inferior), cisterna do quilo e ducto torácico (início)</strong>.<br><br>A face <em>esquerda</em> relaciona-se com a veia hemiázigos (porção superior) e o ureter esquerdo (inferior)."
+  },
+  {
+    "question": "No segmento PROXIMAL da artéria coronária direita (ACD), o que se situa MEDIALMENTE?",
+    "options": [
+      "Átrio direito",
+      "Ventrículo direito",
+      "Tronco pulmonar",
+      "Gordura epicárdica"
+    ],
+    "answer": ["Tronco pulmonar"],
+    "type": "multi",
+    "justification": "Relações do segmento <strong>proximal da ACD</strong>:<ul><li><strong>Anterior:</strong> aurícula direita, gordura epicárdica</li><li><strong>Posterior:</strong> ventrículo direito</li><li><strong>Medial:</strong> tronco pulmonar</li><li><strong>Lateral:</strong> átrio direito</li></ul>No sulco AV direito: Anterior = gordura epicárdica e pericárdio visceral; Posterior = miocárdio VD.<br>Na crux cordis: Anterior = gordura epicárdica; Posterior = seio coronário e AD; Medial = septum IV posterior."
+  },
+  {
+    "question": "Em relação ao tronco de coronária esquerda (TCE), o que se situa ANTERIORMENTE, recobrindo-o?",
+    "options": [
+      "Átrio esquerdo",
+      "Aorta ascendente",
+      "Tronco pulmonar",
+      "Apêndice auricular esquerdo"
+    ],
+    "answer": ["Tronco pulmonar"],
+    "type": "multi",
+    "justification": "Relações do <strong>TCE (Tronco de Coronária Esquerda / LMCA)</strong>:<ul><li><strong>Anterior:</strong> tronco pulmonar — recobre anteriormente o TCE, razão pela qual o TCE é 'protegido' pelo tronco pulmonar no ecocardiograma</li><li><strong>Posterior:</strong> átrio esquerdo</li><li><strong>Direita:</strong> aorta ascendente</li><li><strong>Esquerda:</strong> apêndice auricular esquerdo</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria descendente anterior (DA), o que se situa POSTERIORMENTE?",
+    "options": [
+      "Ventrículo direito",
+      "Gordura epicárdica e pericárdio visceral",
+      "Septum interventricular anterior",
+      "Ventrículo esquerdo"
+    ],
+    "answer": ["Septum interventricular anterior"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria descendente anterior (DA / LAD)</strong>:<ul><li><strong>Anterior:</strong> gordura epicárdica, pericárdio visceral (às vezes mergulha no miocárdio — ponte miocárdica)</li><li><strong>Posterior:</strong> septum interventricular anterior</li><li><strong>Direita:</strong> ventrículo direito</li><li><strong>Esquerda:</strong> ventrículo esquerdo</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria circunflexa (CX), o que a recobre ANTERIORMENTE em seu segmento proximal?",
+    "options": [
+      "Átrio esquerdo",
+      "Seio coronário",
+      "Apêndice auricular esquerdo",
+      "Tronco pulmonar"
+    ],
+    "answer": ["Apêndice auricular esquerdo"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria circunflexa (CX / LCX)</strong> no sulco AV esquerdo:<ul><li><strong>Anterior:</strong> apêndice auricular esquerdo (recobre proximalmente)</li><li><strong>Posterior:</strong> seio coronário (inferior) e átrio esquerdo</li><li><strong>Superior:</strong> átrio esquerdo</li><li><strong>Inferior:</strong> ventrículo esquerdo (onde emite os ramos marginais obtusos)</li></ul>"
+  },
+  {
+    "question": "Na artéria carótida comum (ACC), porção cervical, o que se situa LATERALMENTE?",
+    "options": [
+      "Traqueia e glândula tireoide",
+      "Músculo ECM e platisma",
+      "Processos transversos cervicais e gânglio simpático",
+      "Veia jugular interna e nervo vago"
+    ],
+    "answer": ["Veia jugular interna e nervo vago"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria carótida comum (ACC)</strong> porção cervical:<ul><li><strong>Anterior:</strong> músculo ECM (esternocleidomastóideo), platisma, ramo cervical do nervo facial (VII)</li><li><strong>Posterior:</strong> processos transversos cervicais, músculo longo do pescoço, gânglio cervical simpático, nervo laríngeo recorrente direito (só à direita)</li><li><strong>Medial:</strong> traqueia (direita) / esôfago e traqueia (esquerda), glândula tireoide (lobo lateral)</li><li><strong>Lateral:</strong> veia jugular interna (VJI) e nervo vago (X par) — juntos formam a bainha carotídea</li></ul>"
+  },
+  {
+    "question": "No segmento C4 (cavernoso) da artéria carótida interna, o que se situa LATERALMENTE?",
+    "options": [
+      "Hipófise e seio esfenoidal",
+      "Nervo oculomotor (III) e troclear (IV)",
+      "Nervo abducente (VI)",
+      "Nervo oftálmico (V1)"
+    ],
+    "answer": ["Nervo oftálmico (V1)"],
+    "type": "multi",
+    "justification": "Relações da <strong>ACI no segmento C4 (cavernoso)</strong>, dentro do seio cavernoso:<ul><li><strong>Anterior:</strong> nervo oculomotor (III) e troclear (IV)</li><li><strong>Posterior:</strong> nervo abducente (VI) — único nervo dentro da cavidade do seio</li><li><strong>Medial:</strong> hipófise, seio esfenoidal</li><li><strong>Lateral:</strong> nervo oftálmico (V1) — na parede lateral do seio cavernoso</li></ul>Abaixo de V1, ainda na parede lateral: nervo maxilar (V2)."
+  },
+  {
+    "question": "No segmento C1 (cervical) da artéria carótida interna, o que se situa MEDIALMENTE?",
+    "options": [
+      "Veia jugular interna",
+      "Nervo vago e gânglio cervical superior",
+      "Faringe e tonsilas palatinas",
+      "Carótida externa"
+    ],
+    "answer": ["Faringe e tonsilas palatinas"],
+    "type": "multi",
+    "justification": "Relações da <strong>ACI segmento C1 (cervical)</strong>:<ul><li><strong>Anterior:</strong> carótida externa (inicialmente medial, depois lateral à ACI)</li><li><strong>Posterior:</strong> nervo vago, gânglio cervical superior</li><li><strong>Medial:</strong> faringe, tonsilas palatinas</li><li><strong>Lateral:</strong> veia jugular interna</li></ul>"
+  },
+  {
+    "question": "No segmento C6 (oftálmico) da artéria carótida interna, o que se situa ANTERIORMENTE?",
+    "options": [
+      "Quiasma óptico",
+      "Nervo óptico (II)",
+      "Anel dural proximal",
+      "AComP (comunicante posterior)"
+    ],
+    "answer": ["Nervo óptico (II)"],
+    "type": "multi",
+    "justification": "Relações da <strong>ACI por segmento (Bouthillier)</strong>:<ul><li><strong>C4 (cavernoso):</strong> Anterior = III e IV; Posterior = VI; Medial = hipófise/esfenoidal; Lateral = V1</li><li><strong>C5 (clinoideo):</strong> Anterior = anel dural proximal; Posterior = anel dural distal</li><li><strong>C6 (oftálmico):</strong> Anterior = <strong>nervo óptico (II)</strong></li><li><strong>C7 (comunicante):</strong> Anterior = quiasma óptico; Medial = AComP posterior</li></ul>"
+  },
+  {
+    "question": "No segmento V1 (pré-foraminal) da artéria vertebral, o que se situa ANTERIORMENTE?",
+    "options": [
+      "Processos articulares e articulações unciovertebrais",
+      "Gânglio estrelado e músculo longo do pescoço",
+      "Veia vertebral e músculo escaleno anterior",
+      "Articulações atlantoaxiais"
+    ],
+    "answer": ["Veia vertebral e músculo escaleno anterior"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria vertebral por segmento</strong>:<ul><li><strong>V1 (pré-foraminal — da subclávia ao forame transverso de C6):</strong> Anterior = veia vertebral, músculo escaleno anterior; Posterior = gânglio cervical inferior, músculo longo do pescoço</li><li><strong>V2 (foraminal — C6 a C2):</strong> Anterior = corpos vertebrais, articulações unciovertebrais; Posterior = processos articulares; Lateral = veias vertebrais, plexo simpático perivertebral</li><li><strong>V3 (atlanto-axial — C2 ao forame magno):</strong> Posterior = articulações atlantoaxiais, músculo oblíquo superior da cabeça</li><li><strong>V4 (intradural):</strong> Medial = pirâmides bulbares e oliva; Lateral = raízes do nervo hipoglosso (XII)</li></ul>"
+  },
+  {
+    "question": "No segmento V4 (intradural) da artéria vertebral, o que se situa LATERALMENTE?",
+    "options": [
+      "Pirâmides bulbares e oliva",
+      "Articulações atlantoaxiais",
+      "Raízes do nervo hipoglosso (XII)",
+      "Músculo oblíquo superior da cabeça"
+    ],
+    "answer": ["Raízes do nervo hipoglosso (XII)"],
+    "type": "multi",
+    "justification": "No segmento <strong>V4 (intradural)</strong> da artéria vertebral, após perfurar a dura-máter na fossa posterior:<ul><li><strong>Medial:</strong> pirâmides bulbares, oliva</li><li><strong>Lateral:</strong> raízes do nervo hipoglosso (XII)</li></ul>É neste segmento que a vertebral emite a PICA (artéria cerebelar posteroinferior) e as artérias espinhais anterior e posterior."
+  },
+  {
+    "question": "Em relação à artéria basilar, o que se situa ANTERIORMENTE?",
+    "options": [
+      "Ponte (tronco encefálico) no sulco basilar",
+      "Clivus (porção basilar do occipital) e lâmina quadrilateral do esfenoide",
+      "Nervos VI, VII e VIII",
+      "Cerebelo"
+    ],
+    "answer": ["Clivus (porção basilar do occipital) e lâmina quadrilateral do esfenoide"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria basilar</strong> (~3 cm, nível pontino, fusão das duas vertebrais ao nível do sulco bulbopontino):<ul><li><strong>Anterior:</strong> clivus (porção basilar do osso occipital) e lâmina quadrilateral do esfenoide</li><li><strong>Posterior:</strong> ponte (tronco encefálico), sulco basilar da ponte</li><li><strong>Lateral:</strong> nervos abducente (VI), facial (VII) e vestibulococlear (VIII) emergindo lateralmente à ponte</li></ul>"
+  },
+  {
+    "question": "A artéria subclávia é dividida em 3 partes pelo músculo escaleno anterior. Na 1ª parte, o que se situa ANTERIORMENTE?",
+    "options": [
+      "Plexo braquial e músculo escaleno médio",
+      "Veia subclávia, nervo frênico e artéria torácica interna (origem)",
+      "Cúpula pleural e gânglio estrelado",
+      "1ª costela"
+    ],
+    "answer": ["Veia subclávia, nervo frênico e artéria torácica interna (origem)"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria subclávia por parte</strong>:<ul><li><strong>1ª parte (medial ao escaleno anterior):</strong> Anterior = veia subclávia, nervo frênico, artéria torácica interna (origem); Posterior = cúpula pleural, gânglio estrelado, artéria vertebral (origem); Superior = ducto torácico (esq.) / ducto linfático direito (dir.); Inferior = 1ª costela</li><li><strong>2ª parte (posterior ao escaleno anterior):</strong> Anterior = músculo escaleno anterior, plexo braquial (anterior); Posterior = músculo escaleno médio; Superior = troncos do plexo braquial; Inferior = 1ª costela</li><li><strong>3ª parte (lateral ao escaleno anterior):</strong> Anterior = veia subclávia, clavícula; Posterior = escaleno médio, plexo braquial; Superior = plexo braquial; Inferior = 1ª costela</li></ul>"
+  },
+  {
+    "question": "Na 1ª parte da artéria subclávia, o que se situa POSTERIORMENTE?",
+    "options": [
+      "Veia subclávia e nervo frênico",
+      "Músculo escaleno anterior e plexo braquial",
+      "Cúpula pleural, gânglio estrelado e artéria vertebral",
+      "Veia subclávia e clavícula"
+    ],
+    "answer": ["Cúpula pleural, gânglio estrelado e artéria vertebral"],
+    "type": "multi",
+    "justification": "Na <strong>1ª parte da artéria subclávia</strong> (medial ao músculo escaleno anterior):<ul><li><strong>Anterior:</strong> veia subclávia, nervo frênico, artéria torácica interna (origem)</li><li><strong>Posterior:</strong> cúpula pleural, gânglio estrelado, artéria vertebral (origem)</li></ul>Esta relação posterior explica por que bloqueios do gânglio estrelado podem ser realizados nesta região, e por que a simpatectomia cervical pode afetar a artéria vertebral."
+  },
+  {
+    "question": "Na 1ª parte da artéria axilar (medial ao peitoral menor), o que se situa MEDIALMENTE?",
+    "options": [
+      "Fascículo posterior do plexo braquial",
+      "Fascículo lateral e medial do plexo braquial",
+      "Veia axilar",
+      "Nervo musculocutâneo"
+    ],
+    "answer": ["Veia axilar"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria axilar por parte</strong>:<ul><li><strong>1ª parte (medial ao peitoral menor):</strong> Anterior = veia axilar, peitoral maior; Posterior = fascículo posterior do plexo braquial; Medial = veia axilar; Lateral = fascículos lateral e medial</li><li><strong>2ª parte (posterior ao peitoral menor):</strong> Anterior = peitoral menor e maior; Posterior = fascículo posterior; Medial = fascículo medial; Lateral = fascículo lateral</li><li><strong>3ª parte (lateral ao peitoral menor):</strong> Anterior = pele, fáscia, bíceps; Posterior = nervo radial, nervo axilar; Medial = nervo ulnar, cutâneo medial do antebraço; Lateral = nervo musculocutâneo, tendão bicipital</li></ul>"
+  },
+  {
+    "question": "Na 3ª parte da artéria axilar, o que se situa POSTERIOREMENTE?",
+    "options": [
+      "Veia axilar e peitoral maior",
+      "Fascículo posterior do plexo braquial",
+      "Nervo radial e nervo axilar",
+      "Nervo ulnar e cutâneo medial do antebraço"
+    ],
+    "answer": ["Nervo radial e nervo axilar"],
+    "type": "multi",
+    "justification": "Na <strong>3ª parte da artéria axilar</strong> (lateral ao peitoral menor):<ul><li><strong>Anterior:</strong> pele, fáscia, bíceps braquial</li><li><strong>Posterior:</strong> nervo radial e nervo axilar</li><li><strong>Medial:</strong> nervo ulnar, nervo cutâneo medial do antebraço</li><li><strong>Lateral:</strong> nervo musculocutâneo, tendão bicipital</li></ul>O nervo axilar passa pelo espaço quadrangular com a artéria circunflexa umeral posterior."
+  },
+  {
+    "question": "Na artéria braquial, no terço MÉDIO do braço, onde se posiciona o nervo mediano?",
+    "options": [
+      "Lateral à artéria braquial",
+      "Posterior à artéria braquial",
+      "O nervo mediano cruza anteriormente, passando de lateral para medial",
+      "Medial, acompanhando toda a artéria"
+    ],
+    "answer": ["O nervo mediano cruza anteriormente, passando de lateral para medial"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria braquial</strong> por terço:<ul><li><strong>1/3 superior:</strong> Anterior = pele/fáscia/v. basílica; Posterior = nervo radial; Medial = nervo ulnar e cutâneo medial do antebraço; Lateral = nervo mediano (lateral aqui)</li><li><strong>1/3 médio:</strong> Posterior = nervo radial e tríceps; Medial = nervo ulnar (diverge para o epicôndilo medial); Lateral = nervo mediano (cruza anteriormente de lateral para medial)</li><li><strong>1/3 inferior / fossa cubital:</strong> Anterior = aponeurose bicipital, pele; Posterior = músculo braquial; Medial = nervo mediano; Lateral = tendão do bíceps</li></ul>"
+  },
+  {
+    "question": "Na fossa cubital, o que se situa MEDIALMENTE à artéria braquial?",
+    "options": [
+      "Tendão do bíceps braquial",
+      "Aponeurose bicipital e pele",
+      "Músculo braquial",
+      "Nervo mediano"
+    ],
+    "answer": ["Nervo mediano"],
+    "type": "multi",
+    "justification": "Na <strong>fossa cubital</strong>, relações da artéria braquial:<ul><li><strong>Anterior:</strong> aponeurose bicipital (lacertus fibrosus), pele</li><li><strong>Posterior:</strong> músculo braquial</li><li><strong>Medial:</strong> nervo mediano</li><li><strong>Lateral:</strong> tendão do bíceps braquial</li></ul>É sobre esta artéria que se ausculta os sons de Korotkoff para aferição da pressão arterial."
+  },
+  {
+    "question": "No 1/3 inferior da artéria radial (nível do pulso), o que se situa MEDIALMENTE?",
+    "options": [
+      "Músculo braquiorradial",
+      "Pronador redondo",
+      "Tendão do flexor radial do carpo",
+      "Nervo radial superficial"
+    ],
+    "answer": ["Tendão do flexor radial do carpo"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria radial</strong> por segmento:<ul><li><strong>1/3 superior:</strong> Anterior = músculo braquiorradial (recobre); Posterior = pronador redondo, flexor superficial; Medial = nervo radial superficial</li><li><strong>1/3 médio:</strong> Anterior = braquiorradial; Posterior = pronador redondo, flexores; Medial = nervo radial superficial (acompanha)</li><li><strong>1/3 inferior (pulso) — PALPÁVEL:</strong> Anterior = apenas pele e fáscia; Posterior = pronador quadrado e rádio distal; Medial = tendão do flexor radial do carpo; Lateral = tendão do braquiorradial</li></ul>"
+  },
+  {
+    "question": "No canal de Guyon (nível do pulso), o que se situa MEDIALMENTE à artéria ulnar?",
+    "options": [
+      "Osso pisiforme",
+      "Retináculo flexor",
+      "Nervo ulnar",
+      "Músculo flexor ulnar do carpo"
+    ],
+    "answer": ["Nervo ulnar"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria ulnar no canal de Guyon</strong> (punho):<ul><li><strong>Anterior:</strong> retináculo flexor (ligamento transverso do carpo)</li><li><strong>Posterior:</strong> osso pisiforme</li><li><strong>Medial:</strong> nervo ulnar</li></ul>No terço médio/distal do antebraço: Anterior = flexor superficial dos dedos; Posterior = flexor profundo dos dedos e flexor ulnar do carpo; Medial = nervo ulnar (acompanha constantemente)."
+  },
+  {
+    "question": "No 2/3 distais do antebraço, o que acompanha constantemente a artéria ulnar MEDIALMENTE?",
+    "options": [
+      "Nervo radial superficial",
+      "Músculo pronador redondo",
+      "Nervo ulnar",
+      "Músculo flexor radial do carpo"
+    ],
+    "answer": ["Nervo ulnar"],
+    "type": "multi",
+    "justification": "A <strong>artéria ulnar</strong> tem o <strong>nervo ulnar como acompanhante constante medial</strong> nos 2/3 distais do antebraço. Relações completas:<ul><li><strong>1/3 superior:</strong> Anterior = pronador redondo (cruza anteriormente) e flexor superficial; Posterior = pronador redondo profundo e flexor ulnar do carpo</li><li><strong>2/3 distais:</strong> Anterior = flexor superficial dos dedos; Posterior = flexor profundo, flexor ulnar do carpo; Medial = nervo ulnar (constante)</li><li><strong>Pulso (canal de Guyon):</strong> Anterior = retináculo flexor; Posterior = pisiforme; Medial = nervo ulnar</li></ul>"
+  },
+  {
+    "question": "Em relação ao tronco celíaco, o que se situa ANTERIORMENTE?",
+    "options": [
+      "Aorta abdominal e pilar diafragmático esquerdo",
+      "Veia porta (em formação) e ducto colédoco",
+      "Peritônio parietal posterior e gânglios celíacos",
+      "Fundo do estômago e baço"
+    ],
+    "answer": ["Peritônio parietal posterior e gânglios celíacos"],
+    "type": "multi",
+    "justification": "Relações do <strong>tronco celíaco</strong> (aorta abdominal, T12–L1, ~1–2 cm antes de trifurcar):<ul><li><strong>Anterior:</strong> peritônio parietal posterior, plexo/gânglios celíacos (envolvem o tronco)</li><li><strong>Posterior:</strong> aorta abdominal, pilar diafragmático esquerdo</li><li><strong>Direita:</strong> veia porta (em formação), ducto colédoco</li><li><strong>Esquerda:</strong> fundo do estômago, baço (via artéria esplênica)</li><li><strong>Superior:</strong> crus do diafragma, ligamento arqueado mediano (pode comprimir o TC)</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria mesentérica superior (AMS), o que se situa POSTERIORMENTE, podendo ser comprimido pelo ângulo AMS-aorta?",
+    "options": [
+      "Duodeno (3ª porção)",
+      "Colo do pâncreas e veia esplênica",
+      "Veia renal esquerda e processo uncinado do pâncreas",
+      "Alças do jejuno"
+    ],
+    "answer": ["Veia renal esquerda e processo uncinado do pâncreas"],
+    "type": "multi",
+    "justification": "Relações da <strong>AMS (artéria mesentérica superior)</strong> — origem: aorta abdominal L1:<ul><li><strong>Anterior:</strong> colo do pâncreas, veia esplênica (cruzam anteriormente), veia mesentérica superior</li><li><strong>Posterior:</strong> aorta abdominal, veia renal esquerda (comprimida pelo ângulo AMS-aorta — síndrome de Wilkie/Nutcracker), processo uncinado do pâncreas</li><li><strong>Direita:</strong> duodeno (3ª porção cruza anterior à AMS — pode causar obstrução: síndrome da AMS)</li><li><strong>Esquerda:</strong> veia mesentérica superior, alças do jejuno</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria mesentérica inferior (AMI), o que se situa à sua ESQUERDA?",
+    "options": [
+      "Veia mesentérica inferior",
+      "Aorta abdominal e veia ilíaca comum esquerda",
+      "Ureter esquerdo (que cruza anteriormente à AMI)",
+      "Peritônio parietal posterior"
+    ],
+    "answer": ["Ureter esquerdo (que cruza anteriormente à AMI)"],
+    "type": "multi",
+    "justification": "Relações da <strong>AMI (artéria mesentérica inferior)</strong> — origem: aorta abdominal L3:<ul><li><strong>Anterior:</strong> peritônio parietal posterior, alças do intestino delgado</li><li><strong>Posterior:</strong> aorta abdominal (margem esquerda), veia ilíaca comum esquerda</li><li><strong>Esquerda:</strong> ureter esquerdo (cruza anteriormente à AMI)</li><li><strong>Direita:</strong> veia mesentérica inferior</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria renal DIREITA, o que se situa ANTERIORMENTE?",
+    "options": [
+      "Pilar diafragmático direito e músculo psoas",
+      "Glândula suprarrenal direita",
+      "VCI, ducto colédoco, cabeça do pâncreas e duodeno descendente",
+      "Veia renal esquerda e corpo do pâncreas"
+    ],
+    "answer": ["VCI, ducto colédoco, cabeça do pâncreas e duodeno descendente"],
+    "type": "multi",
+    "justification": "Relações das <strong>artérias renais</strong>:<br><br><strong>Artéria renal DIREITA</strong> (mais longa — cruza a VCI):<ul><li><strong>Anterior:</strong> VCI, ducto colédoco, cabeça do pâncreas, duodeno descendente</li><li><strong>Posterior:</strong> pilar diafragmático direito, músculo psoas direito</li><li><strong>Superior:</strong> glândula suprarrenal direita</li><li><strong>Inferior:</strong> ureter direito</li></ul><strong>Artéria renal ESQUERDA</strong>:<ul><li><strong>Anterior:</strong> veia renal esquerda, corpo/cauda do pâncreas, veia esplênica, colo transverso</li><li><strong>Posterior:</strong> pilar diafragmático esquerdo, músculo psoas esquerdo</li><li><strong>Superior:</strong> glândula suprarrenal esquerda</li><li><strong>Inferior:</strong> ureter esquerdo</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria renal ESQUERDA, o que se situa ANTERIORMENTE?",
+    "options": [
+      "VCI, ducto colédoco e duodeno descendente",
+      "Veia renal esquerda, corpo/cauda do pâncreas, veia esplênica e colo transverso",
+      "Pilar diafragmático esquerdo e músculo psoas",
+      "Glândula suprarrenal esquerda"
+    ],
+    "answer": ["Veia renal esquerda, corpo/cauda do pâncreas, veia esplênica e colo transverso"],
+    "type": "multi",
+    "justification": "A face <strong>anterior</strong> da artéria renal <strong>esquerda</strong> relaciona-se com a <strong>veia renal esquerda, corpo/cauda do pâncreas, veia esplênica e colo transverso</strong>.<br><br>A artéria renal direita é mais longa pois a VCI está à direita da linha média, obrigando a artéria renal direita a cruzar posterior à VCI para alcançar o rim direito."
+  },
+  {
+    "question": "Em relação às artérias ilíacas comuns DIREITA, o que se situa ANTERIORMENTE?",
+    "options": [
+      "Músculo iliopsoas",
+      "Veia ilíaca comum direita",
+      "Ureter direito (cruza anteriormente próximo à bifurcação) e alças ileais",
+      "Corpo vertebral L4–L5"
+    ],
+    "answer": ["Ureter direito (cruza anteriormente próximo à bifurcação) e alças ileais"],
+    "type": "multi",
+    "justification": "Relações das <strong>artérias ilíacas comuns</strong> (bifurcação da aorta em L4):<br><br><strong>Direita:</strong><ul><li><strong>Anterior:</strong> ureter direito (cruza anteriormente próximo à bifurcação), alças ileais, peritônio</li><li><strong>Posterior:</strong> veia ilíaca comum direita (posterior e depois medial), corpo vertebral L4–L5</li><li><strong>Lateral:</strong> músculo iliopsoas</li></ul><strong>Esquerda:</strong><ul><li><strong>Anterior:</strong> ureter esquerdo, colo sigmoide, raiz do mesossigma, peritônio</li><li><strong>Posterior:</strong> veia ilíaca comum esquerda</li><li><strong>Lateral:</strong> músculo iliopsoas</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria ilíaca EXTERNA, o que se situa MEDIALMENTE?",
+    "options": [
+      "Músculo iliopsoas",
+      "Nervo femoral",
+      "Veia ilíaca externa",
+      "Peritônio e alças intestinais"
+    ],
+    "answer": ["Veia ilíaca externa"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria ilíaca externa</strong> (torna-se femoral ao passar posterior ao ligamento inguinal):<ul><li><strong>Anterior:</strong> peritônio, alças intestinais, vasos gonadais (cruzam), ducto deferente (H) / ligamento redondo do útero (M)</li><li><strong>Posterior:</strong> músculo iliopsoas, nervo femoral (lateral ao vaso)</li><li><strong>Medial:</strong> veia ilíaca externa</li><li><strong>Lateral:</strong> nervo femoral, músculo iliopsoas</li></ul>"
+  },
+  {
+    "question": "No triângulo femoral de Scarpa, a disposição das estruturas de LATERAL para MEDIAL é",
+    "options": [
+      "Veia femoral — Artéria femoral — Nervo femoral — Canal linfático",
+      "Nervo femoral — Artéria femoral — Veia femoral — Canal femoral (linfáticos)",
+      "Artéria femoral — Veia femoral — Nervo femoral — Canal femoral",
+      "Nervo femoral — Veia femoral — Artéria femoral — Canal linfático"
+    ],
+    "answer": ["Nervo femoral — Artéria femoral — Veia femoral — Canal femoral (linfáticos)"],
+    "type": "multi",
+    "justification": "No <strong>triângulo femoral (de Scarpa)</strong>, delimitado por: ligamento inguinal (superior), sartório (lateral) e adutor longo (medial).<br><br>Conteúdo de lateral para medial — mnemônica <strong>NAVEL</strong>:<ul><li><strong>N</strong>ervo femoral (mais lateral)</li><li><strong>A</strong>rtéria femoral</li><li><strong>V</strong>eia femoral</li><li>Canal femoral — linfonodos de Cloquet, <strong>L</strong>infáticos (mais medial)</li></ul>Assoalho: iliopsoas (lateral) + pectíneo (medial)."
+  },
+  {
+    "question": "No canal adutor (de Hunter), o que se situa ANTERIORMENTE à artéria femoral?",
+    "options": [
+      "Músculo adutor longo e adutor magno",
+      "Músculo vasto medial, membrana vastoadutória e músculo sartório",
+      "Veia femoral",
+      "Nervo safeno"
+    ],
+    "answer": ["Músculo vasto medial, membrana vastoadutória e músculo sartório"],
+    "type": "multi",
+    "justification": "Relações da artéria femoral no <strong>canal adutor (de Hunter)</strong>, limitado por: vasto medial (anterior/lateral), adutor longo e magno (posterior), membrana vastoadutória (anterior/medial):<ul><li><strong>Anterior:</strong> músculo vasto medial, membrana vastoadutória, músculo sartório (recobre)</li><li><strong>Posterior:</strong> músculo adutor longo (proximal) → adutor magno (distal)</li><li><strong>Medial:</strong> veia femoral (está anterior à artéria neste trecho — inversão em relação ao triângulo femoral)</li></ul>"
+  },
+  {
+    "question": "Na fossa poplítea, a disposição das estruturas de SUPERFICIAL para PROFUNDO é",
+    "options": [
+      "Artéria poplítea → Veia poplítea → Nervo tibial",
+      "Nervo tibial → Veia poplítea → Artéria poplítea",
+      "Veia poplítea → Nervo tibial → Artéria poplítea",
+      "Nervo tibial → Artéria poplítea → Veia poplítea"
+    ],
+    "answer": ["Nervo tibial → Veia poplítea → Artéria poplítea"],
+    "type": "multi",
+    "justification": "Na <strong>fossa poplítea</strong>, de superficial para profundo:<ul><li><strong>Mais superficial:</strong> nervo tibial (e nervo fibular comum lateralmente, junto ao bíceps femoral)</li><li><strong>Intermediário:</strong> veia poplítea</li><li><strong>Mais profundo (junto à cápsula articular):</strong> artéria poplítea</li></ul>Mnemônica de profundo para superficial: <strong>AVN</strong> (Artéria → Veia → Nervo).<br><br>A fossa poplítea é delimitada por: superomedial = semimembranoso + semitendíneo; superolateral = bíceps femoral; inferomedial e inferolateral = cabeças medial e lateral do gastrocnêmio."
+  },
+  {
+    "question": "No canal do tarso (atrás do maléolo medial), a ordem das estruturas de MEDIAL para LATERAL é resumida pela sigla IVAN. O que representa cada letra?",
+    "options": [
+      "I = artéria tibial, V = veia tibial, A = nervo tibial, N = tendão tibial posterior",
+      "I = tendão tibial posterior, V = veia tibial posterior, A = artéria tibial posterior, N = nervo tibial",
+      "I = nervo tibial, V = artéria tibial, A = veia tibial, N = tendão tibial posterior",
+      "I = tendão tibial posterior, V = nervo tibial, A = artéria tibial, N = veia tibial"
+    ],
+    "answer": ["I = tendão tibial posterior, V = veia tibial posterior, A = artéria tibial posterior, N = nervo tibial"],
+    "type": "multi",
+    "justification": "No <strong>canal do tarso</strong> (retináculo flexor / lacinato + calcâneo + maléolo medial), de medial para lateral — sigla <strong>IVAN</strong>:<ul><li><strong>I</strong> = tendão tibial posterior (<em>I</em>nversor)</li><li><strong>V</strong> = <em>V</em>eia tibial posterior</li><li><strong>A</strong> = <em>A</em>rtéria tibial posterior</li><li><strong>N</strong> = <em>N</em>ervo tibial (bifurca aqui nos nervos plantares medial e lateral)</li></ul>Compressão do nervo tibial neste canal → síndrome do túnel do tarso: dor em queimação + parestesias na planta do pé."
+  },
+  {
+    "question": "No segmento PROXIMAL da artéria tibial posterior, o que se situa ANTERIORMENTE?",
+    "options": [
+      "Músculo sóleo",
+      "Artéria fibular",
+      "Músculo tibial posterior e músculo flexor longo dos dedos",
+      "Nervo tibial"
+    ],
+    "answer": ["Músculo tibial posterior e músculo flexor longo dos dedos"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria tibial posterior</strong>:<ul><li><strong>Proximal:</strong> Anterior = músculo tibial posterior e flexor longo dos dedos; Posterior = músculo sóleo (recobre profundamente); Medial = nervo tibial; Lateral = artéria fibular</li><li><strong>Médio/distal:</strong> Anterior = flexor longo dos dedos e flexor longo do hálux; Posterior = sóleo e arco do sóleo; Medial = nervo tibial</li><li><strong>Canal do tarso:</strong> IVAN (ver questão anterior)</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria fibular (peroneal), o que se situa POSTERIORMENTE?",
+    "options": [
+      "Músculo flexor longo do hálux",
+      "Músculo tibial posterior",
+      "Fíbula — a artéria 'navega' junto ao sulco posterior da fíbula",
+      "Músculo fibular longo"
+    ],
+    "answer": ["Fíbula — a artéria 'navega' junto ao sulco posterior da fíbula"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria fibular (peroneal)</strong>:<ul><li><strong>Anterior:</strong> músculo flexor longo do hálux</li><li><strong>Posterior:</strong> fíbula — a artéria 'navega' no sulco posterior da fíbula</li><li><strong>Medial:</strong> músculo tibial posterior</li><li><strong>Lateral:</strong> fíbula e músculo fibular longo</li></ul>A artéria fibular é o maior ramo do tronco tibiofibular e supre o compartimento lateral da perna."
+  },
+  {
+    "question": "Em relação à artéria tibial ANTERIOR no segmento proximal (após atravessar a membrana interóssea), o que se situa LATERALMENTE?",
+    "options": [
+      "Tíbia",
+      "Músculo tibial anterior e extensor longo dos dedos",
+      "Membrana interóssea",
+      "Fíbula"
+    ],
+    "answer": ["Fíbula"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria tibial anterior</strong>:<ul><li><strong>Proximal (após membrana interóssea):</strong> Anterior = músculo tibial anterior e extensor longo dos dedos; Posterior = membrana interóssea; Medial = tíbia; Lateral = fíbula</li><li><strong>Médio:</strong> Anterior = músculo tibial anterior; Posterior = membrana interóssea, extensor longo do hálux; Medial = nervo fibular profundo (acompanha e depois cruza medialmente)</li><li><strong>Distal (tornozelo):</strong> Anterior = retínáculo extensor, tendões extensores; Posterior = tíbia distal, articulação tibiotalar; Medial = nervo fibular profundo; Lateral = tendão extensor longo do hálux</li></ul>"
+  },
+  {
+    "question": "Em relação à veia cava superior (VCS), o que se situa POSTERIORMENTE?",
+    "options": [
+      "Timo e gordura tímica",
+      "Nervo frênico direito e pleura",
+      "Aorta ascendente",
+      "Artéria pulmonar direita (cruza posteriormente), hilo pulmonar direito e traqueia"
+    ],
+    "answer": ["Artéria pulmonar direita (cruza posteriormente), hilo pulmonar direito e traqueia"],
+    "type": "multi",
+    "justification": "Relações da <strong>VCS (veia cava superior)</strong> (fusão das braquiocefálicas na 1ª cartilagem costal direita; comprimento ~7 cm; desemboca no AD na 3ª cartilagem costal):<ul><li><strong>Anterior:</strong> timo/gordura tímica, pleura e pulmão direito, pericárdio (terço inferior)</li><li><strong>Posterior:</strong> artéria pulmonar direita (cruza posteriormente), hilo pulmonar direito, traqueia (superior)</li><li><strong>Direita:</strong> nervo frênico direito, pleura e pulmão direito</li><li><strong>Esquerda:</strong> aorta ascendente</li></ul>"
+  },
+  {
+    "question": "A veia braquiocefálica ESQUERDA é mais longa que a direita pois cruza anteriormente ao arco aórtico. O que se situa POSTERIORMENTE à veia braquiocefálica esquerda?",
+    "options": [
+      "Esterno e timo",
+      "Arco aórtico e seus 3 ramos (tronco braquiocefálico, carótida esquerda, subclávia esquerda)",
+      "Artéria braquiocefálica e traqueia",
+      "Nervos frênicos bilaterais"
+    ],
+    "answer": ["Arco aórtico e seus 3 ramos (tronco braquiocefálico, carótida esquerda, subclávia esquerda)"],
+    "type": "multi",
+    "justification": "Relações das <strong>veias braquiocefálicas</strong>:<ul><li><strong>Direita</strong> (~3 cm, trajeto vertical):<br>Anterior = esterno, 1ª cartilagem costal<br>Posterior = artéria braquiocefálica, traqueia</li><li><strong>Esquerda</strong> (~6 cm, trajeto horizontal — CRUZA ANTERIORMENTE ao arco):<br>Anterior = esterno, timo<br>Posterior = arco aórtico e seus 3 ramos (tronco braquiocefálico, carótida comum esquerda, subclávia esquerda)</li></ul>Esta relação é fundamental durante cirurgias do mediastino anterior e ao se avaliar a veia braquiocefálica esquerda como via de acesso venoso central."
+  },
+  {
+    "question": "No segmento abdominal médio da VCI (L2–L1), o que se situa ANTERIORMENTE?",
+    "options": [
+      "Raiz do mesentério e alças intestinais",
+      "Músculo psoas direito e pilar diafragmático direito",
+      "Glândula suprarrenal direita",
+      "Cabeça do pâncreas, duodeno descendente e artéria hepática (acima)"
+    ],
+    "answer": ["Cabeça do pâncreas, duodeno descendente e artéria hepática (acima)"],
+    "type": "multi",
+    "justification": "Relações da <strong>VCI (veia cava inferior)</strong> por segmento:<ul><li><strong>Abdominal inferior (L5–L2):</strong> Anterior = raiz do mesentério, alças intestinais, duodeno (3ª porção); Posterior = corpos vertebrais, músculo psoas direito; Direita = ureter direito, rim direito (polo inferior); Esquerda = aorta abdominal</li><li><strong>Abdominal médio (L2–L1):</strong> Anterior = cabeça do pâncreas, duodeno descendente, artéria hepática; Posterior = músculo psoas direito, pilar diafragmático direito; Direita = glândula suprarrenal direita; Esquerda = aorta abdominal, artéria renal esquerda (cruza anterior)</li><li><strong>Abdominal superior / hepático:</strong> Anterior = fígado (lobo direito, lobo caudado posteriormente); Posterior = pilar diafragmático direito; Direita = suprarrenal direita, diafragma; Esquerda = lobo caudado do fígado</li></ul>"
+  },
+  {
+    "question": "Em relação à veia porta no ligamento hepatoduodenal (forame de Winslow), o que se situa ANTERIORMENTE e À DIREITA?",
+    "options": [
+      "Artéria hepática própria (à direita) e ducto colédoco (à esquerda)",
+      "Ducto colédoco (à direita) e artéria hepática própria (à esquerda)",
+      "VCI (posteriormente) e duodeno (inferiormente)",
+      "Fígado (superiormente) e ducto colédoco (medialmente)"
+    ],
+    "answer": ["Ducto colédoco (à direita) e artéria hepática própria (à esquerda)"],
+    "type": "multi",
+    "justification": "Relações da <strong>veia porta</strong> no ligamento hepatoduodenal:<ul><li><strong>Anterior direita:</strong> ducto colédoco (colédoco)</li><li><strong>Anterior esquerda:</strong> artéria hepática própria</li><li><strong>Posterior:</strong> veia cava inferior (separada pelo forame de Winslow — bursa omental)</li><li><strong>Superior:</strong> hilo hepático</li><li><strong>Inferior:</strong> duodeno (1ª porção)</li></ul>Mnemônica para o ligamento hepatoduodenal: <strong>AVD</strong> de posterior para anterior = VCI | porta | (artéria hepática + colédoco)."
+  },
+  {
+    "question": "Em relação à artéria esplênica em seu trajeto pelo pâncreas, o que se situa INFERIORMENTE?",
+    "options": [
+      "Rim esquerdo e glândula suprarrenal esquerda",
+      "Estômago (via ligamento gastroesplênico)",
+      "Veia esplênica",
+      "Corpo e cauda do pâncreas"
+    ],
+    "answer": ["Veia esplênica"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria esplênica (lienal)</strong> ao longo da margem superior do pâncreas:<ul><li><strong>Anterior (trajeto pancreático):</strong> corpo e cauda do pâncreas, estômago (via ligamento gastroesplênico)</li><li><strong>Posterior:</strong> rim esquerdo, glândula suprarrenal esquerda</li><li><strong>Superior:</strong> curvatura maior do estômago (artérias gástricas curtas)</li><li><strong>Inferior:</strong> veia esplênica (ligeiramente posterior e inferior à artéria)</li></ul>"
+  },
+  {
+    "question": "Em relação à veia jugular interna no segmento MÉDIO (triângulo carotídeo), o que se situa MEDIALMENTE?",
+    "options": [
+      "Músculo ECM e nervo acessório (XI)",
+      "Carótida interna e músculos faríngeos",
+      "Carótida comum (dentro da bainha carotídea)",
+      "Gânglio cervical superior e músculo escaleno anterior"
+    ],
+    "answer": ["Carótida comum (dentro da bainha carotídea)"],
+    "type": "multi",
+    "justification": "Relações da <strong>veia jugular interna (VJI)</strong> por segmento:<ul><li><strong>Alto (após forame jugular):</strong> Anterior = nervos IX, X, XI, XII (cruzam anteriormente); Posterior = músculo digástrico (ventre posterior); Medial = carótida interna; Lateral = processo mastoide, ECM</li><li><strong>Médio (triângulo carotídeo):</strong> Anterior = ECM (recobre), nervo acessório (XI); Posterior = músculo escaleno anterior, gânglio cervical superior; Medial = carótida comum (bainha carotídea); Lateral = ECM</li><li><strong>Baixo (raiz do pescoço):</strong> Anterior = clavícula, músculo omo-hioideo (cruza); Posterior = músculo escaleno anterior, nervo frênico; Medial = carótida comum, traqueia, esôfago; Lateral = ECM</li></ul>"
+  },
+  {
+    "question": "Em relação à veia subclávia, o que se situa POSTERIORMNTE?",
+    "options": [
+      "Clavícula e músculo subclávio",
+      "1ª costela",
+      "Artéria subclávia (separada pelo músculo escaleno anterior), nervo frênico e cúpula pleural",
+      "Artéria subclávia superiormente"
+    ],
+    "answer": ["Artéria subclávia (separada pelo músculo escaleno anterior), nervo frênico e cúpula pleural"],
+    "type": "multi",
+    "justification": "Relações da <strong>veia subclávia</strong> (continuação da veia axilar após a 1ª costela; comprimento ~3–4 cm):<ul><li><strong>Anterior:</strong> clavícula (recobre anteriormente), músculo subclávio</li><li><strong>Posterior:</strong> artéria subclávia (separada pelo músculo escaleno anterior), nervo frênico, cúpula pleural</li><li><strong>Superior:</strong> artéria subclávia (posterior ao escaleno anterior)</li><li><strong>Inferior:</strong> 1ª costela</li></ul>A proximidade com a cúpula pleural explica por que o pneumotórax é mais frequente no acesso venoso central pela subclávia do que pela jugular interna."
+  },
+  {
+    "question": "Em relação ao tronco pulmonar, o que se situa POSTERIORMENTE?",
+    "options": [
+      "Esterno e pericárdio",
+      "Apêndice auricular direito",
+      "Átrio esquerdo (separado por pericárdio)",
+      "Nervo frênico esquerdo"
+    ],
+    "answer": ["Átrio esquerdo (separado por pericárdio)"],
+    "type": "multi",
+    "justification": "Relações do <strong>tronco pulmonar</strong> (VD → valva pulmonar → bifurcação sob o arco aórtico; comprimento ~5 cm, calibre ~3 cm):<ul><li><strong>Anterior:</strong> pericárdio, esterno, pleura</li><li><strong>Posterior:</strong> átrio esquerdo (separado por pericárdio)</li><li><strong>Direita:</strong> orelha direita, apêndice auricular direito</li><li><strong>Esquerda:</strong> apêndice auricular esquerdo, nervo frênico esquerdo</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria pulmonar DIREITA, o que se situa ANTERIORMENTE?",
+    "options": [
+      "Brônquio principal direito",
+      "Arco aórtico",
+      "Aorta ascendente, VCS e veias pulmonares superiores",
+      "Átrio esquerdo"
+    ],
+    "answer": ["Aorta ascendente, VCS e veias pulmonares superiores"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria pulmonar direita</strong> (bifurcação do tronco pulmonar, sob o arco aórtico, T4–T5):<ul><li><strong>Anterior:</strong> aorta ascendente, VCS, veias pulmonares superiores</li><li><strong>Posterior:</strong> brônquio principal direito (artéria cruza anteriormente ao brônquio no hilo)</li><li><strong>Superior:</strong> arco aórtico</li><li><strong>Inferior:</strong> átrio esquerdo</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria pulmonar ESQUERDA, o que se situa ANTERIORMENTE/SUPERIORMENTE?",
+    "options": [
+      "Brônquio principal esquerdo",
+      "Nervo vago esquerdo e laríngeo recorrente esquerdo",
+      "Arco aórtico e ligamento arterioso (ligamento de Botallo)",
+      "Átrio esquerdo"
+    ],
+    "answer": ["Arco aórtico e ligamento arterioso (ligamento de Botallo)"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria pulmonar esquerda</strong> (mais curta que a direita):<ul><li><strong>Anterior/Superior:</strong> arco aórtico, ligamento arterioso (ligamento de Botallo — remanescente do canal arterial fetal)</li><li><strong>Posterior:</strong> brônquio principal esquerdo</li><li><strong>Superior:</strong> nervo vago esquerdo, nervo laríngeo recorrente esquerdo</li></ul>O ligamento arterioso conecta a artéria pulmonar esquerda ao arco aórtico — é em torno dele que o laríngeo recorrente esquerdo contorna em seu trajeto ascendente para a laringe."
+  },
+  {
+    "question": "Em relação à artéria facial no segmento CERVICAL (pré-mandibular), o que se situa MEDIALMENTE?",
+    "options": [
+      "Mandíbula",
+      "Glândula submandibular e músculo digástrico",
+      "Faringe",
+      "Músculos buccinador e elevadores dos lábios"
+    ],
+    "answer": ["Faringe"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria facial</strong>:<br><br><strong>Segmento cervical (pré-mandibular):</strong><ul><li><strong>Anterior:</strong> glândula submandibular (envolve a artéria), músculo digástrico</li><li><strong>Posterior:</strong> músculo constritor médio da faringe</li><li><strong>Medial:</strong> faringe</li><li><strong>Lateral:</strong> mandíbula</li></ul><strong>Segmento facial (após cruzar a mandíbula):</strong><ul><li><strong>Anterior:</strong> pele e músculo, lábios (ramos labiais)</li><li><strong>Posterior:</strong> músculos buccinador e elevadores dos lábios</li><li><strong>Medial:</strong> nariz (ramo nasal lateral)</li></ul><strong>Segmento angular (ângulo medial do olho):</strong> anastomosa com a artéria oftálmica (ramo do nariz)."
+  },
+  {
+    "question": "No espaço intercostal, o feixe neurovascular corre no sulco costal da margem inferior de cada costela. A ordem de SUPERIOR para INFERIOR é",
+    "options": [
+      "Artéria — Veia — Nervo (AVN)",
+      "Nervo — Artéria — Veia (NAV)",
+      "Veia — Artéria — Nervo (VAN)",
+      "Nervo — Veia — Artéria (NVA)"
+    ],
+    "answer": ["Veia — Artéria — Nervo (VAN)"],
+    "type": "multi",
+    "justification": "No espaço intercostal, o feixe neurovascular localiza-se no <strong>sulco costal da margem inferior de cada costela</strong>, na ordem de superior para inferior: <strong>V</strong>eia → <strong>A</strong>rtéria → <strong>N</strong>ervo (<strong>VAN</strong>).<br><br>Para evitar o feixe VAN na toracocentese ou drenagem pleural, a agulha deve ser inserida na <strong>margem SUPERIOR da costela inferior</strong> do espaço escolhido.<br><br>Relações no espaço intercostal:<ul><li><strong>Superior (sob a costela superior):</strong> veia intercostal, artéria, nervo</li><li><strong>Inferior:</strong> músculo intercostal interno</li><li><strong>Anterior:</strong> músculo intercostal externo (proximal)</li><li><strong>Posterior:</strong> pleura parietal, pulmão</li></ul>"
+  },
+  {
+    "question": "Em relação à artéria coronária direita na CRUX CORDIS, o que se situa MEDIALMENTE?",
+    "options": [
+      "Gordura epicárdica",
+      "Seio coronário e átrio direito",
+      "Septum interventricular posterior",
+      "Aurícula direita"
+    ],
+    "answer": ["Septum interventricular posterior"],
+    "type": "multi",
+    "justification": "Relações da ACD na <strong>crux cordis</strong> (ponto de encontro dos sulcos AV e IV posterior):<ul><li><strong>Anterior:</strong> gordura epicárdica</li><li><strong>Posterior:</strong> seio coronário e átrio direito (AD)</li><li><strong>Medial:</strong> septum interventricular posterior</li></ul>É neste ponto que, na dominância direita, a ACD origina o ramo interventricular posterior (descendente posterior) e os ramos posterolaterais para o VE."
+  },
+  {
+    "question": "Em relação à artéria vertebral no segmento V2 (foraminal — C6 a C2), o que se situa LATERALMENTE?",
+    "options": [
+      "Corpos vertebrais e articulações unciovertebrais",
+      "Processos articulares",
+      "Veias vertebrais e plexo simpático perivertebral",
+      "Músculo oblíquo superior da cabeça"
+    ],
+    "answer": ["Veias vertebrais e plexo simpático perivertebral"],
+    "type": "multi",
+    "justification": "Relações da artéria vertebral no segmento <strong>V2 (foraminal — percorre os forames transversos de C6 a C2)</strong>:<ul><li><strong>Anterior:</strong> corpos vertebrais, articulações unciovertebrais</li><li><strong>Posterior:</strong> processos articulares</li><li><strong>Lateral:</strong> veias vertebrais, plexo simpático perivertebral</li></ul>Este segmento é vulnerável a lesões nas fraturas cervicais (luxações facetárias) e manipulações quiroprática."
+  },
+  {
+    "question": "Em relação à artéria femoral PROFUNDA (femoroprofunda), em que distância abaixo do ligamento inguinal ela se origina da artéria femoral?",
+    "options": [
+      "Imediatamente abaixo do ligamento inguinal (< 1 cm)",
+      "3–5 cm abaixo do ligamento inguinal",
+      "No hiato adutor",
+      "No ápice do triângulo femoral, nível do sartório"
+    ],
+    "answer": ["3–5 cm abaixo do ligamento inguinal"],
+    "type": "multi",
+    "justification": "A <strong>artéria femoral profunda (profunda da coxa / femoroprofunda)</strong> origina-se da artéria femoral <strong>3–5 cm abaixo do ligamento inguinal</strong>, na porção proximal do triângulo femoral.<br><br>Seus ramos principais:<ul><li><strong>Artéria circunflexa femoral lateral:</strong> suprimento da região trocantérica e cabeça do fêmur (compartilhado com a medial)</li><li><strong>Artéria circunflexa femoral medial:</strong> principal suprimento da cabeça do fêmur no adulto via ramos retinaculares</li><li><strong>Artérias perfurantes (4 ramos):</strong> atravessam o músculo adutor magno para o compartimento posterior da coxa</li></ul>Lesão das circunflexas em fraturas do colo femoral → necrose avascular (AVN) da cabeça do fêmur."
+  },
+  {
+    "question": "Em relação à veia femoral no canal adutor, onde ela se posiciona em relação à artéria femoral?",
+    "options": [
+      "Lateral à artéria",
+      "Posterior à artéria",
+      "Anterior à artéria (neste segmento especificamente)",
+      "Medial à artéria (como no triângulo femoral)"
+    ],
+    "answer": ["Anterior à artéria (neste segmento especificamente)"],
+    "type": "multi",
+    "justification": "Há uma inversão de posição da veia femoral em relação à artéria ao longo do trajeto:<ul><li><strong>No triângulo femoral:</strong> veia femoral é <em>medial</em> à artéria femoral</li><li><strong>No canal adutor:</strong> veia femoral é <em>anterior</em> à artéria femoral (inversão de posição)</li></ul>Esta mudança de relação é importante para se compreender a dissecção cirúrgica na exposição dos vasos femorais e para orientar a compressão hemostática após procedimentos percutâneos."
+  },
+  {
+    "question": "Na artéria tibial anterior no nível do TORNOZELO DISTAL, o que se situa MEDIALMENTE?",
+    "options": [
+      "Tendão extensor longo do hálux",
+      "Retináculo extensor superior e inferior",
+      "Nervo fibular profundo",
+      "Tíbia distal e articulação tibiotalar"
+    ],
+    "answer": ["Nervo fibular profundo"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria tibial anterior no tornozelo distal</strong>:<ul><li><strong>Anterior:</strong> retináculo extensor superior e inferior, tendões extensores</li><li><strong>Posterior:</strong> tíbia distal, articulação tibiotalar</li><li><strong>Medial:</strong> nervo fibular profundo</li><li><strong>Lateral:</strong> tendão extensor longo do hálux</li></ul>No segmento médio do antebraço peitoral (compartimento anterior da perna), o nervo fibular profundo acompanha a artéria e depois a cruza medialmente. No tornozelo, ele está medialmente à artéria — informação relevante para bloqueios anestésicos do tornozelo."
+  },
+  {
+    "question": "Em relação à artéria ilíaca interna divisão ANTERIOR, a artéria uterina cruza anteriormente ao ureter. A que distância do colo uterino ocorre esse cruzamento?",
+    "options": [
+      "1 cm lateral ao colo",
+      "2 cm lateral ao colo do útero",
+      "5 cm lateral ao colo",
+      "No nível do arco tendinoso da fáscia pélvica"
+    ],
+    "answer": ["2 cm lateral ao colo do útero"],
+    "type": "multi",
+    "justification": "A <strong>artéria uterina</strong> (ramo da divisão anterior da ilíaca interna) percorre o ligamento cardinal e cruza <strong>anteriormente ao ureter a 2 cm lateral ao colo do útero</strong>.<br><br>Mnemônica: <em>'A água (ureter) passa por baixo da ponte (artéria uterina)'</em>.<br><br>Esta relação é crítica na histerectomia: ao ligar a artéria uterina, o ureter pode ser inadvertidamente pinçado ou seccionado. A incidência de lesão ureteral na histerectomia é de ~0,1–1%.<br><br>Outras relações da ilíaca interna divisão anterior: a. vesical superior (bexiga), a. vesical inferior / vaginal, a. retal média, a. pudenda interna, a. obturatória, a. glútea inferior."
+  },
+  {
+    "question": "Em relação à veia safena magna no segmento da PERNA, qual nervo a acompanha e pode ser lesado na safenectomia?",
+    "options": [
+      "Nervo fibular superficial",
+      "Nervo tibial",
+      "Nervo safeno (ramo do nervo femoral)",
+      "Nervo sural"
+    ],
+    "answer": ["Nervo safeno (ramo do nervo femoral)"],
+    "type": "multi",
+    "justification": "Relações da <strong>veia safena magna</strong> por segmento:<ul><li><strong>Tornozelo (anterior ao maléolo medial):</strong> referência para flebotomia e anestesia do nervo safeno</li><li><strong>Perna (face medial):</strong> acompanhada pelo <strong>nervo safeno</strong> (ramo terminal do nervo femoral) — lesão durante safenectomia causa parestesias e hipoestesia na face medial da perna e do pé</li><li><strong>Joelho (face posteromedial):</strong> cruzamento com veia safena acessória posterior e veia de Giacomini</li><li><strong>Coxa (medialmente ao sartório):</strong> nervo safeno acompanha medialmente</li><li><strong>Hiato safeno:</strong> fura a fáscia cribriforme → desemboca na veia femoral comum (JSF — junção safenofemoral), 4 cm abaixo do ligamento inguinal</li></ul>"
+  },
+  {
+    "question": "Em relação à veia safena PARVA, o que passa posterior ao maléolo LATERAL acompanhando-a?",
+    "options": [
+      "Nervo safeno (ramo do femoral)",
+      "Nervo sural",
+      "Nervo fibular superficial",
+      "Nervo fibular profundo"
+    ],
+    "answer": ["Nervo sural"],
+    "type": "multi",
+    "justification": "Relações da <strong>veia safena parva (pequena safena / SSV)</strong>:<ul><li><strong>Posterior ao maléolo lateral:</strong> Anterior = maléolo fibular (lateral); Acompanha = nervo sural (sensitivo para face lateral do pé e tornozelo)</li><li><strong>Perna (linha média posterior):</strong> superficial à fáscia profunda, entre as cabeças do gastrocnêmio; nervo sural continua acompanhando</li><li><strong>Fossa poplítea:</strong> fura a fáscia poplítea → desemboca na veia poplítea (junção safenopoplítea — JSP, nível variável)</li></ul>Lesão do nervo sural durante safenectomia da parva → anestesia/parestesia na face lateral do pé — importância na abordagem cirúrgica."
+  },
+  {
+    "question": "Na artéria carótida interna, segmento C2 (petroso / canal carotídeo), o que se situa ANTERIORMENTE?",
+    "options": [
+      "Nervo petroso maior e fóvea petrosa",
+      "Cóclea (anteriormente)",
+      "Tuba auditiva e ouvido médio",
+      "Nervo oculomotor (III) e troclear (IV)"
+    ],
+    "answer": ["Tuba auditiva e ouvido médio"],
+    "type": "multi",
+    "justification": "Relações da <strong>ACI segmento C2 (petroso)</strong>, dentro do canal carotídeo do osso temporal:<ul><li><strong>Anterior:</strong> tuba auditiva (trompa de Eustáquio) e ouvido médio</li><li><strong>Posterior:</strong> cóclea (anteriormente ao ápice do rochedo)</li></ul>Esta relação explica por que dissecções ou aneurismas da ACI petrosa podem se apresentar com acúfenos pulsáteis (transmitidos ao ouvido médio).<br><br>No segmento C3 (lacerum): Anterior = nervo petroso maior; Posterior = fóvea petrosa."
+  },
+  {
+    "question": "Em relação às artérias gonadais (testiculares/ováricas), o que se situa POSTERIORMENTE em seu trajeto retroperitoneal?",
+    "options": [
+      "Peritônio e alças intestinais",
+      "Vasos epigástricos inferiores (ao cruzar o anel inguinal profundo)",
+      "Músculo psoas maior e nervo genitofemoral",
+      "Ureter (à direita, cruza anteriormente à artéria gonadal)"
+    ],
+    "answer": ["Músculo psoas maior e nervo genitofemoral"],
+    "type": "multi",
+    "justification": "Relações das <strong>artérias gonadais</strong> (testiculares/ováricas — origem: aorta abdominal L2) em seu trajeto retroperitoneal:<ul><li><strong>Anterior:</strong> peritônio, alças intestinais (a direita cruza anterior ao ureter, posterior ao duodeno)</li><li><strong>Posterior:</strong> músculo psoas maior e nervo genitofemoral</li><li><strong>Lateral (ao cruzar o anel inguinal profundo):</strong> vasos epigástricos inferiores</li></ul>A artéria gonadal direita cruza anteriormente ao ureter direito (ponto de cruzamento — relevante na cirurgia retroperitoneal). A gonadal esquerda drena na veia renal esquerda; a direita drena diretamente na VCI."
+  },
+  {
+    "question": "Em relação à veia poplítea na fossa poplítea, onde ela se situa em relação à artéria poplítea?",
+    "options": [
+      "Lateral à artéria",
+      "Anterior à artéria (superficial a ela)",
+      "Posterior à artéria (mais profunda)",
+      "Medial à artéria"
+    ],
+    "answer": ["Anterior à artéria (superficial a ela)"],
+    "type": "multi",
+    "justification": "Na fossa poplítea, a <strong>veia poplítea está anterior (superficial) à artéria poplítea</strong>, que é a estrutura mais profunda (junto à cápsula articular).<br><br>Disposição de superficial para profundo: Nervo tibial → Veia poplítea → Artéria poplítea.<br><br>Relações da veia poplítea por segmento (tabela do documento):<ul><li><strong>Anterior:</strong> artéria poplítea (profunda à veia)</li><li><strong>Posterior:</strong> nervo tibial</li><li><strong>Lateral (proximal):</strong> nervo fibular comum</li></ul>"
+  },
+  {
+    "question": "Em relação à veia femoral (sistema profundo), o que se situa LATERALMENTE?",
+    "options": [
+      "Canal femoral e linfonodos",
+      "Nervo femoral",
+      "Artéria femoral",
+      "Músculo adutor longo"
+    ],
+    "answer": ["Nervo femoral"],
+    "type": "multi",
+    "justification": "Relações da <strong>veia femoral</strong> no triângulo femoral e canal adutor:<ul><li>No triângulo femoral: veia femoral = medial à artéria femoral; Lateral = artéria femoral; Medial = canal femoral</li></ul>Relações da veia femoral (tabela do sistema venoso profundo):<ul><li><strong>Lateral:</strong> nervo femoral</li><li><strong>Medial:</strong> canal femoral (no triângulo)</li></ul>Atenção terminológica importante: a 'veia femoral superficial' (termo errôneo mas comum) é anatomicamente uma veia do <em>sistema profundo</em> — trombose nela = TVP clinicamente relevante."
+  }, 
+  {
+    "question": "O tronco costocervical origina-se da 2ª parte da artéria subclávia e emite dois ramos principais. Quais são?",
+    "options": [
+      "Artérias intercostais 1ª–2ª e artéria cervical profunda",
+      "Artéria tireoidea inferior e artéria cervical transversa",
+      "Artéria vertebral e artéria torácica interna",
+      "Artéria escapular dorsal e artéria intercostal 3ª"
+    ],
+    "answer": ["Artérias intercostais 1ª–2ª e artéria cervical profunda"],
+    "type": "multi",
+    "justification": "O <strong>tronco costocervical</strong> origina-se da <strong>face posterior da 2ª parte da artéria subclávia</strong> (posterior ao músculo escaleno anterior) e emite:<ul><li><strong>Artérias intercostais posteriores 1ª e 2ª</strong> — as únicas intercostais que NÃO vêm da aorta torácica descendente</li><li><strong>Artéria cervical profunda</strong> — músculos pré-vertebrais cervicais profundos</li></ul>Memória: as intercostais posteriores 3ª–11ª vêm da aorta torácica; as anteriores vêm da artéria torácica interna. Apenas as 1ª e 2ª vêm do tronco costocervical da subclávia."
+  },
+  {
+    "question": "A artéria escapular dorsal origina-se variável da 3ª parte da subclávia (ou do tronco costocervical). Quais músculos supre?",
+    "options": [
+      "Músculo rombóide e músculo levantador da escápula",
+      "Músculo trapézio e músculo deltoide",
+      "Músculo serrátil anterior e músculo subscapular",
+      "Músculo infraespinhoso e músculo redondo menor"
+    ],
+    "answer": ["Músculo rombóide e músculo levantador da escápula"],
+    "type": "multi",
+    "justification": "A <strong>artéria escapular dorsal</strong> origina-se da <strong>3ª parte da artéria subclávia</strong> (ou do tronco costocervical, variável) e supre os <strong>músculos rombóides (maior e menor) e o músculo levantador da escápula</strong>, percorrendo a borda medial da escápula.<br><br>Relações: Anterior = plexo braquial (cruza anteriormente); Posterior = músculo escaleno médio."
+  },
+  {
+    "question": "A artéria toracoacromial origina-se da 2ª parte da artéria axilar e emite 4 ramos. Quais são?",
+    "options": [
+      "Ramos peitoral, acromial, deltóideo e clavicular",
+      "Ramos peitoral, toracodorsal, deltóideo e subescapular",
+      "Ramos serrátil, peitoral, deltóideo e acromial",
+      "Ramos clavicular, coracoide, peitoral e subscapular"
+    ],
+    "answer": ["Ramos peitoral, acromial, deltóideo e clavicular"],
+    "type": "multi",
+    "justification": "A <strong>artéria toracoacromial</strong> origina-se da <strong>2ª parte da artéria axilar</strong> (posterior ao músculo peitoral menor) e emite 4 ramos (mnemônica <strong>PADC</strong>):<ul><li><strong>Peitoral:</strong> músculos peitoral maior e menor</li><li><strong>Acromial:</strong> acrômio — anastomosa com ramos da supraescapular e circunflexa umeral posterior</li><li><strong>Deltóideo:</strong> músculo deltoide</li><li><strong>Clavicular:</strong> articulação acromioclavicular e clavícula</li></ul>"
+  },
+  {
+    "question": "A artéria subescapular origina-se da 3ª parte da artéria axilar e se bifurca em dois ramos. Quais são e o que suprem?",
+    "options": [
+      "Artéria circunflexa da escápula (músculo infraespinhoso) e artéria toracodorsal (músculo grande dorsal)",
+      "Artéria circunflexa umeral posterior e artéria toracodorsal",
+      "Artéria torácica lateral e artéria circunflexa da escápula",
+      "Artéria toracodorsal e artéria circunflexa umeral anterior"
+    ],
+    "answer": ["Artéria circunflexa da escápula (músculo infraespinhoso) e artéria toracodorsal (músculo grande dorsal)"],
+    "type": "multi",
+    "justification": "A <strong>artéria subescapular</strong> é o maior ramo da 3ª parte da artéria axilar e bifurca-se em:<ul><li><strong>Artéria circunflexa da escápula:</strong> passa pelo espaço triangular (redondo maior, menor e tríceps) → fossa infraespinhosa → músculo infraespinhoso e redondo menor</li><li><strong>Artéria toracodorsal:</strong> acompanha o nervo toracodorsal → músculo grande dorsal (latíssimo do dorso) e redondo maior</li></ul>A artéria toracodorsal é referência importante na cirurgia do câncer de mama (esvaziamento axilar) — sua preservação mantém a função do grande dorsal."
+  },
+  {
+    "question": "No segmento C3 (lacerum) da artéria carótida interna, o que se situa ANTERIORMENTE?",
+    "options": [
+      "Tuba auditiva e ouvido médio",
+      "Nervo petroso maior",
+      "Hipófise e seio esfenoidal",
+      "Nervo óptico (II)"
+    ],
+    "answer": ["Nervo petroso maior"],
+    "type": "multi",
+    "justification": "Relações da <strong>ACI no segmento C3 (lacerum)</strong> — a artéria passa sobre o forame lacerum (não o atravessa):<ul><li><strong>Anterior:</strong> nervo petroso maior (ramo do nervo facial — VII par)</li><li><strong>Posterior:</strong> fóvea petrosa</li></ul>No segmento C2 (petroso/canal carotídeo): Anterior = tuba auditiva e ouvido médio; Posterior = cóclea.<br>No segmento C4 (cavernoso): Anterior = III e IV; Posterior = VI; Medial = hipófise; Lateral = V1."
+  },
+  {
+    "question": "A artéria coroide ANTERIOR origina-se da ACI no segmento C7 e é clinicamente importante porque",
+    "options": [
+      "Supre o plexo coroide, a cápsula interna (ramo posterior), o tálamo e o globo pálido — sua oclusão causa hemiplegia, hemianestesia e hemianopsia (síndrome da coroide anterior)",
+      "É o maior ramo da ACI e supre o lobo occipital inteiro",
+      "Supre o hipocampo e causa amnésia se ocluída bilateralmente",
+      "Anastomosa-se com a artéria cerebral posterior diretamente"
+    ],
+    "answer": ["Supre o plexo coroide, a cápsula interna (ramo posterior), o tálamo e o globo pálido — sua oclusão causa hemiplegia, hemianestesia e hemianopsia (síndrome da coroide anterior)"],
+    "type": "multi",
+    "justification": "A <strong>artéria coroide anterior</strong> origina-se da ACI no segmento C7 (comunicante), logo após a AComP. Supre:<ul><li>Plexo coroide do ventrículo lateral</li><li>Braço posterior da <strong>cápsula interna</strong></li><li>Trato óptico</li><li>Tálamo posterolateral e globo pálido</li></ul>Oclusão → <strong>síndrome da coroide anterior</strong>: hemiplegia contralateral + hemianestesia contralateral + hemianopsia homônima contralateral — tríade clássica. Difícil de diferenciar da oclusão da ACM clinicamente, mas a síndrome da coroide é tipicamente mais pura."
+  },
+  {
+    "question": "As artérias lenticuloestriadas são ramos da artéria cerebral MÉDIA (ACM) e são chamadas de 'artérias do AVC'. Por quê?",
+    "options": [
+      "Penetram perpendicularmente para suprir os gânglios da base, cápsula interna e tálamo, sendo vulneráveis à hipertensão — ruptura causa hemorragia intracerebral hipertensiva clássica",
+      "Anastomosam-se entre si e com a ACA, sendo protegidas da isquemia",
+      "São as maiores artérias do encéfalo em diâmetro",
+      "Originam-se da artéria basilar e suprem o tronco encefálico"
+    ],
+    "answer": ["Penetram perpendicularmente para suprir os gânglios da base, cápsula interna e tálamo, sendo vulneráveis à hipertensão — ruptura causa hemorragia intracerebral hipertensiva clássica"],
+    "type": "multi",
+    "justification": "As <strong>artérias lenticuloestriadas</strong> (ramos perfurantes do segmento M1 da ACM) penetram <strong>perpendicularmente</strong> a partir da ACM para suprir:<ul><li>Núcleo lentiforme (putame + globo pálido)</li><li>Caudado</li><li>Braço posterior da cápsula interna</li><li>Tálamo lateral</li></ul>Por terem paredes finas e estarem sujeitas à pressão diretamente transmitida da ACM, são extremamente vulneráveis à hipertensão arterial crônica → <strong>lipohialinose</strong> → ruptura → <strong>hemorragia intracerebral hipertensiva</strong> (localização típica: putame, tálamo, caudado). Também chamadas de artérias de Charcot-Bouchard."
+  },
+  {
+    "question": "A artéria cerebelar SUPERIOR (SCA) origina-se da porção distal da artéria basilar, imediatamente antes de sua bifurcação. O que se situa entre a SCA e a ACP logo após sua origem?",
+    "options": [
+      "Nervo oculomotor (III par)",
+      "Nervo troclear (IV par)",
+      "Nervo abducente (VI par)",
+      "Nervo trigêmeo (V par)"
+    ],
+    "answer": ["Nervo oculomotor (III par)"],
+    "type": "multi",
+    "justification": "A <strong>SCA (artéria cerebelar superior)</strong> origina-se da artéria basilar imediatamente antes de sua bifurcação nas ACP. Após sua origem, a SCA e a ACP formam uma 'pinça' vascular em torno do <strong>nervo oculomotor (III par craniano)</strong>, que emerge entre elas.<br><br>Esta relação explica por que <strong>aneurismas da junção basilar-SCA ou da ACI/AComP</strong> causam compressão do III par → ptose + midríase + desvio lateral e inferior do olho (paralisia do oculomotor) — 'pupila que avisa do aneurisma'."
+  },
+  {
+    "question": "No ligamento hepatoduodenal (forame de Winslow), as estruturas se dispõem em qual ordem, da direita para a esquerda?",
+    "options": [
+      "Ducto colédoco (direita) → artéria hepática própria (esquerda) → veia porta (posterior)",
+      "Artéria hepática própria (direita) → ducto colédoco (esquerda) → veia porta (posterior)",
+      "Veia porta (direita) → ducto colédoco (esquerda) → artéria hepática (posterior)",
+      "Ducto colédoco (direita) → veia porta (central) → artéria hepática (esquerda)"
+    ],
+    "answer": ["Ducto colédoco (direita) → artéria hepática própria (esquerda) → veia porta (posterior)"],
+    "type": "multi",
+    "justification": "No <strong>ligamento hepatoduodenal</strong>, da direita para a esquerda e de anterior para posterior:<ul><li><strong>Anterodireita:</strong> ducto colédoco</li><li><strong>Anteresquerda:</strong> artéria hepática própria</li><li><strong>Posterior (entre os dois):</strong> veia porta</li></ul>Mnemônica: <strong>CAV</strong> (Colédoco–Artéria–Veia), de direita para esquerda na face anterior, com a veia posterior.<br><br>O forame de Winslow (epiploico) situa-se posteriormente ao ligamento hepatoduodenal — a manobra de Pringle (compressão do ligamento entre polegar e indicador) controla o fluxo hepático total em cirurgias de urgência."
+  },
+  {
+    "question": "A artéria gastroduodenal origina-se da artéria hepática comum e desce posterior ao duodeno (1ª porção). O que se situa ANTERIORMENTE à artéria gastroduodenal?",
+    "options": [
+      "Cabeça do pâncreas",
+      "Primeira porção do duodeno",
+      "Vesícula biliar",
+      "Colo do pâncreas"
+    ],
+    "answer": ["Primeira porção do duodeno"],
+    "type": "multi",
+    "justification": "Relações da <strong>artéria gastroduodenal</strong> (ramo da hepática comum, antes de se dividir em hepática própria):<ul><li><strong>Anterior:</strong> 1ª porção do duodeno (bulbo duodenal)</li><li><strong>Posterior:</strong> cabeça do pâncreas</li><li><strong>Direita:</strong> ducto colédoco (percorre sulco no pâncreas)</li></ul>Úlcera péptica da parede posterior do bulbo duodenal pode erosar a artéria gastroduodenal → <strong>hemorragia digestiva alta catastrófica</strong>. Tratamento endoscópico + embolização angiográfica ou ligadura cirúrgica."
+  },
+  {
+    "question": "A artéria cólica média (ramo da AMS) anastomosa-se com a artéria cólica esquerda (ramo da AMI) pela arcada de Riolan. Qual é o ponto de menor vascularização entre os dois territórios, vulnerável na cirurgia?",
+    "options": [
+      "Ponto crítico de Griffiths (flexura esplênica do colo)",
+      "Ponto de Sudeck (junção retossigmoide)",
+      "Ceco e apêndice",
+      "Ângulo hepático do colo"
+    ],
+    "answer": ["Ponto crítico de Griffiths (flexura esplênica do colo)"],
+    "type": "multi",
+    "justification": "Existem dois pontos de 'zona de fronteira' (watershed zones) entre os territórios da AMS e AMI:<ul><li><strong>Ponto crítico de Griffiths:</strong> flexura esplênica do colo — zona de fronteira entre artéria cólica média (AMS) e cólica esquerda (AMI) — ponto mais vulnerável à isquemia durante cirurgia aórtica ou hipotensão</li><li><strong>Ponto de Sudeck:</strong> junção retossigmoide — zona de fronteira entre artéria sigmoide (AMI) e artéria retal superior (AMI distal) — importante na ressecção anterior do reto</li></ul>A <strong>arcada de Riolan</strong> (arco marginal do colo) conecta as duas artérias — sua preservação é essencial na cirurgia do colo esquerdo e nas ressecções aórticas."
+  },
+  {
+    "question": "A artéria epigástrica inferior origina-se da artéria ilíaca externa, próximo ao ligamento inguinal, e sobe na bainha do reto abdominal. Qual é sua relação com o ducto deferente/ligamento redondo do útero?",
+    "options": [
+      "O ducto deferente/ligamento redondo cruza anteriormente à artéria epigástrica inferior ao nível do anel inguinal profundo",
+      "A artéria epigástrica inferior cruza anteriormente ao ducto deferente",
+      "Ambas as estruturas correm paralelas sem cruzamento",
+      "O ducto deferente passa posteriormente à epigástrica inferior em toda sua extensão"
+    ],
+    "answer": ["O ducto deferente/ligamento redondo cruza anteriormente à artéria epigástrica inferior ao nível do anel inguinal profundo"],
+    "type": "multi",
+    "justification": "A <strong>artéria epigástrica inferior</strong> origina-se da artéria ilíaca externa imediatamente acima do ligamento inguinal e sobe medialmente para entrar na bainha do reto abdominal.<br><br>O <strong>ducto deferente (H) / ligamento redondo do útero (M)</strong> cruza <strong>anteriormente</strong> à artéria epigástrica inferior ao nível do <strong>anel inguinal profundo</strong> — referência importante na cirurgia laparoscópica de hérnia inguinal (TAPP/TEP).<br><br>Esta relação define os triângulos na herniorrafia laparoscópica: medial à epigástrica = hérnia direta; lateral = hérnia indireta."
+  },
+  {
+    "question": "A artéria obturatória origina-se da divisão anterior da ilíaca interna e percorre a parede lateral da pelve até o canal obturatório. Existe uma variante perigosa em cirurgias de hérnia inguinal. Qual é?",
+    "options": [
+      "Corona mortis: anastomose entre a obturatória e a artéria epigástrica inferior, que corre sobre o ligamento lacunar (de Gimbernat)",
+      "A obturatória origina-se da artéria femoral ao nível do triângulo femoral",
+      "A obturatória passa pelo forame isquiático maior junto ao nervo pudendo",
+      "A obturatória anastomosa-se com a artéria femoral profunda"
+    ],
+    "answer": ["Corona mortis: anastomose entre a obturatória e a artéria epigástrica inferior, que corre sobre o ligamento lacunar (de Gimbernat)"],
+    "type": "multi",
+    "justification": "A <strong>'Corona mortis' (coroa da morte)</strong> é uma anastomose entre a <strong>artéria obturatória</strong> (ilíaca interna) e a <strong>artéria epigástrica inferior</strong> (ilíaca externa) presente em ~20–30% das pessoas. Esta anastomose corre sobre o <strong>ligamento lacunar (de Gimbernat)</strong>, no anel femoral.<br><br>Na cirurgia de hérnia femoral, ao seccionar o ligamento lacunar para ampliar o anel femoral, a corona mortis pode ser lacerada → sangramento maciço. Daí o nome 'coroa da morte'.<br><br>Relações da artéria obturatória: Anterior = bexiga, ducto deferente; Posterior = fáscia obturatória; Medial = ureter."
+  },
+  {
+    "question": "A artéria pudenda interna origina-se da divisão ANTERIOR da ilíaca interna, sai pela grande incisura isquiática (abaixo do piriforme) e entra na fossa isquioanal pelo canal de Alcock. O que o canal de Alcock contém?",
+    "options": [
+      "Artéria pudenda interna, veia pudenda interna e nervo pudendo",
+      "Artéria glútea inferior, nervo isquiático e artéria pudenda",
+      "Nervo obturatório e artéria obturatória",
+      "Artéria pudenda interna e nervo ciático"
+    ],
+    "answer": ["Artéria pudenda interna, veia pudenda interna e nervo pudendo"],
+    "type": "multi",
+    "justification": "O <strong>canal de Alcock (canal pudendo)</strong> é um desdobramento da fáscia do músculo obturatório interno na parede lateral da fossa isquioanal. Contém:<ul><li><strong>Artéria pudenda interna</strong></li><li><strong>Veia pudenda interna</strong></li><li><strong>Nervo pudendo</strong> (S2–S4)</li></ul>O nervo pudendo pode ser bloqueado neste canal (bloqueio do nervo pudendo) via abordagem transperineal ou transvaginal — analgesia perineal em partos ou procedimentos perineais.<br><br>A artéria pudenda interna emite: artéria retal inferior, artéria perineal, artéria do bulbo, artéria dorsal do pênis/clitóris."
+  },
+  {
+    "question": "A veia ilíaca comum DIREITA é mais curta que a esquerda e está em posição posterior à artéria homônima. A veia ilíaca comum ESQUERDA é mais longa porque",
+    "options": [
+      "Precisa cruzar posterior à artéria ilíaca comum direita e à aorta para alcançar a VCI, que se forma à direita da linha média",
+      "Recebe mais tributárias que a direita",
+      "Origina-se mais caudalmente, em L5",
+      "A VCI se forma à esquerda em L4"
+    ],
+    "answer": ["Precisa cruzar posterior à artéria ilíaca comum direita e à aorta para alcançar a VCI, que se forma à direita da linha média"],
+    "type": "multi",
+    "justification": "A <strong>veia ilíaca comum esquerda</strong> é mais longa que a direita porque a VCI se forma à <strong>direita da linha média</strong> (L5). Para alcançar a VCI, a veia ilíaca esquerda cruza <strong>posterior à artéria ilíaca comum direita e à aorta distal</strong>.<br><br>Esta compressão é o mecanismo da <strong>síndrome de May-Thurner</strong>: a artéria ilíaca comum direita comprime a veia ilíaca comum esquerda contra a coluna vertebral (L5) → TVP iliofemoral esquerda preferencial em mulheres jovens → tratamento: angioplastia com stent venoso."
+  },
+  {
+    "question": "A veia femoral na coxa tem uma relação diferente com a artéria femoral no triângulo femoral e no canal adutor. No CANAL ADUTOR, a veia femoral encontra-se",
+    "options": [
+      "Anterior à artéria femoral (inversão em relação ao triângulo femoral onde é medial)",
+      "Lateral à artéria femoral",
+      "Posterior à artéria femoral",
+      "Na mesma posição que no triângulo femoral — sempre medial"
+    ],
+    "answer": ["Anterior à artéria femoral (inversão em relação ao triângulo femoral onde é medial)"],
+    "type": "multi",
+    "justification": "Há uma <strong>inversão de posição</strong> da veia femoral em relação à artéria ao longo do trajeto na coxa:<ul><li><strong>No triângulo femoral:</strong> veia femoral = <em>medial</em> à artéria</li><li><strong>No canal adutor:</strong> veia femoral = <em>anterior</em> à artéria femoral</li></ul>Esta mudança de relação ocorre porque os vasos giram ligeiramente ao percorrer o canal. É importante conhecer para a dissecção cirúrgica e para compreender por que a compressão inadvertida pode ocluir a veia antes da artéria no canal adutor."
+  },
+  {
+    "question": "As veias tibiais ANTERIORES, ao perfurarem a membrana interóssea para drenar na veia poplítea, têm que fazer um trajeto especial. Onde exatamente elas perfuram a membrana interóssea?",
+    "options": [
+      "Atravessam a membrana interóssea superiormente, logo abaixo da bifurcação da artéria poplítea, e drenam na veia poplítea pelo aspecto anterior",
+      "Perfuram a membrana interóssea ao nível do tornozelo",
+      "Drenam na veia fibular antes de alcançar a poplítea",
+      "Sobem pelo compartimento posterior e drenam diretamente na veia femoral"
+    ],
+    "answer": ["Atravessam a membrana interóssea superiormente, logo abaixo da bifurcação da artéria poplítea, e drenam na veia poplítea pelo aspecto anterior"],
+    "type": "multi",
+    "justification": "As <strong>veias tibiais anteriores (par)</strong> acompanham a artéria tibial anterior no compartimento anterior da perna. Para drenar na veia poplítea, elas perfuram a membrana interóssea <strong>superiormente</strong> (próximo à bifurcação da poplítea) e chegam à face anterior da veia poplítea.<br><br>Relações das veias tibiais anteriores:<ul><li><strong>Posterior:</strong> membrana interóssea (após perfurá-la superiormente)</li><li><strong>Medial:</strong> tíbia</li><li><strong>Lateral:</strong> fíbula</li></ul>Na fossa poplítea, drena pela face anterior da veia poplítea — por isso a veia poplítea recebe tributárias de todos os lados."
+  },
+  {
+    "question": "O seio sigmoide é a continuação do seio transverso e drena no bulbo superior da veia jugular interna pelo forame jugular. Qual estrutura óssea contém o sulco do seio sigmoide?",
+    "options": [
+      "Superfície interna do processo mastoide do osso temporal",
+      "Asa maior do osso esfenoide",
+      "Face interna do occipital, lateral ao forame magno",
+      "Face interna do parietal, no sulco do seio sagital"
+    ],
+    "answer": ["Superfície interna do processo mastoide do osso temporal"],
+    "type": "multi",
+    "justification": "O <strong>seio sigmoide</strong> percorre o <strong>sulco sigmoide na superfície interna do processo mastoide do osso temporal</strong> — daí o nome 'sigmoide' pela forma em S. Drena no <strong>bulbo superior da VJI</strong> pelo forame jugular (junto com os nervos IX, X, XI).<br><br>Esta relação explica por que a <strong>mastoidite</strong> (infecção da mastoide) pode complicar com <strong>trombose do seio sigmoide</strong> → cefaleia, febre, papiledema, déficits de IX–XI. Tratamento: antibióticos + anticoagulação + mastoidectomia cirúrgica."
+  },
+  {
+    "question": "O seio petroso INFERIOR origina-se do seio cavernoso e drena na veia jugular interna. Por qual estrutura óssea ele percorre?",
+    "options": [
+      "Sulco petroso inferior, entre o osso temporal e o occipital, saindo pelo forame jugular",
+      "Canal carotídeo do osso temporal",
+      "Forame oval da asa maior do esfenoide",
+      "Fissura petroescamosa do temporal"
+    ],
+    "answer": ["Sulco petroso inferior, entre o osso temporal e o occipital, saindo pelo forame jugular"],
+    "type": "multi",
+    "justification": "O <strong>seio petroso inferior</strong> drena o seio cavernoso e percorre o <strong>sulco petroso inferior</strong> (na borda inferior do rochedo do temporal, entre o temporal e o occipital) → sai pelo <strong>forame jugular</strong> → <strong>veia jugular interna</strong>.<br><br>O <strong>seio petroso superior</strong> percorre a borda superior do rochedo e drena no seio transverso.<br><br>Importância clínica: o cateterismo seletivo do seio petroso inferior bilateral é utilizado no diagnóstico diferencial da <strong>doença de Cushing</strong> (gradiente de ACTH entre o seio petroso e a veia periférica confirma origem hipofisária)."
+  },
+  {
+    "question": "A veia cerebral média superficial (silviana) drena no seio cavernoso. As veias anastomóticas de Labbé e Trolard conectam a veia silviana a outros seios. Onde drena cada uma?",
+    "options": [
+      "Labbé → seio transverso; Trolard → seio sagital superior",
+      "Labbé → seio sagital superior; Trolard → seio transverso",
+      "Labbé → seio cavernoso; Trolard → seio reto",
+      "Labbé → seio sigmoide; Trolard → seio petroso superior"
+    ],
+    "answer": ["Labbé → seio transverso; Trolard → seio sagital superior"],
+    "type": "multi",
+    "justification": "As veias anastomóticas cerebrais superficiais conectam os grandes seios:<ul><li><strong>Veia de Labbé (anastomótica inferior):</strong> conecta a veia cerebral média superficial (silviana) ao <strong>seio transverso</strong></li><li><strong>Veia de Trolard (anastomótica superior):</strong> conecta a veia cerebral média superficial ao <strong>seio sagital superior</strong></li></ul>A trombose da veia de Labbé (após cirurgia do seio transverso ou trombose venosa cerebral) causa infarto venoso temporal → afasia (hemisfério esquerdo) + convulsões temporais."
+  },
+  {
+    "question": "A veia magna de Galeno forma-se pela fusão das veias cerebrais INTERNAS. O que as veias cerebrais internas drenam e de onde se originam?",
+    "options": [
+      "Drenam tálamo, gânglios da base e cápsula interna; originam-se do forame de Monro (veia tálamo-estriada + veia do septo pelúcido)",
+      "Drenam o lobo frontal medial; originam-se da veia da foice",
+      "Drenam exclusivamente o cerebelo; originam-se das veias pericelulares",
+      "Drenam o lobo occipital; originam-se das veias calcarina e parietooccipital"
+    ],
+    "answer": ["Drenam tálamo, gânglios da base e cápsula interna; originam-se do forame de Monro (veia tálamo-estriada + veia do septo pelúcido)"],
+    "type": "multi",
+    "justification": "As <strong>veias cerebrais internas</strong> formam-se no <strong>forame de Monro</strong> pela junção da <strong>veia tálamo-estriada</strong> (drena o núcleo caudado e cápsula interna) + <strong>veia do septo pelúcido</strong>. Percorrem o teto do 3º ventrículo e drenam:<ul><li>Tálamo</li><li>Gânglios da base (caudado, lentiforme)</li><li>Cápsula interna</li><li>Corpo caloso</li><li>Plexo coroide do ventrículo lateral</li></ul>Unem-se abaixo do esplênio do corpo caloso formando a <strong>veia magna de Galeno</strong> → seio reto → confluência dos seios (tórcula)."
+  },
+  {
+    "question": "A artéria torácica lateral origina-se da 2ª parte da artéria axilar. Qual é sua importância clínica especial em relação à glândula mamária?",
+    "options": [
+      "É o principal suprimento vascular para o quadrante superolateral da mama e é referência na cirurgia do câncer de mama (pode ser preservada ou ligada no esvaziamento axilar)",
+      "É a artéria que supre a aréola e o mamilo exclusivamente",
+      "Origina-se da artéria torácica interna e supre a mama medialmente",
+      "Supre apenas os músculos serrátil anterior e peitoral menor, sem contribuição mamária"
+    ],
+    "answer": ["É o principal suprimento vascular para o quadrante superolateral da mama e é referência na cirurgia do câncer de mama (pode ser preservada ou ligada no esvaziamento axilar)"],
+    "type": "multi",
+    "justification": "A <strong>artéria torácica lateral</strong> (2ª parte da axilar) supre:<ul><li>Quadrante superolateral da mama</li><li>Músculo serrátil anterior</li><li>Músculos peitorais</li></ul>É referência no esvaziamento axilar oncológico — sua ligadura faz parte da técnica de mastectomia radical modificada.<br><br>O suprimento vascular total da mama vem de: torácica lateral (quadrante superolateral), ramos perfurantes da torácica interna (quadrantes mediais), ramos intercostais laterais (quadrante inferior) e ramos da toracoacromial (quadrante superior)."
+  },
+  {
+    "question": "As veias cardíacas anteriores drenam a face anterior do ventrículo DIREITO e têm uma drenagem peculiar diferente das demais veias cardíacas. Onde drenam?",
+    "options": [
+      "Diretamente no átrio direito (não passam pelo seio coronário)",
+      "No seio coronário junto com a grande veia cardíaca",
+      "Na veia cava superior diretamente",
+      "No ventrículo direito diretamente (veias de Tebesiano)"
+    ],
+    "answer": ["Diretamente no átrio direito (não passam pelo seio coronário)"],
+    "type": "multi",
+    "justification": "As <strong>veias cardíacas anteriores</strong> percorrem a face anterior do ventrículo direito (pequenas, 2–4 veias) e drenam <strong>diretamente no átrio direito</strong>, sem passar pelo seio coronário.<br><br>As <strong>veias cardíacas mínimas (de Tebesiano)</strong> são ainda menores e drenam diretamente nas <strong>cavidades cardíacas</strong> (tanto átrios quanto ventrículos).<br><br>Apenas a grande veia cardíaca, veia cardíaca média, pequena e a oblíqua de Marshall drenam no <strong>seio coronário</strong> → átrio direito.<br><br>Clinicamente: as veias de Tebesiano explicam por que o coração tem um pequeno 'shunt' fisiológico de sangue venoso para as câmaras esquerdas."
+  },
+  {
+    "question": "A artéria braquial profunda (profunda do braço) acompanha o nervo RADIAL no sulco espiral do úmero. O que ela irriga e qual sua importância clínica em fraturas do úmero?",
+    "options": [
+      "Irriga o tríceps, o úmero (artéria nutrítia) e anastomosa-se com a rede articular do cotovelo — fratura da diáfise umeral pode lesar o nervo radial E a artéria, causando paralisia dos extensores do punho + déficit vascular",
+      "Irriga apenas o músculo bíceps braquial e não tem relação com fraturas",
+      "Irriga o compartimento anterior do braço junto ao nervo mediano",
+      "Anastomosa-se exclusivamente com a artéria axilar"
+    ],
+    "answer": ["Irriga o tríceps, o úmero (artéria nutrítia) e anastomosa-se com a rede articular do cotovelo — fratura da diáfise umeral pode lesar o nervo radial E a artéria, causando paralisia dos extensores do punho + déficit vascular"],
+    "type": "multi",
+    "justification": "A <strong>artéria braquial profunda (profunda do braço)</strong> é o maior ramo da artéria braquial, originando-se proximalmente e acompanhando o <strong>nervo radial no sulco espiral (radial) do úmero</strong>.<br><br>Irriga: tríceps braquial (todos os ventres), úmero (artéria nutrítia), anastomosa-se com colateral radial (→ rede articular do cotovelo).<br><br>Fratura da diáfise umeral (terço médio) → lesão simultânea do nervo radial + artéria braquial profunda:<ul><li>Nervo radial: sinal da queda do punho (wrist drop), parestesia dorso da mão</li><li>Artéria: hematoma do braço, déficit de perfusão distal</li></ul>"
+  },
+  {
+    "question": "A artéria interóssea comum origina-se da artéria ulnar e se divide em interóssea ANTERIOR e POSTERIOR. A interóssea posterior perfura a membrana interóssea superiormente para irrigar o compartimento",
+    "options": [
+      "Posterior do antebraço (extensores)",
+      "Anterior profundo do antebraço (flexores profundos)",
+      "Lateral do antebraço junto ao nervo radial",
+      "Medial do antebraço junto ao nervo ulnar"
+    ],
+    "answer": ["Posterior do antebraço (extensores)"],
+    "type": "multi",
+    "justification": "A <strong>artéria interóssea comum</strong> origina-se da artéria ulnar logo abaixo da bifurcação da braquial e se divide em:<ul><li><strong>Interóssea anterior:</strong> percorre o compartimento anterior do antebraço, profunda aos flexores, junto ao nervo interósseo anterior (ramo do mediano) → supre flexores profundos, pronador quadrado</li><li><strong>Interóssea posterior:</strong> perfura a membrana interóssea <em>superiormente</em> → compartimento <strong>posterior do antebraço</strong> (extensores) → acompanha o nervo interósseo posterior (ramo profundo do radial)</li></ul>A interóssea recorrente (da posterior) anastomosa-se com a rede articular do cotovelo."
+  },
+  {
+    "question": "A artéria pancreaticoduodenal INFERIOR origina-se da AMS e anastomosa-se com as pancreaticoduodenais SUPERIORES (ramos da gastroduodenal / tronco celíaco). Esta anastomose tem qual importância clínica?",
+    "options": [
+      "É a principal via de circulação colateral entre o tronco celíaco e a AMS — na síndrome do ligamento arqueado mediano ou estenose do TC, o sangue flui retrogradamente pelas pancreaticoduodenais para suprir o fígado, estômago e baço",
+      "Permite ressecções do duodeno sem isquemia pois há duplo suprimento",
+      "Não tem importância clínica significativa",
+      "É a única via de suprimento do pâncreas, sem alternativas colaterais"
+    ],
+    "answer": ["É a principal via de circulação colateral entre o tronco celíaco e a AMS — na síndrome do ligamento arqueado mediano ou estenose do TC, o sangue flui retrogradamente pelas pancreaticoduodenais para suprir o fígado, estômago e baço"],
+    "type": "multi",
+    "justification": "As <strong>artérias pancreaticoduodenais</strong> formam a principal anastomose entre o <strong>tronco celíaco</strong> (via gastroduodenal → pancreaticoduodenais superiores) e a <strong>AMS</strong> (via pancreaticoduodenal inferior).<br><br>Na <strong>síndrome do ligamento arqueado mediano</strong> (compressão do TC pelo pilar diafragmático) ou na oclusão do TC por aterosclerose, o sangue flui retrogradamente: AMS → pancreaticoduodenal inferior → pancreaticoduodenais superiores → gastroduodenal → hepática comum → fígado/estômago/baço. Esta colateral mantém a perfusão do território celíaco e pode ser tão robusta que a estenose do TC passa assintomática por anos."
+  },
+  {
+    "question": "A artéria gástrica esquerda origina-se do tronco celíaco e sobe até a curvatura menor do estômago. Com qual artéria ela se anastomosa ao longo da curvatura menor?",
+    "options": [
+      "Artéria gástrica direita (ramo da artéria hepática própria)",
+      "Artéria gastroepiploica direita (ramo da gastroduodenal)",
+      "Artéria gastroepiploica esquerda (ramo da esplênica)",
+      "Artérias gástricas curtas (ramos da esplênica)"
+    ],
+    "answer": ["Artéria gástrica direita (ramo da artéria hepática própria)"],
+    "type": "multi",
+    "justification": "As arcadas arteriais do estômago:<ul><li><strong>Curvatura menor:</strong> a. gástrica esquerda (tronco celíaco) anastomosa com a <strong>a. gástrica direita</strong> (hepática própria)</li><li><strong>Curvatura maior:</strong> a. gastroepiploica esquerda (esplênica) anastomosa com a <strong>a. gastroepiploica direita</strong> (gastroduodenal)</li><li><strong>Fundo gástrico:</strong> artérias gástricas curtas (esplênica) — única fonte → ressecção do baço pode isquemiar o fundo</li></ul>Na gastrectomia total, todas estas anastomoses são interrompidas. Na gastrectomia parcial, a curvatura maior com a gastroepiploica direita é geralmente preservada para manter o tubo gástrico."
+  },
+  {
+    "question": "A artéria gastroepiploica DIREITA origina-se da artéria gastroduodenal e a gastroepiploica ESQUERDA origina-se da artéria esplênica. Elas se anastomosam na curvatura maior. Qual é a importância clínica da gastroepiploica DIREITA na cardiologia intervencionista?",
+    "options": [
+      "É utilizada como enxerto arterial para bypass coronário (revascularização miocárdica cirúrgica), com resultados semelhantes à artéria radial",
+      "É a principal artéria da mucosa gástrica e sua oclusão causa úlcera gástrica isquêmica",
+      "Anastomosa-se com a artéria mesentérica superior através do omento",
+      "É utilizada como enxerto para bypass de artéria renal estenótica"
+    ],
+    "answer": ["É utilizada como enxerto arterial para bypass coronário (revascularização miocárdica cirúrgica), com resultados semelhantes à artéria radial"],
+    "type": "multi",
+    "justification": "A <strong>artéria gastroepiploica direita</strong> pode ser utilizada como <strong>enxerto arterial in situ</strong> na revascularização miocárdica cirúrgica (CRM), anastomosada principalmente para a artéria coronária direita ou descendente posterior. É particularmente utilizada no Japão (técnica do grupo Suma).<br><br>Vantagens: artéria de bom calibre, in situ, patência ~80% em 10 anos (similar à artéria radial).<br><br>Desvantagem: requer laparotomia adicional, espasmo frequente, comprimento variável. Reservada para reoperações ou quando outras artérias não estão disponíveis."
+  },
+  {
+    "question": "A veia mesentérica INFERIOR (VMI) drena na veia esplênica (ou na junção espleno-mesentérica). Quais são suas tributárias principais?",
+    "options": [
+      "Veia cólica esquerda, veias sigmoideas e veia retal superior",
+      "Veia cólica média, cólica direita e veias ileais",
+      "Veia retal superior, veia esplênica e veias gástricas curtas",
+      "Veia mesentérica superior e veia esplênica"
+    ],
+    "answer": ["Veia cólica esquerda, veias sigmoideas e veia retal superior"],
+    "type": "multi",
+    "justification": "A <strong>VMI (veia mesentérica inferior)</strong> drena o território da AMI e tem como tributárias:<ul><li><strong>Veia cólica esquerda</strong> (colo descendente)</li><li><strong>Veias sigmoideas</strong> (colo sigmoide)</li><li><strong>Veia retal superior</strong> (reto — anastomose portossistêmica)</li></ul>Drena na <strong>veia esplênica</strong> (ou na junção espleno-mesentérica, variável) → veia porta → fígado.<br><br>A veia retal superior é a única veia retal do sistema porta — as retais média e inferior drenam no sistema sistêmico (ilíaca interna). Na hipertensão portal: sangue flui retrogradamente → varizes hemorroidárias."
+  },
+  {
+    "question": "A veia hepática DIREITA é a maior das três veias hepáticas. Em que posição ela drena na veia cava inferior em relação às veias hepáticas média e esquerda?",
+    "options": [
+      "A veia hepática direita drena separadamente na VCI; as veias hepáticas média e esquerda geralmente se unem em tronco comum antes de drenar na VCI (80% dos casos)",
+      "Todas as três drenam separadamente na VCI em três óstios independentes",
+      "A veia hepática direita se une à média antes de drenar na VCI",
+      "As três veias formam um tronco único antes de drenar na VCI"
+    ],
+    "answer": ["A veia hepática direita drena separadamente na VCI; as veias hepáticas média e esquerda geralmente se unem em tronco comum antes de drenar na VCI (80% dos casos)"],
+    "type": "multi",
+    "justification": "Anatomia das veias hepáticas na drenagem para a VCI:<ul><li><strong>Veia hepática direita (maior):</strong> drena <em>separadamente</em> na VCI pelo óstio direito — segmentos V, VI, VII, VIII</li><li><strong>Veias hepática média e esquerda:</strong> formam um <strong>tronco comum (80%)</strong> antes de drenar na VCI pelo óstio esquerdo — segmentos IV+V+VIII (média) e II+III+IV (esquerda)</li></ul>Esta anatomia é fundamental na <strong>hepatectomia</strong> e no planejamento cirúrgico: a ressecção do lobo direito deve preservar as veias médias que drenam o segmento IV; a ressecção esquerda preserva a veia hepática direita."
+  },
+  {
+    "question": "A artéria pulmonar direita é MAIS LONGA que a esquerda porque deve percorrer maior distância para alcançar o hilo pulmonar direito. Qual vaso importante ela passa por trás (posterior)?",
+    "options": [
+      "Aorta ascendente e VCS — a artéria pulmonar direita passa posterior a ambas",
+      "Tronco pulmonar e arco aórtico",
+      "Veia braquiocefálica esquerda",
+      "Átrio esquerdo somente"
+    ],
+    "answer": ["Aorta ascendente e VCS — a artéria pulmonar direita passa posterior a ambas"],
+    "type": "multi",
+    "justification": "A <strong>artéria pulmonar direita</strong> percorre um trajeto horizontal, cruzando <strong>posterior à aorta ascendente e à VCS</strong> (estas estão anteriores a ela) para alcançar o hilo pulmonar direito ao nível de T4–T5.<br><br>Relações completas:<ul><li><strong>Anterior:</strong> aorta ascendente, VCS, veias pulmonares superiores</li><li><strong>Posterior:</strong> brônquio principal direito (a artéria cruza <em>anteriormente</em> ao brônquio no hilo)</li><li><strong>Superior:</strong> arco aórtico</li><li><strong>Inferior:</strong> átrio esquerdo</li></ul>Na embolia pulmonar maciça, o trombo frequentemente se aloja na bifurcação do tronco pulmonar (sela/saddle embolus) e nos ramos principais."
+  },
+  {
+    "question": "As veias pulmonares carregam sangue OXIGENADO dos pulmões para o átrio esquerdo. Qual é a posição das veias pulmonares no hilo pulmonar em relação à artéria pulmonar?",
+    "options": [
+      "As veias pulmonares são anteriores e inferiores à artéria pulmonar no hilo",
+      "As veias pulmonares são posteriores e superiores à artéria pulmonar no hilo",
+      "As veias pulmonares e artérias pulmonares têm posição idêntica no hilo",
+      "As veias pulmonares ficam lateralmente ao brônquio principal"
+    ],
+    "answer": ["As veias pulmonares são anteriores e inferiores à artéria pulmonar no hilo"],
+    "type": "multi",
+    "justification": "No <strong>hilo pulmonar</strong>, a disposição geral das estruturas é:<ul><li><strong>Superior:</strong> artéria pulmonar (lobar superior)</li><li><strong>Posterior:</strong> brônquio principal</li><li><strong>Anterior e inferior:</strong> veias pulmonares (superior e inferior)</li></ul>No pulmão <strong>direito</strong>: artéria pulmonar direita (superior ao brônquio) → brônquio principal direito (posterior) → veias pulmonares (anterior e inferior).<br><br>No pulmão <strong>esquerdo</strong>: artéria pulmonar esquerda (superior e anterior ao brônquio) → brônquio principal esquerdo (posterior) → veias pulmonares (inferior e anterior).<br><br>Estas relações são fundamentais na pneumonectomia e lobectomia — as veias são ligadas por último, após a artéria e o brônquio, para evitar embolia gasosa."
+  },
+  {
+    "question": "A veia jugular ANTERIOR origina-se na região mentoniana e pode anastomosar-se com a contralateral pelo arco venoso jugular. Onde termina?",
+    "options": [
+      "Na veia jugular externa ou na veia subclávia",
+      "Na veia jugular interna diretamente",
+      "Na veia braquiocefálica",
+      "No seio petroso inferior"
+    ],
+    "answer": ["Na veia jugular externa ou na veia subclávia"],
+    "type": "multi",
+    "justification": "A <strong>veia jugular anterior</strong> origina-se na região mentoniana, desce na linha paramediana anterior do pescoço (entre o músculo platisma e a linha média), e drena na <strong>veia jugular externa</strong> ou na <strong>veia subclávia</strong>.<br><br>As duas veias jugulares anteriores podem anastomosar-se acima do manúbrio pelo <strong>arco venoso jugular</strong>, localizado no espaço supraesternal (de Burns) — importante na traqueostomia (risco de lesão do arco).<br><br>Durante a traqueostomia cirúrgica, o arco venoso jugular deve ser identificado e, se necessário, ligado antes da incisão traqueal."
+  },
+  {
+    "question": "As artérias espinhais POSTERIORES (par) têm origem diferente da espinal anterior. De onde se originam e o que suprem?",
+    "options": [
+      "Originam-se da PICA (ou das artérias vertebrais) e suprem o 1/3 posterior da medula (colunas posteriores — tato epicrítico, propriocepção e vibração)",
+      "Originam-se das artérias intercostais e suprem os 2/3 anteriores da medula",
+      "Originam-se da artéria basilar e suprem o bulbo posterior",
+      "Originam-se das artérias cerebrais posteriores e suprem o cerebelo posterior"
+    ],
+    "answer": ["Originam-se da PICA (ou das artérias vertebrais) e suprem o 1/3 posterior da medula (colunas posteriores — tato epicrítico, propriocepção e vibração)"],
+    "type": "multi",
+    "justification": "As <strong>artérias espinhais posteriores (par)</strong>:<ul><li><strong>Origem:</strong> PICA (artéria cerebelar posteroinferior) ou diretamente das artérias vertebrais (segmento V4)</li><li><strong>Trajeto:</strong> descem nas faces posterolaterais da medula, ao longo dos sulcos laterais posteriores</li><li><strong>Território:</strong> 1/3 posterior da medula = <strong>colunas posteriores</strong> (funículos posteriores) — tato epicrítico, propriocepção consciente, vibração e pressão</li></ul>Oclusão das espinhais posteriores → síndrome cordonal posterior: perda de propriocepção + vibração + ataxia sensitiva, com preservação da força e sensibilidade álgico-térmica (diferente da síndrome da artéria espinal anterior)."
+  },
+  {
+    "question": "A artéria de Adamkiewicz (artéria radicular magna anterior) reforça a artéria espinal anterior. Em que nível e de que lado ela predominantemente se origina?",
+    "options": [
+      "Intercostal ou lombar esquerda, nível T9–L2 (mais frequentemente T10–L1)",
+      "Intercostal direita, nível T4–T6",
+      "Artéria lombar esquerda, nível L3–L4 exclusivamente",
+      "Artéria vertebral esquerda, nível C6–C7"
+    ],
+    "answer": ["Intercostal ou lombar esquerda, nível T9–L2 (mais frequentemente T10–L1)"],
+    "type": "multi",
+    "justification": "A <strong>artéria de Adamkiewicz (artéria radicular magna anterior)</strong> é o maior e mais importante reforço da artéria espinal anterior. Características:<ul><li><strong>Lado:</strong> predominantemente <em>esquerdo</em> (~75% dos casos)</li><li><strong>Nível:</strong> T9–L2, mais frequentemente <strong>T10–L1</strong></li><li><strong>Origem:</strong> artéria intercostal posterior ou lombar (ramos da aorta torácica/abdominal)</li></ul>Sua oclusão durante cirurgia aórtica (aneurismectomia toracoabdominal, endoprótese) → síndrome da artéria espinal anterior: paraplegia + disfunção autonômica, com preservação da sensibilidade proprioceptiva posterior. Identificação pré-operatória por angioRM é recomendada nos aneurismas toracoabdominais."
+  },
+  {
+    "question": "A artéria faríngea ASCENDENTE origina-se da artéria carótida externa e supre a faringe, meninges e ouvido médio. Por qual forame ela envia ramos para as meninges?",
+    "options": [
+      "Forame jugular e canal hipoglosso",
+      "Forame oval e forame redondo",
+      "Forame espinhoso (junto à meníngea média)",
+      "Canal carotídeo"
+    ],
+    "answer": ["Forame jugular e canal hipoglosso"],
+    "type": "multi",
+    "justification": "A <strong>artéria faríngea ascendente</strong> é o menor ramo da carótida externa (medial, ascende na parede lateral da faringe). Envia ramos meníngeos pelos:<ul><li><strong>Forame jugular</strong> → meninges da fossa posterior</li><li><strong>Canal hipoglosso</strong> → meninges adjacentes</li></ul>Outros ramos: faríngeos (músculos constritores, mucosa faríngea), timpânico inferior (ouvido médio — anastomosa com a artéria timpânica anterior da maxilar e com a artéria estilomastóidea da auricular posterior).<br><br>Clinicamente: na embolização de tumores glômicos jugulotimpânicos (paragangliomas), a faríngea ascendente é frequentemente embolizada."
+  },
+  {
+    "question": "A artéria auricular POSTERIOR origina-se da carótida externa e supre o ouvido externo e couro cabeludo retroauricular. Qual ramo dela entra no forame estilomastoide para suprir a orelha média?",
+    "options": [
+      "Artéria estilomastóidea",
+      "Artéria timpânica posterior",
+      "Artéria auricular profunda",
+      "Artéria occipital"
+    ],
+    "answer": ["Artéria estilomastóidea"],
+    "type": "multi",
+    "justification": "A <strong>artéria auricular posterior</strong> (carótida externa) emite como ramo importante a <strong>artéria estilomastóidea</strong>, que entra no forame estilomastoide junto ao nervo facial (VII par) e supre:<ul><li>Nervo facial (dentro do canal facial)</li><li>Células mastóideas</li><li>Orelha média (via artéria timpânica posterior)</li></ul>A artéria estilomastóidea é referência na cirurgia da parótida e na parotidectomia — está em relação íntima com o tronco do nervo facial ao sair do forame estilomastoide. Também supre o músculo estilohioideo e o ventre posterior do digástrico."
+  },
+  {
+    "question": "A artéria occipital origina-se da carótida externa e supre o couro cabeludo occipital. Com qual artéria ela anastomosa-se na região da nuca, formando circulação colateral importante?",
+    "options": [
+      "Artéria vertebral (via ramos musculares cervicais profundos)",
+      "Artéria temporal superficial (via ramos parietais)",
+      "Artéria meníngea média (via forame espinhoso)",
+      "Artéria cerebelar posteroinferior (PICA)"
+    ],
+    "answer": ["Artéria vertebral (via ramos musculares cervicais profundos)"],
+    "type": "multi",
+    "justification": "A <strong>artéria occipital</strong> (carótida externa) anastomosa-se com ramos das <strong>artérias vertebrais</strong> (via ramos musculares da nuca e ramos meníngeos) na região occipital e cervical posterior.<br><br>Esta anastomose carótida externa–vertebral é uma via de circulação colateral importante:<ul><li>Na oclusão da carótida interna: fluxo pode ser mantido via carótida externa → occipital → vertebral → basilar (em sentido retrógrado)</li><li>Na síndrome de roubo da subclávia: também pode participar da circulação colateral</li></ul>Relações da artéria occipital: passa posterior ao músculo digástrico (ventre posterior), cruza medialmente à veia jugular interna, percorre o sulco occipital no crânio."
+  },
+  {
+    "question": "A artéria tireoidea SUPERIOR origina-se da carótida externa como seu PRIMEIRO ramo e emite um ramo laríngeo. Qual nervo acompanha a artéria laríngea superior e qual o acompanha a artéria tireoidea inferior (do tronco tireocervical)?",
+    "options": [
+      "Laríngea superior: nervo laríngeo superior (ramo do vago); tireoidea inferior: nervo laríngeo recorrente",
+      "Laríngea superior: nervo hipoglosso; tireoidea inferior: nervo laríngeo superior",
+      "Ambas são acompanhadas pelo nervo laríngeo recorrente",
+      "Laríngea superior: nervo acessório; tireoidea inferior: nervo laríngeo superior"
+    ],
+    "answer": ["Laríngea superior: nervo laríngeo superior (ramo do vago); tireoidea inferior: nervo laríngeo recorrente"],
+    "type": "multi",
+    "justification": "Relações nervosas das artérias tireóideas — fundamentais na tireoidectomia:<ul><li><strong>Artéria laríngea superior</strong> (ramo da tireoidea superior): acompanha o <strong>nervo laríngeo superior</strong> (ramo interno — sensitivo da mucosa laríngea supraglótica). Liga da artéria laríngea superior deve ser feita próximo à glândula para evitar lesão do nervo laríngeo superior → disfonia leve, perda do agudo vocal</li><li><strong>Artéria tireoidea inferior</strong> (tronco tireocervical): cruza próximo ao <strong>nervo laríngeo recorrente</strong> — o nervo passa anterior, posterior ou entre os ramos da artéria (variável). Ligadura da artéria tireoidea inferior deve ser feita distante da glândula (lateral) para preservar o recorrente → disfonia grave se lesado</li></ul>"
+  },
+  {
+    "question": "No canal do carpo (túnel do carpo), as estruturas passam sob o retináculo dos flexores. Qual artéria NÃO passa pelo túnel do carpo?",
+    "options": [
+      "A artéria ulnar — ela passa pelo canal de Guyon (medialmente ao retináculo, não pelo túnel do carpo)",
+      "A artéria radial — ela não chega ao punho",
+      "A artéria interóssea anterior",
+      "Os ramos da artéria dorsal do carpo"
+    ],
+    "answer": ["A artéria ulnar — ela passa pelo canal de Guyon (medialmente ao retináculo, não pelo túnel do carpo)"],
+    "type": "multi",
+    "justification": "O <strong>túnel do carpo</strong> (abaixo do retináculo dos flexores) contém:<ul><li>Nervo mediano</li><li>Tendões dos flexores superficiais (4) e profundos (4)</li><li>Tendão do flexor longo do polegar</li><li><strong>NÃO contém a artéria ulnar nem o nervo ulnar</strong></li></ul>A <strong>artéria ulnar</strong> (e o nervo ulnar) passam pelo <strong>canal de Guyon</strong> — espaço medial ao retináculo dos flexores, entre o pisiforme e o hâmulo do hamato. A artéria radial passa pelo retináculo dos extensores dorsalmente (caixa de tabaco anatômica) para formar o arco palmar profundo."
+  },
+  {
+    "question": "A artéria dorsal do pé (pediosa) é palpável entre o 1º e 2º metatarsos. Quais são suas relações laterais e mediais neste nível?",
+    "options": [
+      "Medial: tendão do extensor longo do hálux; Lateral: tendão do extensor longo dos dedos (2º dedo); Acompanha: nervo fibular profundo (medial à artéria)",
+      "Medial: nervo fibular superficial; Lateral: tendão tibial anterior",
+      "Medial: artéria plantar medial; Lateral: artéria plantar lateral",
+      "Medial: tendão extensor do hálux; Lateral: artéria fibular"
+    ],
+    "answer": ["Medial: tendão do extensor longo do hálux; Lateral: tendão do extensor longo dos dedos (2º dedo); Acompanha: nervo fibular profundo (medial à artéria)"],
+    "type": "multi",
+    "justification": "A <strong>artéria dorsal do pé (pediosa)</strong> no nível do dorso do pé, entre o 1º e 2º metatarsos:<ul><li><strong>Medial:</strong> tendão do extensor longo do hálux</li><li><strong>Lateral:</strong> tendão do extensor longo dos dedos (ramo para o 2º dedo)</li><li><strong>Nervo fibular profundo:</strong> acompanha medialmente à artéria</li></ul>É palpável neste ponto — referência para avaliação do pulso na DAP (doença arterial periférica) e para o cálculo do ITB (índice tornozelo-braquial).<br><br>Ramos: artérias tarsais (medial e lateral), artérias metatarsais dorsais, ramo plantar profundo (→ arco plantar profundo com a plantar lateral)."
+  }
+]
+
+/* ══════════════ ESTADO DO QUIZ ══════════════ */
+let currentQ = 0;
+let userAnswers  = new Array(quizData.length).fill(null).map(()=>[]); // para fill será string dentro do array
+let attempted    = new Array(quizData.length).fill(false);
+
+/* ══════════════ ELEMENTOS DOM ══════════════ */
+const content     = document.getElementById('quiz-content');
+const progressFill= document.getElementById('quiz-progress');
+const progressLbl = document.getElementById('progress-label');
+const prevBtn     = document.getElementById('prev-btn');
+const answerBtn   = document.getElementById('answer-btn');
+const nextBtn     = document.getElementById('next-btn');
+const submitBtn   = document.getElementById('submit-btn');
+const resultsDiv  = document.getElementById('results-container');
+const reportDiv   = document.getElementById('report-container');
+const navDiv      = document.getElementById('navigation-buttons');
+const progressWrap= document.querySelector('.progress-wrapper');
+
+/* ══════════════ RENDER ══════════════ */
+function init(){
+  shuffleArray(quizData);
+  renderAll();
+  goTo(0);
+  bindEvents();
+}
+
+function shuffleArray(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+
+function renderAll(){
+  content.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const card = document.createElement('div');
+    card.className='question-card';
+    card.id=`q-${i}`;
+
+    let badgeClass = 'badge-multi';
+    let badgeText  = '◈ Múltipla escolha';
+    if(q.type==='tf') { badgeClass='badge-tf'; badgeText='✦ V/F'; }
+    else if(q.type==='fill') { badgeClass='badge-fill'; badgeText='⸻ Preenchimento'; }
+
+    let optsHTML='';
+    if(q.type==='tf'){
+      optsHTML=`<div class="tf-options-container">
+        <button class="tf-option tf-v" data-q="${i}" data-o="V"><i class="fas fa-check"></i> Verdadeiro</button>
+        <button class="tf-option tf-f" data-q="${i}" data-o="F"><i class="fas fa-times"></i> Falso</button>
+      </div>`;
+    } else if(q.type==='fill'){
+      optsHTML=`<div class="fill-input-container">
+        <input type="text" class="fill-input" id="fill-${i}" placeholder="Digite sua resposta..." data-q="${i}" value="${userAnswers[i][0]||''}">
+      </div>`;
+    } else {
+      const letters=['A','B','C','D','E','F'];
+      optsHTML=`<div class="options-container">${q.options.map((opt,oi)=>`
+        <button class="mc-option" data-q="${i}" data-o="${opt.replace(/"/g,'&quot;')}">
+          <span class="option-indicator">${letters[oi]}</span>
+          <span>${opt}</span>
+        </button>`).join('')}</div>`;
+    }
+
+    card.innerHTML=`
+      <div class="q-meta">
+        <span class="q-num">Questão ${i+1} / ${quizData.length}</span>
+        <span class="q-type-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <p class="question-text">${q.question}</p>
+      ${optsHTML}
+      <div class="feedback" id="fb-${i}"></div>`;
+    content.appendChild(card);
+  });
+}
+
+/* ══════════════ NAVIGATION ══════════════ */
+function goTo(idx){
+  if(idx<0||idx>=quizData.length) return;
+  document.querySelector(`#q-${currentQ}`)?.classList.remove('active');
+  currentQ=idx;
+  document.querySelector(`#q-${currentQ}`)?.classList.add('active');
+  updateUI();
+}
+
+function updateUI(){
+  const done = attempted.filter(Boolean).length;
+  progressFill.style.width=`${(done/quizData.length)*100}%`;
+  progressLbl.textContent=`${done} / ${quizData.length}`;
+
+  const isAttempted = attempted[currentQ];
+  const q = quizData[currentQ];
+  let hasSelection = false;
+  if(q.type==='fill'){
+    hasSelection = userAnswers[currentQ][0] && userAnswers[currentQ][0].trim() !== '';
+  } else {
+    hasSelection = userAnswers[currentQ].length>0;
+  }
+
+  setBtn(prevBtn,   currentQ>0);
+  setBtn(answerBtn, !isAttempted);
+  setBtn(nextBtn,   isAttempted && currentQ<quizData.length-1);
+  setBtn(submitBtn, isAttempted && currentQ===quizData.length-1);
+  if(!isAttempted) answerBtn.disabled=!hasSelection;
+}
+
+function setBtn(btn,show){ btn.classList.toggle('show',show); }
+
+/* ══════════════ SELECTION HANDLERS ══════════════ */
+function bindEvents(){
+  content.addEventListener('click',e=>{
+    const mc=e.target.closest('.mc-option');
+    const tf=e.target.closest('.tf-option');
+    if(mc) handleMC(mc);
+    if(tf) handleTF(tf);
+  });
+  content.addEventListener('input',e=>{
+    const inp=e.target.closest('.fill-input');
+    if(inp) handleFill(inp);
+  });
+  answerBtn.addEventListener('click', validate);
+  nextBtn.addEventListener('click',()=>goTo(currentQ+1));
+  prevBtn.addEventListener('click',()=>goTo(currentQ-1));
+  submitBtn.addEventListener('click', finishQuiz);
+  document.getElementById('show-report-btn').addEventListener('click',()=>{resultsDiv.style.display='none';reportDiv.style.display='flex';});
+  document.getElementById('back-btn').addEventListener('click',()=>{reportDiv.style.display='none';resultsDiv.style.display='flex';});
+  document.getElementById('retry-btn').addEventListener('click',()=>location.reload());
+}
+
+function handleMC(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  const idx=userAnswers[qi].indexOf(opt);
+  if(idx>-1){ userAnswers[qi].splice(idx,1); btn.classList.remove('selected'); }
+  else{ userAnswers[qi].push(opt); btn.classList.add('selected'); }
+  updateUI();
+}
+
+function handleTF(btn){
+  if(btn.classList.contains('disabled')) return;
+  const qi=parseInt(btn.dataset.q), opt=btn.dataset.o;
+  userAnswers[qi]=[opt];
+  document.querySelectorAll(`.tf-option[data-q='${qi}']`).forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateUI();
+}
+
+function handleFill(inp){
+  if(inp.classList.contains('disabled')) return;
+  const qi=parseInt(inp.dataset.q);
+  userAnswers[qi]=[inp.value]; // armazena como array com um elemento string
+  updateUI();
+}
+
+/* ══════════════ VALIDATE ══════════════ */
+function validate(){
+  if(attempted[currentQ]) return;
+  const q=quizData[currentQ];
+  const fb=document.getElementById(`fb-${currentQ}`);
+  const userAns=userAnswers[currentQ]||[];
+  const correctAns=Array.isArray(q.answer)?q.answer:[q.answer];
+
+  let isCorrect = false;
+  if(q.type==='fill'){
+    // comparação case-insensitive e trim
+    const userStr = (userAns[0]||'').trim().toLowerCase();
+    const correctStr = correctAns[0].trim().toLowerCase();
+    isCorrect = userStr === correctStr;
+  } else {
+    isCorrect = JSON.stringify([...userAns].sort())===JSON.stringify([...correctAns].sort());
+  }
+
+  // desabilitar opções / input
+  if(q.type==='tf'){
+    document.querySelectorAll(`.tf-option[data-q='${currentQ}']`).forEach(opt=>{
+      opt.classList.add('disabled');
+      const ov=opt.dataset.o;
+      if(correctAns.includes(ov)) opt.classList.add('correct');
+      else if(userAns.includes(ov)) opt.classList.add('incorrect');
+    });
+  } else if(q.type==='fill'){
+    const inp = document.getElementById(`fill-${currentQ}`);
+    inp.classList.add('disabled');
+    if(isCorrect) inp.classList.add('correct');
+    else inp.classList.add('incorrect');
+  } else {
+    document.querySelectorAll(`.mc-option[data-q='${currentQ}']`).forEach(opt=>{
+      opt.classList.add('disabled');
+      const ov=opt.dataset.o;
+      if(correctAns.includes(ov)) opt.classList.add('correct');
+      else if(userAns.includes(ov)) opt.classList.add('incorrect');
+    });
+  }
+
+  // feedback
+  const icon = isCorrect ? 'fa-check-circle' : 'fa-times-circle';
+  const title= isCorrect ? 'Correto!' : 'Incorreto';
+  const verdictClass = isCorrect ? 'correct' : 'incorrect';
+
+  let correctListHTML='';
+  if(!isCorrect){
+    correctListHTML=`<div style="margin-top:.5rem;font-size:.82rem;color:var(--muted2);">${correctAns.length>1?'Respostas corretas':'Resposta correta'}:</div>
+    <ul class="correct-list">${correctAns.map(a=>`<li>${a}</li>`).join('')}</ul>`;
+  }
+
+  fb.className=`feedback ${verdictClass}`;
+  fb.innerHTML=`
+    <div class="feedback-verdict"><i class="fas ${icon}"></i>${title}${correctListHTML}</div>
+    <div class="justification">
+      <div class="just-label"><i class="fas fa-flask"></i> Justificativa Clínico-Molecular</div>
+      <div class="just-text">${q.justification}</div>
+    </div>`;
+  fb.style.display='block';
+
+  toast(isCorrect);
+  attempted[currentQ]=true;
+  [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=true);
+
+  setTimeout(()=>{
+    [answerBtn,nextBtn,submitBtn,prevBtn].forEach(b=>b.disabled=false);
+    if(currentQ===quizData.length-1) finishQuiz();
+    else goTo(currentQ+1);
+  },2400);
+}
+
+/* ══════════════ RESULTS ══════════════ */
+function finishQuiz(){
+  let score=0;
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    if(q.type==='fill'){
+      const userStr = (ua[0]||'').trim().toLowerCase();
+      const correctStr = ca[0].trim().toLowerCase();
+      if(userStr === correctStr) score++;
+    } else {
+      if(JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort())) score++;
+    }
+  });
+  const pct=Math.round(score/quizData.length*100);
+
+  document.getElementById('pct-display').textContent=`${pct}%`;
+  document.getElementById('score-display').innerHTML=`Acertos: <strong>${score} de ${quizData.length}</strong>`;
+
+  const circumference=408.4;
+  const ring=document.getElementById('score-ring');
+  setTimeout(()=>{ ring.style.strokeDashoffset=circumference*(1-pct/100); },100);
+
+  const msg=document.getElementById('feedback-message');
+  if(pct>=90) msg.textContent='🎉 Excelente domínio! Você está pronto para a prova.';
+  else if(pct>=70) msg.textContent='👏 Muito bem! Revise os pontos que errou e você chegará lá.';
+  else if(pct>=50) msg.textContent='👍 Bom esforço! Revise as justificativas com atenção.';
+  else msg.textContent='💪 Continue estudando! As justificativas abaixo são seu mapa.';
+
+  buildReport();
+
+  content.style.display='none';
+  navDiv.style.display='none';
+  progressWrap.style.display='none';
+  resultsDiv.style.display='flex';
+}
+
+function buildReport(){
+  const list=document.getElementById('report-list');
+  list.innerHTML='';
+  quizData.forEach((q,i)=>{
+    const ua=userAnswers[i]||[];
+    const ca=Array.isArray(q.answer)?q.answer:[q.answer];
+    let ok = false;
+    if(q.type==='fill'){
+      const userStr = (ua[0]||'').trim().toLowerCase();
+      const correctStr = ca[0].trim().toLowerCase();
+      ok = userStr === correctStr;
+    } else {
+      ok = JSON.stringify([...ua].sort())===JSON.stringify([...ca].sort());
+    }
+    const item=document.createElement('div');
+    item.className=`report-item ${ok?'correct':'incorrect'}`;
+    item.innerHTML=`<p class="ri-q"><strong>Questão ${i+1}:</strong> ${q.question}</p>
+      <p><strong>Sua resposta:</strong> ${ua.length?ua.join(', '):'<em>Não respondida</em>'}</p>
+      <p><strong>Correta:</strong> ${ca.join(', ')}</p>`;
+    list.appendChild(item);
+  });
+}
+
+/* ══════════════ TOAST ══════════════ */
+function toast(ok){
+  Swal.mixin({
+    toast:true,position:'top-end',
+    showConfirmButton:false,
+    timer:1400,timerProgressBar:true,
+    background: ok ? '#0a2e1f' : '#2e0a14',
+    color: ok ? '#34d399' : '#fb7185',
+  }).fire({icon:ok?'success':'error',title:ok?'✓ Correto!':'✗ Incorreto!'});
+}
+
+init();
+});
+</script>
+</body>
+</html>
