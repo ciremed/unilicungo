@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resistência Bacteriana — Medicina Interna & Infectologia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Sans+3:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d14;
+    --bg2: #0f1420;
+    --bg3: #141926;
+    --card: #161c2e;
+    --card2: #1b2237;
+    --border: #252f4a;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --accent3: #8b5cf6;
+    --danger: #ef4444;
+    --warn: #f59e0b;
+    --success: #10b981;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --gold: #f59e0b;
+    --pearl: #06b6d4;
+    --red: #ef4444;
+    --green: #10b981;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ─── HERO ─── */
+  .hero {
+    background: linear-gradient(135deg, #0a0d14 0%, #0f1a30 50%, #0a0d14 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -10%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(59,130,246,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    right: 5%;
+    width: 40%;
+    height: 150%;
+    background: radial-gradient(ellipse, rgba(139,92,246,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(59,130,246,0.12);
+    border: 1px solid rgba(59,130,246,0.3);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    color: var(--text2);
+    font-size: 15px;
+    margin-bottom: 30px;
+    font-style: italic;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .stat-pill span { color: var(--text); font-weight: 600; }
+  .stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ─── LAYOUT ─── */
+  .wrapper { display: flex; min-height: calc(100vh - 280px); }
+
+  /* ─── SIDEBAR NAV ─── */
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 0 20px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+    color: var(--text2);
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .nav-item:hover { background: rgba(59,130,246,0.05); color: var(--text); border-left-color: var(--accent); }
+  .nav-item.active { background: rgba(59,130,246,0.1); color: var(--accent); border-left-color: var(--accent); }
+  .nav-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    min-width: 20px;
+  }
+
+  /* ─── MAIN CONTENT ─── */
+  .main { flex: 1; padding: 40px 44px; max-width: 960px; overflow-x: hidden; }
+
+  /* ─── SECTION HEADERS ─── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.2);
+    padding: 4px 10px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+  }
+  .collapse-icon {
+    color: var(--text3);
+    font-size: 18px;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .collapse-icon.open { transform: rotate(90deg); }
+
+  .section-body { overflow: hidden; transition: max-height 0.4s ease; }
+  .section-body.hidden { display: none; }
+
+  section { margin-bottom: 48px; scroll-margin-top: 20px; }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--text);
+    margin: 28px 0 14px;
+    padding-left: 12px;
+    border-left: 3px solid var(--accent2);
+  }
+  h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text2);
+    margin: 20px 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+
+  p { margin-bottom: 14px; color: var(--text2); line-height: 1.8; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .card-pearl {
+    background: linear-gradient(135deg, rgba(6,182,212,0.08) 0%, rgba(6,182,212,0.03) 100%);
+    border-color: rgba(6,182,212,0.25);
+    border-left: 3px solid var(--pearl);
+  }
+  .card-warn {
+    background: linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(245,158,11,0.03) 100%);
+    border-color: rgba(245,158,11,0.25);
+    border-left: 3px solid var(--warn);
+  }
+  .card-danger {
+    background: linear-gradient(135deg, rgba(239,68,68,0.08) 0%, rgba(239,68,68,0.03) 100%);
+    border-color: rgba(239,68,68,0.25);
+    border-left: 3px solid var(--danger);
+  }
+  .card-success {
+    background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.03) 100%);
+    border-color: rgba(16,185,129,0.25);
+    border-left: 3px solid var(--success);
+  }
+  .card-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .card-label.pearl { color: var(--pearl); }
+  .card-label.warn { color: var(--warn); }
+  .card-label.danger { color: var(--danger); }
+  .card-label.success { color: var(--success); }
+
+  /* ─── TABLES ─── */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 16px 0 24px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead tr { background: var(--card2); }
+  thead th {
+    padding: 11px 14px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr { border-bottom: 1px solid rgba(37,47,74,0.6); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(59,130,246,0.04); }
+  tbody tr:last-child { border-bottom: none; }
+  td { padding: 10px 14px; color: var(--text2); vertical-align: top; line-height: 1.5; }
+  td:first-child { color: var(--text); font-weight: 500; }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+  .tag-blue { background: rgba(59,130,246,0.15); color: #93c5fd; }
+  .tag-red { background: rgba(239,68,68,0.15); color: #fca5a5; }
+  .tag-green { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+  .tag-yellow { background: rgba(245,158,11,0.15); color: #fcd34d; }
+  .tag-purple { background: rgba(139,92,246,0.15); color: #c4b5fd; }
+  .tag-cyan { background: rgba(6,182,212,0.15); color: #67e8f9; }
+
+  /* ─── ESKAPE GRID ─── */
+  .eskape-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .eskape-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: default;
+  }
+  .eskape-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .eskape-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .eskape-name { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .eskape-resist { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+  /* ─── MECHANISM DIAGRAM ─── */
+  .mech-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .mech-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+  .mech-card:hover { transform: translateY(-2px); }
+  .mech-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+  }
+  .mech-1::before { background: linear-gradient(90deg, #ef4444, #f97316); }
+  .mech-2::before { background: linear-gradient(90deg, #8b5cf6, #6366f1); }
+  .mech-3::before { background: linear-gradient(90deg, #06b6d4, #0ea5e9); }
+  .mech-4::before { background: linear-gradient(90deg, #10b981, #14b8a6); }
+  .mech-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .mech-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .mech-desc { font-size: 12px; color: var(--text3); }
+  .mech-examples { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+
+  /* ─── QUIZ SECTION ─── */
+  .quiz-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .quiz-q {
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .quiz-q::before {
+    content: 'Q';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    vertical-align: middle;
+  }
+  .quiz-answer {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: none;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-top: 12px;
+  }
+  .quiz-answer.show { display: block; animation: fadeIn 0.3s; }
+  .quiz-answer strong { color: var(--success); }
+  .btn-reveal {
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.3);
+    color: var(--accent);
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Source Sans 3', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-reveal:hover { background: rgba(59,130,246,0.2); }
+  .btn-reveal.revealed { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--success); }
+
+  /* ─── SEARCH BAR ─── */
+  .search-bar {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 30px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .search-bar input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 14px;
+    flex: 1;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .search-bar input::placeholder { color: var(--text3); }
+  .search-icon { color: var(--text3); font-size: 16px; }
+
+  /* ─── TABS ─── */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab {
+    padding: 7px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    border: 1px solid transparent;
+    color: var(--text3);
+    transition: all 0.2s;
+  }
+  .tab:hover { color: var(--text2); border-color: var(--border); }
+  .tab.active { background: var(--accent); color: white; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s; }
+
+  /* ─── ANTIBIOTICS GRID ─── */
+  .antibiotic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .ab-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    transition: border-color 0.2s;
+  }
+  .ab-card:hover { border-color: var(--accent); }
+  .ab-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .ab-class { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); margin-bottom: 8px; }
+  .ab-spectrum { font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+  .ab-approval { font-size: 11px; color: var(--text3); }
+
+  /* ─── PROGRESS INDICATOR ─── */
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    z-index: 9999;
+    transition: width 0.1s;
+  }
+
+  /* ─── HIGHLIGHT ─── */
+  .highlight { background: rgba(245,158,11,0.2); padding: 0 3px; border-radius: 3px; }
+  mark { background: rgba(245,158,11,0.25); color: var(--text); border-radius: 3px; padding: 0 2px; }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(59,130,246,0.1);
+    color: #93c5fd;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  /* ─── LISTS ─── */
+  ul, ol { margin: 10px 0 14px 20px; color: var(--text2); }
+  li { margin-bottom: 6px; line-height: 1.6; }
+  li strong { color: var(--text); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  section { animation: fadeIn 0.4s ease; }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { padding: 24px 20px; }
+    .mech-grid { grid-template-columns: 1fr; }
+    .hero { padding: 40px 20px; }
+    .hero-stats { gap: 12px; }
+  }
+
+  /* ─── DRUG TABLE COLORS ─── */
+  .resist-none { color: var(--danger); font-weight: 600; }
+  .resist-partial { color: var(--warn); font-weight: 600; }
+  .resist-good { color: var(--success); font-weight: 600; }
+
+  /* ─── BACK TO TOP ─── */
+  #back-top {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--accent);
+    color: white;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 16px;
+    box-shadow: 0 4px 16px rgba(59,130,246,0.3);
+    z-index: 200;
+    text-decoration: none;
+  }
+  #back-top.visible { opacity: 1; }
+
+  /* ─── DEFINITION BOX ─── */
+  .def-box {
+    background: linear-gradient(135deg, rgba(59,130,246,0.06) 0%, transparent 100%);
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    position: relative;
+  }
+  .def-box::before {
+    content: '"';
+    position: absolute;
+    top: 4px; left: 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: rgba(59,130,246,0.15);
+    line-height: 1;
+  }
+  .def-box p { padding-left: 8px; margin-bottom: 0; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* ─── BIG STAT ─── */
+  .big-stat {
+    display: inline-block;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--danger);
+    line-height: 1;
+    margin-right: 6px;
+  }
+
+  /* ─── CLASSIFICATION BOX ─── */
+  .class-row { display: flex; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
+  .class-box {
+    flex: 1;
+    min-width: 120px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .class-box .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+  .class-box .value { font-size: 13px; color: var(--text); font-weight: 500; }
+
+  /* ─── TOOLTIP ─── */
+  [data-tip] { cursor: help; border-bottom: 1px dashed var(--text3); position: relative; }
+  [data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e2d4a;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    font-style: normal;
+    font-family: 'Source Sans 3', sans-serif;
+    line-height: 1.5;
+    max-width: 280px;
+    white-space: normal;
+  }
+</style>
+</head>
+<body>
+
+<div class="reading-progress" id="readingProgress"></div>
+<a href="#top" id="back-top" title="Voltar ao topo">↑</a>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-tag">🧫 Medicina Interna · Infectologia · Nível Avançado</div>
+  <h1>Resistência Bacteriana:<br>Mecanismos & Clínica</h1>
+  <p class="hero-sub">Fisiopatologia, Diagnóstico e Terapêutica — Baseado em Evidências</p>
+  <div class="hero-stats">
+    <div class="stat-pill"><div class="stat-dot" style="background:#ef4444"></div><span>1,27 milhão</span> de mortes diretas/ano (2019)</div>
+    <div class="stat-pill"><div class="stat-dot" style="background:#f59e0b"></div><span>4 mecanismos</span> principais de resistência</div>
+    <div class="stat-pill"><div class="stat-dot" style="background:#3b82f6"></div><span>ESKAPE</span> — 6 patógenos prioritários OMS</div>
+    <div class="stat-pill"><div class="stat-dot" style="background:#10b981"></div><span>27 referências</span> bibliográficas</div>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div style="padding: 16px 40px 0; background: var(--bg2); border-bottom: 1px solid var(--border);">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Buscar no documento... (ex: MRSA, KPC, biofilme, NDM)" oninput="searchContent(this.value)">
+    <span id="searchCount" style="font-size:12px;color:var(--text3)"></span>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="wrapper">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-title">Índice</div>
+    <a class="nav-item active" href="#s1" onclick="setActive(this)"><span class="nav-num">01</span> Introdução & Epidemiologia</a>
+    <a class="nav-item" href="#s2" onclick="setActive(this)"><span class="nav-num">02</span> Como Antibióticos Funcionam</a>
+    <a class="nav-item" href="#s3" onclick="setActive(this)"><span class="nav-num">03</span> Mecanismos de Resistência</a>
+    <a class="nav-item" href="#s3a" onclick="setActive(this)" style="padding-left:32px;font-size:12px"><span class="nav-num">3.1</span> Inativação Enzimática</a>
+    <a class="nav-item" href="#s3b" onclick="setActive(this)" style="padding-left:32px;font-size:12px"><span class="nav-num">3.2</span> Alteração do Alvo</a>
+    <a class="nav-item" href="#s3c" onclick="setActive(this)" style="padding-left:32px;font-size:12px"><span class="nav-num">3.3</span> Impermeabilidade</a>
+    <a class="nav-item" href="#s3d" onclick="setActive(this)" style="padding-left:32px;font-size:12px"><span class="nav-num">3.4</span> Efluxo Ativo</a>
+    <a class="nav-item" href="#s4" onclick="setActive(this)"><span class="nav-num">04</span> THG — Disseminação</a>
+    <a class="nav-item" href="#s5" onclick="setActive(this)"><span class="nav-num">05</span> MDR / XDR / PDR</a>
+    <a class="nav-item" href="#s6" onclick="setActive(this)"><span class="nav-num">06</span> Resistência por Organismo</a>
+    <a class="nav-item" href="#s7" onclick="setActive(this)"><span class="nav-num">07</span> Biofilme & Persisters</a>
+    <a class="nav-item" href="#s8" onclick="setActive(this)"><span class="nav-num">08</span> Diagnóstico Laboratorial</a>
+    <a class="nav-item" href="#s9" onclick="setActive(this)"><span class="nav-num">09</span> Novos Antibióticos</a>
+    <a class="nav-item" href="#s10" onclick="setActive(this)"><span class="nav-num">10</span> ✦ Pontos-Chave & Quiz</a>
+    <a class="nav-item" href="#s11" onclick="setActive(this)"><span class="nav-num">11</span> Referências</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main" id="mainContent">
+
+    <!-- ═══════════════════════════════════════ SECTION 1 ═══ -->
+    <section id="s1">
+      <div class="section-header" onclick="toggleSection('b1','i1')">
+        <span class="section-num">01</span>
+        <span class="section-title">Introdução & Contexto Epidemiológico Global</span>
+        <span class="collapse-icon open" id="i1">▶</span>
+      </div>
+      <div class="section-body" id="b1">
+
+        <div class="def-box">
+          <p><strong>Resistência Antimicrobiana (RAM)</strong> — do inglês <code>AMR (Antimicrobial Resistance)</code> — é definida como a capacidade de um microrganismo de sobreviver e/ou proliferar na presença de concentrações de um agente antimicrobiano que normalmente seriam suficientes para inibir seu crescimento ou causar sua morte.</p>
+        </div>
+
+        <p>A RAM representa uma das maiores ameaças à saúde pública global do século XXI, sendo responsável por <span class="big-stat">1,27M</span> mortes diretas em 2019 e associada a 4,95 milhões de mortes em todo o mundo <em>(IHME/The Lancet, 2022)</em>.</p>
+
+        <h3>Tipos de Resistência</h3>
+        <div class="class-row">
+          <div class="class-box">
+            <div class="label">Intrínseca</div>
+            <div class="value" style="color:var(--accent2)">Fenotípica inerente à espécie — independe de exposição prévia</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px">Ex: <em>P. aeruginosa</em> resistente à ampicilina</div>
+          </div>
+          <div class="class-box">
+            <div class="label">Adquirida</div>
+            <div class="value" style="color:var(--warn)">Mutação cromossômica ou aquisição de genes via THG</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px">Ex: <em>E. coli</em> adquirindo gene <code>blaCTX-M</code></div>
+          </div>
+          <div class="class-box">
+            <div class="label">Fenotípica / Adaptativa</div>
+            <div class="value" style="color:var(--accent3)">Não genética — induzida por condições ambientais</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px">Ex: biofilme, tolerância por persisters</div>
+          </div>
+        </div>
+
+        <h3>🦠 ESKAPE — Patógenos Prioritários OMS</h3>
+        <p>O acrônimo <strong>ESKAPE</strong> — proposto por Rice (2008) — sintetiza os principais patógenos multidroga-resistentes responsáveis por infecções hospitalares graves:</p>
+
+        <div class="eskape-grid">
+          <div class="eskape-card">
+            <div class="eskape-letter" style="color:#ef4444">E</div>
+            <div class="eskape-name"><em>Enterococcus faecium</em> (EfM)</div>
+            <div class="eskape-resist"><span class="tag tag-red">VRE</span></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px">ITU, endocardite, bacteremia</div>
+          </div>
+          <div class="eskape-card">
+            <div class="eskape-letter" style="color:#f97316">S</div>
+            <div class="eskape-name"><em>Staphylococcus aureus</em> (SA)</div>
+            <div class="eskape-resist"><span class="tag tag-yellow">MRSA</span></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px">Pele, pneumonia, bacteremia, endocardite</div>
+          </div>
+          <div class="eskape-card">
+            <div class="eskape-letter" style="color:#eab308">K</div>
+            <div class="eskape-name"><em>Klebsiella pneumoniae</em> (KP)</div>
+            <div class="eskape-resist"><span class="tag tag-blue">ESBL</span> <span class="tag tag-red">KPC</span> <span class="tag tag-purple">NDM</span></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px">Pneumonia, ITU, bacteremia, meningite</div>
+          </div>
+          <div class="eskape-card">
+            <div class="eskape-letter" style="color:#84cc16">A</div>
+            <div class="eskape-name"><em>Acinetobacter baumannii</em> (AB)</div>
+            <div class="eskape-resist"><span class="tag tag-red">CRAB</span></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px">Pneumonia nosocomial, bacteremia</div>
+          </div>
+          <div class="eskape-card">
+            <div class="eskape-letter" style="color:#06b6d4">P</div>
+            <div class="eskape-name"><em>Pseudomonas aeruginosa</em> (PA)</div>
+            <div class="eskape-resist"><span class="tag tag-cyan">CRPA</span></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px">Pneumonia, ITU, queimados</div>
+          </div>
+          <div class="eskape-card">
+            <div class="eskape-letter" style="color:#8b5cf6">E</div>
+            <div class="eskape-name"><em>Enterobacteriaceae</em> spp.</div>
+            <div class="eskape-resist"><span class="tag tag-red">CRE</span> <span class="tag tag-blue">ESBL</span></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px">ITU, bacteremia, intra-abdominal</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ SECTION 2 ═══ -->
+    <section id="s2">
+      <div class="section-header" onclick="toggleSection('b2','i2')">
+        <span class="section-num">02</span>
+        <span class="section-title">Fundamentos: Como os Antibióticos Funcionam</span>
+        <span class="collapse-icon open" id="i2">▶</span>
+      </div>
+      <div class="section-body" id="b2">
+        <p>Para compreender resistência, é imprescindível dominar os mecanismos de ação dos antibióticos. Os alvos dividem-se em 5 grandes categorias:</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Categoria do Alvo</th><th>Exemplos de Antibióticos</th><th>Mecanismo</th></tr></thead>
+            <tbody>
+              <tr><td>🧱 Parede celular (peptidoglicano)</td><td>Betalactâmicos, glicopeptídeos (vancomicina, teicoplanina)</td><td>Inibição das <data-tip="Transpeptidases localizadas na membrana citoplasmática">PBPs</data-tip> ou do precursor Lipídio II</td></tr>
+              <tr><td>🔬 Ribossoma 30S</td><td>Aminoglicosídeos, tetraciclinas, tigeciclina</td><td>Bloqueio da subunidade 30S do ribossoma 70S bacteriano</td></tr>
+              <tr><td>🔬 Ribossoma 50S</td><td>Macrolídeos, cloranfenicol, clindamicina, linezolida, estreptograminas</td><td>Bloqueio da subunidade 50S do ribossoma 70S</td></tr>
+              <tr><td>🧬 Ácidos nucleicos (DNA/RNA)</td><td>Quinolonas/fluoroquinolonas, rifampicina, metronidazol</td><td>Inibição de DNA girase/topoisomerase IV ou RNA polimerase</td></tr>
+              <tr><td>💥 Membrana citoplasmática</td><td>Polimixinas (colistina), daptomicina</td><td>Desestabilização da membrana interna/externa</td></tr>
+              <tr><td>🌿 Síntese de folato</td><td>Sulfonamidas, trimetoprima (TMP)</td><td>Inibição de DHPS e DHFR</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card card-pearl">
+          <div class="card-label pearl">⚡ Pérola Clínica — PBPs</div>
+          <p><strong>PBPs (Penicillin-Binding Proteins / Proteínas de Ligação à Penicilina)</strong> são transpeptidases e carboxipeptidases localizadas na membrana citoplasmática, responsáveis pela formação das pontes cruzadas do peptidoglicano. Os betalactâmicos ligam-se <em>covalentemente</em> ao sítio ativo das PBPs, inibindo irreversivelmente a transpeptidação e levando à lise osmótica. Cada espécie possui diferentes PBPs com afinidades distintas, explicando diferenças no espectro de ação.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ SECTION 3 ═══ -->
+    <section id="s3">
+      <div class="section-header" onclick="toggleSection('b3','i3')">
+        <span class="section-num">03</span>
+        <span class="section-title">Mecanismos de Resistência Bacteriana</span>
+        <span class="collapse-icon open" id="i3">▶</span>
+      </div>
+      <div class="section-body" id="b3">
+
+        <p>Os mecanismos de resistência são classificados em <strong>4 grandes categorias fisiopatológicas</strong>, que frequentemente coexistem na mesma cepa <em>(fenótipo MDR/XDR/PDR)</em>:</p>
+
+        <div class="mech-grid">
+          <div class="mech-card mech-1" onclick="location.href='#s3a'">
+            <div class="mech-icon">💊</div>
+            <div class="mech-title">I — Inativação Enzimática</div>
+            <div class="mech-desc">Enzimas degradam ou modificam o antibiótico</div>
+            <div class="mech-examples"><span class="tag tag-red">ESBL</span><span class="tag tag-red">KPC</span><span class="tag tag-red">NDM</span><span class="tag tag-red">AAC/APH</span></div>
+          </div>
+          <div class="mech-card mech-2" onclick="location.href='#s3b'">
+            <div class="mech-icon">🎯</div>
+            <div class="mech-title">II — Alteração do Alvo</div>
+            <div class="mech-desc">Modificação do sítio de ligação do antibiótico</div>
+            <div class="mech-examples"><span class="tag tag-purple">MRSA/PBP2a</span><span class="tag tag-purple">VRE/VanA</span><span class="tag tag-purple">QRDR</span></div>
+          </div>
+          <div class="mech-card mech-3" onclick="location.href='#s3c'">
+            <div class="mech-icon">🚧</div>
+            <div class="mech-title">III — Impermeabilidade</div>
+            <div class="mech-desc">Perda de porinas — redução do influxo</div>
+            <div class="mech-examples"><span class="tag tag-cyan">OprD (PA)</span><span class="tag tag-cyan">OmpK36 (KP)</span></div>
+          </div>
+          <div class="mech-card mech-4" onclick="location.href='#s3d'">
+            <div class="mech-icon">🔄</div>
+            <div class="mech-title">IV — Efluxo Ativo</div>
+            <div class="mech-desc">Bombas expulsam o antibiótico da célula</div>
+            <div class="mech-examples"><span class="tag tag-green">MexAB-OprM</span><span class="tag tag-green">AcrAB-TolC</span></div>
+          </div>
+        </div>
+
+        <!-- 3.1 -->
+        <section id="s3a">
+          <h3>3.1 Mecanismo I: Inativação Enzimática</h3>
+
+          <h4>Betalactamases — Classificação Ambler</h4>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Classe Ambler</th><th>Sítio Ativo</th><th>Principais Enzimas</th><th>Inibidores</th></tr></thead>
+              <tbody>
+                <tr><td><span class="tag tag-blue">Classe A</span></td><td>Serina (Ser-70)</td><td>TEM-1, SHV-1, <strong>CTX-M (ESBL)</strong>, <strong>KPC</strong></td><td>Clavulanato, sulbactam, tazobactam, <span class="resist-good">avibactam (KPC)</span></td></tr>
+                <tr><td><span class="tag tag-red">Classe B</span></td><td>Metalo (Zn²⁺)</td><td><strong>NDM-1/2/5</strong>, VIM, IMP, SPM</td><td><span class="resist-none">NENHUM clinicamente disponível</span>*</td></tr>
+                <tr><td><span class="tag tag-yellow">Classe C</span></td><td>Serina (Ser-64)</td><td>AmpC (CMY, DHA, ACC, MOX)</td><td><span class="resist-none">NÃO inibidas</span> por inibidores clássicos; avibactam parcial</td></tr>
+                <tr><td><span class="tag tag-purple">Classe D</span></td><td>Serina (Ser-70)</td><td>OXA-48, OXA-23, OXA-58</td><td><span class="resist-partial">Avibactam (OXA-48 parcial)</span>; maioria resistente</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:12px;color:var(--text3)">*Aztreonam/avibactam em desenvolvimento e aprovado na Europa para NDM.</p>
+
+          <h4>ESBL — Betalactamases de Espectro Estendido</h4>
+          <div class="card card-warn">
+            <div class="card-label warn">⚠️ Definição ESBL</div>
+            <p>ESBLs são betalactamases de Classe A capazes de hidrolisar penicilinas, cefalosporinas de 1ª a 4ª geração E aztreonam, mas <strong>NÃO carbapenens</strong>. São inibidas por ácido clavulânico, sulbactam e tazobactam in vitro (porém resistência clínica pode ocorrer por hiperprodução).</p>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Família</th><th>Gene</th><th>Características</th><th>Epidemiologia</th></tr></thead>
+              <tbody>
+                <tr><td><strong>CTX-M</strong></td><td><code>blaCTX-M</code> (&gt;250 variantes)</td><td>A mais prevalente globalmente; hidrolisa especialmente cefotaxima; disseminação em <em>E. coli</em> ST131</td><td><span class="tag tag-red">Pandêmica</span> — principal ESBL no Brasil e mundo</td></tr>
+                <tr><td>SHV</td><td><code>blaSHV-2, SHV-5, SHV-12</code></td><td>Derivada da SHV-1 (penicilinase); mutações ampliam espectro</td><td>Frequente em <em>K. pneumoniae</em></td></tr>
+                <tr><td>TEM</td><td><code>blaTEM-3 → TEM-173</code></td><td>Derivada da TEM-1; variantes ESBL por mutações em posições 164, 238, 240</td><td><em>E. coli</em> e <em>K. pneumoniae</em></td></tr>
+                <tr><td>PER, VEB, GES</td><td><code>blaPER, blaVEB, blaGES</code></td><td>Menos comuns; GES pode ter atividade carbapenemase</td><td>Surtos pontuais; PA e Acinetobacter</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card card-pearl">
+            <div class="card-label pearl">🔬 Diagnóstico Laboratorial ESBL</div>
+            <ul>
+              <li>Disco-difusão: halo em cefotaxima, ceftriaxona ou ceftazidima ≤ 25 mm (ou CIM ≥ 2 mg/L)</li>
+              <li><strong>DDST (Double-Disk Synergy Test)</strong>: aumento do halo ≥ 5 mm na presença de disco com ácido clavulânico</li>
+              <li>Padrão clássico: resistência a cefalosporinas + sensibilidade a carbapenens + sinergismo com clavulanato</li>
+              <li><strong>CIM</strong> (Concentração Inibitória Mínima): menor concentração capaz de inibir crescimento visível in vitro — padrão-ouro</li>
+            </ul>
+          </div>
+
+          <h4>KPC — Klebsiella pneumoniae Carbapenemase</h4>
+          <p>Carbapenemases de <span class="tag tag-blue">Classe A</span>, codificadas pelo gene <code>blaKPC</code> em transposons <code>Tn4401</code>. Hidrolisam <strong>TODOS os betalactâmicos</strong>. Inibidas por <strong>avibactam</strong> e <strong>relebactam</strong>. Clone dominante: <code>ST258</code>. Mortalidade de <span class="resist-none">40–70%</span> nas bacteremias em UTI.</p>
+
+          <h4>NDM — New Delhi Metallo-beta-lactamase</h4>
+          <p>Metalo-betalactamase de <span class="tag tag-red">Classe B</span>. Usa <strong>Zn²⁺</strong> como cofator. Hidrolisa TODOS os betalactâmicos, <strong>EXCETO aztreonam</strong>. Não inibida por inibidores clássicos ou avibactam isolado.</p>
+          <div class="card card-pearl">
+            <div class="card-label pearl">💡 Pérola NDM</div>
+            <p>A combinação <strong>aztreonam + avibactam</strong> tem atividade contra NDM: avibactam protege o aztreonam contra outras betalactamases coexistentes. Aprovada em vários países para XDR/PDR.</p>
+          </div>
+
+          <h4>Tabela Comparativa de Carbapenemases</h4>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Carbapenemase</th><th>Classe</th><th>Mecanismo</th><th>Inibidores</th><th>Distribuição</th></tr></thead>
+              <tbody>
+                <tr><td><strong>KPC</strong></td><td><span class="tag tag-blue">A (Serina)</span></td><td>Serina-esterase</td><td><span class="resist-good">Avibactam, Relebactam</span></td><td>EUA, Brasil, Europa, China</td></tr>
+                <tr><td><strong>NDM</strong></td><td><span class="tag tag-red">B (Metalo-Zn²⁺)</span></td><td>Coordenação Zn²⁺; inativa tudo exceto aztreonam</td><td><span class="resist-none">Nenhum aprovado</span><br>(ATM-AVI promissor)</td><td>Índia, Paquistão, Europa, Brasil</td></tr>
+                <tr><td>VIM</td><td><span class="tag tag-red">B (Metalo)</span></td><td>Metalo-betalactamase em integrons</td><td><span class="resist-none">Idem NDM</span></td><td>Europa Meridional, América Latina</td></tr>
+                <tr><td>IMP</td><td><span class="tag tag-red">B (Metalo)</span></td><td>Metalo-betalactamase</td><td><span class="resist-none">Idem NDM</span></td><td>Japão, Austrália, Europa</td></tr>
+                <tr><td><strong>OXA-48</strong></td><td><span class="tag tag-purple">D (Serina)</span></td><td>Hidrolisa carbapenens fracamente</td><td><span class="resist-partial">Avibactam (parcial)</span></td><td>Turquia, Oriente Médio, Europa</td></tr>
+                <tr><td>OXA-23/58</td><td><span class="tag tag-purple">D (Serina)</span></td><td>Carbapenemases em Acinetobacter</td><td><span class="resist-none">Nenhum aprovado</span></td><td>Mundial (A. baumannii)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4>Enzimas Modificadoras de Aminoglicosídeos (EMA)</h4>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Família</th><th>Nome Completo</th><th>Mecanismo</th><th>Gene</th></tr></thead>
+              <tbody>
+                <tr><td><span class="tag tag-blue">AAC</span></td><td>Aminoglycoside Acetyltransferase</td><td>Transferência de grupo acetila ao grupo amino</td><td><code>aac(6')-Ib</code></td></tr>
+                <tr><td><span class="tag tag-yellow">APH</span></td><td>Aminoglycoside Phosphotransferase</td><td>Fosforilação de grupos hidroxila</td><td><code>aph(3')</code></td></tr>
+                <tr><td><span class="tag tag-purple">ANT</span></td><td>Aminoglycoside Nucleotidyltransferase</td><td>Adenilação de grupos hidroxila</td><td><code>ant(4')</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card card-warn">
+            <div class="card-label warn">⚠️ Novos Mecanismos — 16S rRNA Methyltransferases</div>
+            <p>Enzimas como <code>RmtB</code>, <code>ArmA</code>, <code>RmtC</code> metilam o RNA ribossômico 16S, conferindo resistência de alto nível a TODOS os aminoglicosídeos. Frequentemente co-carregadas com <code>blaKPC</code> ou <code>blaNDM</code> em plasmídeos, gerando cepas de resistência extremamente ampla.</p>
+          </div>
+        </section>
+
+        <!-- 3.2 -->
+        <section id="s3b">
+          <h3>3.2 Mecanismo II: Alteração do Alvo</h3>
+
+          <h4>MRSA — PBP2a (mecA)</h4>
+          <p><strong>MRSA (Methicillin-Resistant Staphylococcus aureus)</strong> apresenta resistência a todos os betalactâmicos pela produção de <code>PBP2a</code> (PBP2'), codificada pelo gene <code>mecA</code>, contido no <code>SCCmec</code>.</p>
+          <div class="card" style="background:var(--card);border-color:var(--border)">
+            <p><strong>Fisiopatologia:</strong> A PBP2a possui baixíssima afinidade por betalactâmicos (KD ~1000× menor que PBPs normais). Quando os betalactâmicos inibem as PBPs nativas (PBP1,2,3,4), a PBP2a assume a função transpeptidase, mantendo a síntese da parede celular. É resistência por <em>nova proteína alvo</em>, não inativação enzimática.</p>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Tipo</th><th>Características</th><th>SCCmec</th><th>Epidemiologia</th></tr></thead>
+              <tbody>
+                <tr><td><span class="tag tag-red">HA-MRSA</span></td><td>Infecções nosocomiais, dispositivos invasivos, MDR</td><td>SCCmec I, II, III (maiores)</td><td>UTI, hemocultura, feridas cirúrgicas</td></tr>
+                <tr><td><span class="tag tag-yellow">CA-MRSA</span></td><td>Sem fatores de risco hospitalares; produz <strong>PVL</strong></td><td>SCCmec IV, V (menores, mais móveis)</td><td>USA300; furunculose, fasciíte necrotizante</td></tr>
+                <tr><td><span class="tag tag-green">LA-MRSA</span></td><td>Associado a animais de produção; mecC em bovinos</td><td>SCCmec V; mecC</td><td>Zoonose; exposição ocupacional</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card card-pearl">
+            <div class="card-label pearl">💡 PVL — Panton-Valentine Leucocidina</div>
+            <p>Toxina formadora de poros em leucócitos, codificada pelo fago <code>φSa2</code>. Associada ao CA-MRSA e a: infecções de pele necrotizantes, <strong>pneumonia necrosante fulminante</strong> (pós-influenza) e osteomielite em jovens. Presente em ~70–100% dos CA-MRSA.</p>
+          </div>
+
+          <h4>VRE — Vancomycin-Resistant Enterococcus</h4>
+          <p>Resistência aos glicopeptídeos por <strong>reprogramação do alvo D-Ala-D-Ala</strong>. A vancomicina liga-se ao dipeptídeo <strong>D-Ala-D-Ala</strong> do precursor do peptidoglicano. Nos VRE, ligases codificadas pelos genes <code>van</code> alteram este terminal:</p>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Fenótipo</th><th>Gene</th><th>Substituição</th><th>CIM Vanco</th><th>CIM Teico</th><th>Transmissão</th></tr></thead>
+              <tbody>
+                <tr><td><span class="tag tag-red">VanA</span></td><td><code>vanHAX</code></td><td>D-Ala-D-Ala → <strong>D-Ala-D-Lac</strong></td><td>&gt;64 mg/L</td><td>&gt;16 mg/L</td><td><span class="tag tag-red">Plasmídeo — inter-espécies (MRSA!)</span></td></tr>
+                <tr><td><span class="tag tag-yellow">VanB</span></td><td><code>vanYWHBXZ</code></td><td>D-Ala-D-Ala → D-Ala-D-Lac</td><td>4–1024 mg/L</td><td>&lt;1 mg/L <span class="resist-good">(sensível)</span></td><td>Cromossomo ou plasmídeo</td></tr>
+                <tr><td><span class="tag tag-green">VanC</span></td><td><code>vanC1/2/3</code></td><td>D-Ala-D-Ala → <strong>D-Ala-D-Ser</strong></td><td>2–32 mg/L</td><td>&lt;1 mg/L</td><td><span class="resist-good">Intrínseco — NÃO transferível</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card card-danger">
+            <div class="card-label danger">🚨 VRSA — Emergência Catastrófica</div>
+            <p>Transferência de VanA de VRE para MRSA via conjugação plasmidial. CIM de vancomicina ≥32 mg/L. &lt;20 casos documentados nos EUA. Tratamento: linezolida, daptomicina, tigeciclina, ceftarolina.</p>
+          </div>
+
+          <h4>QRDR — Resistência às Quinolonas</h4>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Gene</th><th>Subunidade</th><th>Enzima</th><th>Bactérias</th></tr></thead>
+              <tbody>
+                <tr><td><code>gyrA</code></td><td>GyrA</td><td>DNA girase (Topoisomerase II)</td><td>Gram-negativos (primário)</td></tr>
+                <tr><td><code>gyrB</code></td><td>GyrB</td><td>DNA girase</td><td>Gram-negativos</td></tr>
+                <tr><td><code>parC</code></td><td>ParC</td><td>Topoisomerase IV</td><td>Gram-positivos (primário)</td></tr>
+                <tr><td><code>parE</code></td><td>ParE</td><td>Topoisomerase IV</td><td>Gram+ e negativos</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><strong>PMQR (Plasmid-Mediated Quinolone Resistance):</strong> Qnr (A,B,C,D,S,VC) — proteínas que protegem DNA girase; <code>aac(6')-Ib-cr</code> — variante que acetila ciprofloxacino; <code>OqxAB, QepA</code> — bombas de efluxo plasmidiais.</p>
+
+          <h4>Resistência aos Macrolídeos — Fenótipo MLSB</h4>
+          <p>Genes <code>erm</code> (<em>Erythromycin Ribosome Methylase</em>) codificam metiltransferases do rRNA 23S, conferindo resistência cruzada a <strong>M</strong>acrolídeos, <strong>L</strong>incosamidas e <strong>S</strong>treptograminas B.</p>
+          <div class="card card-warn">
+            <div class="card-label warn">⚠️ D-Zone Test — Detectar iMLSB</div>
+            <p>Discos de eritromicina (15µg) e clindamicina (2µg) a 15–20 mm. Se clindamicina sensível + eritromicina resistente → o halo de clindamicina achata em formato 'D' próximo à eritromicina. <strong>D-test positivo = iMLSB = NÃO usar clindamicina clinicamente.</strong></p>
+          </div>
+        </section>
+
+        <!-- 3.3 -->
+        <section id="s3c">
+          <h3>3.3 Mecanismo III: Impermeabilidade e Redução do Influxo</h3>
+          <p>A entrada de antibióticos hidrofílicos (carbapenens, cefalosporinas, quinolonas) depende de <strong>porinas (OMP — Outer Membrane Proteins)</strong>. Perda ou modificação dessas porinas reduz a concentração intracelular:</p>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Bactéria</th><th>Porina</th><th>Antibiótico Afetado</th><th>Consequência Clínica</th></tr></thead>
+              <tbody>
+                <tr><td><em>P. aeruginosa</em></td><td><code>OprD</code> — canal específico para carbapenens</td><td>Imipenem &gt;&gt; meropenem</td><td>Resistência a carbapenens <em>sem carbapenemase</em>; frequente após terapia com imipenem</td></tr>
+                <tr><td><em>K. pneumoniae</em></td><td><code>OmpK35</code> e <code>OmpK36</code></td><td>Carbapenens, cefalosporinas</td><td>Combinação com ESBL → resistência a carbapenens sem carbapenemase (CIM intermediário)</td></tr>
+                <tr><td><em>E. coli</em></td><td><code>OmpF</code> e <code>OmpC</code></td><td>Cefalosporinas, quinolonas, cloranfenicol</td><td>Frequentemente combinado com outros mecanismos</td></tr>
+                <tr><td><em>A. baumannii</em></td><td><code>CarO</code></td><td>Imipenem, meropenem</td><td>Perda de CarO + OXA-23 = resistência total a carbapenens</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 3.4 -->
+        <section id="s3d">
+          <h3>3.4 Mecanismo IV: Sistemas de Efluxo Ativo</h3>
+          <p>Bombas de efluxo expulsam ativamente antibióticos da célula, mantendo concentrações intracelulares subinibitórias. Causa importante de resistência de baixo nível e seleção de mutantes:</p>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Família</th><th>Nome</th><th>Energia</th><th>Exemplos</th></tr></thead>
+              <tbody>
+                <tr><td><span class="tag tag-blue">MFS</span></td><td>Major Facilitator Superfamily</td><td>Gradiente H⁺</td><td>TetA/TetB (tetraciclinas); NorA em SA</td></tr>
+                <tr><td><span class="tag tag-red">RND</span></td><td>Resistance-Nodulation-Division</td><td>Gradiente H⁺</td><td><strong>MexAB-OprM</strong>, MexCD-OprJ (PA); <strong>AcrAB-TolC</strong> (E. coli) — espectro MUITO amplo</td></tr>
+                <tr><td><span class="tag tag-yellow">SMR</span></td><td>Small Multidrug Resistance</td><td>Gradiente H⁺</td><td>EmrE (E. coli): aminoglicosídeos</td></tr>
+                <tr><td><span class="tag tag-green">MATE</span></td><td>Multidrug And Toxin Extrusion</td><td>Gradiente Na⁺/H⁺</td><td>NorM (V. cholerae): quinolonas</td></tr>
+                <tr><td><span class="tag tag-purple">ABC</span></td><td>ATP-Binding Cassette</td><td>ATP</td><td>VgaA (S. aureus): estreptograminas A</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card card-pearl">
+            <div class="card-label pearl">⚡ Pérola — MexAB-OprM em P. aeruginosa</div>
+            <p>Complexo tripartite: <code>MexB</code> (membrana interna) + <code>MexA</code> (fusão) + <code>OprM</code> (porina externa) — traversa toda a parede celular. Substratos: betalactâmicos, fluoroquinolonas, tetraciclinas, macrolídeos, cloranfenicol, TMP. Superexpressão por mutações em <code>mexR</code>, <code>nalC</code>, <code>nalD</code> → causa mais comum de resistência de baixo nível a múltiplos antibióticos em PA.</p>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ SECTION 4 ═══ -->
+    <section id="s4">
+      <div class="section-header" onclick="toggleSection('b4','i4')">
+        <span class="section-num">04</span>
+        <span class="section-title">Transferência Horizontal de Genes (THG)</span>
+        <span class="collapse-icon open" id="i4">▶</span>
+      </div>
+      <div class="section-body" id="b4">
+        <p><strong>THG (Horizontal Gene Transfer — HGT)</strong>: principal mecanismo de disseminação inter-espécies de genes de resistência. Três mecanismos:</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Mecanismo</th><th>Processo</th><th>DNA Transferido</th><th>Exemplos</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag tag-red">Conjugação</span></td><td>Contato célula-célula via pilus F; transferência por poro citoplasmático</td><td>Plasmídeos conjugativos, ICEs</td><td>Plasmídeos com <code>blaKPC</code>, <code>blaNDM</code>, <code>blaCTX-M</code>, VanA</td></tr>
+              <tr><td><span class="tag tag-yellow">Transformação</span></td><td>Captação de DNA livre (eDNA) por células competentes</td><td>Fragmentos cromossômicos ou plasmidiais</td><td>PBPs em <em>S. pneumoniae</em></td></tr>
+              <tr><td><span class="tag tag-blue">Transdução</span></td><td>Transferência mediada por bacteriófagos</td><td>DNA hospedeiro embalado acidentalmente no fago</td><td>SaPI: transferência de <code>mecA</code>, toxinas</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Elementos Genéticos Móveis (EGM)</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>EGM</th><th>Características</th><th>Importância Clínica</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag tag-blue">Plasmídeos</span></td><td>DNA circular extracromossômico autorreplicante; carregam múltiplos genes de resistência</td><td>Principal veículo de MDR; IncF, IncI, IncN (ESBL/carbapenemases)</td></tr>
+              <tr><td><span class="tag tag-yellow">Transposons (Tn)</span></td><td>Movem-se entre loci; gene transposase nas extremidades (IR)</td><td>Tn4401 (blaKPC); Tn1546 (VanA); Tn10 (TetA)</td></tr>
+              <tr><td><span class="tag tag-green">Integrons (In)</span></td><td>Plataformas de captura de gene cassettes; integrase IntI, sítio attI, promotor Pc</td><td>Classe 1 (IntI1) associado à MDR em Gram-negativos</td></tr>
+              <tr><td><span class="tag tag-purple">ICE</span></td><td>Integram ao cromossomo, mas conjugam como plasmídeos</td><td>SXT/R391 family (V. cholerae — TMP-SMX)</td></tr>
+              <tr><td><span class="tag tag-red">PAI / RAI</span></td><td>Grandes regiões cromossômicas (10–200 kb) adquiridas horizontalmente</td><td>SCCmec (mecA em MRSA); ilhas genômicas em A. baumannii</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ SECTION 5 ═══ -->
+    <section id="s5">
+      <div class="section-header" onclick="toggleSection('b5','i5')">
+        <span class="section-num">05</span>
+        <span class="section-title">Definições: MDR, XDR e PDR</span>
+        <span class="collapse-icon open" id="i5">▶</span>
+      </div>
+      <div class="section-body" id="b5">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Termo</th><th>Sigla</th><th>Definição (Magiorakos et al., 2012)</th><th>Implicação Clínica</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Multidrug-Resistant</strong></td><td><span class="tag tag-yellow">MDR</span></td><td>Resistência a ≥1 agente em ≥3 categorias de antimicrobianos</td><td>Limita opções; requer segunda linha</td></tr>
+              <tr><td><strong>Extensively Drug-Resistant</strong></td><td><span class="tag tag-red">XDR</span></td><td>Resistência em TODAS as categorias EXCETO 1 ou 2</td><td>Opções extremamente limitadas; último recurso</td></tr>
+              <tr><td><strong>Pandrug-Resistant</strong></td><td><span class="tag tag-red" style="background:rgba(239,68,68,0.3)">PDR</span></td><td>Resistência a TODOS os agentes em TODAS as categorias</td><td><span class="resist-none">Sem opções terapêuticas convencionais — catastrófico</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card card-warn">
+          <div class="card-label warn">📌 Importante</div>
+          <p>As categorias são calculadas com base em grupos pré-definidos de antibióticos por espécie. Para <em>K. pneumoniae</em>, as 9 categorias incluem: aminoglicosídeos, carbapenens, cefalosporinas 3ª/4ª geração, fluoroquinolonas, monobactâmicos, penicilinas + inibidores, polimixinas e outros. Seguir tabelas de Magiorakos et al. (2012).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ SECTION 6 ═══ -->
+    <section id="s6">
+      <div class="section-header" onclick="toggleSection('b6','i6')">
+        <span class="section-num">06</span>
+        <span class="section-title">Resistência por Organismo: Abordagem Clínica</span>
+        <span class="collapse-icon open" id="i6">▶</span>
+      </div>
+      <div class="section-body" id="b6">
+
+        <div class="tabs">
+          <div class="tab active" onclick="showTab(this,'t-sa')">S. aureus</div>
+          <div class="tab" onclick="showTab(this,'t-kp')">K. pneumoniae</div>
+          <div class="tab" onclick="showTab(this,'t-pa')">P. aeruginosa</div>
+        </div>
+
+        <div id="t-sa" class="tab-content active">
+          <h3>Staphylococcus aureus — MRSA, VISA, VRSA</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Fenótipo</th><th>CIM Oxacilina</th><th>Mecanismo</th><th>Tratamento</th></tr></thead>
+              <tbody>
+                <tr><td><span class="tag tag-green">MSSA</span></td><td>&lt;2 mg/L</td><td>PBPs normais</td><td><span class="resist-good">Oxacilina, cefalosporinas 1ª/2ª geração</span></td></tr>
+                <tr><td><span class="tag tag-red">MRSA</span></td><td>≥4 mg/L</td><td>PBP2a (mecA)</td><td><span class="resist-partial">Vancomicina (1ª linha), daptomicina, linezolida, ceftarolina</span></td></tr>
+                <tr><td><span class="tag tag-yellow">hVISA</span></td><td>1–2 mg/L (subpop. 4–8)</td><td>Espessamento parede celular</td><td>Daptomicina alta dose, linezolida; <span class="resist-none">evitar vancomicina</span></td></tr>
+                <tr><td><span class="tag tag-yellow">VISA</span></td><td>4–8 mg/L</td><td>Espessamento parede — D-Ala-D-Ala aprisionam vancomicina</td><td>Daptomicina ± betalactâmico, linezolida, ceftarolina</td></tr>
+                <tr><td><span class="tag tag-red">VRSA</span></td><td>≥16 mg/L</td><td>VanA de VRE transferido para MRSA</td><td>Linezolida, daptomicina, tigeciclina, ceftarolina — consultar especialista</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="t-kp" class="tab-content">
+          <h3>Klebsiella pneumoniae — ESBL e Carbapenemases</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Fenótipo</th><th>Genes</th><th>Tratamento Preferencial</th><th>Alternativas</th></tr></thead>
+              <tbody>
+                <tr><td><span class="tag tag-blue">ESBL+</span></td><td><code>blaCTX-M, blaSHV, blaTEM</code></td><td><span class="resist-good">Carbapenens (ertapenem, meropenem)</span></td><td>PTZ se CIM ≤2 (MERINO trial controverso)</td></tr>
+                <tr><td><span class="tag tag-red">KPC+</span></td><td><code>blaKPC</code></td><td><span class="resist-good">CAZ-AVI; meropenem-vaborbactam</span></td><td>IMI-REL; ATM-AVI (se NDM co-produtora); polimixinas (último recurso)</td></tr>
+                <tr><td><span class="tag tag-red">NDM+</span></td><td><code>blaNDM</code></td><td><span class="resist-good">ATM-AVI; CAZ-AVI + aztreonam</span></td><td>Tigeciclina + colistina; cefiderocol</td></tr>
+                <tr><td><span class="tag tag-purple">OXA-48+</span></td><td><code>blaOXA-48</code></td><td><span class="resist-good">CAZ-AVI; MER-VAB</span></td><td>Temocilina (Europa); cefiderocol; ATM-AVI</td></tr>
+                <tr><td><span class="tag tag-red">KPC + NDM</span></td><td><code>blaKPC + blaNDM</code></td><td><span class="resist-partial">CAZ-AVI + aztreonam (combinação)</span></td><td>Cefiderocol — consultar especialista</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="t-pa" class="tab-content">
+          <h3>Pseudomonas aeruginosa — Resistência Intrínseca e Adquirida</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Mecanismo</th><th>Detalhe</th><th>Antibiótico Perdido</th></tr></thead>
+              <tbody>
+                <tr><td>AmpC cromossômica</td><td>Gene <code>ampC</code> desreprimido; Classe C; não inibida por tazobactam/clavulanato</td><td>Cefalosporinas 1ª–3ª; ampicilina</td></tr>
+                <tr><td>Perda de OprD</td><td>Porina específica para imipenem; downregulation por mutação</td><td>Imipenem &gt;&gt; meropenem</td></tr>
+                <tr><td>Superexpressão MexAB-OprM</td><td>Mutações em <code>mexR, nalC, nalD</code></td><td>Betalactâmicos, quinolonas, tetraciclinas, macrolídeos</td></tr>
+                <tr><td>MexXY-OprM</td><td>Induzida por aminoglicosídeos; regulada por <code>mexZ</code></td><td>Aminoglicosídeos, quinolonas, cefepima</td></tr>
+                <tr><td>Carbapenemases</td><td>VIM, IMP, NDM em integrons/plasmídeos</td><td>Todos os betalactâmicos</td></tr>
+                <tr><td>Mutações <code>gyrA/parC</code></td><td>QRDR</td><td>Ciprofloxacino, levofloxacino</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card card-pearl">
+            <div class="card-label pearl">💊 Tratamento CRPA</div>
+            <ul>
+              <li><strong>CRPA sem carbapenemase:</strong> ceftolozano-tazobactam, ceftazidima-avibactam</li>
+              <li><strong>CRPA com MBL (VIM/IMP/NDM):</strong> cefiderocol; aztreonam-avibactam</li>
+              <li><strong>Imipenem-cilastatina-relebactam:</strong> ativo para alguns CRPA sem MBL</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ SECTION 7 ═══ -->
+    <section id="s7">
+      <div class="section-header" onclick="toggleSection('b7','i7')">
+        <span class="section-num">07</span>
+        <span class="section-title">Resistência Não-Genética: Biofilme & Persisters</span>
+        <span class="collapse-icon open" id="i7">▶</span>
+      </div>
+      <div class="section-body" id="b7">
+
+        <p><strong>Biofilme</strong>: comunidade estruturada de bactérias aderidas a superfície, envoltas por <strong>MEC (EPS — Extracellular Polymeric Substances)</strong> composta por polissacarídeos, proteínas, eDNA e lipídios.</p>
+
+        <div class="card card-warn">
+          <div class="card-label warn">🏗️ Mecanismos de Resistência no Biofilme</div>
+          <ul>
+            <li><strong>Barreira de difusão:</strong> EPS retarda penetração de antibióticos (especialmente aminoglicosídeos)</li>
+            <li><strong>Gradientes de O₂ e nutrientes:</strong> células centrais anóxicas têm metabolismo reduzido → alvos menos ativos (betalactâmicos requerem síntese ativa de parede)</li>
+            <li><strong>Células persisters:</strong> subpopulação em dormência metabólica — tolerantes mas NÃO geneticamente resistentes; reiniciam crescimento após remoção do antibiótico</li>
+            <li><strong>Quórum sensing:</strong> regula upregulation de bombas de efluxo dentro do biofilme</li>
+          </ul>
+        </div>
+
+        <h3>Relevância Clínica do Biofilme</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Dispositivo / Local</th><th>Organismo Principal</th><th>Implicação Clínica</th></tr></thead>
+            <tbody>
+              <tr><td>Cateter venoso central (CVC)</td><td>SCN, S. aureus, Candida</td><td>ICSRC — geralmente requer <strong>remoção do CVC</strong></td></tr>
+              <tr><td>Prótese valvular cardíaca</td><td>S. aureus, SCN, Streptococcus viridans</td><td>Endocardite sobre prótese (EPV) — frequentemente necessita cirurgia</td></tr>
+              <tr><td>Implante ortopédico</td><td>S. aureus, SCN, P. aeruginosa</td><td>Infecção periprotética — revisão cirúrgica (DAIR ou remoção)</td></tr>
+              <tr><td>Pulmão na fibrose cística</td><td>P. aeruginosa mucóide</td><td>Biofilme crônico — erradicação impossível; supressão com azitromicina + tobramicina inalatória</td></tr>
+              <tr><td>Cateteres urinários</td><td>E. coli, K. pneumoniae, Proteus</td><td>ITU relacionada a cateter; cristalização mineral (Proteus — urease)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ SECTION 8 ═══ -->
+    <section id="s8">
+      <div class="section-header" onclick="toggleSection('b8','i8')">
+        <span class="section-num">08</span>
+        <span class="section-title">Diagnóstico Laboratorial da Resistência</span>
+        <span class="collapse-icon open" id="i8">▶</span>
+      </div>
+      <div class="section-body" id="b8">
+
+        <h3>Métodos Fenotípicos</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Método</th><th>Parâmetro</th><th>Vantagem / Limitação</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Disco-difusão (Kirby-Bauer)</strong></td><td>Halo de inibição (mm) → S/I/R por CLSI ou EUCAST</td><td>Barato, rápido, universal; não fornece CIM exata</td></tr>
+              <tr><td><strong>Microdiluição em caldo (CIM)</strong></td><td>CIM (mg/L) — padrão-ouro</td><td>Preciso; base para PK/PD; mais trabalhoso</td></tr>
+              <tr><td><strong>E-test</strong></td><td>CIM lida diretamente na tira gradiente</td><td>Prático; CIM contínua; caro</td></tr>
+              <tr><td><strong>Sistemas automatizados</strong> (VITEK 2)</td><td>CIM + perfil S/I/R em 6–18h</td><td>Rápido; pode errar em mecanismos incomuns</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Métodos Genotípicos e Moleculares</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Método</th><th>Princípio</th><th>Aplicação Clínica</th></tr></thead>
+            <tbody>
+              <tr><td><strong>PCR / RT-PCR</strong></td><td>Amplificação de genes-alvo</td><td>Detecção de mecA (MRSA), blaKPC, blaNDM, vanA/B, blaOXA-48 em horas</td></tr>
+              <tr><td><strong>PCR Multiplex (mPCR)</strong></td><td>Amplificação simultânea de múltiplos genes</td><td>Painel de carbapenemases (KPC/NDM/VIM/IMP/OXA) em &lt;4h; ex: Xpert Carba-R</td></tr>
+              <tr><td><strong>WGS (Whole-Genome Sequencing)</strong></td><td>Sequenciamento completo do genoma</td><td>Investigação de surtos; resistoma completo; identificação de novos genes</td></tr>
+              <tr><td><strong>MALDI-TOF MS</strong></td><td>Identifica por perfil de proteínas ribossômicas em &lt;10 min</td><td>Identificação rápida de espécie; aplicações emergentes para carbapenemases</td></tr>
+              <tr><td><strong>Carba NP</strong></td><td>Colorimétrico para detecção de carbapenemases</td><td>Sensível/específico para Classe A e B; rápido</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>PK/PD — Otimização Posológica</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Parâmetro</th><th>Significado</th><th>Antibióticos</th><th>Implicação</th></tr></thead>
+            <tbody>
+              <tr><td><strong>T&gt;CIM</strong></td><td>% do intervalo acima da CIM; tempo-dependente</td><td>Betalactâmicos (T&gt;CIM ≥40–70%)</td><td>Infusão prolongada/contínua → melhor atividade contra CIM elevada</td></tr>
+              <tr><td><strong>Cmax/CIM</strong></td><td>Pico sérico / CIM; concentração-dependente</td><td>Aminoglicosídeos, quinolonas (Cmax/CIM ≥8–10)</td><td>Once-daily dosing de aminoglicosídeos — maximiza Cmax e reduz nefrotoxicidade</td></tr>
+              <tr><td><strong>AUC/CIM</strong></td><td>Área sob a curva / CIM</td><td>Vancomicina (AUC₂₄/CIM ≥400–600), quinolonas</td><td>Monitorização de vancomicina por AUC (TDM) — não mais por nível de vale</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ SECTION 9 ═══ -->
+    <section id="s9">
+      <div class="section-header" onclick="toggleSection('b9','i9')">
+        <span class="section-num">09</span>
+        <span class="section-title">Novos Antibióticos & Estratégias Terapêuticas MDR/XDR</span>
+        <span class="collapse-icon open" id="i9">▶</span>
+      </div>
+      <div class="section-body" id="b9">
+
+        <div class="antibiotic-grid">
+          <div class="ab-card">
+            <div class="ab-name">Ceftazidima-Avibactam</div>
+            <div class="ab-class">CAZ-AVI | Cefalosporina 3ª G + Inibidor NXL104</div>
+            <div class="ab-spectrum">KPC, OXA-48, AmpC; PA sem MBL. <span class="resist-none">NÃO cobre NDM/VIM.</span></div>
+            <div class="ab-approval"><span class="tag tag-green">FDA 2015</span> <span class="tag tag-blue">EMA 2016</span></div>
+          </div>
+          <div class="ab-card">
+            <div class="ab-name">Meropenem-Vaborbactam</div>
+            <div class="ab-class">MER-VAB | Carbapenem + Ácido borônico</div>
+            <div class="ab-spectrum">KPC (alta atividade). <span class="resist-none">NÃO cobre MBL, OXA-48.</span></div>
+            <div class="ab-approval"><span class="tag tag-green">FDA 2017</span> <span class="tag tag-blue">EMA 2018</span></div>
+          </div>
+          <div class="ab-card">
+            <div class="ab-name">Imipenem-Cilastatina-Relebactam</div>
+            <div class="ab-class">IMI-REL | Carbapenem + Diazabiciclooctano</div>
+            <div class="ab-spectrum">KPC, AmpC, PA sem MBL. <span class="resist-none">Não cobre NDM, OXA-48.</span></div>
+            <div class="ab-approval"><span class="tag tag-green">FDA 2019</span></div>
+          </div>
+          <div class="ab-card" style="border-color:rgba(16,185,129,0.3)">
+            <div class="ab-name" style="color:var(--success)">Aztreonam-Avibactam ⭐</div>
+            <div class="ab-class">ATM-AVI | Monobactâmico + Inibidor NXL104</div>
+            <div class="ab-spectrum"><span class="resist-good">Cobre NDM e outras MBL</span> — inovação terapêutica crítica. ATM resiste às MBL; AVI protege contra ESBLs coexistentes.</div>
+            <div class="ab-approval"><span class="tag tag-blue">EMA 2023</span></div>
+          </div>
+          <div class="ab-card">
+            <div class="ab-name">Ceftolozano-Tazobactam</div>
+            <div class="ab-class">C/T | Cefalosporina antipseudomonas + Inibidor</div>
+            <div class="ab-spectrum">PA MDR (AmpC/efluxo). <span class="resist-none">NÃO cobre carbapenemases.</span></div>
+            <div class="ab-approval"><span class="tag tag-green">FDA 2014</span> <span class="tag tag-blue">EMA 2015</span></div>
+          </div>
+          <div class="ab-card" style="border-color:rgba(6,182,212,0.3)">
+            <div class="ab-name" style="color:var(--pearl)">Cefiderocol ⭐</div>
+            <div class="ab-class">Cefalosporina-sideróforo (quelante de ferro)</div>
+            <div class="ab-spectrum"><span class="resist-good">Gram-negativos XDR incl. NDM, CRPA, CRAB.</span> Uptake ativo via receptores de ferro; contorna impermeabilidade.</div>
+            <div class="ab-approval"><span class="tag tag-green">FDA 2019</span> <span class="tag tag-blue">EMA 2020</span></div>
+          </div>
+          <div class="ab-card">
+            <div class="ab-name">Ceftarolina</div>
+            <div class="ab-class">CPT | Cefalosporina 5ª geração</div>
+            <div class="ab-spectrum"><span class="resist-good">MRSA (liga-se à PBP2a!)</span>, S. pneumoniae resistente. Único betalactâmico anti-MRSA aprovado.</div>
+            <div class="ab-approval"><span class="tag tag-green">FDA 2010</span> <span class="tag tag-blue">EMA 2012</span></div>
+          </div>
+          <div class="ab-card">
+            <div class="ab-name">Tigeciclina</div>
+            <div class="ab-class">Glicilciclina (derivada de tetraciclina)</div>
+            <div class="ab-spectrum">MRSA, VRE, ESBL (exceto Proteus/PA). Escapa de tet efflux pumps. <span class="resist-none">Não usar para bacteremia/ITU (PK ruim).</span></div>
+            <div class="ab-approval"><span class="tag tag-green">FDA 2005</span></div>
+          </div>
+          <div class="ab-card">
+            <div class="ab-name">Dalbavancina / Oritavancina</div>
+            <div class="ab-class">Lipoglicopeptídeos de longa ação (t½ 8–14 dias)</div>
+            <div class="ab-spectrum">MRSA, SCN, Streptococcus. Inibem síntese de peptidoglicano (Lipídio II + transpeptidação).</div>
+            <div class="ab-approval"><span class="tag tag-green">FDA 2014</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ SECTION 10 ═══ -->
+    <section id="s10">
+      <div class="section-header" onclick="toggleSection('b10','i10')">
+        <span class="section-num">10</span>
+        <span class="section-title">✦ Pontos-Chave, Pérolas & Quiz Interativo</span>
+        <span class="collapse-icon open" id="i10">▶</span>
+      </div>
+      <div class="section-body" id="b10">
+
+        <h3>Resumo de Alto Rendimento</h3>
+        <div class="card card-success">
+          <div class="card-label success">📋 Cheat Sheet — Alto Rendimento</div>
+          <ul>
+            <li><strong>ESBL:</strong> resistência a cefalosporinas + sensibilidade a carbapenens + inibição por clavulanato. Gene mais comum: <code>blaCTX-M</code>. Tratamento: <span class="resist-good">carbapenens</span>.</li>
+            <li><strong>KPC:</strong> Classe A (serina); hidrolisa todos betalactâmicos incl. carbapenens; inibida por avibactam. Tratamento: <span class="resist-good">CAZ-AVI ou MER-VAB</span>.</li>
+            <li><strong>NDM:</strong> MBL Classe B (Zn²⁺); NÃO inibida por avibactam isolado; aztreonam resiste. Tratamento: <span class="resist-good">ATM-AVI ou cefiderocol</span>.</li>
+            <li><strong>MRSA:</strong> mecA → PBP2a; resistente a TODOS betalactâmicos. Monitorizar vancomicina por <strong>AUC/CIM</strong>, não por vale.</li>
+            <li><strong>VRE VanA:</strong> D-Ala-D-Lac; resistente a vancomicina <em>E</em> teicoplanina. Tratamento: <span class="resist-good">linezolida, daptomicina</span>.</li>
+            <li><strong>VRE VanC:</strong> intrínseco (<em>E. gallinarum</em>, <em>E. casseliflavus</em>); NÃO transferível; <span class="resist-good">sensível à teicoplanina</span>.</li>
+            <li><strong>Biofilme:</strong> resistência fenotípica não-genética; geralmente requer remoção de dispositivo.</li>
+          </ul>
+        </div>
+
+        <h3>⚠️ Pegadinhas de Prova e Erros Comuns</h3>
+        <div class="card card-danger">
+          <div class="card-label danger">🚫 Erros Clássicos</div>
+          <ol>
+            <li><strong>Usar PTZ para sepse grave por ESBL+:</strong> estudo MERINO (2018) mostrou maior mortalidade com piperacilina-tazobactam vs. meropenem em bacteremia por E. coli/K. pneumoniae ESBL+. <span class="resist-none">Use carbapenens para infecção grave por ESBL.</span></li>
+            <li><strong>Interpretar OXA-48 como ESBL:</strong> OXA-48 é carbapenemase Classe D — o perfil fenotípico pode ser sutil (CIM limítrofe). Testes moleculares são essenciais.</li>
+            <li><strong>Usar vancomicina para VRE VanA:</strong> VanA confere resistência à vancomicina <em>E</em> teicoplanina. Use linezolida ou daptomicina.</li>
+            <li><strong>Não testar D-Zone em SA eritro-R + clinda-S:</strong> MLSB induzível → falha terapêutica in vivo com clindamicina.</li>
+            <li><strong>Tratar CRPA com CAZ-AVI quando há MBL:</strong> CAZ-AVI não cobre NDM/VIM. <span class="resist-none">Use ATM-AVI ou cefiderocol.</span></li>
+            <li><strong>Não distinguir resistência intrínseca de adquirida:</strong> <em>P. aeruginosa</em> é intrinsecamente resistente à ampicilina, cefalosporinas 1ª geração e cotrimoxazol — não solicitar esses antibióticos.</li>
+          </ol>
+        </div>
+
+        <h3>🏆 Questões Estilo Residência / Board</h3>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Paciente com bacteremia por K. pneumoniae. Antibiograma: resistência a cefalosporinas 3ª geração, aztreonam, ampicilina-sulbactam, PTZ. Sensível a meropenem, ertapenem e amicacina. Teste com disco de clavulanato aumenta o halo da cefotaxima em 8mm. Qual o mecanismo e tratamento de escolha?</div>
+          <button class="btn-reveal" onclick="revealQuiz(this)">Revelar resposta</button>
+          <div class="quiz-answer">
+            <strong>✅ ESBL (DDST positivo — aumento ≥5mm com clavulanato).</strong><br>
+            Mecanismo mais provável: <code>blaCTX-M</code> (mais prevalente). Tratamento: <strong>carbapenem</strong> (meropenem ou ertapenem para infecção não-grave).<br>
+            <strong>NÃO usar piperacilina-tazobactam para bacteremia grave por ESBL</strong> — estudo MERINO (2018) demonstrou maior mortalidade (30 dias) com PTZ vs. meropenem em bacteremia por E. coli/KP ESBL+.
+          </div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Paciente em UTI com PAV por P. aeruginosa. Imipenem resistente (CIM 16 mg/L), meropenem intermediário (CIM 4 mg/L). Carba NP negativo (sem carbapenemase). Qual o mecanismo mais provável de resistência ao imipenem e qual antibiótico considerar?</div>
+          <button class="btn-reveal" onclick="revealQuiz(this)">Revelar resposta</button>
+          <div class="quiz-answer">
+            <strong>✅ Perda de OprD (porina específica para imipenem).</strong><br>
+            PA pode perder OprD seletivamente — resistência ao imipenem sem carbapenemase. O meropenem usa OprD com menor eficiência → CIM mais baixa.<br>
+            Sem MBL: <strong>ceftolozano-tazobactam</strong> ou <strong>ceftazidima-avibactam</strong> são opções adequadas. Infusão prolongada de meropenem (3h) pode ser considerada para CIM=4 sem alternativas.
+          </div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">Hemoculturas positivas para Enterococcus faecium. Resistente à ampicilina, vancomicina E teicoplanina. Qual o fenótipo VAN e qual o tratamento de escolha?</div>
+          <button class="btn-reveal" onclick="revealQuiz(this)">Revelar resposta</button>
+          <div class="quiz-answer">
+            <strong>✅ VanA</strong> — resistência a vancomicina E teicoplanina (diferencia de VanB que mantém sensibilidade a teicoplanina).<br>
+            <em>E. faecium</em> VanA = VRE de maior importância clínica.<br>
+            Tratamento: <strong>linezolida</strong> (600mg 12/12h) ou <strong>daptomicina</strong> (6–8mg/kg/dia — doses mais altas em bacteremia/endocardite). Tigeciclina tem atividade, mas PK desfavorável para bacteremia.
+          </div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-q">S. aureus isolado com resistência à eritromicina e aparentemente sensível à clindamicina. Por que a clindamicina pode falhar in vivo e como confirmar?</div>
+          <button class="btn-reveal" onclick="revealQuiz(this)">Revelar resposta</button>
+          <div class="quiz-answer">
+            <strong>✅ MLSB induzível (iMLSB)</strong> — o gene <code>erm</code> está presente mas inativo no teste (sem eritromicina para induzi-lo), levando a falsa sensibilidade à clindamicina.<br>
+            In vivo, sob pressão antibiótica, o gene <code>erm</code> é induzido → resistência à clindamicina → falha terapêutica.<br>
+            <strong>Confirmar com D-Zone Test:</strong> discos de eritromicina (15µg) e clindamicina (2µg) a 15–20mm. Achatamento do halo de clindamicina em 'D' = iMLSB positivo = <span class="resist-none">NÃO usar clindamicina.</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ SECTION 11 ═══ -->
+    <section id="s11">
+      <div class="section-header" onclick="toggleSection('b11','i11')">
+        <span class="section-num">11</span>
+        <span class="section-title">Referências Bibliográficas</span>
+        <span class="collapse-icon open" id="i11">▶</span>
+      </div>
+      <div class="section-body" id="b11">
+        <ol style="font-size:13px;color:var(--text3);line-height:2">
+          <li>Magiorakos AP, et al. Multidrug-resistant, extensively drug-resistant and pandrug-resistant bacteria. <em>Clin Microbiol Infect.</em> 2012;18(3):268-281.</li>
+          <li>Murray CJ, et al. Global burden of bacterial antimicrobial resistance in 2019. <em>Lancet.</em> 2022;399(10325):629-655.</li>
+          <li>Rice LB. Federal funding for the study of antimicrobial resistance. <em>J Infect Dis.</em> 2008;197(8):1079-1081.</li>
+          <li>Ambler RP. The structure of beta-lactamases. <em>Philos Trans R Soc Lond B Biol Sci.</em> 1980;289:321-331.</li>
+          <li>Bush K, Bradford PA. Epidemiology of beta-lactamase-producing pathogens. <em>Clin Microbiol Rev.</em> 2020;33(2):e00047-19.</li>
+          <li>Paterson DL, Bonomo RA. Extended-spectrum beta-lactamases: a clinical update. <em>Clin Microbiol Rev.</em> 2005;18(4):657-686.</li>
+          <li>van Duin D, Doi Y. The global epidemiology of carbapenemase-producing Enterobacteriaceae. <em>Virulence.</em> 2017;8(4):460-469.</li>
+          <li>Yong D, et al. Characterization of bla(NDM-1). <em>Antimicrob Agents Chemother.</em> 2009;53(12):5046-5054.</li>
+          <li>Nikaido H. Multidrug resistance in bacteria. <em>Annu Rev Biochem.</em> 2009;78:119-146.</li>
+          <li>Poole K. Efflux-mediated antimicrobial resistance. <em>J Antimicrob Chemother.</em> 2005;56(1):20-51.</li>
+          <li>Flemming HC, Wingender J. The biofilm matrix. <em>Nat Rev Microbiol.</em> 2010;8(9):623-633.</li>
+          <li>Lewis K. Persister cells, dormancy and infectious disease. <em>Nat Rev Microbiol.</em> 2007;5(1):48-56.</li>
+          <li>Harris PNA, et al. MERINO trial — PTZ vs meropenem. <em>JAMA.</em> 2018;320(10):984-994.</li>
+          <li>Rybak MJ, et al. Therapeutic monitoring of vancomycin (AUC guideline). <em>Am J Health Syst Pharm.</em> 2020;77(11):835-864.</li>
+          <li>Tamma PD, et al. IDSA Guidance — AmpC, CRAB, Stenotrophomonas. <em>Clin Infect Dis.</em> 2022;74(12):2089-2114.</li>
+          <li>WHO. Global AMR surveillance report 2022. Geneva: WHO; 2022.</li>
+          <li>EUCAST. Breakpoint Tables, Version 13.0. 2023. www.eucast.org</li>
+          <li>CLSI. M100 — Antimicrobial Susceptibility Testing, 33rd ed. 2023.</li>
+          <li>Drawz SM, Bonomo RA. Three decades of beta-lactamase inhibitors. <em>Clin Microbiol Rev.</em> 2010;23(1):160-201.</li>
+          <li>Mandell GL, et al. Principles and Practice of Infectious Diseases. 9th ed. Elsevier; 2020.</li>
+          <li>Murray PR, et al. Medical Microbiology. 9th ed. Elsevier; 2021.</li>
+          <li>Longo DL, et al. Harrison's Principles of Internal Medicine. 21st ed. McGraw-Hill; 2022.</li>
+        </ol>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // ─── READING PROGRESS ───
+  window.addEventListener('scroll', () => {
+    const scrollTop = document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const pct = (scrollTop / docHeight) * 100;
+    document.getElementById('readingProgress').style.width = pct + '%';
+    document.getElementById('back-top').classList.toggle('visible', scrollTop > 300);
+  });
+
+  // ─── COLLAPSE SECTIONS ───
+  function toggleSection(bodyId, iconId) {
+    const body = document.getElementById(bodyId);
+    const icon = document.getElementById(iconId);
+    if (body.classList.contains('hidden')) {
+      body.classList.remove('hidden');
+      icon.classList.add('open');
+    } else {
+      body.classList.add('hidden');
+      icon.classList.remove('open');
+    }
+  }
+
+  // ─── NAV ACTIVE STATE ───
+  function setActive(el) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ─── TABS ───
+  function showTab(el, targetId) {
+    el.closest('.section-body, .main').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    el.closest('.section-body, .main').querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    const target = document.getElementById(targetId);
+    if (target) target.classList.add('active');
+  }
+
+  // ─── QUIZ ───
+  function revealQuiz(btn) {
+    const answer = btn.nextElementSibling;
+    if (answer.classList.contains('show')) {
+      answer.classList.remove('show');
+      btn.textContent = 'Revelar resposta';
+      btn.classList.remove('revealed');
+    } else {
+      answer.classList.add('show');
+      btn.textContent = 'Ocultar resposta';
+      btn.classList.add('revealed');
+    }
+  }
+
+  // ─── SEARCH ───
+  function searchContent(query) {
+    const main = document.getElementById('mainContent');
+    const countEl = document.getElementById('searchCount');
+
+    // Clear previous highlights
+    main.querySelectorAll('mark').forEach(m => {
+      const parent = m.parentNode;
+      parent.replaceChild(document.createTextNode(m.textContent), m);
+      parent.normalize();
+    });
+
+    if (!query || query.length < 2) {
+      countEl.textContent = '';
+      return;
+    }
+
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
+      acceptNode: node => {
+        const tag = node.parentElement.tagName;
+        if (['SCRIPT','STYLE','MARK','INPUT','CODE'].includes(tag)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) {
+      if (regex.test(n.textContent)) nodes.push(n);
+    }
+
+    let total = 0;
+    nodes.forEach(node => {
+      const parts = node.textContent.split(regex);
+      const matches = node.textContent.match(regex) || [];
+      total += matches.length;
+      const frag = document.createDocumentFragment();
+      parts.forEach((part, i) => {
+        frag.appendChild(document.createTextNode(part));
+        if (i < matches.length) {
+          const mark = document.createElement('mark');
+          mark.textContent = matches[i];
+          frag.appendChild(mark);
+        }
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+
+    countEl.textContent = total > 0 ? `${total} resultado${total !== 1 ? 's' : ''}` : 'Nenhum resultado';
+  }
+
+  // ─── ACTIVE NAV ON SCROLL ───
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-item');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }, { passive: true });
+</script>
+</body>
+</html>
