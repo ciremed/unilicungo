@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transcrição & Tradução — Biologia Molecular Médica</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=JetBrains+Mono:wght@300;400;600&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0f1528;
+    --bg3: #151c35;
+    --accent1: #4fc3f7;
+    --accent2: #e040fb;
+    --accent3: #69f0ae;
+    --accent4: #ffca28;
+    --accent5: #ff7043;
+    --text: #e8eaf6;
+    --text2: #9fa8da;
+    --text3: #5c6bc0;
+    --border: rgba(79,195,247,0.15);
+    --card: rgba(15,21,40,0.8);
+    --glow1: rgba(79,195,247,0.3);
+    --glow2: rgba(224,64,251,0.3);
+    --glow3: rgba(105,240,174,0.3);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Serif 4', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ANIMATED BG */
+  .bg-grid {
+    position: fixed; inset:0; z-index:0;
+    background-image:
+      linear-gradient(rgba(79,195,247,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,195,247,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none;
+  }
+  .bg-orb {
+    position:fixed; border-radius:50%; filter:blur(80px); pointer-events:none; z-index:0;
+    animation: orb-drift 12s ease-in-out infinite alternate;
+  }
+  .bg-orb.o1 { width:500px; height:500px; top:-100px; left:-100px; background:rgba(79,195,247,0.07); }
+  .bg-orb.o2 { width:400px; height:400px; bottom:-100px; right:-100px; background:rgba(224,64,251,0.07); animation-delay:-6s; }
+  @keyframes orb-drift { to { transform: translate(40px, 30px); } }
+
+  /* LAYOUT */
+  main { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:0 24px 80px; }
+
+  /* HEADER */
+  header {
+    text-align:center; padding: 60px 0 40px;
+    position:relative;
+  }
+  .header-label {
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:4px; text-transform:uppercase;
+    color: var(--accent1); margin-bottom:16px;
+    opacity:0.8;
+  }
+  h1 {
+    font-family:'Playfair Display', serif;
+    font-size:clamp(2rem,5vw,3.6rem); font-weight:900;
+    line-height:1.1;
+    background: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 50%, var(--accent3) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+    margin-bottom:16px;
+  }
+  .header-sub {
+    font-size:1.05rem; color:var(--text2); max-width:680px; margin:0 auto;
+    line-height:1.7;
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display:flex; gap:8px; flex-wrap:wrap;
+    justify-content:center; margin:40px 0 32px;
+  }
+  .nav-tab {
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; letter-spacing:1px; text-transform:uppercase;
+    padding:10px 20px; border-radius:4px;
+    border:1px solid var(--border);
+    background:var(--card); color:var(--text2);
+    cursor:pointer; transition:all .25s;
+    backdrop-filter:blur(10px);
+  }
+  .nav-tab:hover { border-color:var(--accent1); color:var(--accent1); }
+  .nav-tab.active {
+    background: linear-gradient(135deg,rgba(79,195,247,0.2),rgba(224,64,251,0.2));
+    border-color:var(--accent1); color:var(--accent1);
+    box-shadow:0 0 20px var(--glow1);
+  }
+
+  /* SECTION */
+  .section { display:none; animation: fadeUp .4s ease; }
+  .section.active { display:block; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+  /* CARDS */
+  .card {
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px; padding:28px 32px;
+    backdrop-filter:blur(16px);
+    margin-bottom:20px;
+    transition:border-color .25s;
+  }
+  .card:hover { border-color:rgba(79,195,247,0.3); }
+
+  .card-title {
+    font-family:'Playfair Display',serif;
+    font-size:1.3rem; font-weight:700;
+    color:var(--accent1); margin-bottom:14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .card-title .tag {
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; letter-spacing:2px;
+    padding:3px 10px; border-radius:20px;
+    background:rgba(79,195,247,0.12);
+    color:var(--accent1); border:1px solid rgba(79,195,247,0.25);
+  }
+
+  p { line-height:1.8; color:var(--text2); margin-bottom:12px; }
+  p:last-child { margin-bottom:0; }
+
+  /* HIGHLIGHT BOXES */
+  .highlight {
+    border-left:3px solid var(--accent3);
+    background:rgba(105,240,174,0.06);
+    padding:14px 18px; border-radius:0 8px 8px 0;
+    margin:14px 0; font-size:.95rem;
+  }
+  .highlight.warn { border-color:var(--accent4); background:rgba(255,202,40,0.06); }
+  .highlight.danger { border-color:var(--accent5); background:rgba(255,112,67,0.06); }
+  .highlight.purple { border-color:var(--accent2); background:rgba(224,64,251,0.06); }
+
+  /* ACRONYM TOOLTIP */
+  .acr {
+    color:var(--accent1); border-bottom:1px dashed var(--accent1);
+    cursor:help; position:relative; display:inline-block;
+    transition:color .2s;
+  }
+  .acr:hover { color:var(--accent3); }
+  .acr .tooltip {
+    position:absolute; bottom:calc(100% + 8px); left:50%;
+    transform:translateX(-50%);
+    background:#1a2040; border:1px solid var(--accent1);
+    border-radius:8px; padding:10px 14px;
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    color:var(--text); white-space:nowrap; z-index:100;
+    pointer-events:none; opacity:0; transition:opacity .2s;
+    box-shadow:0 8px 30px rgba(0,0,0,0.5);
+    max-width:280px; white-space:normal;
+    line-height:1.5;
+  }
+  .acr:hover .tooltip { opacity:1; }
+
+  /* TABLE */
+  .tbl-wrap { overflow-x:auto; margin:18px 0; }
+  table {
+    width:100%; border-collapse:collapse;
+    font-size:.9rem;
+  }
+  th {
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--accent1); padding:12px 16px;
+    background:rgba(79,195,247,0.08);
+    border-bottom:1px solid var(--border);
+    text-align:left;
+  }
+  td { padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text2); vertical-align:top; }
+  tr:hover td { background:rgba(79,195,247,0.04); }
+
+  /* ══════════════════════════════════════════
+     INTERACTIVE ANIMATIONS
+  ══════════════════════════════════════════ */
+
+  /* DNA ANIMATION */
+  .dna-stage {
+    background:rgba(10,14,26,0.8);
+    border:1px solid var(--border); border-radius:12px;
+    padding:30px 20px; margin:20px 0;
+    text-align:center; overflow:hidden;
+    position:relative;
+  }
+  .dna-canvas {
+    display:block; margin:0 auto;
+  }
+
+  /* STEP ANIMATION - Transcription */
+  .process-stepper {
+    margin:20px 0;
+  }
+  .step-nav {
+    display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;
+  }
+  .step-btn {
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; padding:8px 14px;
+    border-radius:20px; border:1px solid var(--border);
+    background:transparent; color:var(--text3);
+    cursor:pointer; transition:all .2s;
+  }
+  .step-btn.active {
+    background:rgba(79,195,247,0.15);
+    border-color:var(--accent1); color:var(--accent1);
+  }
+  .step-content {
+    display:none;
+  }
+  .step-content.active { display:block; }
+
+  /* MOLECULE VISUALIZER */
+  .mol-canvas-wrap {
+    background:#060810; border-radius:12px;
+    padding:10px; margin:16px 0;
+    border:1px solid var(--border);
+  }
+
+  /* TRANSLATION RIBOSOME ANIMATION */
+  .ribosome-stage {
+    background:#060810; border-radius:12px;
+    padding:20px; margin:16px 0;
+    border:1px solid var(--border);
+    overflow:hidden; position:relative;
+  }
+
+  /* ACCORDION */
+  .accordion { margin:10px 0; }
+  .acc-header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 18px; border-radius:8px;
+    background:rgba(255,255,255,0.03); border:1px solid var(--border);
+    cursor:pointer; transition:all .2s;
+    font-family:'JetBrains Mono',monospace; font-size:13px;
+    color:var(--text2);
+  }
+  .acc-header:hover { border-color:var(--accent1); color:var(--accent1); }
+  .acc-header.open { border-color:var(--accent1); color:var(--accent1); background:rgba(79,195,247,0.06); }
+  .acc-arrow { transition:transform .3s; font-size:10px; }
+  .acc-header.open .acc-arrow { transform:rotate(180deg); }
+  .acc-body {
+    max-height:0; overflow:hidden; transition:max-height .4s ease;
+    padding:0 18px;
+  }
+  .acc-body.open { max-height:600px; padding:16px 18px; }
+  .acc-body p { font-size:.92rem; }
+
+  /* GRID LAYOUTS */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media(max-width:700px) { .grid-2,.grid-3 { grid-template-columns:1fr; } }
+
+  /* ENZYME CARDS */
+  .enzyme-card {
+    background:rgba(10,14,26,0.9);
+    border:1px solid var(--border); border-radius:10px;
+    padding:20px; transition:all .3s; cursor:default;
+  }
+  .enzyme-card:hover {
+    border-color:var(--accent2);
+    transform:translateY(-3px);
+    box-shadow:0 8px 30px var(--glow2);
+  }
+  .enzyme-name {
+    font-family:'Playfair Display',serif;
+    font-size:1.05rem; font-weight:700;
+    color:var(--accent2); margin-bottom:6px;
+  }
+  .enzyme-abbr {
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; color:var(--accent4);
+    letter-spacing:1px; margin-bottom:10px;
+  }
+  .enzyme-fn { font-size:.88rem; color:var(--text2); line-height:1.6; }
+
+  /* CODON TABLE */
+  .codon-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+    gap:6px; margin:16px 0;
+  }
+  .codon-cell {
+    padding:8px 6px; border-radius:6px;
+    text-align:center; font-family:'JetBrains Mono',monospace;
+    font-size:11px; border:1px solid var(--border);
+    transition:all .2s; cursor:default;
+  }
+  .codon-cell:hover { transform:scale(1.05); z-index:2; }
+  .codon-cell .cdn { color:var(--accent1); font-weight:600; font-size:12px; }
+  .codon-cell .aa { color:var(--text2); font-size:10px; margin-top:2px; }
+  .codon-stop { border-color:rgba(255,112,67,0.4); background:rgba(255,112,67,0.08); }
+  .codon-start { border-color:rgba(105,240,174,0.4); background:rgba(105,240,174,0.08); }
+
+  /* PROGRESS BAR ANIMATION */
+  .progress-wrap { margin:16px 0; }
+  .progress-label {
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    color:var(--text3); letter-spacing:1px; margin-bottom:6px;
+    display:flex; justify-content:space-between;
+  }
+  .progress-bar {
+    height:6px; border-radius:3px;
+    background:rgba(255,255,255,0.05);
+    overflow:hidden;
+  }
+  .progress-fill {
+    height:100%; border-radius:3px;
+    background:linear-gradient(90deg,var(--accent1),var(--accent2));
+    width:0; transition:width 1.5s ease;
+  }
+
+  /* FLASHCARD */
+  .flashcard-wrap { perspective:1000px; margin:16px 0; }
+  .flashcard {
+    width:100%; min-height:160px;
+    position:relative; transform-style:preserve-3d;
+    transition:transform .6s; cursor:pointer;
+  }
+  .flashcard.flipped { transform:rotateY(180deg); }
+  .flashcard-front, .flashcard-back {
+    position:absolute; inset:0;
+    backface-visibility:hidden;
+    border-radius:12px; padding:24px;
+    display:flex; flex-direction:column;
+    justify-content:center; align-items:center;
+    text-align:center;
+    border:1px solid var(--border);
+  }
+  .flashcard-front { background:var(--card); }
+  .flashcard-back { background:rgba(105,240,174,0.06); border-color:var(--accent3); transform:rotateY(180deg); }
+  .flashcard-q { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--text); }
+  .flashcard-a { color:var(--accent3); font-size:.95rem; line-height:1.7; }
+  .flashcard-hint { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text3); margin-top:12px; }
+
+  /* QUIZ */
+  .quiz-q { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--text); margin-bottom:14px; }
+  .quiz-options { display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt {
+    padding:12px 16px; border-radius:8px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,0.02);
+    cursor:pointer; transition:all .2s;
+    font-size:.92rem; color:var(--text2);
+    text-align:left;
+  }
+  .quiz-opt:hover { border-color:var(--accent1); color:var(--text); }
+  .quiz-opt.correct { border-color:var(--accent3); background:rgba(105,240,174,0.12); color:var(--accent3); }
+  .quiz-opt.wrong { border-color:var(--accent5); background:rgba(255,112,67,0.1); color:var(--accent5); }
+  .quiz-feedback { margin-top:12px; font-size:.9rem; display:none; }
+  .quiz-next {
+    margin-top:14px; padding:10px 24px;
+    border-radius:6px; border:1px solid var(--accent1);
+    background:rgba(79,195,247,0.1); color:var(--accent1);
+    cursor:pointer; font-family:'JetBrains Mono',monospace;
+    font-size:12px; transition:all .2s; display:none;
+  }
+  .quiz-next:hover { background:rgba(79,195,247,0.2); }
+
+  /* REFERENCE */
+  .ref {
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; color:var(--text3);
+    background:rgba(255,255,255,0.03);
+    border-radius:4px; padding:2px 6px;
+    border:1px solid rgba(255,255,255,0.06);
+    cursor:default; vertical-align:middle;
+  }
+
+  .refs-list { list-style:none; }
+  .refs-list li {
+    padding:12px 0; border-bottom:1px solid var(--border);
+    font-size:.88rem; color:var(--text2); line-height:1.6;
+  }
+  .refs-list li:last-child { border-bottom:none; }
+  .refs-list .rnum {
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; color:var(--accent1);
+    display:inline-block; width:28px;
+  }
+
+  /* SECTION DIVIDER */
+  .divider {
+    border:none; border-top:1px solid var(--border);
+    margin:32px 0;
+  }
+
+  /* MNEMONIC */
+  .mnemonic {
+    display:inline-flex; gap:4px; flex-wrap:wrap;
+    margin:12px 0;
+  }
+  .mnemonic span {
+    font-family:'Playfair Display',serif;
+    font-weight:700; font-size:1.05rem;
+    color:var(--accent4);
+  }
+  .mnemonic .sub {
+    font-size:.7rem; color:var(--text3);
+    display:block; margin-top:2px;
+    font-family:'JetBrains Mono',monospace;
+    font-weight:400;
+  }
+
+  /* SECTION HEADING */
+  .section-title {
+    font-family:'Playfair Display',serif;
+    font-size:1.8rem; font-weight:700;
+    color:var(--text); margin-bottom:8px;
+  }
+  .section-desc { font-size:.95rem; color:var(--text3); margin-bottom:28px; }
+
+  /* QUICK REVIEW BOX */
+  .quick-review {
+    border:1px solid rgba(255,202,40,0.3);
+    background:rgba(255,202,40,0.04);
+    border-radius:12px; padding:20px 24px; margin:20px 0;
+  }
+  .quick-review-title {
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--accent4); margin-bottom:14px;
+  }
+  .quick-review ul { list-style:none; }
+  .quick-review ul li {
+    padding:6px 0; border-bottom:1px solid rgba(255,202,40,0.08);
+    font-size:.9rem; color:var(--text2); display:flex; gap:10px;
+  }
+  .quick-review ul li::before { content:"›"; color:var(--accent4); flex-shrink:0; }
+  .quick-review ul li:last-child { border-bottom:none; }
+
+  /* INTERACTIVE DNA */
+  #dna-svg { width:100%; max-width:700px; height:200px; }
+  .dna-bp { cursor:pointer; }
+  .dna-bp:hover { opacity:0.85; }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity:0; transform:translateY(20px); transition:all .5s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+
+  /* Animations */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  @keyframes slide-r { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+  .pulse { animation:pulse 2s infinite; }
+  .bounce { animation:bounce 1.5s infinite; }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-orb o1"></div>
+<div class="bg-orb o2"></div>
+
+<main>
+  <!-- HEADER -->
+  <header>
+    <div class="header-label">Biologia Molecular · Medicina Interna</div>
+    <h1>Transcrição & Tradução<br>Molecular</h1>
+    <p class="header-sub">
+      Do gene à proteína — elementos, enzimas, acrónimos destrinçados e mecanismos interativos com base em evidência bibliográfica atual.
+    </p>
+  </header>
+
+  <!-- NAVIGATION -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('overview')">Visão Geral</button>
+    <button class="nav-tab" onclick="showSection('transcricao')">Transcrição</button>
+    <button class="nav-tab" onclick="showSection('traducao')">Tradução</button>
+    <button class="nav-tab" onclick="showSection('enzimas')">Enzimas & Fatores</button>
+    <button class="nav-tab" onclick="showSection('acronimos')">Acrónimos</button>
+    <button class="nav-tab" onclick="showSection('patologia')">Relevância Clínica</button>
+    <button class="nav-tab" onclick="showSection('revisao')">Revisão & Quiz</button>
+    <button class="nav-tab" onclick="showSection('referencias')">Referências</button>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 1: VISÃO GERAL
+  ═══════════════════════════════════ -->
+  <div class="section active" id="section-overview">
+    <div class="card">
+      <div class="card-title">O Dogma Central da Biologia Molecular <span class="tag">DOGMA</span></div>
+      <p>
+        Proposto por Francis Crick em 1958 e reformulado em 1970, o
+        <span class="acr">Dogma Central<span class="tooltip">Crick FC. Central Dogma of Molecular Biology. Nature. 1970;227:561–563.</span></span>
+        descreve o fluxo unidirecional da informação genética:
+      </p>
+      <div style="text-align:center;margin:24px 0;font-family:'JetBrains Mono',monospace;font-size:1.1rem;letter-spacing:2px;">
+        <span style="color:var(--accent1)">DNA</span>
+        <span style="color:var(--text3)"> ──→ </span>
+        <span style="color:var(--accent2)">RNA</span>
+        <span style="color:var(--text3)"> ──→ </span>
+        <span style="color:var(--accent3)">Proteína</span>
+      </div>
+      <p>
+        Exceções incluem a <strong style="color:var(--accent4)">transcriptase reversa</strong> (RNA → DNA, em retrovírus como o HIV)
+        e a <strong style="color:var(--accent4)">replicação de RNA</strong> (em vírus RNA), que não contradizem, mas expandem o dogma original.
+      </p>
+    </div>
+
+    <!-- DNA animated diagram -->
+    <div class="card">
+      <div class="card-title">Estrutura do DNA — Clique nas Bases para Identificar</div>
+      <div class="dna-stage">
+        <canvas id="dnaCanvas" class="dna-canvas" width="680" height="180" style="max-width:100%"></canvas>
+        <div id="dna-info" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent4);min-height:20px;">
+          Clique em uma base nitrogenada para ver detalhes...
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow overview -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="color:var(--accent2)">Transcrição</div>
+        <p>Processo pelo qual o DNA serve de molde para síntese de
+          <span class="acr">mRNA<span class="tooltip">mRNA = Messenger RNA (RNA mensageiro) — cópia da sequência codificante do gene transportada para o ribossomo.</span></span>,
+          <span class="acr">rRNA<span class="tooltip">rRNA = Ribosomal RNA (RNA ribossomal) — componente estrutural e catalítico dos ribossomas.</span></span> e
+          <span class="acr">tRNA<span class="tooltip">tRNA = Transfer RNA (RNA transportador) — adaptor que carrega aminoácidos ao ribossoma.</span></span>.
+          Ocorre no <strong>núcleo</strong> (eucariotos) ou <strong>citoplasma</strong> (procariotos).
+        </p>
+        <div class="highlight">
+          <strong>Enzima chave:</strong> RNA polimerase — sintetiza RNA na direção 5'→3', lendo o DNA no sentido 3'→5' (molde anti-sense).
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--accent3)">Tradução</div>
+        <p>Processo pelo qual a sequência de nucleótidos do mRNA é decodificada em sequência de aminoácidos pelo ribossoma, com auxílio do tRNA e de múltiplos fatores proteicos.</p>
+        <div class="highlight" style="border-color:var(--accent3);background:rgba(105,240,174,0.06)">
+          <strong>Local:</strong> Ribossomas (livres no citoplasma ou associados ao
+          <span class="acr">RER<span class="tooltip">RER = Retículo Endoplasmático Rugoso — local de síntese de proteínas secretórias e de membrana em eucariotos.</span></span>
+          para proteínas secretórias).
+        </div>
+      </div>
+    </div>
+
+    <!-- Key comparisons -->
+    <div class="card">
+      <div class="card-title">Procarioto vs. Eucarioto — Diferenças Críticas</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr>
+            <th>Característica</th>
+            <th>Procarioto</th>
+            <th>Eucarioto</th>
+          </tr>
+          <tr>
+            <td>Local da transcrição</td>
+            <td style="color:var(--accent4)">Citoplasma</td>
+            <td style="color:var(--accent1)">Núcleo</td>
+          </tr>
+          <tr>
+            <td>RNA polimerase</td>
+            <td>1 (com subunidades α₂ββ'σ)</td>
+            <td>3 (Pol I, II, III)</td>
+          </tr>
+          <tr>
+            <td>mRNA inicial</td>
+            <td>Pronto para tradução (sem introns)</td>
+            <td>Pré-mRNA → processado (splicing, 5' cap, poly-A)</td>
+          </tr>
+          <tr>
+            <td>Ribossoma</td>
+            <td><span class="acr">70S<span class="tooltip">70S = Unidade Svedberg; 70S = subunidades 30S + 50S. O "S" não é aditivo — refere-se à taxa de sedimentação.</span></span> (30S + 50S)</td>
+            <td><span class="acr">80S<span class="tooltip">80S = subunidades 40S + 60S em eucariotos.</span></span> (40S + 60S)</td>
+          </tr>
+          <tr>
+            <td>Acoplamento transcrição/tradução</td>
+            <td>Simultâneo</td>
+            <td>Separado temporal e espacialmente</td>
+          </tr>
+          <tr>
+            <td>Iniciador de tradução</td>
+            <td>N-formilmetionina (fMet)</td>
+            <td>Metionina (Met)</td>
+          </tr>
+          <tr>
+            <td>Antibióticos alvo</td>
+            <td>Amplo (tetraciclinas, aminoglicosídeos, cloranfenicol...)</td>
+            <td>Citotóxicos (ex.: cicloheximida)</td>
+          </tr>
+        </table>
+      </div>
+      <div class="highlight warn">
+        <strong>Pearola clínica:</strong> A diferença ribossomal 70S (bactérias) vs 80S (humanos) é o fundamento do mecanismo de ação seletivo de antibióticos como aminoglicosídeos, macrólidos e cloranfenicol.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 2: TRANSCRIÇÃO
+  ═══════════════════════════════════ -->
+  <div class="section" id="section-transcricao">
+    <div class="section-title">Transcrição</div>
+    <div class="section-desc">Da sequência de DNA à molécula de RNA — mecanismo passo a passo.</div>
+
+    <!-- Stepper -->
+    <div class="card">
+      <div class="card-title">Etapas da Transcrição — Animação Interativa</div>
+      <div class="process-stepper">
+        <div class="step-nav">
+          <button class="step-btn active" onclick="showStep('txn',0,this)">1 · Iniciação</button>
+          <button class="step-btn" onclick="showStep('txn',1,this)">2 · Elongação</button>
+          <button class="step-btn" onclick="showStep('txn',2,this)">3 · Terminação</button>
+          <button class="step-btn" onclick="showStep('txn',3,this)">4 · Processamento (Eu)</button>
+        </div>
+        <canvas id="txnCanvas" width="700" height="160" style="width:100%;max-width:700px;display:block;margin:0 auto;background:#060810;border-radius:10px;border:1px solid var(--border)"></canvas>
+        <div id="txn-step-info" style="margin-top:14px;"></div>
+      </div>
+    </div>
+
+    <!-- Promoters -->
+    <div class="card">
+      <div class="card-title">Elementos Promotores <span class="tag">REGULAÇÃO</span></div>
+      <div class="grid-2">
+        <div>
+          <p style="color:var(--accent4);font-weight:600;margin-bottom:8px">Procarioto</p>
+          <div class="highlight">
+            <strong>–10 (Pribnow box):</strong> TATAAT — local de fusão do DNA (melting).<br>
+            <strong>–35:</strong> TTGACA — reconhecimento pelo fator σ.
+          </div>
+          <p>O fator <strong style="color:var(--accent2)">sigma (σ)</strong> confere especificidade de promotor. σ<sup>70</sup> é o principal em <em>E. coli</em>. Após iniciação, σ dissocia-se e o <em>core enzyme</em> continua a elongação.</p>
+        </div>
+        <div>
+          <p style="color:var(--accent1);font-weight:600;margin-bottom:8px">Eucarioto (RNA Pol II)</p>
+          <div class="highlight" style="border-color:var(--accent1);background:rgba(79,195,247,0.06)">
+            <strong>TATA box (–25 a –30):</strong> Reconhecida por <span class="acr">TBP<span class="tooltip">TBP = TATA-binding protein — subunidade do fator geral de transcrição TFIID. Âncora do complexo pré-iniciação.</span></span>.<br>
+            <strong>Iniciador (Inr):</strong> Sobre o +1.<br>
+            <strong>DPE:</strong> Downstream Promoter Element (+28 a +32).
+          </div>
+          <p>Elementos distais: <strong>enhancers</strong> (aumentam transcrição, independente de orientação/distância) e <strong>silencers</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- GTFs -->
+    <div class="card">
+      <div class="card-title">Fatores Gerais de Transcrição em Eucariotos <span class="tag">GTFs</span></div>
+      <p><span class="acr">GTF<span class="tooltip">GTF = General Transcription Factor — proteínas que formam o complexo pré-iniciação (PIC) junto à RNA Pol II.</span></span>s são necessários para posicionar a RNA Pol II no promotor. Formam o <strong>complexo pré-iniciação (PIC)</strong>.</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Fator</th><th>Componente Chave</th><th>Função</th></tr>
+          <tr>
+            <td><strong style="color:var(--accent1)">TFIID</strong></td>
+            <td><span class="acr">TBP<span class="tooltip">TBP = TATA-binding protein</span></span> + <span class="acr">TAFs<span class="tooltip">TAFs = TBP-Associated Factors</span></span></td>
+            <td>Reconhece a TATA box; âncora do PIC</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent1)">TFIIA</strong></td>
+            <td>3 subunidades</td>
+            <td>Estabiliza TBP–DNA</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent1)">TFIIB</strong></td>
+            <td>Monômero</td>
+            <td>Recruta RNA Pol II + TFIIF; define o sítio de iniciação</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent1)">TFIIF</strong></td>
+            <td>RAP30 + RAP74</td>
+            <td>Estabiliza RNA Pol II; inibe ligação inespecífica</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent1)">TFIIE</strong></td>
+            <td>α + β</td>
+            <td>Recruta TFIIH; estimula atividade ATPase/helicase</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent1)">TFIIH</strong></td>
+            <td>XPB, XPD (helicases) + CDK7</td>
+            <td>Abre duplex de DNA; <span class="acr">CTD<span class="tooltip">CTD = Carboxy-Terminal Domain da RNA Pol II — fosforilada por CDK7 de TFIIH para iniciar a elongação.</span></span> kinase para liberação do promotor; reparo de DNA (<span class="acr">NER<span class="tooltip">NER = Nucleotide Excision Repair — via de reparo relevante em xeroderma pigmentoso, onde XPB e XPD estão mutados.</span></span>)</td>
+          </tr>
+        </table>
+      </div>
+      <div class="highlight warn">
+        <strong>Relevância clínica:</strong> Mutações em XPB/XPD (subunidades de TFIIH) causam <strong>xeroderma pigmentoso</strong> — incapacidade de reparar lesões por UV, com risco elevado de neoplasias cutâneas. <span class="ref">[1]</span>
+      </div>
+    </div>
+
+    <!-- RNA Pol types -->
+    <div class="card">
+      <div class="card-title">As 3 RNA Polimerases Eucariotas</div>
+      <div class="grid-3">
+        <div class="enzyme-card">
+          <div class="enzyme-name">RNA Pol I</div>
+          <div class="enzyme-abbr">RNAP-I · NUCLEOLAR</div>
+          <div class="enzyme-fn">
+            Produz <strong style="color:var(--accent4)">rRNA pré-28S, 18S, 5.8S</strong> (pré-rRNA 45S/47S).<br>
+            Local: nucléolo. Inibida por actinomicina D a baixas doses.
+          </div>
+        </div>
+        <div class="enzyme-card" style="border-color:rgba(224,64,251,0.3)">
+          <div class="enzyme-name">RNA Pol II</div>
+          <div class="enzyme-abbr">RNAP-II · mRNA + snRNA</div>
+          <div class="enzyme-fn">
+            Produz <strong style="color:var(--accent4)">mRNA, snRNA, miRNA, lncRNA</strong>.<br>
+            Inibida especificamente por <strong>α-amanitina</strong> (toxina de <em>Amanita phalloides</em>) — relevância em intoxicação por cogumelos. <span class="ref">[2]</span>
+          </div>
+        </div>
+        <div class="enzyme-card" style="border-color:rgba(105,240,174,0.3)">
+          <div class="enzyme-name">RNA Pol III</div>
+          <div class="enzyme-abbr">RNAP-III · tRNA + 5S</div>
+          <div class="enzyme-fn">
+            Produz <strong style="color:var(--accent4)">tRNA, rRNA 5S, snRNA U6, 7SL RNA</strong>.<br>
+            Promotores internos (Box A, B, C).
+          </div>
+        </div>
+      </div>
+      <div class="highlight danger" style="margin-top:16px">
+        <strong>Pegadinha de prova:</strong> α-amanitina inibe especificamente a RNA Pol II em doses baixas; em doses altas, também inibe Pol III. <strong>NÃO inibe Pol I</strong>. Saber a sensibilidade diferencial é frequentemente cobrado.
+      </div>
+    </div>
+
+    <!-- mRNA processing -->
+    <div class="card">
+      <div class="card-title">Processamento do Pré-mRNA (Eucariotos) <span class="tag">SPLICING</span></div>
+      <p>O transcrito primário <span class="acr">hnRNA<span class="tooltip">hnRNA = heterogeneous nuclear RNA — designação histórica para o pré-mRNA não processado, ainda no núcleo.</span></span> sofre 3 modificações antes de exportar ao citoplasma:</p>
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>① 5' CAP (7-metilguanosina)</span><span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body">
+          <p>Adição de 7-metilguanosina (m<sup>7</sup>G) ao nucleótido 5' por ligação 5'→5' trifosfato, catalizada pela <strong>guanilil transferase</strong> nuclear. Funções: proteção contra exonucleases 5', sinalização de exportação nuclear, reconhecimento pelo fator de iniciação <span class="acr">eIF4E<span class="tooltip">eIF4E = Eukaryotic Initiation Factor 4E — proteína que reconhece o 5' cap do mRNA; alvo terapêutico em oncologia.</span></span> para tradução.</p>
+          <div class="highlight">A oncoproteína MYC regula positivamente a tradução cap-dependente via eIF4E.</div>
+        </div>
+      </div>
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>② Poliadenilação 3' (Poly-A tail)</span><span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body">
+          <p>Adição de ~200 adeninas ao extremo 3', após clivagem do pré-mRNA no sinal <strong>AAUAAA</strong> (≈10–30 nt upstream do sítio de clivagem) pela <span class="acr">CPSF<span class="tooltip">CPSF = Cleavage and Polyadenylation Specificity Factor — reconhece AAUAAA e coordena a clivagem do pré-mRNA.</span></span>. A cauda poly-A é adicionada pela <strong>poly-A polimerase</strong>. Funções: proteção 3', exportação, estabilidade, eficiência traducional.</p>
+        </div>
+      </div>
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>③ Splicing — remoção de introns</span><span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body">
+          <p>Realizado pelo <span class="acr">spliceossoma<span class="tooltip">Spliceossoma (spliceosome) = complexo ribonucleoprotéico formado por 5 snRNPs (U1, U2, U4, U5, U6) e proteínas auxiliares. Catalisa o splicing de introns do pré-mRNA.</span></span>, complexo de ~5 <span class="acr">snRNPs<span class="tooltip">snRNPs = Small Nuclear RiboNucleoProteins — partículas contendo snRNA + proteínas (Sm, Sm-like). Nomeadas pelo snRNA que contêm: U1, U2, U4, U5, U6.</span></span> (U1, U2, U4, U5, U6) e centenas de proteínas.</p>
+          <p><strong>Mecanismo (2 reações de transesterificação):</strong></p>
+          <ol style="list-style:decimal;padding-left:20px;color:var(--text2);line-height:1.9;font-size:.92rem">
+            <li>O 2'-OH do adenosina do <strong>ponto de ramificação (branch point)</strong> ataca o sítio 5' do splice site → forma o <strong>lariat</strong> (laço de intron).</li>
+            <li>O 3'-OH do exon 1 liberado ataca o sítio 3' splice site → liga exon 1 ao exon 2; intron-lariat é liberado e degradado.</li>
+          </ol>
+          <div class="highlight warn">
+            <strong>Relevância:</strong> Mutações no sítio de splice causam retenção de introns ou skipping de exons. Exemplo clínico: forma grave de <em>beta-talassemia</em> por mutação no sítio de splicing do gene HBB. <span class="ref">[3]</span>
+          </div>
+          <p style="margin-top:12px"><strong>Splicing alternativo:</strong> 95% dos genes humanos sofrem splicing alternativo, gerando múltiplas isoformas proteicas a partir de um único gene.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 3: TRADUÇÃO
+  ═══════════════════════════════════ -->
+  <div class="section" id="section-traducao">
+    <div class="section-title">Tradução</div>
+    <div class="section-desc">Do mRNA à proteína — decodificação do código genético pelo ribossoma.</div>
+
+    <!-- Ribosome canvas -->
+    <div class="card">
+      <div class="card-title">Ribossoma em Ação — Animação Interativa</div>
+      <canvas id="riboCanvas" width="700" height="200" style="width:100%;max-width:700px;display:block;background:#060810;border-radius:10px;border:1px solid var(--border);margin-bottom:12px"></canvas>
+      <div class="step-nav">
+        <button class="step-btn active" onclick="showStep('trl',0,this)">1 · Iniciação</button>
+        <button class="step-btn" onclick="showStep('trl',1,this)">2 · Elongação</button>
+        <button class="step-btn" onclick="showStep('trl',2,this)">3 · Terminação</button>
+      </div>
+      <div id="trl-step-info" style="margin-top:14px;"></div>
+    </div>
+
+    <!-- tRNA -->
+    <div class="card">
+      <div class="card-title">tRNA — Adaptador Universal <span class="tag">tRNA</span></div>
+      <div class="grid-2">
+        <div>
+          <p>O tRNA tem estrutura terciária em "L" formada por quatro hastes (<em>stems</em>) na estrutura 2D em trevo (<em>cloverleaf</em>):</p>
+          <ul style="list-style:none;padding:0;margin:10px 0">
+            <li style="padding:5px 0;border-bottom:1px solid var(--border);color:var(--text2);font-size:.92rem">• <strong style="color:var(--accent1)">Braço aceitador (3'):</strong> 5'-CCA-3' universal → local de carga do aminoácido</li>
+            <li style="padding:5px 0;border-bottom:1px solid var(--border);color:var(--text2);font-size:.92rem">• <strong style="color:var(--accent1)">Braço anticodon:</strong> contém o loop anticodon (3 bases complementares ao codon do mRNA)</li>
+            <li style="padding:5px 0;border-bottom:1px solid var(--border);color:var(--text2);font-size:.92rem">• <strong style="color:var(--accent1)">Braço D (DHU):</strong> contém dihidrouridina; reconhecido pelas <span class="acr">aaRS<span class="tooltip">aaRS = Aminoacil-tRNA Sintetases — enzimas que carregam cada aminoácido ao seu tRNA cognato. Há 20 aaRS em eucariotos.</span></span></li>
+            <li style="padding:5px 0;color:var(--text2);font-size:.92rem">• <strong style="color:var(--accent1)">Braço TΨC:</strong> interações com ribossoma</li>
+          </ul>
+        </div>
+        <div>
+          <div class="highlight" style="border-color:var(--accent2);background:rgba(224,64,251,0.06)">
+            <strong>Aminoacil-tRNA Sintetases (aaRS):</strong><br>
+            20 enzimas distintas, uma por aminoácido. Catalisam a reação:<br>
+            <code style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--accent4)">AA + tRNA + ATP → aa-tRNA + AMP + PPi</code>
+            <br><br>Usam a energia do ATP para criar a ligação de alta energia éster (aminoacil-tRNA). Esta é a etapa que garante a fidelidade do código genético — erro aqui resulta em proteína errada.
+          </div>
+          <div class="highlight warn" style="margin-top:10px">
+            <strong>Wobble (Crick, 1966):</strong> A terceira base do anticodon pode parear de forma não convencional com a terceira base do codon — permite que um único tRNA reconheça múltiplos codons sinônimos.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Translation steps -->
+    <div class="card">
+      <div class="card-title">Sítios do Ribossoma A–P–E</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Sítio</th><th>Sigla</th><th>Função</th></tr>
+          <tr>
+            <td><strong style="color:var(--accent5)">A</strong></td>
+            <td><span class="acr">A<span class="tooltip">A-site = Aminoacyl site — local de entrada do novo aa-tRNA.</span></span> (Aminoacil)</td>
+            <td>Recebe o novo aminoacil-tRNA; local de decodificação do codon</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent3)">P</strong></td>
+            <td><span class="acr">P<span class="tooltip">P-site = Peptidyl site — contém o tRNA com a cadeia peptídica em crescimento.</span></span> (Peptidil)</td>
+            <td>Mantém o tRNA com a cadeia peptídica em crescimento; local de ligação peptídica</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text3)">E</strong></td>
+            <td><span class="acr">E<span class="tooltip">E-site = Exit site — tRNA descarregado sai pelo sítio E.</span></span> (Exit/Saída)</td>
+            <td>tRNA descarregado sai do ribossoma</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Initiation factors -->
+    <div class="card">
+      <div class="card-title">Fatores de Iniciação, Elongação e Terminação</div>
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>Fatores de Iniciação Eucariotos (eIF)</span><span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body">
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>Fator</th><th>Função</th></tr>
+              <tr><td><strong style="color:var(--accent1)">eIF1, eIF1A</strong></td><td>Promovem dissociação das subunidades ribossomais</td></tr>
+              <tr><td><strong style="color:var(--accent1)">eIF2</strong></td><td>GTPase; carrega Met-tRNA<sub>i</sub> ao sítio P da subunidade 40S (complexo ternário). <strong>Alvo de regulação por stress:</strong> fosforilação de eIF2α (PERK, HRI, GCN2, PKR) inibe a tradução global. <span class="ref">[4]</span></td></tr>
+              <tr><td><strong style="color:var(--accent1)">eIF2B</strong></td><td>GEF de eIF2; regenera eIF2-GTP. Inibido quando eIF2α está fosforilado.</td></tr>
+              <tr><td><strong style="color:var(--accent1)">eIF3</strong></td><td>Maior fator de iniciação (~13 subunidades); ancora complexo de iniciação à 40S</td></tr>
+              <tr><td><strong style="color:var(--accent1)">eIF4F</strong></td><td>Complexo = eIF4E (cap binding) + eIF4A (helicase) + eIF4G (scaffold). Recruta mRNA ao ribossoma. <strong>mTOR</strong> regula via 4E-BP1.</td></tr>
+              <tr><td><strong style="color:var(--accent1)">eIF5</strong></td><td>GTPase activating protein; promove hidrólise de GTP de eIF2</td></tr>
+              <tr><td><strong style="color:var(--accent1)">eIF5B</strong></td><td>GTPase; promove junção da subunidade 60S</td></tr>
+            </table>
+          </div>
+          <div class="highlight warn">
+            <strong>Oncologia/Target therapy:</strong> Inibidores de eIF4E (ex.: ribavirin) e da via mTOR→4E-BP1→eIF4F são estudados em neoplasias com tradução excessiva.
+          </div>
+        </div>
+      </div>
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>Fatores de Elongação Eucariotos (eEF)</span><span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body">
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>Fator</th><th>Prokaryotic homolog</th><th>Função</th></tr>
+              <tr>
+                <td><strong style="color:var(--accent3)">eEF1A</strong></td>
+                <td>EF-Tu</td>
+                <td>GTPase; carrega aa-tRNA ao sítio A; GTP hidrolisado após decodificação correta</td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--accent3)">eEF1B</strong></td>
+                <td>EF-Ts</td>
+                <td>GEF de eEF1A; regenera eEF1A-GTP</td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--accent3)">eEF2</strong></td>
+                <td>EF-G</td>
+                <td>GTPase; catalisa a translocação (A→P→E) do ribossoma em direção 3'. <strong>Alvo da toxina diftérica</strong> (ADP-ribosilação de His715). <span class="ref">[5]</span></td>
+              </tr>
+            </table>
+          </div>
+          <div class="highlight danger">
+            <strong>Toxina diftérica (Corynebacterium diphtheriae):</strong> ADP-ribosilação de um resíduo de histidina modificado (difte-hamida/diphthamide) em eEF2 → inibição irreversível da translocação → morte celular → lesão de miocárdio, nervo periférico, suprarrenal. <span class="ref">[5]</span>
+          </div>
+        </div>
+      </div>
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>Fatores de Terminação e Release (eRF)</span><span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body">
+          <p>Codons de stop (<span style="color:var(--accent5)">UAA, UAG, UGA</span>) não são reconhecidos por tRNAs, mas por <span class="acr">eRF<span class="tooltip">eRF = Eukaryotic Release Factor — reconhecem codons de stop e estimulam a hidrólise da ligação peptidil-tRNA.</span></span>s:</p>
+          <ul style="list-style:none;padding:0;color:var(--text2);font-size:.92rem">
+            <li style="padding:6px 0;border-bottom:1px solid var(--border)">• <strong style="color:var(--accent1)">eRF1</strong> — reconhece os 3 codons de stop; estimula hidrólise da cadeia peptídica do tRNA no sítio P.</li>
+            <li style="padding:6px 0">• <strong style="color:var(--accent1)">eRF3</strong> — GTPase; estimula atividade de eRF1 após hidrólise de GTP.</li>
+          </ul>
+          <div class="highlight warn" style="margin-top:12px">
+            <strong>Read-through terapêutico:</strong> Aminoglicosídeos (ex.: gentamicina) e ataluren promovem supressão de codons de stop prematuros (PTCs) — estratégia para distrofias musculares e fibrose cística causadas por mutações nonsense. <span class="ref">[6]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Genetic code -->
+    <div class="card">
+      <div class="card-title">Código Genético — Codons Essenciais <span class="tag">CÓDIGO</span></div>
+      <div class="highlight" style="margin-bottom:16px">
+        <strong>Propriedades do código genético:</strong> triplete (3 bases/codon), não sobreponível, degenerado (múltiplos codons para 1 aminoácido), universalidade quase total, sem vírgulas.
+      </div>
+      <div id="codonGrid" class="codon-grid"></div>
+      <p style="margin-top:12px;font-size:.85rem">Passe o cursor sobre cada codon para ver o aminoácido completo.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 4: ENZIMAS & FATORES
+  ═══════════════════════════════════ -->
+  <div class="section" id="section-enzimas">
+    <div class="section-title">Enzimas & Fatores Chave</div>
+    <div class="section-desc">Catálogo completo das moléculas que orquestram transcrição e tradução.</div>
+
+    <div class="card">
+      <div class="card-title">RNA Polimerases — Bioquímica Detalhada</div>
+      <p>Todas as RNA polimerases (RNAP) sintetizam RNA na direção <strong>5'→3'</strong>, lendo o molde de DNA no sentido <strong>3'→5'</strong>. <strong>Não necessitam de primer.</strong></p>
+      <div class="tbl-wrap">
+        <table>
+          <tr>
+            <th>Propriedade</th>
+            <th>E. coli RNAP</th>
+            <th>RNA Pol I (Eu)</th>
+            <th>RNA Pol II (Eu)</th>
+            <th>RNA Pol III (Eu)</th>
+          </tr>
+          <tr>
+            <td>Subunidades</td>
+            <td>α₂ββ'ω + σ</td>
+            <td>~14 subunidades</td>
+            <td>~12 subunidades + CTD</td>
+            <td>~17 subunidades</td>
+          </tr>
+          <tr>
+            <td>Produto</td>
+            <td>mRNA, rRNA, tRNA (todos)</td>
+            <td>pré-rRNA (45S)</td>
+            <td>mRNA, snRNA, miRNA</td>
+            <td>tRNA, 5S rRNA, snRNA U6</td>
+          </tr>
+          <tr>
+            <td>Inibidor específico</td>
+            <td>Rifampicina (liga-se a β)</td>
+            <td>Actinomicina D (baixa dose)</td>
+            <td><strong>α-amanitina</strong> (baixa dose)</td>
+            <td>α-amanitina (alta dose)</td>
+          </tr>
+          <tr>
+            <td>CTD</td>
+            <td>—</td>
+            <td>—</td>
+            <td>Sim (52 heptapeptídeos YSPTSPS)</td>
+            <td>—</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Outras Enzimas Críticas</div>
+      <div class="grid-2">
+        <div class="enzyme-card">
+          <div class="enzyme-name">Helicases</div>
+          <div class="enzyme-abbr">DNAHELICASE · RNAHELICASE</div>
+          <div class="enzyme-fn">
+            <em>Transcrição:</em> XPB/XPD (em TFIIH) abrem o DNA para RNA Pol II.<br>
+            <em>Tradução:</em> eIF4A (helicase RNA-dependente) desfaz estruturas secundárias do 5'UTR do mRNA para varredura do ribossoma 40S.
+          </div>
+        </div>
+        <div class="enzyme-card">
+          <div class="enzyme-name">Peptidil Transferase</div>
+          <div class="enzyme-abbr">PEPTIDYLTRANSFERASE · 23S/28S rRNA</div>
+          <div class="enzyme-fn">
+            Catalisa a formação da ligação peptídica no sítio A do ribossoma. É uma <strong>ribozima</strong> — a atividade catalítica reside no rRNA 23S (procarioto) / 28S (eucarioto), não nas proteínas ribossomais. <span class="ref">[7]</span>
+          </div>
+        </div>
+        <div class="enzyme-card">
+          <div class="enzyme-name">GTPases Ribossomais</div>
+          <div class="enzyme-abbr">eIF2 · eIF5B · eEF1A · eEF2 · eRF3</div>
+          <div class="enzyme-fn">
+            Todas as etapas de iniciação, elongação e terminação envolvem GTPases — a hidrólise de GTP fornece energia e irreversibilidade às transições conformacionais do ribossoma.
+          </div>
+        </div>
+        <div class="enzyme-card">
+          <div class="enzyme-name">Topoisomerases</div>
+          <div class="enzyme-abbr">TOPO I · TOPO II</div>
+          <div class="enzyme-fn">
+            Resolvem o superenrolamento positivo gerado à frente da RNA Pol durante a transcrição. <strong>Fluoroquinolonas</strong> inibem a DNA girase (Topo II bacteriana); <strong>camptotecina</strong> inibe Topo I humana (uso oncológico).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Regulação Pós-Transcricional <span class="tag">miRNA · siRNA</span></div>
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>miRNA (microRNA) — Silenciamento endógeno</span><span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body">
+          <p>Pequenos RNAs (~22 nt) codificados no genoma, transcritos como pri-miRNA pela RNA Pol II, processados por <span class="acr">Drosha<span class="tooltip">Drosha — RNase III nuclear que processa pri-miRNA em pre-miRNA (≈70 nt, hairpin).</span></span> (nuclear) e <span class="acr">Dicer<span class="tooltip">Dicer — RNase III citoplasmática que cliva o pre-miRNA em duplex miRNA de ≈22 nt.</span></span> (citoplasmática). A fita guia é incorporada ao <span class="acr">RISC<span class="tooltip">RISC = RNA-Induced Silencing Complex — complexo que usa o miRNA/siRNA como guia para reconhecer mRNAs alvo. A proteína central é a Argonauta (AGO).</span></span> e pareamento imperfeito → repressão traducional ou degradação do mRNA. Envolvidos em oncogênese, diferenciação celular e resposta imune. <span class="ref">[8]</span></p>
+        </div>
+      </div>
+      <div class="accordion">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>siRNA — RNA Interferência (RNAi)</span><span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body">
+          <p>RNA de dupla fita (dsRNA) processado por Dicer em fragmentos de ~21 nt. Pareamento perfeito com mRNA alvo → clivagem por <span class="acr">AGO2<span class="tooltip">AGO2 = Argonauta 2 — a única proteína AGO humana com atividade endonuclease (Slicer), catalisa a clivagem do mRNA guiada pelo siRNA.</span></span> (Slicer). Base para terapias de RNAi aprovadas: patisiran (RNA-TTR, polineuropatia hereditária, 2018), inclisiran (PCSK9, 2020). <span class="ref">[9]</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 5: ACRÓNIMOS
+  ═══════════════════════════════════ -->
+  <div class="section" id="section-acronimos">
+    <div class="section-title">Glossário de Acrónimos & Abreviaturas</div>
+    <div class="section-desc">Todos os termos técnicos destrinçados com contexto clínico.</div>
+
+    <div id="acronym-filter" style="margin-bottom:20px">
+      <input type="text" id="acr-search" placeholder="Pesquisar acrónimo..." oninput="filterAcr()"
+        style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none">
+    </div>
+
+    <div id="acr-list"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 6: RELEVÂNCIA CLÍNICA
+  ═══════════════════════════════════ -->
+  <div class="section" id="section-patologia">
+    <div class="section-title">Relevância Clínica & Patologia</div>
+    <div class="section-desc">Do mecanismo molecular à doença — conexões críticas para a prática médica.</div>
+
+    <div class="card">
+      <div class="card-title">Antibióticos — Mecanismo Molecular Detalhado</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr>
+            <th>Antibiótico</th>
+            <th>Alvo Molecular</th>
+            <th>Mecanismo</th>
+            <th>Relevância Clínica</th>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent4)">Rifampicina</strong></td>
+            <td>RNA Pol β (procarioto)</td>
+            <td>Liga-se ao "rifampicin pocket" da subunidade β → bloqueia elongação após 2-3 nt sintetizados</td>
+            <td>TB, hanseníase, meningite meningocócica (profilaxia)</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent4)">Aminoglicosídeos</strong> (gentamicina, estreptomicina)</td>
+            <td>rRNA 16S (sítio A, 30S)</td>
+            <td>Distorce o sítio de decodificação → misreading (leitura incorreta de codons) + inibição da translocação</td>
+            <td>Gram-negativos, TB; nefrotoxicidade e ototoxicidade</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent4)">Tetraciclinas</strong></td>
+            <td>Sítio A (30S)</td>
+            <td>Bloqueiam entrada de aminoacil-tRNA no sítio A; inibição reversível</td>
+            <td>Rickettsia, Chlamydia, Borrelia, acne</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent4)">Cloranfenicol</strong></td>
+            <td>Peptidil transferase (50S)</td>
+            <td>Liga-se ao sítio A do 50S → inibe formação da ligação peptídica</td>
+            <td>Meningite (alternativa), febre tifoide; aplasia medular idiossincrática</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent4)">Macrólidos</strong> (eritromicina, azitromicina)</td>
+            <td>Túnel de saída peptídica (50S)</td>
+            <td>Bloqueiam o túnel de saída do peptídeo → inibição da translocação</td>
+            <td>Pneumonia atípica, coqueluche, Campylobacter</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent4)">Linezolida</strong></td>
+            <td>Interface 23S rRNA/proteínas 30S</td>
+            <td>Inibe formação do complexo de iniciação 70S; impede ligação do fMet-tRNA</td>
+            <td>MRSA, VRE; inibidor da MAO (interações medicamentosas)</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--accent4)">Fusídico</strong></td>
+            <td>EF-G (EF-G·GDP·Pi complexo)</td>
+            <td>Estabiliza EF-G após hidrólise do GTP → bloqueia translocação</td>
+            <td>MRSA, infecções cutâneas</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Toxinas & Patogénese Molecular <span class="tag">ALTA FREQUÊNCIA</span></div>
+      <div class="grid-2">
+        <div class="highlight danger" style="border-radius:8px;padding:16px">
+          <strong style="color:var(--accent5)">Toxina Diftérica</strong><br>
+          <span class="acr">EF<span class="tooltip">EF = Elongation Factor — fatores de elongação ribossomal.</span></span>-2 é ADP-ribosilado na His715 (diphthamide) → inibição irreversível da translocação → parada da tradução proteica. Produzida por C. diphtheriae lisogenizado pelo fago β. Manifestações: pseudomembrana faríngea, miocardite, neuropatia. Tratamento: antitoxina equina + penicilina/eritromicina. <span class="ref">[5]</span>
+        </div>
+        <div class="highlight danger" style="border-radius:8px;padding:16px">
+          <strong style="color:var(--accent5)">Toxina Shiga / Verotoxina</strong><br>
+          N-glicosilase que cliva a adenina do rRNA 28S → inibição da peptidil transferase → apoptose de células endoteliais. Causada por E. coli O157:H7 e Shigella dysenteriae. Síndrome hemolítico-urêmica (SHU): tríade microangiopatia trombótica + IRA + trombocitopenia. Não usar antibióticos (libera toxina). <span class="ref">[10]</span>
+        </div>
+        <div class="highlight warn" style="border-radius:8px;padding:16px">
+          <strong style="color:var(--accent4)">Toxina do Cólera</strong><br>
+          ADP-ribosilação da subunidade Gsα → ativação permanente da adenilil ciclase → ↑↑ AMPc → hipersecreção de Cl⁻ e água. Mecanismo de transcrição relevante: CT-B (subunidade B, pentâmero) liga-se ao GM1, CT-A (subunidade A) entra na célula e ADP-ribosila Gsα. Tratamento: reidratação + doxiciclina.
+        </div>
+        <div class="highlight warn" style="border-radius:8px;padding:16px">
+          <strong style="color:var(--accent4)">Ricina</strong><br>
+          N-glicosilase (como toxina Shiga) extraída de Ricinus communis. Cliva rRNA 28S → inibição de síntese proteica → morte celular. Sem antídoto; tratamento de suporte.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Oncologia Molecular — Transcrição Desregulada</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Gene/Proteína</th><th>Função Normal</th><th>Alteração em Cancro</th><th>Relevância Terapêutica</th></tr>
+          <tr>
+            <td>MYC</td>
+            <td>Fator de transcrição (bHLH-LZ); ativa genes de proliferação, metabolismo, tradução</td>
+            <td>Amplificação/translocação em linfoma de Burkitt (t(8;14)), mieloma, neuroblastoma</td>
+            <td>Alvo difícil ("undruggable"); pesquisa em inibidores BET, degradadores PROTAC</td>
+          </tr>
+          <tr>
+            <td>p53 (TP53)</td>
+            <td>Fator de transcrição ativador de genes de parada do ciclo (p21), apoptose (BAX), reparo</td>
+            <td>Mutado em ~50% dos cânceres humanos; gain-of-function muts comuns</td>
+            <td>APR-246 (restora WT p53), MDM2 inibidores</td>
+          </tr>
+          <tr>
+            <td>mTOR → eIF4F</td>
+            <td>Kinase que fosforila 4E-BP1 → libera eIF4E → ativa tradução cap-dependente</td>
+            <td>Hiperativado em tumores: ↑ tradução de oncoproteínas (ciclina D1, VEGF, c-MYC)</td>
+            <td>Everolimus, temsirolimus (mTORC1 inib.) — CCR, mama, PNET</td>
+          </tr>
+          <tr>
+            <td>BRD4</td>
+            <td>Leitor de H4K5/8/12/16ac; recruta P-TEFb para elongação da RNA Pol II</td>
+            <td>Amplificado/rearranjo em NUT midline carcinoma; essencial para MYC</td>
+            <td>JQ1, OTX015 (BET inibidores) — em ensaios clínicos</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 7: REVISÃO & QUIZ
+  ═══════════════════════════════════ -->
+  <div class="section" id="section-revisao">
+    <div class="section-title">Revisão & Active Recall</div>
+    <div class="section-desc">Flashcards, pontos de alto rendimento e perguntas estilo board.</div>
+
+    <div class="quick-review">
+      <div class="quick-review-title">⚡ High-Yield Facts — Provas & Residência</div>
+      <ul>
+        <li>RNA Pol II é inibida por α-amanitina (toxina de Amanita phalloides); NÃO inibe Pol I</li>
+        <li>Toxina diftérica: ADP-ribosila eEF2 → inibe translocação</li>
+        <li>Toxina Shiga: N-glicosilase; cliva 28S rRNA → inibe peptidil transferase</li>
+        <li>Rifampicina: inibe RNAP bacteriana (subunidade β); não eukaryotic</li>
+        <li>Linezolida inibe síntese proteica bacteriana E é inibidora da MAO</li>
+        <li>Splicing: branch point adenosina → lariat; snRNPs U1,U2,U4,U5,U6</li>
+        <li>eIF2α fosforilado por 4 quinases (PERK, HRI, GCN2, PKR) inibe tradução global (ISR)</li>
+        <li>Codon iniciador AUG; 3 codons stop: UAA, UAG, UGA</li>
+        <li>Peptidil transferase é uma ribozima (rRNA 23S/28S)</li>
+        <li>Ribossoma procarioto 70S = 30S + 50S; eucarioto 80S = 40S + 60S</li>
+        <li>mTOR → fosforila 4E-BP1 → libera eIF4E → ↑ tradução cap-dependente</li>
+        <li>Xeroderma pigmentoso: mutação XPB/XPD (subunidades de TFIIH), defeito em NER</li>
+      </ul>
+    </div>
+
+    <!-- Flashcards -->
+    <div class="card">
+      <div class="card-title">Flashcards — Clique para Revelar</div>
+      <div id="flashcard-container"></div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button onclick="prevFlash()" style="padding:8px 18px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px">← Anterior</button>
+        <span id="flash-counter" style="flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3);line-height:2.5"></span>
+        <button onclick="nextFlash()" style="padding:8px 18px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px">Próximo →</button>
+      </div>
+    </div>
+
+    <!-- Quiz -->
+    <div class="card">
+      <div class="card-title">Quiz Estilo Board <span class="tag">MCQ</span></div>
+      <div id="quiz-container"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SECTION 8: REFERÊNCIAS
+  ═══════════════════════════════════ -->
+  <div class="section" id="section-referencias">
+    <div class="section-title">Referências Bibliográficas</div>
+    <div class="section-desc">Fontes primárias e textos canônicos com base em evidência atual.</div>
+
+    <div class="card">
+      <ul class="refs-list">
+        <li><span class="rnum">[1]</span> Scharer OD. Nucleotide excision repair in eukaryotes. <em>Cold Spring Harb Perspect Biol.</em> 2013;5(10):a012609. doi:10.1101/cshperspect.a012609</li>
+        <li><span class="rnum">[2]</span> Bushnell DA, Cramer P, Kornberg RD. Structural basis of transcription: alpha-amanitin–RNA polymerase II cocrystal at 2.8 Å resolution. <em>Science.</em> 2002;295(5558):1253–1255.</li>
+        <li><span class="rnum">[3]</span> Higgs DR, Engel JD, Stamatoyannopoulos G. Thalassaemia. <em>Lancet.</em> 2012;379(9813):373–383. doi:10.1016/S0140-6736(11)60283-3</li>
+        <li><span class="rnum">[4]</span> Pavitt GD, Ron D. New insights into translational regulation in the endoplasmic reticulum unfolded protein response. <em>Cold Spring Harb Perspect Biol.</em> 2012;4(6):a012278.</li>
+        <li><span class="rnum">[5]</span> Collier RJ. Diphtheria toxin: mode of action and structure. <em>Bacteriol Rev.</em> 1975;39(1):54–85.</li>
+        <li><span class="rnum">[6]</span> Peltz SW, Morsy M, Welch EM, Jacobson A. Ataluren as an agent for therapeutic nonsense suppression. <em>Annu Rev Med.</em> 2013;64:407–425.</li>
+        <li><span class="rnum">[7]</span> Nissen P, Hansen J, Ban N, et al. The structural basis of ribosome activity in peptide bond synthesis. <em>Science.</em> 2000;289(5481):920–930.</li>
+        <li><span class="rnum">[8]</span> Bartel DP. MicroRNAs: target recognition and regulatory functions. <em>Cell.</em> 2009;136(2):215–233.</li>
+        <li><span class="rnum">[9]</span> Adams D, Gonzalez-Duarte A, O'Riordan WD, et al. Patisiran, an RNAi therapeutic, for hereditary transthyretin amyloidosis. <em>N Engl J Med.</em> 2018;379(1):11–21.</li>
+        <li><span class="rnum">[10]</span> Tarr PI, Gordon CA, Chandler WL. Shiga-toxin-producing Escherichia coli and haemolytic uraemic syndrome. <em>Lancet.</em> 2005;365(9464):1073–1086.</li>
+        <li><span class="rnum">[T1]</span> Alberts B, et al. <em>Molecular Biology of the Cell.</em> 7th ed. W.W. Norton; 2022.</li>
+        <li><span class="rnum">[T2]</span> Lewin B, et al. <em>Lewin's Genes XII.</em> Jones & Bartlett; 2018.</li>
+        <li><span class="rnum">[T3]</span> Lodish H, et al. <em>Molecular Cell Biology.</em> 9th ed. Macmillan; 2021.</li>
+        <li><span class="rnum">[T4]</span> Murray RK, et al. <em>Harper's Illustrated Biochemistry.</em> 31st ed. McGraw-Hill; 2023.</li>
+        <li><span class="rnum">[T5]</span> Le T, Bhushan V. <em>First Aid for the USMLE Step 1 2024.</em> McGraw-Hill; 2024.</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ═══════════════════════════════════
+//  DNA CANVAS ANIMATION
+// ═══════════════════════════════════
+const dnaCanvas = document.getElementById('dnaCanvas');
+const dnaCtx = dnaCanvas.getContext('2d');
+const W = dnaCanvas.width, H = dnaCanvas.height;
+const bases = ['A','T','G','C'];
+const baseColors = { A:'#4fc3f7', T:'#e040fb', G:'#69f0ae', C:'#ffca28' };
+const pairs = { A:'T', T:'A', G:'C', C:'G' };
+const baseInfo = {
+  A: 'Adenina (purina) — pareia com Timina (DNA) / Uracila (RNA). Ligação dupla (A·T ou A·U).',
+  T: 'Timina (pirimidina) — pareia com Adenina. Exclusiva do DNA. Ligação dupla (T·A).',
+  G: 'Guanina (purina) — pareia com Citosina. Ligação tripla (G·C). Mais estável termicamente.',
+  C: 'Citosina (pirimidina) — pareia com Guanina. Ligação tripla (G≡C).',
+};
+
+const bpData = [];
+const NUM_BP = 18;
+let dnaAngle = 0;
+let selectedBP = null;
+
+function initDNA() {
+  for (let i = 0; i < NUM_BP; i++) {
+    bpData.push(bases[Math.floor(Math.random()*4)]);
+  }
+}
+
+function drawDNA() {
+  dnaCtx.clearRect(0,0,W,H);
+  const cx = W/2;
+  const spacing = W / (NUM_BP+1);
+  const amp = 35;
+  const midY = H/2;
+
+  // Draw backbone
+  dnaCtx.beginPath();
+  for (let i=0;i<NUM_BP;i++) {
+    const x = spacing*(i+1);
+    const y1 = midY - amp*Math.sin(dnaAngle + i*0.45);
+    if(i===0) dnaCtx.moveTo(x,y1); else dnaCtx.lineTo(x,y1);
+  }
+  dnaCtx.strokeStyle='rgba(79,195,247,0.3)'; dnaCtx.lineWidth=2; dnaCtx.stroke();
+
+  dnaCtx.beginPath();
+  for (let i=0;i<NUM_BP;i++) {
+    const x = spacing*(i+1);
+    const y2 = midY + amp*Math.sin(dnaAngle + i*0.45);
+    if(i===0) dnaCtx.moveTo(x,y2); else dnaCtx.lineTo(x,y2);
+  }
+  dnaCtx.strokeStyle='rgba(224,64,251,0.3)'; dnaCtx.lineWidth=2; dnaCtx.stroke();
+
+  bpData.forEach((base, i) => {
+    const x = spacing*(i+1);
+    const y1 = midY - amp*Math.sin(dnaAngle + i*0.45);
+    const y2 = midY + amp*Math.sin(dnaAngle + i*0.45);
+    const paired = pairs[base];
+
+    // Bond
+    dnaCtx.beginPath();
+    dnaCtx.moveTo(x, y1+6); dnaCtx.lineTo(x, y2-6);
+    dnaCtx.strokeStyle='rgba(255,255,255,0.12)'; dnaCtx.lineWidth=1; dnaCtx.stroke();
+
+    // Top base
+    dnaCtx.beginPath();
+    dnaCtx.arc(x, y1, 8, 0, Math.PI*2);
+    dnaCtx.fillStyle = i === selectedBP ? '#fff' : baseColors[base];
+    dnaCtx.fill();
+    dnaCtx.fillStyle='#0a0e1a';
+    dnaCtx.font='bold 9px JetBrains Mono,monospace';
+    dnaCtx.textAlign='center'; dnaCtx.textBaseline='middle';
+    dnaCtx.fillText(base, x, y1);
+
+    // Bottom base
+    dnaCtx.beginPath();
+    dnaCtx.arc(x, y2, 8, 0, Math.PI*2);
+    dnaCtx.fillStyle = i === selectedBP ? '#fff' : baseColors[paired];
+    dnaCtx.fill();
+    dnaCtx.fillStyle='#0a0e1a';
+    dnaCtx.fillText(paired, x, y2);
+
+    bpData[i] = {base, paired, x, y1, y2};
+  });
+
+  dnaAngle += 0.015;
+  requestAnimationFrame(drawDNA);
+}
+
+dnaCanvas.addEventListener('click', (e) => {
+  const rect = dnaCanvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (W / rect.width);
+  const my = (e.clientY - rect.top) * (H / rect.height);
+  let found = false;
+  bpData.forEach((bp, i) => {
+    if (typeof bp === 'object') {
+      const d1 = Math.hypot(mx-bp.x, my-bp.y1);
+      const d2 = Math.hypot(mx-bp.x, my-bp.y2);
+      if (d1 < 12 || d2 < 12) {
+        selectedBP = i;
+        const b = d1 < d2 ? bp.base : bp.paired;
+        document.getElementById('dna-info').textContent = `${b}: ${baseInfo[b]}`;
+        found = true;
+      }
+    }
+  });
+  if (!found) { selectedBP = null; document.getElementById('dna-info').textContent = 'Clique em uma base nitrogenada para ver detalhes...'; }
+});
+
+initDNA(); drawDNA();
+
+// ═══════════════════════════════════
+//  TRANSCRIPTION STEP ANIMATION
+// ═══════════════════════════════════
+const txnCanvas = document.getElementById('txnCanvas');
+const txnCtx = txnCanvas.getContext('2d');
+const TW = txnCanvas.width, TH = txnCanvas.height;
+
+const txnSteps = [
+  {
+    title:'Iniciação',
+    draw:(ctx,t)=>{
+      // DNA double helix representation
+      ctx.fillStyle='#4fc3f7'; ctx.font='bold 13px JetBrains Mono,monospace';
+      // Promoter
+      ctx.fillStyle='rgba(255,202,40,0.15)';
+      ctx.fillRect(20,60,120,60);
+      ctx.fillStyle='#ffca28'; ctx.font='11px JetBrains Mono,monospace';
+      ctx.textAlign='center'; ctx.fillText('Promotor',80,57);
+      ctx.fillText('–35  –10',80,130);
+      // DNA strands
+      for(let x=20;x<680;x+=16){
+        ctx.fillStyle=x<140?'rgba(79,195,247,0.8)':'rgba(79,195,247,0.3)';
+        ctx.fillRect(x,75,12,8);
+        ctx.fillStyle=x<140?'rgba(224,64,251,0.8)':'rgba(224,64,251,0.3)';
+        ctx.fillRect(x,100,12,8);
+      }
+      // Sigma factor bouncing
+      const bx = 80 + Math.sin(t*0.05)*5;
+      const by = 88 + Math.sin(t*0.07)*4;
+      ctx.fillStyle='rgba(105,240,174,0.9)';
+      ctx.beginPath(); ctx.arc(bx,by,22,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0a0e1a'; ctx.font='bold 11px JetBrains Mono,monospace';
+      ctx.textAlign='center'; ctx.fillText('σ',bx,by);
+      ctx.fillText('RNAP',bx,by+12);
+    },
+    info:`<div class="highlight"><strong>Iniciação:</strong> O fator sigma (σ) reconhece os elementos –35 e –10 do promotor. A holoenzima (α₂ββ'σ) forma o complexo fechado → isomerização para complexo aberto (desenovelamento do DNA no –10). Os primeiros nucleótidos são sintetizados sem movimento da polimerase (transcrição abortiva) até escapar do promotor.</div>`
+  },
+  {
+    title:'Elongação',
+    draw:(ctx,t)=>{
+      // DNA strands
+      for(let x=20;x<680;x+=16){
+        ctx.fillStyle='rgba(79,195,247,0.3)'; ctx.fillRect(x,60,12,8);
+        ctx.fillStyle='rgba(224,64,251,0.3)'; ctx.fillRect(x,90,12,8);
+      }
+      // Unwound bubble moving
+      const pos = 100 + (t*1.5)%480;
+      ctx.fillStyle='rgba(255,255,255,0.08)';
+      ctx.fillRect(pos-30,55,80,50);
+      ctx.fillStyle='rgba(79,195,247,0.15)'; ctx.fillRect(pos-30,55,80,10);
+      ctx.fillStyle='rgba(224,64,251,0.15)'; ctx.fillRect(pos-30,85,80,10);
+
+      // RNA pol moving
+      ctx.fillStyle='rgba(105,240,174,0.85)';
+      ctx.beginPath(); ctx.arc(pos,75,24,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0a0e1a'; ctx.font='bold 11px JetBrains Mono,monospace';
+      ctx.textAlign='center'; ctx.fillText('RNAP',pos,75);
+
+      // RNA growing
+      ctx.strokeStyle='rgba(255,202,40,0.8)'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(20,130);
+      const rnaEnd = Math.min(pos-20,650);
+      for(let x=20;x<rnaEnd;x+=4){
+        ctx.lineTo(x, 130 + Math.sin(x*0.18)*8);
+      }
+      ctx.stroke();
+      ctx.fillStyle='#ffca28'; ctx.font='10px JetBrains Mono,monospace';
+      ctx.textAlign='left'; ctx.fillText("5' RNA →",22,150);
+    },
+    info:`<div class="highlight"><strong>Elongação:</strong> σ dissocia-se. O core enzyme (α₂ββ'ω) move-se ao longo do molde 3'→5', sintetizando RNA 5'→3'. A bolha de transcrição (~17 pb) move-se consigo. O NTP correto entra, complementaridade Watson-Crick → fosfodiéster → PPi liberado (puxo termodinâmico).</div>`
+  },
+  {
+    title:'Terminação',
+    draw:(ctx,t)=>{
+      // Terminação rho-independente: hairpin
+      ctx.strokeStyle='rgba(79,195,247,0.4)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(20,90);
+      for(let x=20;x<400;x+=4){
+        ctx.lineTo(x,90+Math.sin(x*0.2)*10);
+      }
+      ctx.stroke();
+      // Hairpin structure
+      const hx=450, hy=90;
+      ctx.strokeStyle='#69f0ae'; ctx.lineWidth=3;
+      ctx.beginPath();
+      ctx.moveTo(400,90); ctx.bezierCurveTo(420,40,480,40,500,90);
+      ctx.stroke();
+      ctx.fillStyle='#69f0ae'; ctx.font='11px JetBrains Mono,monospace';
+      ctx.textAlign='center'; ctx.fillText('Hairpin',450,30);
+      ctx.fillStyle='rgba(255,112,67,0.5)'; ctx.font='11px JetBrains Mono,monospace';
+      ctx.textAlign='center';
+      // UUUUU
+      for(let i=0;i<8;i++){
+        ctx.fillStyle=`rgba(255,112,67,${0.4+Math.sin(t*0.1+i)*0.3})`;
+        ctx.fillText('U',520+i*14,90);
+      }
+      ctx.fillStyle='#ff7043'; ctx.fillText('poly-U → dissociação',590,120);
+    },
+    info:`<div class="highlight"><strong>Terminação:</strong><br>
+    <strong>Rho-independente (intrínseca):</strong> Sequência rica em G-C forma hairpin no RNA → pausa da RNAP; seguida de sequência de U's (poly-U). O híbrido RNA-DNA rico em A·U é fraco → dissociação.<br>
+    <strong>Rho-dependente (procarioto):</strong> Proteína Rho (hexâmero RNA-dependente helicase) liga-se ao <em>rut</em> site do RNA e "persegue" a RNAP até atingi-la em pausa → desenrola o híbrido RNA-DNA → término.</div>`
+  },
+  {
+    title:'Processamento',
+    draw:(ctx,t)=>{
+      // Pre-mRNA with introns/exons
+      const y=90;
+      const segs=[
+        {type:'cap',label:'Cap',w:40,col:'#4fc3f7'},
+        {type:'exon',label:'Exon 1',w:70,col:'rgba(105,240,174,0.7)'},
+        {type:'intron',label:'Intron 1',w:80,col:'rgba(255,112,67,0.4)'},
+        {type:'exon',label:'Exon 2',w:70,col:'rgba(105,240,174,0.7)'},
+        {type:'intron',label:'Intron 2',w:70,col:'rgba(255,112,67,0.4)'},
+        {type:'exon',label:'Exon 3',w:70,col:'rgba(105,240,174,0.7)'},
+        {type:'polyA',label:'Poly-A',w:50,col:'#ffca28'},
+      ];
+      let x=10;
+      segs.forEach(s=>{
+        ctx.fillStyle=s.col; ctx.fillRect(x,y-14,s.w,28); ctx.fillStyle='#0a0e1a';
+        ctx.font='9px JetBrains Mono,monospace'; ctx.textAlign='center';
+        ctx.fillText(s.label,x+s.w/2,y+3);
+        x+=s.w+4;
+      });
+      // Splicing scissors animation
+      if(t%120<60){
+        const sc1x=130, sc2x=305;
+        ctx.fillStyle='#e040fb'; ctx.font='18px sans-serif';
+        ctx.textAlign='center';
+        ctx.fillText('✂',sc1x,y-25+Math.sin(t*0.2)*5);
+        ctx.fillText('✂',sc2x,y-25+Math.sin(t*0.2+1)*5);
+      }
+      // Mature mRNA
+      ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.font='10px JetBrains Mono,monospace';
+      ctx.textAlign='left'; ctx.fillText('→ mRNA maduro (sem introns)',10,145);
+    },
+    info:`<div class="highlight"><strong>Processamento do pré-mRNA (eucarioto):</strong><br>
+    ① <strong>5' Cap:</strong> 7-metilguanosina adicionada co-transcricionalmente<br>
+    ② <strong>Splicing:</strong> Spliceossoma (U1+U2+U4+U5+U6 snRNPs) remove introns via 2 transesterificações; exons ligados<br>
+    ③ <strong>Poly-A:</strong> Clivagem no AAUAAA + adição de ~200 A's pela poly-A polimerase<br>
+    O mRNA maduro é exportado pelo poro nuclear (NPC) ao citoplasma.</div>`
+  }
+];
+
+let txnFrame = 0, txnCurrentStep = 0;
+function drawTxn() {
+  txnCtx.clearRect(0,0,TW,TH);
+  txnSteps[txnCurrentStep].draw(txnCtx, txnFrame);
+  txnFrame++;
+  requestAnimationFrame(drawTxn);
+}
+drawTxn();
+
+// ═══════════════════════════════════
+//  RIBOSOME ANIMATION
+// ═══════════════════════════════════
+const riboCanvas = document.getElementById('riboCanvas');
+const riboCtx = riboCanvas.getContext('2d');
+const RW = riboCanvas.width, RH = riboCanvas.height;
+
+const trlSteps = [
+  {
+    title:'Iniciação',
+    draw:(ctx,t)=>{
+      // 40S subunit
+      ctx.fillStyle='rgba(79,195,247,0.25)';
+      ctx.beginPath(); ctx.ellipse(350,80,160,35,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#4fc3f7'; ctx.font='11px JetBrains Mono,monospace';
+      ctx.textAlign='center'; ctx.fillText('40S',350,83);
+
+      // mRNA
+      ctx.strokeStyle='#ffca28'; ctx.lineWidth=4;
+      ctx.beginPath(); ctx.moveTo(50,115); ctx.lineTo(650,115); ctx.stroke();
+      ctx.fillStyle='#ffca28'; ctx.font='10px JetBrains Mono,monospace';
+      ctx.textAlign='left'; ctx.fillText("5' mRNA",52,132); ctx.textAlign='right'; ctx.fillText("3'",648,132);
+
+      // AUG
+      ctx.fillStyle='rgba(105,240,174,0.8)'; ctx.font='bold 14px JetBrains Mono,monospace';
+      ctx.textAlign='center'; ctx.fillText('AUG',350,113);
+
+      // Met-tRNA bouncing in
+      const ty = 50+Math.sin(t*0.05)*15;
+      ctx.fillStyle='rgba(224,64,251,0.8)';
+      ctx.beginPath(); ctx.arc(350,ty,16,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#fff'; ctx.font='9px JetBrains Mono,monospace';
+      ctx.fillText('Met',350,ty); ctx.fillText('tRNA',350,ty+10);
+
+      // eIF labels
+      ctx.fillStyle='rgba(255,202,40,0.6)'; ctx.font='10px JetBrains Mono,monospace';
+      ctx.textAlign='left'; ctx.fillText('eIF2·GTP·Met-tRNAi → P-site',180,170);
+      ctx.fillText('eIF4F recruta mRNA → scanning 5\'→3\'',180,185);
+    },
+    info:`<div class="highlight"><strong>Iniciação (eucarioto):</strong> 
+    eIF2·GTP·Met-tRNA<sub>i</sub> forma complexo ternário → liga à subunidade 40S → mRNA recrutado via eIF4F (reconhece 5'cap) → varredura 5'→3' até AUG → reconhecimento do codon START (contexto Kozak: GCCRCCAUGG) → eIF5·GTP hidrólise → junção 60S → complexo 80S ativo.</div>`
+  },
+  {
+    title:'Elongação',
+    draw:(ctx,t)=>{
+      // Full ribosome
+      ctx.fillStyle='rgba(79,195,247,0.2)';
+      ctx.beginPath(); ctx.ellipse(350,60,160,35,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='rgba(224,64,251,0.2)';
+      ctx.beginPath(); ctx.ellipse(350,125,160,40,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#4fc3f7'; ctx.font='11px JetBrains Mono,monospace'; ctx.textAlign='center';
+      ctx.fillText('40S',350,55);
+      ctx.fillStyle='#e040fb'; ctx.fillText('60S',350,120);
+
+      // Sites A P E
+      const sites=[{l:'E',x:240,c:'rgba(100,100,200,0.7)'},{l:'P',x:350,c:'rgba(105,240,174,0.7)'},{l:'A',x:460,c:'rgba(255,112,67,0.7)'}];
+      sites.forEach(s=>{
+        ctx.fillStyle=s.c; ctx.fillRect(s.x-20,75,40,30);
+        ctx.fillStyle='#fff'; ctx.font='bold 12px JetBrains Mono,monospace';
+        ctx.fillText(s.l,s.x,94);
+      });
+
+      // mRNA
+      ctx.strokeStyle='#ffca28'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(50,145); ctx.lineTo(650,145); ctx.stroke();
+
+      // tRNA in P site with growing peptide
+      ctx.fillStyle='rgba(105,240,174,0.8)';
+      ctx.beginPath(); ctx.arc(350,60,14,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0a0e1a'; ctx.font='9px JetBrains Mono,monospace';
+      ctx.textAlign='center'; ctx.fillText('P-tRNA',350,60);
+
+      // New tRNA approaching A
+      const ax = 460 + Math.sin(t*0.08)*20;
+      ctx.fillStyle='rgba(255,112,67,0.7)';
+      ctx.beginPath(); ctx.arc(ax,40,12,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0a0e1a'; ctx.font='9px JetBrains Mono,monospace';
+      ctx.fillText('aa-tRNA',ax,40);
+
+      // Peptide chain
+      ctx.strokeStyle='rgba(105,240,174,0.5)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(350,46);
+      for(let i=0;i<6;i++) ctx.lineTo(350-i*10-5,46-i*8-10);
+      ctx.stroke();
+    },
+    info:`<div class="highlight"><strong>Elongação:</strong><br>
+    ① <strong>Decoding:</strong> eEF1A·GTP·aa-tRNA → sítio A → pareamento codon-anticodon → GTP hidrolisado → eEF1A sai.<br>
+    ② <strong>Peptidil transferase:</strong> RNA 28S catalisa transferência do peptídeo do P-tRNA para o aa-tRNA do sítio A → formação da ligação peptídica.<br>
+    ③ <strong>Translocação:</strong> eEF2·GTP hidrolisado → ribossoma avança 1 codon → A→P→E; tRNA de saída sai pelo sítio E.</div>`
+  },
+  {
+    title:'Terminação',
+    draw:(ctx,t)=>{
+      // Ribosome
+      ctx.fillStyle='rgba(79,195,247,0.2)';
+      ctx.beginPath(); ctx.ellipse(350,60,160,35,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='rgba(224,64,251,0.2)';
+      ctx.beginPath(); ctx.ellipse(350,125,160,40,0,0,Math.PI*2); ctx.fill();
+
+      // Stop codon
+      ctx.fillStyle='rgba(255,112,67,0.8)'; ctx.font='bold 14px JetBrains Mono,monospace';
+      ctx.textAlign='center'; ctx.fillText('UAA',460,143);
+      ctx.fillStyle='rgba(255,112,67,0.5)'; ctx.font='10px JetBrains Mono,monospace';
+      ctx.fillText('STOP',460,158);
+
+      // eRF1
+      const ry = 90+Math.sin(t*0.05)*8;
+      ctx.fillStyle='rgba(255,202,40,0.8)';
+      ctx.beginPath(); ctx.arc(460,ry,18,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0a0e1a'; ctx.font='bold 10px JetBrains Mono,monospace';
+      ctx.fillText('eRF1',460,ry);
+
+      // Protein being released
+      const py = 30+Math.sin(t*0.04)*5;
+      ctx.strokeStyle='rgba(105,240,174,0.7)'; ctx.lineWidth=2;
+      ctx.beginPath();
+      for(let i=0;i<10;i++) ctx.lineTo(280+i*15, py+Math.sin(i*0.8)*10);
+      ctx.stroke();
+      ctx.fillStyle='#69f0ae'; ctx.font='10px JetBrains Mono,monospace';
+      ctx.textAlign='center'; ctx.fillText('Proteína liberada →',350,15);
+
+      // Recycling
+      ctx.fillStyle='rgba(100,100,200,0.4)'; ctx.font='10px JetBrains Mono,monospace';
+      ctx.fillText('eRF3·GTP + ABCE1 → reciclagem ribossomal',350,185);
+    },
+    info:`<div class="highlight"><strong>Terminação:</strong> eRF1 reconhece codon stop no sítio A (mimetiza tRNA) → estimula hidrólise da ligação éster peptidil-tRNA → cadeia polipeptídica liberada. eRF3·GTP estimula eRF1. ABCE1 (ATPase) separa as subunidades ribossomais para reciclagem.</div>`
+  }
+];
+
+let riboFrame=0, trlCurrentStep=0;
+function drawRibo() {
+  riboCtx.clearRect(0,0,RW,RH);
+  trlSteps[trlCurrentStep].draw(riboCtx, riboFrame);
+  riboFrame++;
+  requestAnimationFrame(drawRibo);
+}
+drawRibo();
+
+// ═══════════════════════════════════
+//  STEP CONTROLLER
+// ═══════════════════════════════════
+function showStep(which, idx, btn) {
+  btn.parentElement.querySelectorAll('.step-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(which==='txn'){
+    txnCurrentStep=idx; txnFrame=0;
+    document.getElementById('txn-step-info').innerHTML = txnSteps[idx].info;
+  } else {
+    trlCurrentStep=idx; riboFrame=0;
+    document.getElementById('trl-step-info').innerHTML = trlSteps[idx].info;
+  }
+}
+// Init info
+document.getElementById('txn-step-info').innerHTML = txnSteps[0].info;
+document.getElementById('trl-step-info').innerHTML = trlSteps[0].info;
+
+// ═══════════════════════════════════
+//  CODON TABLE
+// ═══════════════════════════════════
+const codons = [
+  {c:'AUG',a:'Met',start:true},{c:'UUU',a:'Phe'},{c:'UUC',a:'Phe'},{c:'UUA',a:'Leu'},
+  {c:'UUG',a:'Leu'},{c:'CUU',a:'Leu'},{c:'CUC',a:'Leu'},{c:'CUA',a:'Leu'},{c:'CUG',a:'Leu'},
+  {c:'AUU',a:'Ile'},{c:'AUC',a:'Ile'},{c:'AUA',a:'Ile'},{c:'GUU',a:'Val'},{c:'GUC',a:'Val'},
+  {c:'GUA',a:'Val'},{c:'GUG',a:'Val'},{c:'UCU',a:'Ser'},{c:'UCC',a:'Ser'},{c:'UCA',a:'Ser'},
+  {c:'UCG',a:'Ser'},{c:'CCU',a:'Pro'},{c:'CCC',a:'Pro'},{c:'CCA',a:'Pro'},{c:'CCG',a:'Pro'},
+  {c:'ACU',a:'Thr'},{c:'ACC',a:'Thr'},{c:'ACA',a:'Thr'},{c:'ACG',a:'Thr'},{c:'GCU',a:'Ala'},
+  {c:'GCC',a:'Ala'},{c:'GCA',a:'Ala'},{c:'GCG',a:'Ala'},{c:'UAU',a:'Tyr'},{c:'UAC',a:'Tyr'},
+  {c:'CAU',a:'His'},{c:'CAC',a:'His'},{c:'CAA',a:'Gln'},{c:'CAG',a:'Gln'},{c:'AAU',a:'Asn'},
+  {c:'AAC',a:'Asn'},{c:'AAA',a:'Lys'},{c:'AAG',a:'Lys'},{c:'GAU',a:'Asp'},{c:'GAC',a:'Asp'},
+  {c:'GAA',a:'Glu'},{c:'GAG',a:'Glu'},{c:'UGU',a:'Cys'},{c:'UGC',a:'Cys'},{c:'UGG',a:'Trp'},
+  {c:'CGU',a:'Arg'},{c:'CGC',a:'Arg'},{c:'CGA',a:'Arg'},{c:'CGG',a:'Arg'},{c:'AGA',a:'Arg'},
+  {c:'AGG',a:'Arg'},{c:'AGU',a:'Ser'},{c:'AGC',a:'Ser'},{c:'GGU',a:'Gly'},{c:'GGC',a:'Gly'},
+  {c:'GGA',a:'Gly'},{c:'GGG',a:'Gly'},
+  {c:'UAA',a:'STOP',stop:true},{c:'UAG',a:'STOP',stop:true},{c:'UGA',a:'STOP',stop:true},
+];
+const grid = document.getElementById('codonGrid');
+codons.forEach(cd=>{
+  const div=document.createElement('div');
+  div.className='codon-cell'+(cd.stop?' codon-stop':'')+(cd.start?' codon-start':'');
+  div.title=cd.start?'Codon de início (Met)':cd.stop?'Codon de parada':'';
+  div.innerHTML=`<div class="cdn">${cd.c}</div><div class="aa">${cd.a}</div>`;
+  grid.appendChild(div);
+});
+
+// ═══════════════════════════════════
+//  ACCORDION
+// ═══════════════════════════════════
+function toggleAcc(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ═══════════════════════════════════
+//  ACRONYM DATABASE & FILTER
+// ═══════════════════════════════════
+const acronyms = [
+  {a:'mRNA',f:'Messenger RNA',d:'RNA mensageiro — cópia da sequência codificante do gene, transportada do núcleo ao ribossoma para ser traduzida em proteína.'},
+  {a:'tRNA',f:'Transfer RNA',d:'RNA transportador — molécula adaptadora que carrega aminoácidos ao ribossoma, com anticodon complementar ao codon do mRNA.'},
+  {a:'rRNA',f:'Ribosomal RNA',d:'RNA ribossomal — componente estrutural e catalítico dos ribossomas (23S/28S é ribozima com atividade peptidil transferase).'},
+  {a:'snRNA',f:'Small Nuclear RNA',d:'RNA nuclear pequeno — componente dos snRNPs do spliceossoma (U1,U2,U4,U5,U6 participam do splicing de introns).'},
+  {a:'snRNP',f:'Small Nuclear RiboNucleoProtein',d:'Partícula ribonucleoprotéica nuclear — complexo de snRNA + proteínas Sm que formam o spliceossoma.'},
+  {a:'miRNA',f:'MicroRNA',d:'Micro-RNA — ~22 nt; silencia genes por repressão traducional ou degradação de mRNA via complexo RISC.'},
+  {a:'siRNA',f:'Small Interfering RNA',d:'RNA de interferência pequeno — ~21 nt; induz clivagem de mRNA alvo via AGO2 (mecanismo RNAi). Base de terapias aprovadas (patisiran, inclisiran).'},
+  {a:'lncRNA',f:'Long Non-Coding RNA',d:'RNA não codificante longo (>200 nt) — funções regulatórias: cromatina, splicing, transcrição. Ex: XIST (inativação do X), HOTAIR.'},
+  {a:'GTF',f:'General Transcription Factor',d:'Fatores gerais de transcrição — proteínas (TFIIA,B,D,E,F,H) que formam o complexo pré-iniciação (PIC) com RNA Pol II.'},
+  {a:'TBP',f:'TATA-binding Protein',d:'Proteína de ligação à TATA — subunidade de TFIID; reconhece e deforma a TATA box; âncora do PIC.'},
+  {a:'TAF',f:'TBP-Associated Factor',d:'Fator associado ao TBP — subunidades de TFIID que reconhecem elementos do promotor (Inr, DPE) e activadores transcricionais.'},
+  {a:'CTD',f:'Carboxy-Terminal Domain',d:'Domínio C-terminal da RNA Pol II — 52 repetições do heptapeptídeo YSPTSPS; fosforilada em diferentes resíduos para controlar iniciação vs elongação.'},
+  {a:'CPSF',f:'Cleavage and Polyadenylation Specificity Factor',d:'Fator de especificidade de clivagem e poliadenilação — reconhece a sequência AAUAAA no pré-mRNA para clivagem e início da poliadenilação.'},
+  {a:'PIC',f:'Pre-Initiation Complex',d:'Complexo pré-iniciação — assembléia de RNA Pol II + GTFs (TFIIA/B/D/E/F/H) no promotor antes da síntese de RNA.'},
+  {a:'NER',f:'Nucleotide Excision Repair',d:'Reparo por excisão de nucleótidos — via de reparo de lesões grandes (dímeros de pirimidina, adutos). XPB e XPD (de TFIIH) são essenciais. Defeito → xeroderma pigmentoso.'},
+  {a:'RISC',f:'RNA-Induced Silencing Complex',d:'Complexo de silenciamento induzido por RNA — contém AGO2 e o RNA guia (miRNA/siRNA); dirige a repressão ou degradação de mRNAs alvo.'},
+  {a:'AGO2',f:'Argonaute 2',d:'Argonauta 2 — única proteína AGO humana com atividade endonuclease (Slicer); catalisa a clivagem de mRNA alvo guiada por siRNA.'},
+  {a:'eIF',f:'Eukaryotic Initiation Factor',d:'Fator de iniciação eucariótico — grupo de proteínas (eIF1, eIF2, eIF3, eIF4A/B/E/G, eIF5, eIF5B) que orquestram a montagem do complexo de iniciação 80S.'},
+  {a:'eEF',f:'Eukaryotic Elongation Factor',d:'Fator de elongação eucariótico — eEF1A (entrega aa-tRNA ao sítio A) e eEF2 (translocação). Homólogos aos EF-Tu e EF-G bacterianos.'},
+  {a:'eRF',f:'Eukaryotic Release Factor',d:'Fator de terminação/liberação eucariótico — eRF1 reconhece codons de parada; eRF3 é GTPase estimuladora.'},
+  {a:'aaRS',f:'Aminoacyl-tRNA Synthetase',d:'Aminoacil-tRNA sintetase — 20 enzimas distintas que carregam cada aminoácido ao seu tRNA cognato usando ATP. A fidelidade do código genético depende destas enzimas.'},
+  {a:'ISR',f:'Integrated Stress Response',d:'Resposta integrada ao stress — fosforilação de eIF2α por PERK/HRI/GCN2/PKR → inibição da tradução global + ativação de ATF4. Resposta a ER stress, privação de aminoácidos, infecção viral, heme insuficiente.'},
+  {a:'IRES',f:'Internal Ribosome Entry Site',d:'Sítio interno de entrada ribossomal — estrutura de RNA secundária que recruta ribossomas independentemente do 5\'cap. Usado por vírus (HCV, poliovírus) e alguns mRNAs celulares.'},
+  {a:'UTR',f:"Untranslated Region",d:'Região não traduzida — 5\'UTR (controle traducional, scanning ribosomal) e 3\'UTR (estabilidade, sítios de ligação de miRNA, poliadenilação).'},
+  {a:'ORF',f:'Open Reading Frame',d:'Grelha de leitura aberta — sequência de codons iniciada por AUG e terminada por codon de stop. Um mRNA pode ter múltiplos uORFs no 5\'UTR que regulam a tradução do ORF principal.'},
+  {a:'PTC',f:'Premature Termination Codon',d:'Codon de terminação prematuro — codon de stop gerado por mutação nonsense ou frameshift. Ativam NMD (Nonsense-Mediated Decay). Alvo de terapias de read-through (ataluren).'},
+  {a:'NMD',f:'Nonsense-Mediated Decay',d:'Decaimento mediado por nonsense — via de vigilância do mRNA que degrada transcritos com PTCs mais de 50-55 nt upstream da última junção exon-exon.'},
+  {a:'RER',f:'Retículo Endoplasmático Rugoso',d:'Local de síntese de proteínas secretórias e de membrana — ribossomas ligados ao RER sintetizam proteínas co-traducionalmente translocadas ao lúmen.'},
+  {a:'EJC',f:'Exon Junction Complex',d:'Complexo de junção de exon — depositado 20-24 nt upstream de cada junção exon-exon após splicing; marca de processamento; ativador de NMD se downstream de PTC.'},
+  {a:'P-TEFb',f:'Positive Transcription Elongation Factor b',d:'Complexo CDK9/ciclina T1 — fosforila a Ser2 do CTD da RNA Pol II para liberar a pausa na elongação. Recruta BRD4. Inibido em células quiescentes por HEXIM1/7SK snRNA.'},
+  {a:'HAT',f:'Histone Acetyltransferase',d:'Histona acetiltransferase — adiciona grupos acetila em lisinas de histonas → relaxamento da cromatina → ativação transcricional. Ex: CBP/p300, GCN5.'},
+  {a:'HDAC',f:'Histone Deacetylase',d:'Histona desacetilase — remove acetila → condensação da cromatina → repressão transcricional. Alvo de vorinostat, romidepsina (linfomas T cutâneos).'},
+  {a:'BRD4',f:'Bromodomain-containing Protein 4',d:'Proteína com bromodomínio 4 — lê acetilação de histonas (H4K5/8/12/16ac); recruta P-TEFb para elongação; essencial para super-enhancers e MYC. Inibido por JQ1 (BET inibidor).'},
+];
+
+function renderAcr(list) {
+  const el = document.getElementById('acr-list');
+  el.innerHTML = list.map(a=>`
+    <div class="card" style="margin-bottom:10px;padding:18px 24px">
+      <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--accent1);font-weight:700">${a.a}</span>
+        <span style="font-size:.9rem;color:var(--accent4)">${a.f}</span>
+      </div>
+      <p style="margin-top:8px;font-size:.88rem">${a.d}</p>
+    </div>
+  `).join('');
+}
+renderAcr(acronyms);
+
+function filterAcr() {
+  const q = document.getElementById('acr-search').value.toLowerCase();
+  renderAcr(acronyms.filter(a=>
+    a.a.toLowerCase().includes(q)||a.f.toLowerCase().includes(q)||a.d.toLowerCase().includes(q)
+  ));
+}
+
+// ═══════════════════════════════════
+//  FLASHCARDS
+// ═══════════════════════════════════
+const flashData = [
+  {q:'Qual enzima sintetiza mRNA em eucariotos?', a:'RNA Polimerase II (RNAP-II) — inibida especificamente por α-amanitina em baixas concentrações.'},
+  {q:'Qual o mecanismo da toxina diftérica?', a:'ADP-ribosilação de eEF2 (His715/diphthamide) → inibição irreversível da translocação ribossomal → parada da síntese proteica.'},
+  {q:'Quais são os 3 codons de stop e como são reconhecidos?', a:'UAA, UAG, UGA — reconhecidos por eRF1 (fator proteico), não por tRNA. eRF3 (GTPase) estimula eRF1.'},
+  {q:'Qual subunidade bacteriana é alvo dos aminoglicosídeos?', a:'Subunidade 30S (rRNA 16S, sítio A) — distorce o centro de decodificação, causando misreading e inibição da translocação.'},
+  {q:'O que é o splicing alternativo e qual a sua importância?', a:'Inclusão/exclusão diferencial de exons → múltiplas isoformas proteicas de um único gene. ~95% dos genes humanos multi-exon sofrem splicing alternativo. Essencial para diversidade proteômica.'},
+  {q:'Qual a diferença entre o ribossoma procarioto e eucarioto relevante para antibióticos?', a:'Procarioto: 70S (30S+50S). Eucarioto: 80S (40S+60S). A diferença estrutural permite seletividade de antibióticos como tetraciclinas, aminoglicosídeos, cloranfenicol (alvam a 30S/50S bacteriana sem afetar 40S/60S humanas).'},
+  {q:'Que enzima catalisa a ligação peptídica e qual a sua natureza molecular?', a:'Peptidil transferase — é uma RIBOZIMA. A atividade catalítica reside no rRNA 23S (procarioto) / 28S (eucarioto), não nas proteínas ribossomais. (Nissen et al., Science 2000)'},
+  {q:'Como a fosforilação de eIF2α regula a tradução?', a:'eIF2α fosforilado (por PERK, HRI, GCN2 ou PKR) inibe eIF2B (seu GEF) → depleção de eIF2·GTP → inibição da tradução global → mas ativação seletiva de mRNAs com uORFs (ex.: ATF4). Resposta integrada ao stress (ISR).'},
+  {q:'Qual o papel de TFIIH na transcrição e em que doença é relevante?', a:'TFIIH contém as helicases XPB e XPD (abrem DNA) e CDK7 (fosforila CTD da RNA Pol II). Em xeroderma pigmentoso, mutações em XPB/XPD comprometem a via NER → acúmulo de lesões por UV → neoplasias cutâneas múltiplas.'},
+  {q:'Quais snRNPs participam do spliceossoma e em que ordem se recrutam?', a:'U1 reconhece o 5\' splice site → U2 se liga ao branch point (adenosina) → U4/U6 di-snRNP entra → U5 → rearranjos conformacionais → catálise por U2/U6 (metalloenzima). U4 sai no complexo ativo (Bact).'},
+];
+
+let flashIdx=0, flashFlipped=false;
+function renderFlash(){
+  const d=flashData[flashIdx];
+  const c=document.getElementById('flashcard-container');
+  c.innerHTML=`
+    <div class="flashcard-wrap" onclick="flipFlash()">
+      <div class="flashcard" id="fc" ${flashFlipped?'style="transform:rotateY(180deg)"':''}>
+        <div class="flashcard-front">
+          <div class="flashcard-q">${d.q}</div>
+          <div class="flashcard-hint">Clique para revelar a resposta</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="flashcard-a">${d.a}</div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('flash-counter').textContent=`${flashIdx+1} / ${flashData.length}`;
+}
+function flipFlash(){
+  flashFlipped=!flashFlipped;
+  const fc=document.getElementById('fc');
+  fc.style.transform=flashFlipped?'rotateY(180deg)':'';
+}
+function nextFlash(){ flashIdx=(flashIdx+1)%flashData.length; flashFlipped=false; renderFlash(); }
+function prevFlash(){ flashIdx=(flashIdx-1+flashData.length)%flashData.length; flashFlipped=false; renderFlash(); }
+renderFlash();
+
+// ═══════════════════════════════════
+//  QUIZ
+// ═══════════════════════════════════
+const quizData = [
+  {
+    q:'Um paciente é internado com paralisia progressiva descendente após consumo de cogumelos silvestres. A análise bioquímica revela inibição da RNA Pol II hepática. Qual a toxina responsável?',
+    opts:['Muscarina','α-Amanitina','Ricina','Faloidina'],
+    correct:1,
+    exp:'α-Amanitina (Amanita phalloides) inibe especificamente a RNA Pol II (produtora de mRNA). Faloidina estabiliza actina; ricina inibe ribossoma (28S); muscarina é colinérgica.',
+  },
+  {
+    q:'Criança de 3 anos apresenta pseudomembrana faríngea, febre e miocardite progressiva. O mecanismo molecular da complicação cardíaca envolve:',
+    opts:['Inibição da RNA Pol bacteriana pelo fago β','ADP-ribosilação de eEF2 → parada da síntese proteica cardiomiocitária','Clivagem do rRNA 28S por N-glicosilase','Ativação permanente da adenilil ciclase'],
+    correct:1,
+    exp:'Toxina diftérica (C. diphtheriae lisogenizado pelo fago β): subunidade A ADP-ribosila eEF2 no resíduo diphthamide (His715) → inibição irreversível da translocação → morte de cardiomiócitos.',
+  },
+  {
+    q:'Uma criança com eritrodermia, fotossensibilidade e múltiplos carcinomas cutâneos desde os 2 anos. A biopsia de fibroblastos mostra incapacidade de reparar dímeros de pirimidina. Qual proteína do complexo de transcrição está mutada?',
+    opts:['TBP (TFIID)','XPB ou XPD (TFIIH)','eIF2α','U1 snRNP'],
+    correct:1,
+    exp:'Xeroderma pigmentoso — mutação nas helicases XPB ou XPD de TFIIH, que participam do NER (abertura do DNA ao redor da lesão). TFIIH tem dupla função: GTF para transcrição e fator de NER.',
+  },
+  {
+    q:'Qual das seguintes afirmações sobre a peptidil transferase é CORRETA?',
+    opts:[
+      'É uma proteína ribossomal da subunidade grande',
+      'É uma ribozima; a atividade catalítica reside no rRNA 23S/28S',
+      'Requer hidrólise de GTP para a formação de cada ligação peptídica',
+      'É inibida por aminoglicosídeos',
+    ],
+    correct:1,
+    exp:'Peptidil transferase é uma ribozima — o rRNA 23S (procarioto) ou 28S (eucarioto) catalisa a formação da ligação peptídica. (Prêmio Nobel 2009: Ramakrishnan, Steitz, Yonath). GTP é consumido na elongação por eEF2 (translocação), não na ligação peptídica.',
+  },
+  {
+    q:'Qual o mecanismo de resistência bacteriana aos macrólidos por modificação ribossomal?',
+    opts:[
+      'Metilação do sítio ativo da peptidil transferase no 28S rRNA',
+      'Metilação do 23S rRNA (erm genes) → reduz afinidade do antibiótico pelo túnel de saída',
+      'Fosforilação de EF-G pelo macrólido',
+      'Perda da subunidade 50S por hipermutação',
+    ],
+    correct:1,
+    exp:'Genes erm (erythromycin ribosome methylase) codificam metiltransferases que adicionam grupos metila em A2058 do 23S rRNA → redução da afinidade dos macrólidos (e clindamicina, lincosamida, estreptogramina B) pelo ribossoma. Mecanismo MLSB.',
+  },
+];
+
+let quizIdx=0, quizAnswered=false;
+function renderQuiz(){
+  const q=quizData[quizIdx];
+  const c=document.getElementById('quiz-container');
+  c.innerHTML=`
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:10px">Questão ${quizIdx+1} de ${quizData.length}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-options">
+      ${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}) ${o}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="qfb"></div>
+    <button class="quiz-next" id="qnxt" onclick="nextQuiz()">Próxima questão →</button>
+  `;
+}
+function answerQuiz(idx){
+  if(quizAnswered) return;
+  quizAnswered=true;
+  const q=quizData[quizIdx];
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach((o,i)=>{
+    if(i===q.correct) o.classList.add('correct');
+    else if(i===idx&&idx!==q.correct) o.classList.add('wrong');
+  });
+  const fb=document.getElementById('qfb');
+  fb.style.display='block';
+  fb.innerHTML=`<div class="highlight ${idx===q.correct?'':'danger'}">${idx===q.correct?'✓ Correto!':'✗ Incorreto.'} ${q.exp}</div>`;
+  document.getElementById('qnxt').style.display='inline-block';
+}
+function nextQuiz(){
+  quizIdx=(quizIdx+1)%quizData.length; quizAnswered=false; renderQuiz();
+}
+renderQuiz();
+
+// ═══════════════════════════════════
+//  SCROLL REVEAL
+// ═══════════════════════════════════
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
